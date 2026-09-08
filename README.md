@@ -10,7 +10,7 @@ Phiên bản ban đầu sử dụng **HTML và CSS thuần**, chưa có JavaScri
 | --- | --- | --- |
 | Từ Trương Thanh Trúc | Thành viên nhóm | `Truc` |
 | Lữ Võ Hoàng Phúc | MSSV: 31241025389 | `Phuc` |
-| Trương Ứng Quang | quangtruong.31221020585@st.ueh.edu.vn | `Quang` |
+| Trương Ứng Quang | MSSV: 31221020585| `Quang` |
 
 Ba thành viên cùng xây dựng và hoàn thiện dự án. Mỗi người có một nhánh riêng để cập nhật phần việc của mình; cả ba nhánh bắt đầu từ cùng một bộ giao diện.
 
