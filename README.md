@@ -8,7 +8,7 @@ Phiên bản ban đầu sử dụng **HTML và CSS thuần**, chưa có JavaScri
 
 | Họ và tên | Thông tin | Nhánh làm việc |
 | --- | --- | --- |
-| Từ Trương Thanh Trúc | 31241023563 | `Truc` |
+| Từ Trương Thanh Trúc | MSSV: 31241023563 | `Truc` |
 | Lữ Võ Hoàng Phúc | MSSV: 31241025389 | `Phuc` |
 | Trương Ứng Quang | MSSV: 31221020585| `Quang` |
 
