@@ -1,0 +1,106 @@
+<?php
+use App\Core\Auth;
+use App\Core\Session;
+
+$success = Session::flash('success');
+$error = Session::flash('error');
+$warning = Session::flash('warning');
+$info = Session::flash('info');
+$role = Auth::role();
+?>
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="<?= e(Session::csrfToken()) ?>">
+    <title><?= e($pageTitle ?? 'CouponHub') ?></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= e(asset('/css/style.css')) ?>">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
+        <a class="navbar-brand font-weight-bold" href="<?= e(url('/')) ?>">CouponHub</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a class="nav-link" href="<?= e(url('/')) ?>">Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?= e(url('/coupons')) ?>">Coupon</a></li>
+
+                <?php if (Auth::check()): ?>
+                    <li class="nav-item"><a class="nav-link" href="<?= e(url('/dashboard')) ?>">Tài khoản</a></li>
+                <?php endif; ?>
+
+                <?php if (in_array($role, ['USER', 'MERCHANT'], true)): ?>
+                    <li class="nav-item"><a class="nav-link" href="<?= e(url('/my-coupons')) ?>">Coupon của tôi</a></li>
+                <?php endif; ?>
+
+                <?php if ($role === 'ADMIN'): ?>
+                    <li class="nav-item"><a class="nav-link" href="<?= e(url('/admin')) ?>">Admin</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= e(url('/admin/coupons')) ?>">Duyệt coupon</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= e(url('/admin/reports')) ?>">Báo cáo</a></li>
+                <?php endif; ?>
+            </ul>
+
+            <ul class="navbar-nav ml-auto align-items-lg-center">
+                <?php if (Auth::check()): ?>
+                    <li class="nav-item mr-lg-3 text-white-50 small"><?= e((string) (Auth::user()['full_name'] ?? '')) ?></li>
+                    <li class="nav-item">
+                        <form method="post" action="<?= e(url('/logout')) ?>" class="mb-0">
+                            <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
+                            <button class="btn btn-outline-light btn-sm" type="submit">Đăng xuất</button>
+                        </form>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item"><a class="nav-link" href="<?= e(url('/login')) ?>">Đăng nhập</a></li>
+                    <li class="nav-item"><a class="btn btn-light btn-sm ml-lg-2" href="<?= e(url('/register')) ?>">Đăng ký</a></li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="py-4">
+    <div class="container">
+        <?php if ($success): ?>
+            <div class="alert alert-success alert-dismissible fade show auto-dismiss-alert" data-timeout="12000" role="alert">
+                <?= e($success) ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($info): ?>
+            <div class="alert alert-info alert-dismissible fade show auto-dismiss-alert" data-timeout="12000" role="alert">
+                <?= e($info) ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($warning): ?>
+            <div class="alert alert-warning alert-dismissible fade show auto-dismiss-alert" data-timeout="15000" role="alert">
+                <?= e($warning) ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
+            </div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert alert-danger alert-dismissible fade show auto-dismiss-alert" data-timeout="20000" role="alert">
+                <?= e($error) ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
+            </div>
+        <?php endif; ?>
+
+        <?= $content ?>
+    </div>
+</main>
+
+<footer class="border-top py-4 bg-white">
+    <div class="container text-muted small">CouponHub &copy; <?= date('Y') ?> &middot; PHP OOP + MVC</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= e(asset('/js/app.js')) ?>"></script>
+</body>
+</html>

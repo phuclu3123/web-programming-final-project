@@ -1,52 +1,62 @@
 <?php
+
 declare(strict_types=1);
+
+namespace App\Core;
 
 final class Session
 {
-    public static function localDemo(array $config): bool
+    public static function start(): void
     {
-        $remote = $_SERVER['REMOTE_ADDR'] ?? '';
-        $host = strtolower(explode(':', $_SERVER['HTTP_HOST'] ?? '')[0]);
-        return ($config['local_demo'] ?? false)
-            && in_array($remote, ['127.0.0.1', '::1'], true)
-            && in_array($host, ['127.0.0.1', 'localhost'], true)
-            && !isset($_SERVER['HTTP_X_FORWARDED_FOR']);
-    }
-
-    public static function actor(Database $db, array $config, string $role): array
-    {
-        $demo = self::localDemo($config);
-        $id = $demo ? 0 : (int) ($_SESSION['user_id'] ?? 0);
-        if (!$demo && $id <= 0) {
-            throw new HttpError(401, 'Bạn cần đăng nhập để truy cập trang này.');
-        }
-        $actor = $db->call('ch_actor', [$id, $role, $demo ? 1 : 0])[0][0] ?? null;
-        if (!$actor) {
-            throw new HttpError(403, 'Tài khoản không có quyền truy cập.');
-        }
-        return $actor;
-    }
-
-    public static function token(): string
-    {
-        return $_SESSION['csrf'] ??= bin2hex(random_bytes(32));
-    }
-
-    public static function checkCsrf(string $token): void
-    {
-        if (!hash_equals(self::token(), $token)) {
-            throw new HttpError(403, 'Phiên gửi biểu mẫu không hợp lệ. Vui lòng tải lại trang.');
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_name((string) App::config('app.session_name', 'couponhub_session'));
+            session_start();
         }
     }
 
-    public static function flash(string $key, ?string $message = null): ?string
+    public static function get(string $key, $default = null)
     {
-        if ($message !== null) {
-            $_SESSION['flash'][$key] = $message;
+        return $_SESSION[$key] ?? $default;
+    }
+
+    public static function put(string $key, $value): void
+    {
+        $_SESSION[$key] = $value;
+    }
+
+    public static function forget(string $key): void
+    {
+        unset($_SESSION[$key]);
+    }
+
+    public static function flash(string $key, ?string $value = null): ?string
+    {
+        if ($value !== null) {
+            $_SESSION['_flash'][$key] = $value;
             return null;
         }
-        $value = $_SESSION['flash'][$key] ?? null;
-        unset($_SESSION['flash'][$key]);
-        return $value;
+
+        $message = $_SESSION['_flash'][$key] ?? null;
+        unset($_SESSION['_flash'][$key]);
+        return is_string($message) ? $message : null;
+    }
+
+    public static function regenerate(): void
+    {
+        session_regenerate_id(true);
+    }
+
+    public static function csrfToken(): string
+    {
+        if (empty($_SESSION['_csrf'])) {
+            $_SESSION['_csrf'] = bin2hex(random_bytes(32));
+        }
+        return (string) $_SESSION['_csrf'];
+    }
+
+    public static function verifyCsrf(?string $token): bool
+    {
+        $stored = $_SESSION['_csrf'] ?? '';
+        return is_string($token) && is_string($stored) && $stored !== '' && hash_equals($stored, $token);
     }
 }

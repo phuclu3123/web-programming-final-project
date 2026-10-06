@@ -1,0 +1,79 @@
+html, body { min-height: 100%; }
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f6f8fb;
+    color: #212529;
+}
+main { flex: 1 0 auto; }
+footer { flex-shrink: 0; }
+.navbar-brand { letter-spacing: .2px; }
+.card { border-radius: .75rem; }
+.jumbotron { border-radius: 1rem; }
+.form-control:focus { box-shadow: 0 0 0 .2rem rgba(0,123,255,.15); }
+
+.coupon-card { transition: transform .15s ease, box-shadow .15s ease; }
+.coupon-card:hover { transform: translateY(-2px); }
+.coupon-discount { font-size: 1.35rem; font-weight: 700; color: #0b63ce; }
+.coupon-code code, .coupon-code-large code {
+    display: inline-block;
+    padding: .45rem .7rem;
+    border: 1px dashed #6c757d;
+    border-radius: .4rem;
+    background: #f8f9fa;
+    color: #212529;
+    font-size: 1rem;
+    letter-spacing: .04em;
+}
+.coupon-code-large code { font-size: 1.35rem; }
+
+/* Soft semantic badges: category, usage channel and status are visually distinct. */
+.badge-soft {
+    display: inline-block;
+    padding: .32rem .58rem;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.badge-category-shopping { background: #e8f0ff; color: #2457d6; border-color: #c9dbff; }
+.badge-category-food { background: #fff1e8; color: #c75d14; border-color: #ffd3b5; }
+.badge-category-travel { background: #e8f8ef; color: #218a4a; border-color: #bfe8cf; }
+.badge-category-tech { background: #e9f3ff; color: #1769aa; border-color: #c5ddf6; }
+.badge-category-entertainment { background: #f3e8ff; color: #7b3fc6; border-color: #dec3ff; }
+.badge-category-beauty { background: #ffe8f2; color: #b83270; border-color: #ffc5dd; }
+.badge-category-service { background: #eef2f6; color: #526170; border-color: #d6dee6; }
+.badge-category-fashion { background: #fff0f1; color: #b13d4b; border-color: #ffd0d5; }
+.badge-category-default { background: #f1f3f5; color: #495057; border-color: #dee2e6; }
+
+.badge-usage-online { background: #e8f1ff; color: #1d5fd0; border-color: #caddff; }
+.badge-usage-offline { background: #f1f3f5; color: #495057; border-color: #dee2e6; }
+.badge-usage-both { background: #e8fbf8; color: #138a72; border-color: #bfeee5; }
+.badge-usage-default { background: #f1f3f5; color: #495057; border-color: #dee2e6; }
+
+.trust-score-value { font-size: 2.2rem; font-weight: 700; line-height: 1; }
+.interaction-toolbar .btn { margin-right: .35rem; margin-bottom: .35rem; }
+.vote-btn.active { box-shadow: inset 0 0 0 2px rgba(0,0,0,.12); font-weight: 600; }
+.comment-item { border-bottom: 1px solid #edf0f3; padding: .85rem 0; }
+.comment-item:last-child { border-bottom: 0; }
+.comment-body { white-space: pre-wrap; word-break: break-word; }
+
+.datetime-feedback { min-height: 1.35rem; }
+.datetime-feedback.is-warning { color: #856404; }
+.datetime-feedback.is-valid-note { color: #155724; }
+.datetime-feedback.is-invalid-note { color: #721c24; }
+
+.admin-detail-grid dt { color: #6c757d; font-weight: 600; }
+.admin-detail-grid dd { margin-bottom: .6rem; }
+
+.point-card-number { font-size: 2rem; font-weight: 700; }
+.progress-thin { height: .55rem; border-radius: 999px; }
+
+@media (max-width: 767.98px) {
+    .coupon-code-large code { font-size: 1.05rem; }
+    .trust-score-value { font-size: 1.8rem; }
+}

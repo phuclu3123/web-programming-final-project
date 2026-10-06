@@ -1,46 +1,64 @@
 <?php
+
 declare(strict_types=1);
 
-/** Immutable wrapper around one HTTP request. */
+namespace App\Core;
+
 final class Request
 {
-    public function __construct(
-        private readonly array $query,
-        private readonly array $post,
-        private readonly array $server
-    ) {}
-
-    public static function fromGlobals(): self
-    {
-        return new self($_GET, $_POST, $_SERVER);
-    }
+    /** @var array<string,mixed>|null */
+    private ?array $json = null;
 
     public function method(): string
     {
-        return strtoupper((string) ($this->server['REQUEST_METHOD'] ?? 'GET'));
+        return strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
     }
 
-    public function query(string $name, string $default = ''): string
+    public function path(): string
     {
-        return $this->stringValue($this->query, $name, $default, 'Tham số URL');
-    }
+        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+        $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
+        $scriptDir = rtrim($scriptDir, '/');
 
-    public function post(string $name, string $default = ''): string
-    {
-        return $this->stringValue($this->post, $name, $default, 'Dữ liệu biểu mẫu');
-    }
-
-    public function isAjax(): bool
-    {
-        return strtolower((string) ($this->server['HTTP_X_REQUESTED_WITH'] ?? '')) === 'couponhub';
-    }
-
-    private function stringValue(array $source, string $name, string $default, string $label): string
-    {
-        $value = $source[$name] ?? $default;
-        if (!is_string($value)) {
-            throw new HttpError(422, $label . ' không hợp lệ.');
+        if ($scriptDir !== '' && $scriptDir !== '/' && strpos($uri, $scriptDir) === 0) {
+            $uri = substr($uri, strlen($scriptDir));
         }
-        return trim($value);
+
+        $uri = '/' . ltrim((string) $uri, '/');
+        return $uri === '//' ? '/' : (rtrim($uri, '/') ?: '/');
+    }
+
+    public function input(string $key, $default = null)
+    {
+        $data = $this->all();
+        return $data[$key] ?? $default;
+    }
+
+    /** @return array<string,mixed> */
+    public function all(): array
+    {
+        if ($this->isJson()) {
+            if ($this->json === null) {
+                $raw = file_get_contents('php://input') ?: '';
+                $decoded = json_decode($raw, true);
+                $this->json = is_array($decoded) ? $decoded : [];
+            }
+            return array_merge($_GET, $this->json);
+        }
+
+        return array_merge($_GET, $_POST);
+    }
+
+    public function isJson(): bool
+    {
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+        return stripos($contentType, 'application/json') !== false;
+    }
+
+    public function expectsJson(): bool
+    {
+        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+        $xhr = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+        return stripos($accept, 'application/json') !== false || strtolower($xhr) === 'xmlhttprequest';
     }
 }
