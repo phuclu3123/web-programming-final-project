@@ -1,17 +1,59 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Controllers;
-
-use App\Core\{Controller, Database as DB};
-
-final class HomeController extends Controller
+final class HomeController extends AbstractController
 {
-    public function index(): void
+    public function handle(): void
     {
-        $categories = DB::all('SELECT cat.*,COUNT(c.id) AS coupon_count FROM {{categories}} cat LEFT JOIN v_coupon_status c ON c.category_id=cat.id AND c.effective_status=? WHERE cat.is_active=1 GROUP BY cat.id ORDER BY cat.sort_order,cat.id', ['ACTIVE']);
-        $coupons = DB::all("SELECT c.*,m.name AS merchant_name,s.trust_score,s.total_votes,(SELECT COUNT(*) FROM {{favorites}} f WHERE f.coupon_id=c.id) AS favorite_count FROM v_coupon_status c JOIN {{merchants}} m ON m.id=c.merchant_id JOIN v_coupon_vote_stats s ON s.coupon_id=c.id WHERE c.effective_status='ACTIVE' ORDER BY favorite_count DESC,c.created_at DESC LIMIT 6");
-        $campaigns = DB::all("SELECT ca.* FROM {{campaigns}} ca LEFT JOIN {{merchants}} m ON m.id=ca.owner_merchant_id WHERE ca.status='PUBLISHED' AND ca.ends_at>UTC_TIMESTAMP() AND (ca.owner_merchant_id IS NULL OR (m.status='APPROVED' AND m.deleted_at IS NULL)) ORDER BY ca.starts_at LIMIT 3");
-        $stats = DB::one("SELECT (SELECT COUNT(*) FROM v_coupon_status WHERE effective_status='ACTIVE') AS coupons,(SELECT COUNT(*) FROM {{merchants}} WHERE deleted_at IS NULL AND status IN ('APPROVED','UNCLAIMED')) AS merchants,(SELECT COUNT(*) FROM {{votes}} WHERE vote_type='WORKING') AS verifications");
-        $this->view('home', compact('categories', 'coupons', 'campaigns', 'stats'), 'CouponHub — Tìm deal tốt, chia sẻ điều hay');
+        $this->requireMethod('GET');
+
+        $q = $this->request->query('q');
+        if (textLength($q) > 100) {
+            throw new HttpError(422, 'Từ khóa tối đa 100 ký tự.');
+        }
+
+        $categoryId = positiveId($this->request->query('category', '0'), true);
+        $merchantId = positiveId($this->request->query('merchant', '0'), true);
+        $discountType = $this->request->query('type');
+        if (!in_array($discountType, ['', 'PERCENTAGE', 'FIXED_AMOUNT', 'FREE_SHIPPING', 'BUY_X_GET_Y', 'GIFT', 'CASHBACK'], true)) {
+            throw new HttpError(422, 'Loại ưu đãi không hợp lệ.');
+        }
+        $usageChannel = $this->request->query('channel');
+        if (!in_array($usageChannel, ['', 'ONLINE', 'OFFLINE', 'BOTH'], true)) {
+            throw new HttpError(422, 'Kênh sử dụng không hợp lệ.');
+        }
+        $ending = $this->request->query('ending', '0');
+        if (!in_array($ending, ['0', '1'], true)) {
+            throw new HttpError(422, 'Bộ lọc sắp hết hạn không hợp lệ.');
+        }
+        $endingSoon = $ending === '1';
+        $sort = $this->request->query('sort', 'newest');
+        if (!in_array($sort, ['newest', 'expiry'], true)) {
+            throw new HttpError(422, 'Thứ tự sắp xếp không hợp lệ.');
+        }
+
+        [$categories, $merchants, $coupons] = (new Coupon($this->db))->search(
+            $q,
+            $categoryId,
+            $merchantId,
+            $discountType,
+            $usageChannel,
+            $endingSoon,
+            $sort
+        );
+
+        $role = 'user';
+        $title = 'Khám phá ưu đãi';
+        $demo = Session::localDemo($this->config);
+
+        if ($this->request->isAjax()) {
+            header('Vary: X-Requested-With');
+        }
+
+        $this->render('home', compact(
+            'q', 'categoryId', 'merchantId', 'discountType', 'usageChannel', 'endingSoon', 'sort',
+            'categories', 'merchants', 'coupons',
+            'role', 'title', 'demo'
+        ));
     }
 }

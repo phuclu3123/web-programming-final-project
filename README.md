@@ -1,24 +1,27 @@
-# Góc học tập — Web Programming Final Project
+# CouponHub
 
-Website cơ bản giới thiệu nội dung học lập trình web và nhóm thực hiện bài cuối kỳ. Trang gồm phần giới thiệu dự án, các chủ đề học tập và thông tin thành viên; bố cục có điều chỉnh cho máy tính và điện thoại.
+Đồ án Web Programming viết bằng PHP OOP theo mô hình MVC.
 
-Phiên bản ban đầu sử dụng **HTML và CSS thuần**, chưa có JavaScript, PHP hay cơ sở dữ liệu.
+## Chạy dự án
+
+1. Tạo database `dbcouponshubweb` trong phpMyAdmin.
+2. Tạo các bảng và routine trực tiếp trong phpMyAdmin theo yêu cầu của giảng viên.
+3. Kiểm tra cấu hình kết nối tại `config/database.php`.
+4. Đặt dự án trong thư mục web của XAMPP và mở `index.php`.
+
+Các trang chính:
+
+- `index.php`: danh sách coupon công khai.
+- `shop.php`: khu vực merchant.
+- `admin.php`: khu vực quản trị.
+
+Ứng dụng sử dụng các routine: `ch_actor`, `ch_public_catalog_v2`,
+`ch_public_catalog_v3`, `ch_shop_dashboard`, `ch_shop_dashboard_v2`,
+`ch_create_coupon`, `ch_admin_dashboard`, `ch_admin_dashboard_v2`,
+`ch_approve_coupon` và `ch_reject_coupon`.
 
 ## Thành viên
 
-| Họ và tên | Thông tin | Nhánh làm việc |
-| --- | --- | --- |
-| Từ Trương Thanh Trúc | Thành viên nhóm | `Truc` |
-| Lữ Võ Hoàng Phúc | MSSV: 31241025389 | `Phuc` |
-| Trương Ứng Quang | quangtruong.31221020585@st.ueh.edu.vn | `Quang` |
-
-Ba thành viên cùng xây dựng và hoàn thiện dự án. Mỗi người có một nhánh riêng để cập nhật phần việc của mình; cả ba nhánh bắt đầu từ cùng một bộ giao diện.
-
-## Cấu trúc
-
-- `index.html`: nội dung và cấu trúc trang.
-- `style.css`: màu sắc, bố cục và phần điều chỉnh cho màn hình nhỏ.
-
-## Xem trang
-
-Tải repo về và mở `index.html` bằng trình duyệt. Không cần cài thư viện hoặc chạy server.
+- Từ Trương Thanh Trúc — nhánh `Truc`
+- Lữ Võ Hoàng Phúc — nhánh `Phuc`
+- Trương Ứng Quang — nhánh `Quang`
