@@ -30,7 +30,17 @@ if (!function_exists('url')) {
 if (!function_exists('asset')) {
     function asset(string $path): string
     {
-        return url('/' . ltrim($path, '/'));
+        $normalized = '/' . ltrim($path, '/');
+        $assetUrl = url($normalized);
+        $file = dirname(__DIR__) . '/public' . $normalized;
+
+        // Cache-bust local assets after each deploy/hotfix so browsers do not keep
+        // an old JavaScript/CSS file while PHP has already changed.
+        if (is_file($file)) {
+            $assetUrl .= '?v=' . (string) filemtime($file);
+        }
+
+        return $assetUrl;
     }
 }
 
@@ -182,6 +192,65 @@ if (!function_exists('report_reason_label')) {
             'INAPPROPRIATE' => 'Nội dung không phù hợp',
             'OTHER' => 'Khác',
             default => (string) $reason,
+        };
+    }
+}
+
+
+if (!function_exists('slugify')) {
+    function slugify(string $value): string
+    {
+        $value = trim(mb_strtolower($value));
+        $map = [
+            'à'=>'a','á'=>'a','ạ'=>'a','ả'=>'a','ã'=>'a','â'=>'a','ầ'=>'a','ấ'=>'a','ậ'=>'a','ẩ'=>'a','ẫ'=>'a','ă'=>'a','ằ'=>'a','ắ'=>'a','ặ'=>'a','ẳ'=>'a','ẵ'=>'a',
+            'è'=>'e','é'=>'e','ẹ'=>'e','ẻ'=>'e','ẽ'=>'e','ê'=>'e','ề'=>'e','ế'=>'e','ệ'=>'e','ể'=>'e','ễ'=>'e',
+            'ì'=>'i','í'=>'i','ị'=>'i','ỉ'=>'i','ĩ'=>'i',
+            'ò'=>'o','ó'=>'o','ọ'=>'o','ỏ'=>'o','õ'=>'o','ô'=>'o','ồ'=>'o','ố'=>'o','ộ'=>'o','ổ'=>'o','ỗ'=>'o','ơ'=>'o','ờ'=>'o','ớ'=>'o','ợ'=>'o','ở'=>'o','ỡ'=>'o',
+            'ù'=>'u','ú'=>'u','ụ'=>'u','ủ'=>'u','ũ'=>'u','ư'=>'u','ừ'=>'u','ứ'=>'u','ự'=>'u','ử'=>'u','ữ'=>'u',
+            'ỳ'=>'y','ý'=>'y','ỵ'=>'y','ỷ'=>'y','ỹ'=>'y','đ'=>'d',
+        ];
+        $value = strtr($value, $map);
+        $value = preg_replace('/[^a-z0-9]+/', '-', $value) ?? '';
+        return trim($value, '-');
+    }
+}
+
+if (!function_exists('campaign_status_label')) {
+    function campaign_status_label(string $status): string
+    {
+        return match (strtoupper($status)) {
+            'DRAFT' => 'Bản nháp',
+            'PUBLISHED' => 'Đã xuất bản',
+            'DISABLED' => 'Đã tắt',
+            'ARCHIVED' => 'Đã lưu trữ',
+            default => $status,
+        };
+    }
+}
+
+if (!function_exists('campaign_status_class')) {
+    function campaign_status_class(string $status): string
+    {
+        return match (strtoupper($status)) {
+            'PUBLISHED' => 'success',
+            'DRAFT' => 'secondary',
+            'DISABLED' => 'warning',
+            'ARCHIVED' => 'dark',
+            default => 'secondary',
+        };
+    }
+}
+
+if (!function_exists('merchant_status_label')) {
+    function merchant_status_label(string $status): string
+    {
+        return match (strtoupper($status)) {
+            'UNCLAIMED' => 'Chưa có chủ',
+            'PENDING' => 'Chờ duyệt',
+            'APPROVED' => 'Đã duyệt',
+            'REJECTED' => 'Bị từ chối',
+            'LOCKED' => 'Đã khóa',
+            default => $status,
         };
     }
 }

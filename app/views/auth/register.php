@@ -23,13 +23,27 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Mật khẩu</label>
-                        <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" name="password" minlength="8" required>
-                        <?php if (isset($errors['password'])): ?><div class="invalid-feedback"><?= e($errors['password']) ?></div><?php endif; ?>
+                        <div class="input-group">
+                            <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" name="password" minlength="8" autocomplete="new-password" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary password-toggle" type="button" data-target="#password" aria-label="Hiện mật khẩu" aria-pressed="false" title="Hiện mật khẩu">
+                                    <i class="fa-solid fa-eye password-eye-symbol" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <?php if (isset($errors['password'])): ?><div class="invalid-feedback d-block"><?= e($errors['password']) ?></div><?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="password_confirmation">Xác nhận mật khẩu</label>
-                        <input type="password" class="form-control <?= isset($errors['password_confirmation']) ? 'is-invalid' : '' ?>" id="password_confirmation" name="password_confirmation" minlength="8" required>
-                        <?php if (isset($errors['password_confirmation'])): ?><div class="invalid-feedback"><?= e($errors['password_confirmation']) ?></div><?php endif; ?>
+                        <div class="input-group">
+                            <input type="password" class="form-control <?= isset($errors['password_confirmation']) ? 'is-invalid' : '' ?>" id="password_confirmation" name="password_confirmation" minlength="8" autocomplete="new-password" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary password-toggle" type="button" data-target="#password_confirmation" aria-label="Hiện mật khẩu xác nhận" aria-pressed="false" title="Hiện mật khẩu">
+                                    <i class="fa-solid fa-eye password-eye-symbol" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <?php if (isset($errors['password_confirmation'])): ?><div class="invalid-feedback d-block"><?= e($errors['password_confirmation']) ?></div><?php endif; ?>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Đăng ký</button>
                 </form>

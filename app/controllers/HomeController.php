@@ -9,6 +9,9 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Repositories\CampaignRepository;
+use App\Repositories\CouponRepository;
+use App\Repositories\MerchantRepository;
 use App\Repositories\UserRepository;
 use Throwable;
 
@@ -16,8 +19,17 @@ final class HomeController extends Controller
 {
     public function index(Request $request): void
     {
+        $pdo = Database::connection();
+        $campaigns = new CampaignRepository($pdo);
+        $coupons = new CouponRepository($pdo);
+        $merchants = new MerchantRepository($pdo);
+
         $this->view('home/index', [
             'pageTitle' => 'CouponHub',
+            'currentCampaigns' => $campaigns->publicCurrent(2),
+            'upcomingCampaigns' => $campaigns->publicUpcoming(4),
+            'hotDeals' => $coupons->hotDeals(6),
+            'popularMerchants' => $merchants->popular(6),
         ]);
     }
 
@@ -31,14 +43,6 @@ final class HomeController extends Controller
             'pageTitle' => 'Tài khoản của tôi',
             'rewardSummary' => $users->rewardSummary($userId),
             'pointHistory' => $users->pointHistory($userId),
-        ]);
-    }
-
-    public function admin(Request $request): void
-    {
-        Auth::requireRole(['ADMIN']);
-        $this->view('dashboard/admin', [
-            'pageTitle' => 'Admin Dashboard',
         ]);
     }
 
@@ -58,10 +62,7 @@ final class HomeController extends Controller
                 ],
             ]);
         } catch (Throwable $e) {
-            Response::json([
-                'success' => false,
-                'message' => 'Database connection failed.',
-            ], 503);
+            Response::json(['success' => false, 'message' => 'Database connection failed.'], 503);
         }
     }
 }

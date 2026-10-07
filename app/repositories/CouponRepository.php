@@ -62,7 +62,7 @@ final class CouponRepository
             "JOIN categories cat ON cat.id = c.category_id " .
             "JOIN users u ON u.id = c.submitted_by " .
             "JOIN v_coupon_vote_stats s ON s.coupon_id = c.id " .
-            "WHERE c.id = ? AND c.effective_status = 'ACTIVE' LIMIT 1";
+            "WHERE c.id = ? AND c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$id]);
         $row = $stmt->fetch();
@@ -71,7 +71,7 @@ final class CouponRepository
 
     public function isActive(int $couponId): bool
     {
-        $stmt = $this->pdo->prepare("SELECT 1 FROM v_coupon_status WHERE id = ? AND effective_status = 'ACTIVE' LIMIT 1");
+        $stmt = $this->pdo->prepare("SELECT 1 FROM v_coupon_status WHERE id = ? AND effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci LIMIT 1");
         $stmt->execute([$couponId]);
         return (bool) $stmt->fetchColumn();
     }
@@ -137,6 +137,169 @@ final class CouponRepository
             "JOIN users u ON u.id = c.submitted_by " .
             "WHERE c.moderation_status = 'PENDING' AND c.deleted_at IS NULL " .
             "ORDER BY c.created_at ASC, c.id ASC";
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    /** @param array<string,mixed> $data */
+    public function submitOfficial(int $actorId, array $data): int
+    {
+        $stmt = $this->pdo->prepare(
+            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+        );
+        $stmt->execute([
+            $actorId,
+            $data['merchant_id'],
+            $data['category_id'],
+            1,
+            $data['title'],
+            $data['code'],
+            $data['description'],
+            $data['terms'],
+            $data['discount_type'],
+            $data['discount_value'],
+            $data['cashback_unit'],
+            $data['min_order_amount'],
+            $data['max_discount_amount'],
+            $data['usage_channel'],
+            $data['promotion_url'],
+            null,
+            null,
+            $data['starts_at_utc'],
+            $data['ends_at_utc'],
+        ]);
+        $row = $stmt->fetch();
+        $stmt->closeCursor();
+        return (int) ($row['coupon_id'] ?? 0);
+    }
+
+    /** @return array<int,array<string,mixed>> */
+    public function officialByOwner(int $userId): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT c.id,c.merchant_id,c.title,c.code,c.discount_type,c.discount_value,c.cashback_unit,c.usage_channel,c.starts_at,c.ends_at, " .
+            "c.effective_status,c.moderation_status,c.publication_status,c.review_note,m.name AS merchant_name,cat.name AS category_name,c.created_at " .
+            "FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id JOIN categories cat ON cat.id=c.category_id " .
+            "WHERE c.source='OFFICIAL' AND m.owner_user_id=? AND m.deleted_at IS NULL ORDER BY c.created_at DESC,c.id DESC"
+        );
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    }
+
+    /** @return array<string,mixed>|null */
+    public function findOwnedOfficialForEdit(int $couponId, int $userId): ?array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT c.*,m.name AS merchant_name,cat.name AS category_name FROM coupons c " .
+            "JOIN merchants m ON m.id=c.merchant_id JOIN categories cat ON cat.id=c.category_id " .
+            "WHERE c.id=? AND c.source='OFFICIAL' AND m.owner_user_id=? AND m.status='APPROVED' AND c.deleted_at IS NULL LIMIT 1"
+        );
+        $stmt->execute([$couponId, $userId]);
+        $row = $stmt->fetch();
+        return is_array($row) ? $row : null;
+    }
+
+    /** @param array<string,mixed> $data */
+    public function updateOwnedOfficial(int $actorId, int $couponId, array $data): void
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $merchant = $this->pdo->prepare('SELECT id,owner_user_id,status FROM merchants WHERE id=? FOR UPDATE');
+            $merchant->execute([(int) $data['merchant_id']]);
+            $m = $merchant->fetch();
+            if (!is_array($m) || (int) ($m['owner_user_id'] ?? 0) !== $actorId || (string) $m['status'] !== 'APPROVED') {
+                throw new \RuntimeException('Merchant không thuộc quyền quản lý của bạn.');
+            }
+
+            $lock = $this->pdo->prepare(
+                "SELECT moderation_status,publication_status,merchant_id,source FROM coupons WHERE id=? AND deleted_at IS NULL FOR UPDATE"
+            );
+            $lock->execute([$couponId]);
+            $old = $lock->fetch();
+            if (!is_array($old) || (string) $old['source'] !== 'OFFICIAL' || (int) $old['merchant_id'] !== (int) $data['merchant_id']) {
+                throw new \RuntimeException('Không tìm thấy coupon Official phù hợp.');
+            }
+
+            if (!empty($data['code'])) {
+                $dup = $this->pdo->prepare(
+                    "SELECT COUNT(*) FROM coupons WHERE id<>? AND merchant_id=? AND code_normalized=UPPER(TRIM(?)) AND deleted_at IS NULL " .
+                    "AND moderation_status IN ('PENDING','APPROVED') AND publication_status='ENABLED' AND starts_at<? AND ends_at>?"
+                );
+                $dup->execute([$couponId, $data['merchant_id'], $data['code'], $data['ends_at_utc'], $data['starts_at_utc']]);
+                if ((int) $dup->fetchColumn() > 0) throw new \RuntimeException('Mã coupon bị trùng khoảng hiệu lực với coupon khác của Merchant.');
+            }
+
+            $update = $this->pdo->prepare(
+                "UPDATE coupons SET category_id=?,title=?,code=?,description=?,terms=?,discount_type=?,discount_value=?,cashback_unit=?,min_order_amount=?,max_discount_amount=?,usage_channel=?,promotion_url=?,starts_at=?,ends_at=?, " .
+                "moderation_status='PENDING',publication_status='ENABLED',reviewed_by=NULL,reviewed_at=NULL,review_note=NULL WHERE id=?"
+            );
+            $update->execute([
+                $data['category_id'],$data['title'],$data['code'],$data['description'],$data['terms'],$data['discount_type'],$data['discount_value'],$data['cashback_unit'],
+                $data['min_order_amount'],$data['max_discount_amount'],$data['usage_channel'],$data['promotion_url'],$data['starts_at_utc'],$data['ends_at_utc'],$couponId,
+            ]);
+
+            $this->pdo->prepare('DELETE FROM votes WHERE coupon_id=?')->execute([$couponId]);
+            $history = $this->pdo->prepare(
+                "INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,?,?)"
+            );
+            $history->execute([$couponId,$actorId,$old['moderation_status'],'PENDING',$old['publication_status'],'ENABLED','Merchant cập nhật nội dung và gửi duyệt lại']);
+            $this->pdo->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,'COUPON_EDIT','Official coupon updated; re-moderation required')")
+                ->execute([$actorId,$couponId]);
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    public function disableOwnedOfficial(int $actorId, int $couponId): void
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT c.moderation_status,c.publication_status,m.id AS merchant_id FROM coupons c JOIN merchants m ON m.id=c.merchant_id " .
+                "WHERE c.id=? AND c.source='OFFICIAL' AND m.owner_user_id=? AND m.status='APPROVED' AND c.deleted_at IS NULL FOR UPDATE"
+            );
+            $stmt->execute([$couponId,$actorId]);
+            $row = $stmt->fetch();
+            if (!is_array($row)) throw new \RuntimeException('Không tìm thấy coupon Official thuộc Merchant của bạn.');
+            if ((string) $row['publication_status'] === 'DISABLED') {
+                $this->pdo->commit();
+                return;
+            }
+            $this->pdo->prepare("UPDATE coupons SET publication_status='DISABLED' WHERE id=?")->execute([$couponId]);
+            $this->pdo->prepare(
+                "INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,'DISABLED','Merchant ngừng coupon')"
+            )->execute([$couponId,$actorId,$row['moderation_status'],$row['moderation_status'],$row['publication_status']]);
+            $this->pdo->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,'COUPON_DISABLE','Merchant disabled official coupon')")
+                ->execute([$actorId,$couponId]);
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    /** @return array<int,array<string,mixed>> */
+    public function eligibleForMerchantCampaign(int $merchantId, int $userId): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT c.id,c.title,c.code,c.starts_at,c.ends_at,c.effective_status FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id " .
+            "WHERE c.merchant_id=? AND m.owner_user_id=? AND c.source='OFFICIAL' AND c.moderation_status='APPROVED' AND c.publication_status='ENABLED' AND c.deleted_at IS NULL " .
+            "ORDER BY c.ends_at ASC,c.id DESC"
+        );
+        $stmt->execute([$merchantId,$userId]);
+        return $stmt->fetchAll();
+    }
+
+    /** @return array<int,array<string,mixed>> */
+    public function hotDeals(int $limit = 6): array
+    {
+        $limit = max(1, min(12, $limit));
+        $sql = "SELECT c.id,c.title,c.code,c.discount_type,c.discount_value,c.cashback_unit,c.usage_channel,c.ends_at,c.is_official,m.name AS merchant_name,cat.name AS category_name, " .
+            "s.trust_score,s.total_votes,(SELECT COUNT(*) FROM favorites f WHERE f.coupon_id=c.id) AS favorite_count " .
+            "FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id JOIN categories cat ON cat.id=c.category_id JOIN v_coupon_vote_stats s ON s.coupon_id=c.id " .
+            "WHERE c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci " .
+            "ORDER BY favorite_count DESC,s.total_votes DESC,c.created_at DESC LIMIT " . $limit;
         return $this->pdo->query($sql)->fetchAll();
     }
 

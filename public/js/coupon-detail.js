@@ -1,6 +1,7 @@
 (function ($) {
     'use strict';
 
+    $(function () {
     var $page = $('#coupon-detail-page');
     if (!$page.length) return;
 
@@ -90,7 +91,7 @@
         var $submit = $form.find('button[type="submit"]');
         $submit.prop('disabled', true);
 
-        request($page.data('comment-url'), {body: body})
+        request($page.data('comment-url') || $form.attr('action'), {body: body})
             .done(function (response) {
                 var c = response.data;
                 $('#comment-empty').remove();
@@ -128,7 +129,7 @@
 
         var $submit = $form.find('button[type="submit"]');
         $submit.prop('disabled', true);
-        request($page.data('report-url'), {reason: reason, details: details})
+        request($page.data('report-url') || $form.attr('action'), {reason: reason, details: details})
             .done(function (response) {
                 $('#reportCouponModal').modal('hide');
                 $form[0].reset();
@@ -156,5 +157,6 @@
         } else {
             window.CouponHub.showMessage($message, 'info', 'Hãy chọn mã và sao chép thủ công.', 10000);
         }
+    });
     });
 })(jQuery);

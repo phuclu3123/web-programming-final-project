@@ -18,8 +18,15 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Mật khẩu</label>
-                        <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" name="password" autocomplete="current-password" required>
-                        <?php if (isset($errors['password'])): ?><div class="invalid-feedback"><?= e($errors['password']) ?></div><?php endif; ?>
+                        <div class="input-group">
+                            <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" name="password" autocomplete="current-password" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary password-toggle" type="button" data-target="#password" aria-label="Hiện mật khẩu" aria-pressed="false" title="Hiện mật khẩu">
+                                    <i class="fa-solid fa-eye password-eye-symbol" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <?php if (isset($errors['password'])): ?><div class="invalid-feedback d-block"><?= e($errors['password']) ?></div><?php endif; ?>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
                 </form>

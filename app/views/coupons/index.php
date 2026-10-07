@@ -108,4 +108,4 @@
     Chưa có coupon phù hợp với bộ lọc hiện tại.
 </div>
 
-<script src="<?= e(asset('/js/search.js')) ?>"></script>
+

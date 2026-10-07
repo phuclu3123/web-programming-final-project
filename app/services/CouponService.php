@@ -55,7 +55,7 @@ final class CouponService
     /** @param array<string,mixed> $input */
     public function submitCommunity(int $actorId, array $input): int
     {
-        $data = $this->validateAndNormalizeSubmission($input);
+        $data = $this->validateSubmission($input);
 
         try {
             $couponId = $this->coupons->submitCommunity($actorId, $data);
@@ -79,6 +79,33 @@ final class CouponService
             }
             throw $e;
         }
+    }
+
+    /** @param array<string,mixed> $input */
+    public function submitOfficial(int $actorId, array $input): int
+    {
+        $data = $this->validateSubmission($input);
+        try {
+            $couponId = $this->coupons->submitOfficial($actorId, $data);
+            if ($couponId <= 0) throw new RuntimeException('Không thể xác định coupon Official vừa tạo.');
+            return $couponId;
+        } catch (PDOException $e) {
+            $message = $e->getMessage();
+            if (stripos($message, 'Only approved merchant owner') !== false) {
+                throw new RuntimeException('Chỉ chủ Merchant đã được duyệt mới có thể tạo Official Deal.');
+            }
+            if (stripos($message, 'Duplicate code with overlapping validity') !== false) {
+                throw new RuntimeException('Mã coupon này bị trùng khoảng hiệu lực với coupon khác của Merchant.');
+            }
+            throw $e;
+        }
+    }
+
+    /** @param array<string,mixed> $input */
+    public function updateOfficial(int $actorId, int $couponId, array $input): void
+    {
+        $data = $this->validateSubmission($input);
+        $this->coupons->updateOwnedOfficial($actorId, $couponId, $data);
     }
 
     public function moderate(int $actorId, int $couponId, string $action, ?string $note): void
@@ -107,7 +134,7 @@ final class CouponService
     }
 
     /** @param array<string,mixed> $input @return array<string,mixed> */
-    private function validateAndNormalizeSubmission(array $input): array
+    public function validateSubmission(array $input): array
     {
         $errors = [];
         $title = trim((string) ($input['title'] ?? ''));

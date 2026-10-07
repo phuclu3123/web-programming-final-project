@@ -194,7 +194,7 @@ final class InteractionRepository
 
     private function activeCouponExists(int $couponId): bool
     {
-        $stmt = $this->pdo->prepare("SELECT 1 FROM v_coupon_status WHERE id = ? AND effective_status = 'ACTIVE' LIMIT 1");
+        $stmt = $this->pdo->prepare("SELECT 1 FROM v_coupon_status WHERE id = ? AND effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci LIMIT 1");
         $stmt->execute([$couponId]);
         return (bool) $stmt->fetchColumn();
     }

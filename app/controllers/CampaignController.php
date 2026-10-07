@@ -1,57 +1,150 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
-use App\Core\{Controller, Auth, Database as DB, HttpException};
+use App\Core\Auth;
+use App\Core\Controller;
+use App\Core\Database;
+use App\Core\Request;
+use App\Core\Response;
+use App\Core\Session;
+use App\Repositories\CampaignRepository;
+use App\Repositories\CouponRepository;
+use App\Repositories\MerchantRepository;
 use App\Services\CampaignService;
+use Throwable;
 
 final class CampaignController extends Controller
 {
-    public function index(): void
+    private CampaignRepository $campaigns;
+    private MerchantRepository $merchants;
+    private CouponRepository $coupons;
+    private CampaignService $service;
+
+    public function __construct()
     {
-        $campaigns = DB::all("SELECT ca.* FROM {{campaigns}} ca LEFT JOIN {{merchants}} m ON m.id=ca.owner_merchant_id WHERE ca.status='PUBLISHED' AND ca.ends_at>UTC_TIMESTAMP() AND (ca.owner_merchant_id IS NULL OR (m.status='APPROVED' AND m.deleted_at IS NULL)) ORDER BY ca.starts_at");
-        $this->view('campaigns/index', compact('campaigns'), 'Mùa săn ưu đãi');
+        $pdo = Database::connection();
+        $this->campaigns = new CampaignRepository($pdo);
+        $this->merchants = new MerchantRepository($pdo);
+        $this->coupons = new CouponRepository($pdo);
+        $this->service = new CampaignService($this->campaigns);
     }
-    public function show(): void
+
+    public function show(Request $request, string $id): void
     {
-        $id = $this->request->id();
-        $campaign = DB::one("SELECT ca.* FROM {{campaigns}} ca LEFT JOIN {{merchants}} m ON m.id=ca.owner_merchant_id WHERE ca.id=? AND ca.status='PUBLISHED' AND (ca.owner_merchant_id IS NULL OR (m.status='APPROVED' AND m.deleted_at IS NULL))", [$id]);
-        if (!$campaign) throw new HttpException('Không tìm thấy campaign.', 404);
-        $rows = DB::call('tttt_list_coupons_by_campaign', [$id])[0] ?? [];
-        $coupons = array_values(array_filter($rows, fn($c) => in_array($c['effective_status'], ['ACTIVE', 'SCHEDULED'], true)));
-        $this->view('campaigns/show', compact('campaign', 'coupons'), $campaign['name']);
+        $campaign = $this->campaigns->findPublic((int) $id);
+        if ($campaign === null) { $this->renderError(404, 'Campaign không tồn tại hoặc chưa public.'); return; }
+        $this->view('campaigns/show', [
+            'pageTitle'=>(string) $campaign['name'],
+            'campaign'=>$campaign,
+            'coupons'=>$this->campaigns->publicCoupons((int) $campaign['id']),
+        ]);
     }
-    public function manage(): void
+
+    public function merchantIndex(Request $request): void
     {
-        $u = Auth::require();
-        if (!in_array($u->role(), ['ADMIN', 'MERCHANT'], true)) throw new HttpException('Cần tài khoản Merchant hoặc Admin.', 403);
-        $campaign = [];
-        $attached = [];
-        $candidates = [];
-        if ($this->request->input('id')) {
-            $id = $this->request->id();
-            $campaign = (new CampaignService())->manageable($id);
-            $attached = DB::call('tttt_list_coupons_by_campaign', [$id])[0] ?? [];
-            $sql = "SELECT id,title,merchant_id FROM {{coupons}} WHERE deleted_at IS NULL AND starts_at<? AND ends_at>?";
-            $params = [$campaign['ends_at'], $campaign['starts_at']];
-            if ($campaign['owner_merchant_id']) {
-                $sql .= ' AND merchant_id=?';
-                $params[] = $campaign['owner_merchant_id'];
-            }
-            $candidates = DB::all($sql . ' ORDER BY id DESC LIMIT 200', $params);
+        Auth::requireRole(['MERCHANT']);
+        $this->view('merchant/campaigns/index', [
+            'pageTitle'=>'Campaign của Merchant',
+            'campaigns'=>$this->campaigns->merchantCampaigns((int) Auth::id()),
+        ]);
+    }
+
+    public function merchantCreate(Request $request): void
+    {
+        Auth::requireRole(['MERCHANT']);
+        $this->view('merchant/campaigns/form', [
+            'pageTitle'=>'Tạo Campaign','mode'=>'create','campaign'=>null,'old'=>[],
+            'shops'=>$this->merchants->ownedApproved((int) Auth::id()),
+        ]);
+    }
+
+    public function merchantStore(Request $request): void
+    {
+        Auth::requireRole(['MERCHANT']); $this->csrf($request);
+        try {
+            $merchantId = (int) $request->input('merchant_id', 0);
+            if ($this->merchants->findOwnedApproved($merchantId, (int) Auth::id()) === null) throw new \RuntimeException('Merchant không thuộc quyền quản lý của bạn.');
+            $id = $this->service->create((int) Auth::id(), $merchantId, $request->all());
+            Session::flash('success', 'Đã tạo Campaign. Bạn có thể gắn Official Coupon phù hợp vào Campaign.');
+            Response::redirect(url('/merchant/campaigns/' . $id));
+        } catch (Throwable $e) {
+            Session::flash('error', $e->getMessage());
+            Response::redirect(url('/merchant/campaigns/create'));
         }
-        $merchants = $u->isAdmin() ? DB::all("SELECT * FROM {{merchants}} WHERE status='APPROVED' AND deleted_at IS NULL") : DB::all("SELECT * FROM {{merchants}} WHERE owner_user_id=? AND status='APPROVED' AND deleted_at IS NULL", [$u->id()]);
-        $this->view('campaigns/form', compact('campaign', 'attached', 'candidates', 'merchants'), 'Quản lý campaign');
     }
-    public function save(): void
+
+    public function merchantShow(Request $request, string $id): void
     {
-        $id = (new CampaignService())->save($this->request->post(), $this->request->input('id') ? $this->request->id() : null);
-        $this->success('Đã lưu campaign.', '/campaigns/manage', ['id' => $id]);
+        Auth::requireRole(['MERCHANT']);
+        $campaign = $this->campaigns->findOwned((int) $id, (int) Auth::id());
+        if ($campaign === null) { $this->renderError(404, 'Không tìm thấy Campaign.'); return; }
+        $this->view('merchant/campaigns/show', [
+            'pageTitle'=>(string) $campaign['name'],
+            'campaign'=>$campaign,
+            'attached'=>$this->campaigns->attachedCoupons((int) $id),
+            'eligible'=>$this->coupons->eligibleForMerchantCampaign((int) $campaign['owner_merchant_id'], (int) Auth::id()),
+        ]);
     }
-    public function attach(): void
+
+    public function merchantEdit(Request $request, string $id): void
     {
-        $id = $this->request->id();
-        (new CampaignService())->attach($id, $this->request->id('coupon_id'), $this->request->input('remove') === '1');
-        $this->success('Đã cập nhật coupon của campaign.', '/campaigns/manage', ['id' => $id]);
+        Auth::requireRole(['MERCHANT']);
+        $campaign = $this->campaigns->findOwned((int) $id, (int) Auth::id());
+        if ($campaign === null) { $this->renderError(404, 'Không tìm thấy Campaign.'); return; }
+        $old = $campaign;
+        $old['starts_at'] = $this->utcToLocal((string) $campaign['starts_at']);
+        $old['ends_at'] = $this->utcToLocal((string) $campaign['ends_at']);
+        $this->view('merchant/campaigns/form', [
+            'pageTitle'=>'Sửa Campaign','mode'=>'edit','campaign'=>$campaign,'old'=>$old,
+            'shops'=>$this->merchants->ownedApproved((int) Auth::id()),
+        ]);
+    }
+
+    public function merchantUpdate(Request $request, string $id): void
+    {
+        Auth::requireRole(['MERCHANT']); $this->csrf($request);
+        try {
+            $this->service->updateOwned((int) $id, (int) Auth::id(), $request->all());
+            Session::flash('success', 'Đã cập nhật Campaign.');
+            Response::redirect(url('/merchant/campaigns/' . (int) $id));
+        } catch (Throwable $e) {
+            Session::flash('error', $e->getMessage());
+            Response::redirect(url('/merchant/campaigns/' . (int) $id . '/edit'));
+        }
+    }
+
+    public function attach(Request $request, string $id): void
+    {
+        Auth::requireRole(['MERCHANT']); $this->csrf($request);
+        try {
+            if ($this->campaigns->findOwned((int) $id, (int) Auth::id()) === null) throw new \RuntimeException('Bạn không có quyền sửa Campaign này.');
+            $this->campaigns->attach((int) Auth::id(), (int) $id, (int) $request->input('coupon_id', 0));
+            Session::flash('success', 'Đã gắn coupon vào Campaign.');
+        } catch (Throwable $e) { Session::flash('error', $e->getMessage()); }
+        Response::redirect(url('/merchant/campaigns/' . (int) $id));
+    }
+
+    public function detach(Request $request, string $id, string $couponId): void
+    {
+        Auth::requireRole(['MERCHANT']); $this->csrf($request);
+        try {
+            $this->campaigns->detachOwned((int) $id, (int) $couponId, (int) Auth::id());
+            Session::flash('success', 'Đã gỡ coupon khỏi Campaign.');
+        } catch (Throwable $e) { Session::flash('error', $e->getMessage()); }
+        Response::redirect(url('/merchant/campaigns/' . (int) $id));
+    }
+
+    private function csrf(Request $request): void
+    {
+        if (!Session::verifyCsrf((string) $request->input('_token', ''))) { $this->renderError(419, 'Phiên làm việc đã hết hạn.'); exit; }
+    }
+
+    private function utcToLocal(string $value): string
+    {
+        try { return (new \DateTimeImmutable($value,new \DateTimeZone('UTC')))->setTimezone(new \DateTimeZone((string) config('app.timezone','Asia/Ho_Chi_Minh')))->format('Y-m-d\\TH:i'); }
+        catch (\Throwable $e) { return ''; }
     }
 }

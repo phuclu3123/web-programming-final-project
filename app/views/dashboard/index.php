@@ -18,6 +18,11 @@ if ($nextPoints !== null && (int) $nextPoints > 0) {
                     <dt class="col-sm-3">Email</dt><dd class="col-sm-9"><?= e((string) (Auth::user()['email'] ?? '')) ?></dd>
                     <dt class="col-sm-3">Role</dt><dd class="col-sm-9"><span class="badge badge-info"><?= e((string) Auth::role()) ?></span></dd>
                 </dl>
+                <div class="mt-3">
+                    <?php if (Auth::role() === 'MERCHANT'): ?><a class="btn btn-sm btn-outline-primary" href="<?= e(url('/merchant')) ?>">Mở Merchant Center</a><?php endif; ?>
+                    <?php if (Auth::role() === 'USER'): ?><a class="btn btn-sm btn-outline-primary" href="<?= e(url('/merchant/apply')) ?>">Đăng ký Merchant</a><?php endif; ?>
+                    <?php if (Auth::role() === 'ADMIN'): ?><a class="btn btn-sm btn-outline-primary" href="<?= e(url('/admin')) ?>">Mở Admin Dashboard</a><?php endif; ?>
+                </div>
             </div>
         </div>
     </div>

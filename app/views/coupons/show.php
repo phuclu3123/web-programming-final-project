@@ -8,6 +8,7 @@ $saved = (bool) ($interactionState['saved'] ?? false);
 $currentVote = $interactionState['vote'] ?? null;
 $stats = $interactionState['stats'] ?? [];
 $comments = $interactionState['comments'] ?? [];
+$pageScripts = ['/js/coupon-detail.js'];
 ?>
 <div id="coupon-detail-page"
      data-coupon-id="<?= (int) $coupon['id'] ?>"
@@ -76,7 +77,7 @@ $comments = $interactionState['comments'] ?? [];
                     </div>
 
                     <?php if ($isLoggedIn): ?>
-                        <form id="comment-form" class="mb-3">
+                        <form id="comment-form" class="mb-3" method="post" action="<?= e(url('/api/coupons/' . (int) $coupon['id'] . '/comments')) ?>">
                             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                             <div class="form-group mb-2">
                                 <textarea class="form-control" id="comment-body" name="body" rows="3" maxlength="3000" placeholder="Viết bình luận..." required></textarea>
@@ -154,7 +155,7 @@ $comments = $interactionState['comments'] ?? [];
         <div class="modal fade" id="reportCouponModal" tabindex="-1" aria-labelledby="reportCouponModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form id="report-form">
+                    <form id="report-form" method="post" action="<?= e(url('/api/coupons/' . (int) $coupon['id'] . '/reports')) ?>">
                         <div class="modal-header">
                             <h5 class="modal-title" id="reportCouponModalLabel">Báo cáo coupon</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
@@ -191,4 +192,3 @@ $comments = $interactionState['comments'] ?? [];
     <?php endif; ?>
 </div>
 
-<script src="<?= e(asset('/js/coupon-detail.js')) ?>"></script>

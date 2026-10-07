@@ -40,7 +40,7 @@ footer { flex-shrink: 0; }
     white-space: nowrap;
 }
 
-.badge-category-shopping { background: #e8f0ff; color: #2457d6; border-color: #c9dbff; }
+.badge-category-shopping { background: #f1e9ff; color: #6f42c1; border-color: #dac6ff; }
 .badge-category-food { background: #fff1e8; color: #c75d14; border-color: #ffd3b5; }
 .badge-category-travel { background: #e8f8ef; color: #218a4a; border-color: #bfe8cf; }
 .badge-category-tech { background: #e9f3ff; color: #1769aa; border-color: #c5ddf6; }
@@ -76,4 +76,113 @@ footer { flex-shrink: 0; }
 @media (max-width: 767.98px) {
     .coupon-code-large code { font-size: 1.05rem; }
     .trust-score-value { font-size: 1.8rem; }
+}
+
+
+/* Password visibility control. */
+.password-toggle {
+    min-width: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.password-eye-icon {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.password-toggle.is-visible {
+    background: #e9ecef;
+    color: #212529;
+}
+
+
+/* Phase 3 UI polish: visible password eye + global Back to Top. */
+.password-toggle {
+    min-width: 48px;
+    padding-left: .7rem;
+    padding-right: .7rem;
+    font-size: 1rem;
+}
+.password-eye-symbol {
+    display: inline-block;
+    font-size: 1.15rem;
+    line-height: 1;
+    color: #495057;
+    transform: translateY(-1px);
+}
+.password-toggle.is-visible .password-eye-symbol {
+    color: #212529;
+}
+
+.back-to-top {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1030;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    line-height: 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+    box-shadow: 0 .35rem .9rem rgba(0,0,0,.18);
+}
+.back-to-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.back-to-top:focus {
+    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25), 0 .35rem .9rem rgba(0,0,0,.18);
+}
+
+@media (max-width: 575.98px) {
+    .back-to-top {
+        right: 14px;
+        bottom: 14px;
+        width: 42px;
+        height: 42px;
+    }
+}
+
+/* Phase 4: Font Awesome password visibility button. */
+.password-toggle .password-eye-symbol {
+    font-size: 1rem;
+    line-height: 1;
+    color: #6c757d;
+    transform: none;
+}
+.password-toggle:hover .password-eye-symbol,
+.password-toggle:focus .password-eye-symbol,
+.password-toggle.is-visible .password-eye-symbol { color: #0d6efd; }
+
+/* Merchant/Admin dashboards. */
+.merchant-stat-number,
+.admin-stat-number { font-size: 2rem; font-weight: 700; line-height: 1.15; margin-top: .45rem; }
+.admin-stat-card { transition: transform .15s ease, box-shadow .15s ease; }
+.admin-stat-card:hover { transform: translateY(-2px); box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important; }
+
+.campaign-hero {
+    color: #fff;
+    background: linear-gradient(135deg, #0d6efd 0%, #4f46e5 55%, #7c3aed 100%);
+    overflow: hidden;
+}
+.campaign-hero .badge { color: #495057; }
+.campaign-hero a.btn-light { color: #0d6efd; font-weight: 600; }
+
+.table td, .table th { vertical-align: middle; }
+
+@media (max-width: 991.98px) {
+    .navbar .dropdown-menu { border: 0; background: rgba(255,255,255,.98); }
 }

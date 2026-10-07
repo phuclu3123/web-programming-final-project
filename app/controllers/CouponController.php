@@ -49,6 +49,7 @@ final class CouponController extends Controller
             'categories' => $this->categories->activeAll(),
             'merchants' => $this->merchants->publicFilterOptions(),
             'filters' => $filters,
+            'pageScripts' => ['/js/search.js'],
         ]);
     }
 
@@ -164,6 +165,7 @@ final class CouponController extends Controller
             'old' => $old,
             'categories' => $this->categories->activeAll(),
             'merchants' => $this->merchants->availableForCommunitySubmission(),
+            'pageScripts' => ['/js/coupon-form.js'],
         ]);
     }
 }

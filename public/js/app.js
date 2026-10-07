@@ -57,5 +57,42 @@
         $('.auto-dismiss-alert').each(function () {
             window.CouponHub.scheduleAlert($(this));
         });
+
+        $(document).on('click', '.password-toggle', function () {
+            var $button = $(this);
+            var selector = String($button.attr('data-target') || '');
+            var $input = $(selector);
+            if (!$input.length) return;
+
+            var showing = $input.attr('type') === 'text';
+            $input.attr('type', showing ? 'password' : 'text');
+            $button.attr('aria-pressed', showing ? 'false' : 'true');
+            $button.attr('aria-label', showing ? 'Hiện mật khẩu' : 'Ẩn mật khẩu');
+            $button.attr('title', showing ? 'Hiện mật khẩu' : 'Ẩn mật khẩu');
+            $button.toggleClass('is-visible', !showing);
+
+            var $symbol = $button.find('.password-eye-symbol');
+            if ($symbol.length) {
+                $symbol.toggleClass('fa-eye', showing);
+                $symbol.toggleClass('fa-eye-slash', !showing);
+            }
+        });
+
+        var $backToTop = $('#back-to-top');
+        var toggleBackToTop = function () {
+            if (!$backToTop.length) return;
+            if ($(window).scrollTop() > 320) {
+                $backToTop.addClass('is-visible');
+            } else {
+                $backToTop.removeClass('is-visible');
+            }
+        };
+
+        toggleBackToTop();
+        $(window).on('scroll.backToTop', toggleBackToTop);
+
+        $backToTop.on('click', function () {
+            $('html, body').stop(true).animate({ scrollTop: 0 }, 350);
+        });
     });
 })(jQuery);
