@@ -10,9 +10,7 @@ use RuntimeException;
 
 final class AuthService
 {
-    public function __construct(private UserRepository $users)
-    {
-    }
+    public function __construct(private UserRepository $users) {}
 
     /** @return array<string,mixed> */
     public function register(string $fullName, string $email, string $password): array

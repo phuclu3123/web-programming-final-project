@@ -10,9 +10,7 @@ use Throwable;
 
 final class InteractionRepository
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
+    public function __construct(private PDO $pdo) {}
 
     public function setFavorite(int $actorId, int $couponId, bool $saved): void
     {
@@ -26,6 +24,27 @@ final class InteractionRepository
         $stmt = $this->pdo->prepare('CALL sp_set_vote(?, ?, ?)');
         $stmt->execute([$actorId, $couponId, $vote]);
         $stmt->closeCursor();
+    }
+
+    /**
+     * UI hint only; sp_set_vote is still the authoritative authorization check.
+     * An active Shop manager must not confirm any coupon of that Shop.
+     */
+    public function voteRestriction(int $actorId, int $couponId): ?string
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT CASE " .
+                "WHEN c.submitted_by = ? THEN 'AUTHOR' " .
+                "WHEN EXISTS (" .
+                    "SELECT 1 FROM merchant_memberships mm " .
+                    "WHERE mm.user_id = ? AND mm.merchant_id = c.merchant_id AND mm.status = 'ACTIVE'" .
+                ") THEN 'SHOP_MANAGER' " .
+                "ELSE NULL END AS restriction_reason " .
+                "FROM coupons c WHERE c.id = ? LIMIT 1"
+        );
+        $stmt->execute([$actorId, $actorId, $couponId]);
+        $value = $stmt->fetchColumn();
+        return is_string($value) ? $value : null;
     }
 
     public function isFavorite(int $actorId, int $couponId): bool
@@ -48,8 +67,8 @@ final class InteractionRepository
     {
         $stmt = $this->pdo->prepare(
             'SELECT s.working_count, s.not_working_count, s.condition_changed_count, s.total_votes, s.trust_score, s.last_verification_at, ' .
-            '(SELECT COUNT(*) FROM favorites f WHERE f.coupon_id = s.coupon_id) AS favorite_count ' .
-            'FROM v_coupon_vote_stats s WHERE s.coupon_id = ? LIMIT 1'
+                'fs.total_favorites AS favorite_count,fs.qualified_favorites ' .
+                'FROM v_coupon_vote_stats s JOIN v_coupon_favorite_stats fs ON fs.coupon_id=s.coupon_id WHERE s.coupon_id = ? LIMIT 1'
         );
         $stmt->execute([$couponId]);
         $row = $stmt->fetch();
@@ -61,6 +80,7 @@ final class InteractionRepository
             'trust_score' => null,
             'last_verification_at' => null,
             'favorite_count' => 0,
+            'qualified_favorites' => 0,
         ];
     }
 
@@ -70,9 +90,9 @@ final class InteractionRepository
         $limit = max(1, min(100, $limit));
         $stmt = $this->pdo->prepare(
             'SELECT c.id, c.body, c.created_at, c.updated_at, u.id AS user_id, u.full_name ' .
-            'FROM comments c JOIN users u ON u.id = c.user_id ' .
-            "WHERE c.coupon_id = ? AND c.status = 'VISIBLE' AND u.deleted_at IS NULL " .
-            'ORDER BY c.created_at DESC, c.id DESC LIMIT ' . $limit
+                'FROM comments c JOIN users u ON u.id = c.user_id ' .
+                "WHERE c.coupon_id = ? AND c.status = 'VISIBLE' AND u.deleted_at IS NULL " .
+                'ORDER BY c.created_at DESC, c.id DESC LIMIT ' . $limit
         );
         $stmt->execute([$couponId]);
         return $stmt->fetchAll();
@@ -102,7 +122,7 @@ final class InteractionRepository
 
             $fetch = $this->pdo->prepare(
                 'SELECT c.id, c.body, c.created_at, c.updated_at, u.id AS user_id, u.full_name ' .
-                'FROM comments c JOIN users u ON u.id = c.user_id WHERE c.id = ? LIMIT 1'
+                    'FROM comments c JOIN users u ON u.id = c.user_id WHERE c.id = ? LIMIT 1'
             );
             $fetch->execute([$commentId]);
             $row = $fetch->fetch();

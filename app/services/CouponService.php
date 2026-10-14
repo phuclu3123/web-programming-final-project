@@ -13,13 +13,11 @@ use RuntimeException;
 
 final class CouponService
 {
-    private const DISCOUNT_TYPES = ['PERCENTAGE','FIXED_AMOUNT','FREE_SHIPPING','BUY_X_GET_Y','GIFT','CASHBACK'];
-    private const CHANNELS = ['ONLINE','OFFLINE','BOTH'];
-    private const SORTS = ['NEWEST','POPULAR','ENDING_SOON'];
+    private const DISCOUNT_TYPES = ['PERCENTAGE', 'FIXED_AMOUNT', 'FREE_SHIPPING', 'BUY_X_GET_Y', 'GIFT', 'CASHBACK'];
+    private const CHANNELS = ['ONLINE', 'OFFLINE', 'BOTH'];
+    private const SORTS = ['NEWEST', 'POPULAR', 'ENDING_SOON'];
 
-    public function __construct(private CouponRepository $coupons)
-    {
-    }
+    public function __construct(private CouponRepository $coupons) {}
 
     /** @param array<string,mixed> $input @return array<string,mixed> */
     public function normalizeSearch(array $input): array
@@ -39,7 +37,7 @@ final class CouponService
             'merchant_id' => $this->positiveIntOrNull($input['merchant_id'] ?? null),
             'discount_type' => in_array($type, self::DISCOUNT_TYPES, true) ? $type : null,
             'usage_channel' => in_array($channel, self::CHANNELS, true) ? $channel : null,
-            'ending_soon' => in_array((string) ($input['ending_soon'] ?? ''), ['1','true','on'], true),
+            'ending_soon' => in_array((string) ($input['ending_soon'] ?? ''), ['1', 'true', 'on'], true),
             'sort' => in_array($sort, self::SORTS, true) ? $sort : 'NEWEST',
             'page' => max(1, (int) ($input['page'] ?? 1)),
             'page_size' => min(24, max(1, (int) ($input['page_size'] ?? 12))),
@@ -111,7 +109,7 @@ final class CouponService
     public function moderate(int $actorId, int $couponId, string $action, ?string $note): void
     {
         $action = strtoupper(trim($action));
-        if ($couponId <= 0 || !in_array($action, ['APPROVE','REJECT'], true)) {
+        if ($couponId <= 0 || !in_array($action, ['APPROVE', 'REJECT'], true)) {
             throw new RuntimeException('Yêu cầu kiểm duyệt không hợp lệ.');
         }
 
@@ -169,7 +167,7 @@ final class CouponService
         if ($maxDiscountRaw !== '' && !is_numeric($maxDiscountRaw)) $errors['max_discount_amount'] = 'Mức giảm tối đa phải là số.';
         elseif ($maxDiscount !== null && $maxDiscount <= 0) $errors['max_discount_amount'] = 'Mức giảm tối đa phải lớn hơn 0.';
 
-        if (in_array($type, ['PERCENTAGE','FIXED_AMOUNT','CASHBACK'], true)) {
+        if (in_array($type, ['PERCENTAGE', 'FIXED_AMOUNT', 'CASHBACK'], true)) {
             if ($discountValue === null || $discountValue <= 0) {
                 $errors['discount_value'] = 'Giá trị giảm phải lớn hơn 0.';
             }
@@ -181,7 +179,7 @@ final class CouponService
             $errors['discount_value'] = 'Giảm theo phần trăm không được vượt quá 100%.';
         }
         if ($type === 'CASHBACK') {
-            if (!in_array($cashbackUnit, ['PERCENTAGE','FIXED_AMOUNT'], true)) {
+            if (!in_array($cashbackUnit, ['PERCENTAGE', 'FIXED_AMOUNT'], true)) {
                 $errors['cashback_unit'] = 'Vui lòng chọn đơn vị hoàn tiền.';
             }
             if ($cashbackUnit === 'PERCENTAGE' && $discountValue !== null && $discountValue > 100) {

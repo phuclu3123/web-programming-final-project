@@ -10,9 +10,7 @@ use RuntimeException;
 
 final class AdminService
 {
-    public function __construct(private AdminRepository $admin, private CampaignRepository $campaigns)
-    {
-    }
+    public function __construct(private AdminRepository $admin, private CampaignRepository $campaigns) {}
 
     public function setUserStatus(int $actorId, int $userId, string $status): void
     {

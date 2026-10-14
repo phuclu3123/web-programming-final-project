@@ -30,6 +30,7 @@
         $('#not-working-count').text(stats.notWorkingCount || 0);
         $('#condition-changed-count').text(stats.conditionChangedCount || 0);
         $('#favorite-count').text(stats.favoriteCount || 0);
+        $('#qualified-favorite-count').text(stats.qualifiedFavorites || 0);
     }
 
     $('#favorite-btn').on('click', function () {

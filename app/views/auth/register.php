@@ -1,53 +1,56 @@
-<?php use App\Core\Session; ?>
+<?php
+
+use App\Core\Session; ?>
 <div class="row justify-content-center">
-    <div class="col-md-7 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                <h2 class="h4 mb-4">Tạo tài khoản User</h2>
-
-                <?php if (!empty($errors['auth'])): ?>
-                    <div class="alert alert-danger"><?= e($errors['auth']) ?></div>
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm auth-card">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="h3 mb-2">Đăng ký tài khoản</h1>
+                <p class="text-muted mb-4">Mọi tài khoản mới đều là User. Bạn có thể đăng ký quyền quản lý nhiều
+                    Merchant/Shop sau khi đăng nhập.</p>
+                <?php if (!empty($errors['auth'])): ?><div class="alert alert-danger"><?= e($errors['auth']) ?></div>
                 <?php endif; ?>
-
-                <form method="post" action="<?= e(url('/register')) ?>" novalidate>
+                <form method="post" action="<?= e(url('/register')) ?>">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                    <div class="form-group">
-                        <label for="full_name">Họ và tên</label>
-                        <input type="text" class="form-control <?= isset($errors['full_name']) ? 'is-invalid' : '' ?>" id="full_name" name="full_name" maxlength="120" value="<?= e($old['full_name'] ?? '') ?>" required>
-                        <?php if (isset($errors['full_name'])): ?><div class="invalid-feedback"><?= e($errors['full_name']) ?></div><?php endif; ?>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" id="email" name="email" maxlength="191" value="<?= e($old['email'] ?? '') ?>" required>
-                        <?php if (isset($errors['email'])): ?><div class="invalid-feedback"><?= e($errors['email']) ?></div><?php endif; ?>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Mật khẩu</label>
+                    <div class="form-group"><label for="full_name">Họ và tên</label>
                         <div class="input-group">
-                            <input type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="password" name="password" minlength="8" autocomplete="new-password" required>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary password-toggle" type="button" data-target="#password" aria-label="Hiện mật khẩu" aria-pressed="false" title="Hiện mật khẩu">
-                                    <i class="fa-solid fa-eye password-eye-symbol" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <?php if (isset($errors['password'])): ?><div class="invalid-feedback d-block"><?= e($errors['password']) ?></div><?php endif; ?>
+                            <div class="input-group-prepend"><span class="input-group-text"><i
+                                        class="fa-solid fa-user"></i></span></div><input class="form-control"
+                                id="full_name" name="full_name" placeholder="Nhập họ và tên" maxlength="120" required
+                                value="<?= e((string)($old['full_name'] ?? '')) ?>">
+                        </div><?php if (isset($errors['full_name'])): ?><small
+                            class="text-danger"><?= e($errors['full_name']) ?></small><?php endif; ?>
                     </div>
-                    <div class="form-group">
-                        <label for="password_confirmation">Xác nhận mật khẩu</label>
+                    <div class="form-group"><label for="email">Email</label>
                         <div class="input-group">
-                            <input type="password" class="form-control <?= isset($errors['password_confirmation']) ? 'is-invalid' : '' ?>" id="password_confirmation" name="password_confirmation" minlength="8" autocomplete="new-password" required>
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-secondary password-toggle" type="button" data-target="#password_confirmation" aria-label="Hiện mật khẩu xác nhận" aria-pressed="false" title="Hiện mật khẩu">
-                                    <i class="fa-solid fa-eye password-eye-symbol" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <?php if (isset($errors['password_confirmation'])): ?><div class="invalid-feedback d-block"><?= e($errors['password_confirmation']) ?></div><?php endif; ?>
+                            <div class="input-group-prepend"><span class="input-group-text"><i
+                                        class="fa-solid fa-envelope"></i></span></div><input class="form-control"
+                                id="email" name="email" type="email" autocomplete="email"
+                                placeholder="Nhập email của bạn" maxlength="191" required
+                                value="<?= e((string)($old['email'] ?? '')) ?>">
+                        </div><?php if (isset($errors['email'])): ?><small
+                            class="text-danger"><?= e($errors['email']) ?></small><?php endif; ?>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Đăng ký</button>
+                    <?php foreach (['password' => 'Mật khẩu', 'password_confirmation' => 'Xác nhận mật khẩu'] as $field => $label): ?>
+                    <div class="form-group"><label for="<?= e($field) ?>"><?= e($label) ?></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text"><i
+                                        class="fa-solid fa-lock"></i></span></div><input class="form-control"
+                                id="<?= e($field) ?>" name="<?= e($field) ?>" type="password" minlength="8"
+                                autocomplete="new-password"
+                                placeholder="<?= $field === 'password' ? 'Nhập mật khẩu (ít nhất 8 ký tự)' : 'Nhập lại mật khẩu' ?>"
+                                required>
+                            <div class="input-group-append"><button type="button" class="btn password-toggle"
+                                    data-target="#<?= e($field) ?>" aria-label="Hiện mật khẩu" aria-pressed="false"><i
+                                        class="fa-solid fa-eye password-eye-symbol"></i></button></div>
+                        </div><?php if (isset($errors[$field])): ?><small
+                            class="text-danger"><?= e($errors[$field]) ?></small><?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
+                    <button class="btn btn-primary btn-block" type="submit">Tạo tài khoản User</button>
                 </form>
-                <p class="text-muted mt-3 mb-0">Đã có tài khoản? <a href="<?= e(url('/login')) ?>">Đăng nhập</a>.</p>
+                <p class="text-center mt-3 mb-0 small">Đã có tài khoản? <a href="<?= e(url('/login')) ?>">Đăng nhập</a>
+                </p>
             </div>
         </div>
     </div>

@@ -17,8 +17,8 @@ final class DashboardController extends Controller
         Auth::requireRole(['ADMIN']);
         $repo = new AdminRepository(Database::connection());
         $this->view('admin/dashboard/index', [
-            'pageTitle'=>'Admin Dashboard',
-            'stats'=>$repo->dashboardStats(),
+            'pageTitle' => 'Admin Dashboard',
+            'stats' => $repo->dashboardStats(),
         ]);
     }
 }

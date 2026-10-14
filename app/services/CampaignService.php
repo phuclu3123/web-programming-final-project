@@ -11,9 +11,7 @@ use RuntimeException;
 
 final class CampaignService
 {
-    public function __construct(private CampaignRepository $campaigns)
-    {
-    }
+    public function __construct(private CampaignRepository $campaigns) {}
 
     /** @param array<string,mixed> $input */
     public function create(int $actorId, ?int $merchantId, array $input): int
@@ -38,7 +36,7 @@ final class CampaignService
         $description = trim((string) ($input['description'] ?? ''));
         $status = strtoupper(trim((string) ($input['status'] ?? 'DRAFT')));
         if ($name === '' || mb_strlen($name) > 200) throw new RuntimeException('Tên Campaign là bắt buộc và tối đa 200 ký tự.');
-        if (!in_array($status, ['DRAFT','PUBLISHED'], true)) throw new RuntimeException('Merchant chỉ có thể lưu nháp hoặc xuất bản Campaign.');
+        if (!in_array($status, ['DRAFT', 'PUBLISHED'], true)) throw new RuntimeException('Merchant chỉ có thể lưu nháp hoặc xuất bản Campaign.');
         $start = $this->localToUtc((string) ($input['starts_at'] ?? ''));
         $end = $this->localToUtc((string) ($input['ends_at'] ?? ''));
         if ($start === null || $end === null) throw new RuntimeException('Thời gian Campaign không hợp lệ.');
@@ -47,7 +45,7 @@ final class CampaignService
             throw new RuntimeException('Campaign phải có thời gian kết thúc sau thời gian bắt đầu.');
         }
         if ((new DateTimeImmutable($end, $utc))->getTimestamp() <= time()) throw new RuntimeException('Campaign phải kết thúc trong tương lai.');
-        return ['name'=>$name,'description'=>$description !== '' ? $description : null,'starts_at_utc'=>$start,'ends_at_utc'=>$end,'status'=>$status];
+        return ['name' => $name, 'description' => $description !== '' ? $description : null, 'starts_at_utc' => $start, 'ends_at_utc' => $end, 'status' => $status];
     }
 
     private function localToUtc(string $value): ?string

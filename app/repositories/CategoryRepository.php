@@ -9,9 +9,7 @@ use PDO;
 
 final class CategoryRepository
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
+    public function __construct(private PDO $pdo) {}
 
     /** @return Category[] */
     public function activeAll(): array

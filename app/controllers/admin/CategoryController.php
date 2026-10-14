@@ -19,18 +19,45 @@ final class CategoryController extends Controller
 {
     private AdminRepository $repo;
     private AdminService $service;
-    public function __construct(){ $pdo=Database::connection(); $this->repo=new AdminRepository($pdo); $this->service=new AdminService($this->repo,new CampaignRepository($pdo)); }
-    public function index(Request $request): void { Auth::requireRole(['ADMIN']); $this->view('admin/categories/index',['pageTitle'=>'Quản lý danh mục','categories'=>$this->repo->categories()]); }
+    public function __construct()
+    {
+        $pdo = Database::connection();
+        $this->repo = new AdminRepository($pdo);
+        $this->service = new AdminService($this->repo, new CampaignRepository($pdo));
+    }
+    public function index(Request $request): void
+    {
+        Auth::requireRole(['ADMIN']);
+        $this->view('admin/categories/index', ['pageTitle' => 'Quản lý danh mục', 'categories' => $this->repo->categories()]);
+    }
     public function store(Request $request): void
     {
-        Auth::requireRole(['ADMIN']); if(!Session::verifyCsrf((string)$request->input('_token',''))){$this->renderError(419,'Phiên làm việc đã hết hạn.');return;}
-        try{$this->service->addCategory((int)Auth::id(),$request->all());Session::flash('success','Đã thêm danh mục.');}catch(Throwable $e){Session::flash('error',$e->getMessage());}
+        Auth::requireRole(['ADMIN']);
+        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+            $this->renderError(419, 'Phiên làm việc đã hết hạn.');
+            return;
+        }
+        try {
+            $this->service->addCategory((int)Auth::id(), $request->all());
+            Session::flash('success', 'Đã thêm danh mục.');
+        } catch (Throwable $e) {
+            Session::flash('error', $e->getMessage());
+        }
         Response::redirect(url('/admin/categories'));
     }
-    public function toggle(Request $request,string $id): void
+    public function toggle(Request $request, string $id): void
     {
-        Auth::requireRole(['ADMIN']); if(!Session::verifyCsrf((string)$request->input('_token',''))){$this->renderError(419,'Phiên làm việc đã hết hạn.');return;}
-        try{$this->repo->toggleCategory((int)$id,(string)$request->input('active','0')==='1');Session::flash('success','Đã cập nhật danh mục.');}catch(Throwable $e){Session::flash('error',$e->getMessage());}
+        Auth::requireRole(['ADMIN']);
+        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+            $this->renderError(419, 'Phiên làm việc đã hết hạn.');
+            return;
+        }
+        try {
+            $this->repo->toggleCategory((int)$id, (string)$request->input('active', '0') === '1');
+            Session::flash('success', 'Đã cập nhật danh mục.');
+        } catch (Throwable $e) {
+            Session::flash('error', $e->getMessage());
+        }
         Response::redirect(url('/admin/categories'));
     }
 }

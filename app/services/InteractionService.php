@@ -12,13 +12,12 @@ use RuntimeException;
 final class InteractionService
 {
     private const VOTES = ['WORKING', 'NOT_WORKING', 'CONDITION_CHANGED'];
-    private const REPORT_REASONS = ['EXPIRED','NOT_WORKING','WRONG_TERMS','DUPLICATE','SPAM','FAKE','INAPPROPRIATE','OTHER'];
+    private const REPORT_REASONS = ['EXPIRED', 'NOT_WORKING', 'WRONG_TERMS', 'DUPLICATE', 'SPAM', 'FAKE', 'INAPPROPRIATE', 'OTHER'];
 
     public function __construct(
         private InteractionRepository $interactions,
         private CouponRepository $coupons
-    ) {
-    }
+    ) {}
 
     /** @return array<string,mixed> */
     public function initialState(?int $actorId, int $couponId): array
@@ -26,6 +25,7 @@ final class InteractionService
         return [
             'saved' => $actorId !== null ? $this->interactions->isFavorite($actorId, $couponId) : false,
             'vote' => $actorId !== null ? $this->interactions->currentVote($actorId, $couponId) : null,
+            'voteRestriction' => $actorId !== null ? $this->interactions->voteRestriction($actorId, $couponId) : null,
             'stats' => $this->normalizeStats($this->interactions->stats($couponId)),
             'comments' => $this->interactions->comments($couponId),
         ];
@@ -34,7 +34,14 @@ final class InteractionService
     /** @return array<string,mixed> */
     public function setFavorite(int $actorId, int $couponId, bool $saved): array
     {
-        $this->assertCouponId($couponId);
+        // A coupon may expire or be archived after being saved. Users must
+        // still be able to remove it from their library. Only adding a new
+        // favorite requires the coupon to be publicly active.
+        if ($saved) {
+            $this->assertCouponId($couponId);
+        } elseif ($couponId <= 0 || !$this->interactions->isFavorite($actorId, $couponId)) {
+            throw new RuntimeException('Coupon không có trong danh sách đã lưu.');
+        }
 
         try {
             $this->interactions->setFavorite($actorId, $couponId, $saved);
@@ -134,6 +141,7 @@ final class InteractionService
             'trustScore' => $stats['trust_score'] !== null ? (float) $stats['trust_score'] : null,
             'lastVerificationAt' => $stats['last_verification_at'] ?? null,
             'favoriteCount' => (int) ($stats['favorite_count'] ?? 0),
+            'qualifiedFavorites' => (int) ($stats['qualified_favorites'] ?? 0),
         ];
     }
 
@@ -148,7 +156,7 @@ final class InteractionService
     {
         $message = $e->getMessage();
         $map = [
-            'Author and merchant owner cannot vote on own coupon' => 'Người đăng hoặc chủ Merchant không thể tự xác nhận coupon của mình.',
+            'Author and merchant owner cannot vote on own coupon' => 'Bạn là người đăng coupon hoặc đang quản lý Shop phát hành coupon này nên không thể tham gia xác minh cộng đồng.',
             'Coupon must be active' => 'Chỉ coupon đang hoạt động mới có thể được xác nhận.',
             'Coupon cannot be saved' => 'Coupon hiện không thể lưu.',
             'Active account required' => 'Tài khoản của bạn hiện không hoạt động.',

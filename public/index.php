@@ -30,6 +30,7 @@ require_once $root . '/app/helpers.php';
 $config = [
     'app' => require $root . '/config/app.php',
     'database' => require $root . '/config/database.php',
+    'mail' => require $root . '/config/mail.php',
 ];
 
 App::init($config);

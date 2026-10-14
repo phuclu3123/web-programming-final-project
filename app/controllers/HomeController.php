@@ -13,6 +13,8 @@ use App\Repositories\CampaignRepository;
 use App\Repositories\CouponRepository;
 use App\Repositories\MerchantRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\ArticleRepository;
+use App\Repositories\SavedCouponRepository;
 use Throwable;
 
 final class HomeController extends Controller
@@ -30,6 +32,7 @@ final class HomeController extends Controller
             'upcomingCampaigns' => $campaigns->publicUpcoming(4),
             'hotDeals' => $coupons->hotDeals(6),
             'popularMerchants' => $merchants->popular(6),
+            'recentArticles' => (new ArticleRepository($pdo))->published(3),
         ]);
     }
 
@@ -43,6 +46,7 @@ final class HomeController extends Controller
             'pageTitle' => 'Tài khoản của tôi',
             'rewardSummary' => $users->rewardSummary($userId),
             'pointHistory' => $users->pointHistory($userId),
+            'savedCount' => (new SavedCouponRepository(Database::connection()))->countForUser($userId),
         ]);
     }
 

@@ -16,7 +16,7 @@ final class UserRepository
     public function findByEmail(string $email): ?array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, email, password_hash, full_name, avatar_path, role, status, created_at, updated_at ' .
+            'SELECT id, email, password_hash, full_name, avatar_path, role, status, auth_version, created_at, updated_at ' .
             'FROM users WHERE email = ? AND deleted_at IS NULL LIMIT 1'
         );
         $stmt->execute([$email]);
@@ -28,7 +28,7 @@ final class UserRepository
     public function findById(int $id): ?array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, email, full_name, avatar_path, role, status, created_at, updated_at ' .
+            'SELECT id, email, full_name, avatar_path, role, status, auth_version, created_at, updated_at ' .
             'FROM users WHERE id = ? AND deleted_at IS NULL LIMIT 1'
         );
         $stmt->execute([$id]);

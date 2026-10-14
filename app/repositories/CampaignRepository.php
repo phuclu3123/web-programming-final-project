@@ -9,9 +9,7 @@ use RuntimeException;
 
 final class CampaignRepository
 {
-    public function __construct(private PDO $pdo)
-    {
-    }
+    public function __construct(private PDO $pdo) {}
 
     /** @return array<int,array<string,mixed>> */
     public function publicCurrent(int $limit = 3): array
@@ -38,7 +36,7 @@ final class CampaignRepository
     {
         $stmt = $this->pdo->prepare(
             "SELECT c.*,m.name AS merchant_name FROM campaigns c LEFT JOIN merchants m ON m.id=c.owner_merchant_id " .
-            "WHERE c.id=? AND c.status='PUBLISHED' AND c.ends_at>UTC_TIMESTAMP() LIMIT 1"
+                "WHERE c.id=? AND c.status='PUBLISHED' AND c.ends_at>UTC_TIMESTAMP() LIMIT 1"
         );
         $stmt->execute([$id]);
         $row = $stmt->fetch();
@@ -50,13 +48,13 @@ final class CampaignRepository
     {
         $stmt = $this->pdo->prepare(
             "SELECT c.id,c.title,c.code,c.discount_type,c.discount_value,c.cashback_unit,c.min_order_amount,c.max_discount_amount,c.usage_channel,c.ends_at, " .
-            "m.name AS merchant_name,cat.name AS category_name,s.trust_score,s.total_votes, " .
-            "(SELECT COUNT(*) FROM favorites f WHERE f.coupon_id=c.id) AS favorite_count " .
-            "FROM campaign_coupons cc JOIN v_coupon_status c ON c.id=cc.coupon_id " .
-            "JOIN merchants m ON m.id=c.merchant_id JOIN categories cat ON cat.id=c.category_id " .
-            "JOIN v_coupon_vote_stats s ON s.coupon_id=c.id " .
-            "WHERE cc.campaign_id=? AND c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci " .
-            "ORDER BY c.created_at DESC,c.id DESC"
+                "m.name AS merchant_name,cat.name AS category_name,s.trust_score,s.total_votes, " .
+                "(SELECT total_favorites FROM v_coupon_favorite_stats fs WHERE fs.coupon_id=c.id) AS favorite_count " .
+                "FROM campaign_coupons cc JOIN v_coupon_status c ON c.id=cc.coupon_id " .
+                "JOIN merchants m ON m.id=c.merchant_id JOIN categories cat ON cat.id=c.category_id " .
+                "JOIN v_coupon_vote_stats s ON s.coupon_id=c.id " .
+                "WHERE cc.campaign_id=? AND c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci " .
+                "ORDER BY c.created_at DESC,c.id DESC"
         );
         $stmt->execute([$campaignId]);
         return $stmt->fetchAll();
@@ -78,7 +76,7 @@ final class CampaignRepository
     {
         return $this->pdo->query(
             "SELECT c.id,c.title,c.code,c.merchant_id,c.starts_at,c.ends_at,m.name AS merchant_name FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id " .
-            "WHERE c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci ORDER BY m.name,c.title"
+                "WHERE c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci ORDER BY m.name,c.title"
         )->fetchAll();
     }
 
@@ -93,8 +91,8 @@ final class CampaignRepository
     {
         $stmt = $this->pdo->prepare(
             "SELECT c.*,m.name AS merchant_name,(SELECT COUNT(*) FROM campaign_coupons cc WHERE cc.campaign_id=c.id) AS coupon_count " .
-            "FROM campaigns c JOIN merchants m ON m.id=c.owner_merchant_id " .
-            "WHERE m.owner_user_id=? AND m.status='APPROVED' AND m.deleted_at IS NULL ORDER BY c.created_at DESC,c.id DESC"
+                "FROM campaigns c JOIN merchants m ON m.id=c.owner_merchant_id JOIN merchant_memberships mm ON mm.merchant_id=m.id " .
+                "WHERE mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL ORDER BY c.created_at DESC,c.id DESC"
         );
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
@@ -104,8 +102,8 @@ final class CampaignRepository
     public function findOwned(int $campaignId, int $userId): ?array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT c.*,m.name AS merchant_name FROM campaigns c JOIN merchants m ON m.id=c.owner_merchant_id " .
-            "WHERE c.id=? AND m.owner_user_id=? AND m.status='APPROVED' AND m.deleted_at IS NULL LIMIT 1"
+            "SELECT c.*,m.name AS merchant_name FROM campaigns c JOIN merchants m ON m.id=c.owner_merchant_id JOIN merchant_memberships mm ON mm.merchant_id=m.id " .
+                "WHERE c.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL LIMIT 1"
         );
         $stmt->execute([$campaignId, $userId]);
         $row = $stmt->fetch();
@@ -114,6 +112,11 @@ final class CampaignRepository
 
     public function create(int $actorId, ?int $merchantId, string $name, string $slug, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status): int
     {
+        if ($merchantId !== null) {
+            $check = $this->pdo->prepare("SELECT 1 FROM merchant_memberships mm JOIN merchants m ON m.id=mm.merchant_id WHERE mm.merchant_id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL");
+            $check->execute([$merchantId, $actorId]);
+            if (!$check->fetchColumn()) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
+        }
         $stmt = $this->pdo->prepare(
             'INSERT INTO campaigns(owner_merchant_id,created_by,name,slug,description,starts_at,ends_at,status) VALUES(?,?,?,?,?,?,?,?)'
         );
@@ -129,7 +132,7 @@ final class CampaignRepository
         // Every attached coupon must still overlap the edited Campaign window.
         $invalid = $this->pdo->prepare(
             "SELECT COUNT(*) FROM campaign_coupons cc JOIN coupons c ON c.id=cc.coupon_id " .
-            "WHERE cc.campaign_id=? AND NOT (c.starts_at<? AND c.ends_at>?)"
+                "WHERE cc.campaign_id=? AND NOT (c.starts_at<? AND c.ends_at>?)"
         );
         $invalid->execute([$campaignId, $endsAtUtc, $startsAtUtc]);
         if ((int) $invalid->fetchColumn() > 0) {
@@ -159,8 +162,8 @@ final class CampaignRepository
     {
         $stmt = $this->pdo->prepare(
             "SELECT c.id,c.title,c.code,c.effective_status,m.name AS merchant_name,c.starts_at,c.ends_at " .
-            "FROM campaign_coupons cc JOIN v_coupon_status c ON c.id=cc.coupon_id JOIN merchants m ON m.id=c.merchant_id " .
-            "WHERE cc.campaign_id=? ORDER BY cc.added_at DESC"
+                "FROM campaign_coupons cc JOIN v_coupon_status c ON c.id=cc.coupon_id JOIN merchants m ON m.id=c.merchant_id " .
+                "WHERE cc.campaign_id=? ORDER BY cc.added_at DESC"
         );
         $stmt->execute([$campaignId]);
         return $stmt->fetchAll();

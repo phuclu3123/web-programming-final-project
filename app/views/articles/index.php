@@ -1,0 +1,3 @@
+<h1 class="h3 mb-3">Bài viết & hướng dẫn CouponHub</h1>
+<div class="row"><?php foreach($articles as $a):?><div class="col-md-6 col-lg-4 mb-4"><div class="card h-100 shadow-sm"><div class="card-body"><h2 class="h5"><a href="<?=e(url('/articles/'.(string)$a['slug']))?>"><?=e((string)$a['title'])?></a></h2><p class="text-muted"><?=e((string)($a['summary']??''))?></p><small class="text-muted"><?=e((string)$a['author_name'])?> · <?=e(format_db_datetime((string)$a['published_at']))?></small></div></div></div><?php endforeach;?></div>
+<?php if($articles===[]):?><p class="text-muted">Chưa có bài viết đã xuất bản.</p><?php endif;?>

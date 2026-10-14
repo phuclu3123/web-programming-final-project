@@ -22,25 +22,30 @@ final class UserController extends Controller
 
     public function __construct()
     {
-        $pdo=Database::connection();
-        $this->repo=new AdminRepository($pdo);
-        $this->service=new AdminService($this->repo,new CampaignRepository($pdo));
+        $pdo = Database::connection();
+        $this->repo = new AdminRepository($pdo);
+        $this->service = new AdminService($this->repo, new CampaignRepository($pdo));
     }
 
     public function index(Request $request): void
     {
         Auth::requireRole(['ADMIN']);
-        $this->view('admin/users/index',['pageTitle'=>'Quản lý User','users'=>$this->repo->users()]);
+        $this->view('admin/users/index', ['pageTitle' => 'Quản lý User', 'users' => $this->repo->users()]);
     }
 
-    public function status(Request $request,string $id): void
+    public function status(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token',''))) { $this->renderError(419,'Phiên làm việc đã hết hạn.'); return; }
+        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+            $this->renderError(419, 'Phiên làm việc đã hết hạn.');
+            return;
+        }
         try {
-            $this->service->setUserStatus((int)Auth::id(),(int)$id,(string)$request->input('status',''));
-            Session::flash('success','Đã cập nhật trạng thái User.');
-        } catch (Throwable $e) { Session::flash('error',$e->getMessage()); }
+            $this->service->setUserStatus((int)Auth::id(), (int)$id, (string)$request->input('status', ''));
+            Session::flash('success', 'Đã cập nhật trạng thái User.');
+        } catch (Throwable $e) {
+            Session::flash('error', $e->getMessage());
+        }
         Response::redirect(url('/admin/users'));
     }
 }

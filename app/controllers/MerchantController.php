@@ -39,7 +39,7 @@ final class MerchantController extends Controller
 
     public function apply(Request $request): void
     {
-        Auth::requireRole(['USER','MERCHANT']);
+        Auth::requireRole(['USER', 'MERCHANT']);
         $this->view('merchant/apply', [
             'pageTitle' => 'Đăng ký Merchant',
             'claimable' => $this->merchants->claimable(),
@@ -49,7 +49,7 @@ final class MerchantController extends Controller
 
     public function submitApplication(Request $request): void
     {
-        Auth::requireRole(['USER','MERCHANT']);
+        Auth::requireRole(['USER', 'MERCHANT']);
         $this->verifyCsrf($request);
         try {
             $this->service->requestMerchant((int) Auth::id(), $request->all());
@@ -78,7 +78,7 @@ final class MerchantController extends Controller
     {
         Auth::requireRole(['MERCHANT']);
         $merchant = $this->owned((int) $id);
-        $this->view('merchant/profile', ['pageTitle'=>'Hồ sơ Merchant','merchant'=>$merchant]);
+        $this->view('merchant/profile', ['pageTitle' => 'Hồ sơ Merchant', 'merchant' => $merchant]);
     }
 
     public function updateProfile(Request $request, string $id): void
@@ -99,9 +99,9 @@ final class MerchantController extends Controller
     {
         Auth::requireRole(['MERCHANT']);
         $this->view('merchant/coupons/index', [
-            'pageTitle'=>'Official Coupons',
-            'coupons'=>$this->coupons->officialByOwner((int) Auth::id()),
-            'shops'=>$this->merchants->ownedApproved((int) Auth::id()),
+            'pageTitle' => 'Official Coupons',
+            'coupons' => $this->coupons->officialByOwner((int) Auth::id()),
+            'shops' => $this->merchants->ownedApproved((int) Auth::id()),
         ]);
     }
 
@@ -127,7 +127,7 @@ final class MerchantController extends Controller
         } catch (ValidationException $e) {
             $this->renderCouponForm('create', $e->errors(), $input, $shops, null);
         } catch (Throwable $e) {
-            $this->renderCouponForm('create', ['auth'=>$e->getMessage()], $input, $shops, null);
+            $this->renderCouponForm('create', ['auth' => $e->getMessage()], $input, $shops, null);
         }
     }
 
@@ -135,7 +135,10 @@ final class MerchantController extends Controller
     {
         Auth::requireRole(['MERCHANT']);
         $coupon = $this->coupons->findOwnedOfficialForEdit((int) $id, (int) Auth::id());
-        if ($coupon === null) { $this->renderError(404, 'Không tìm thấy Official Coupon.'); return; }
+        if ($coupon === null) {
+            $this->renderError(404, 'Không tìm thấy Official Coupon.');
+            return;
+        }
         $old = $coupon;
         $old['starts_at'] = $this->utcToLocalInput((string) $coupon['starts_at']);
         $old['ends_at'] = $this->utcToLocalInput((string) $coupon['ends_at']);
@@ -157,7 +160,7 @@ final class MerchantController extends Controller
             $this->renderCouponForm('edit', $e->errors(), $input, $this->merchants->ownedApproved((int) Auth::id()), $coupon);
         } catch (Throwable $e) {
             $coupon = $this->coupons->findOwnedOfficialForEdit($couponId, (int) Auth::id());
-            $this->renderCouponForm('edit', ['auth'=>$e->getMessage()], $input, $this->merchants->ownedApproved((int) Auth::id()), $coupon);
+            $this->renderCouponForm('edit', ['auth' => $e->getMessage()], $input, $this->merchants->ownedApproved((int) Auth::id()), $coupon);
         }
     }
 
@@ -185,7 +188,10 @@ final class MerchantController extends Controller
     private function owned(int $id): array
     {
         $merchant = $this->merchants->findOwnedApproved($id, (int) Auth::id());
-        if ($merchant === null) { $this->renderError(404, 'Không tìm thấy Merchant thuộc quyền quản lý của bạn.'); exit; }
+        if ($merchant === null) {
+            $this->renderError(404, 'Không tìm thấy Merchant thuộc quyền quản lý của bạn.');
+            exit;
+        }
         return $merchant;
     }
 
@@ -193,16 +199,23 @@ final class MerchantController extends Controller
     private function renderCouponForm(string $mode, array $errors, array $old, array $shops, ?array $coupon): void
     {
         $this->view('merchant/coupons/form', [
-            'pageTitle'=>$mode === 'edit' ? 'Sửa Official Coupon' : 'Tạo Official Coupon',
-            'mode'=>$mode,'errors'=>$errors,'old'=>$old,'shops'=>$shops,'coupon'=>$coupon,
-            'categories'=>$this->categories->activeAll(),
-            'pageScripts'=>['/js/coupon-form.js'],
+            'pageTitle' => $mode === 'edit' ? 'Sửa Official Coupon' : 'Tạo Official Coupon',
+            'mode' => $mode,
+            'errors' => $errors,
+            'old' => $old,
+            'shops' => $shops,
+            'coupon' => $coupon,
+            'categories' => $this->categories->activeAll(),
+            'pageScripts' => ['/js/coupon-form.js'],
         ]);
     }
 
     private function verifyCsrf(Request $request): void
     {
-        if (!Session::verifyCsrf((string) $request->input('_token', ''))) { $this->renderError(419, 'Phiên làm việc đã hết hạn.'); exit; }
+        if (!Session::verifyCsrf((string) $request->input('_token', ''))) {
+            $this->renderError(419, 'Phiên làm việc đã hết hạn.');
+            exit;
+        }
     }
 
     private function utcToLocalInput(string $value): string
@@ -210,6 +223,8 @@ final class MerchantController extends Controller
         try {
             return (new \DateTimeImmutable($value, new \DateTimeZone('UTC')))
                 ->setTimezone(new \DateTimeZone((string) config('app.timezone', 'Asia/Ho_Chi_Minh')))->format('Y-m-d\\TH:i');
-        } catch (\Throwable $e) { return ''; }
+        } catch (\Throwable $e) {
+            return '';
+        }
     }
 }

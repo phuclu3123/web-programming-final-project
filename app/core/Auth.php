@@ -24,13 +24,19 @@ final class Auth
             self::$synced = true;
             try {
                 $stmt = Database::connection()->prepare(
-                    'SELECT id,email,full_name,role,status FROM users WHERE id=? AND deleted_at IS NULL LIMIT 1'
+                    'SELECT id,email,full_name,role,status,auth_version FROM users WHERE id=? AND deleted_at IS NULL LIMIT 1'
                 );
                 $stmt->execute([(int) ($user['id'] ?? 0)]);
                 $fresh = $stmt->fetch();
-                if (!is_array($fresh) || (string) $fresh['status'] !== 'ACTIVE') {
+                if (!is_array($fresh) || (string) $fresh['status'] !== 'ACTIVE'
+                    || (int) ($user['auth_version'] ?? 0) !== (int) $fresh['auth_version']) {
                     Session::forget('auth_user');
                     return null;
+                }
+                if((string)$fresh['role']!=='ADMIN'){
+                    $membership=Database::connection()->prepare("SELECT 1 FROM merchant_memberships mm JOIN merchants m ON m.id=mm.merchant_id WHERE mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL LIMIT 1");
+                    $membership->execute([(int)$fresh['id']]);
+                    $fresh['role']=$membership->fetchColumn()?'MERCHANT':'USER';
                 }
                 $user = [
                     'id' => (int) $fresh['id'],
@@ -38,6 +44,7 @@ final class Auth
                     'full_name' => (string) $fresh['full_name'],
                     'role' => (string) $fresh['role'],
                     'status' => (string) $fresh['status'],
+                    'auth_version' => (int) $fresh['auth_version'],
                 ];
                 Session::put('auth_user', $user);
             } catch (Throwable $e) {
@@ -77,6 +84,7 @@ final class Auth
             'full_name' => (string) $user['full_name'],
             'role' => (string) $user['role'],
             'status' => (string) $user['status'],
+            'auth_version' => (int) ($user['auth_version'] ?? 0),
         ]);
     }
 

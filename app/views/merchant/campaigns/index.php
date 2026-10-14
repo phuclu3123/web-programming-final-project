@@ -1,2 +1,25 @@
-<div class="d-flex justify-content-between align-items-center mb-4"><div><h1 class="h3 mb-1">Campaign của Merchant</h1><p class="text-muted mb-0">Tạo chiến dịch và gắn nhiều Official Coupon của chính Merchant.</p></div><a class="btn btn-primary" href="<?= e(url('/merchant/campaigns/create')) ?>"><i class="fa-solid fa-plus mr-1"></i>Tạo Campaign</a></div>
-<div class="row"><?php if($campaigns===[]):?><div class="col-12"><div class="alert alert-info">Chưa có Campaign.</div></div><?php endif;?><?php foreach($campaigns as $c):?><div class="col-md-6 mb-3"><div class="card shadow-sm h-100"><div class="card-body"><div class="d-flex justify-content-between"><h2 class="h5"><?= e((string)$c['name']) ?></h2><span class="badge badge-<?= e(campaign_status_class((string)$c['status'])) ?>"><?= e(campaign_status_label((string)$c['status'])) ?></span></div><div class="small text-muted mb-2"><?= e((string)$c['merchant_name']) ?> · <?= (int)$c['coupon_count'] ?> coupon</div><div><?= e(format_db_datetime((string)$c['starts_at'])) ?> → <?= e(format_db_datetime((string)$c['ends_at'])) ?></div><a class="btn btn-outline-primary btn-sm mt-3" href="<?= e(url('/merchant/campaigns/'.(int)$c['id'])) ?>">Quản lý</a></div></div></div><?php endforeach;?></div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Campaign của Merchant</h1>
+        <p class="text-muted mb-0">Tạo chiến dịch và gắn nhiều Official Coupon của chính Merchant.</p>
+    </div><a class="btn btn-primary" href="<?= e(url('/merchant/campaigns/create')) ?>"><i
+            class="fa-solid fa-plus mr-1"></i>Tạo Campaign</a>
+</div>
+<div class="row"><?php if($campaigns===[]):?><div class="col-12">
+        <div class="alert alert-info">Chưa có Campaign.</div>
+    </div><?php endif;?><?php foreach($campaigns as $c):?><div class="col-md-6 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h2 class="h5"><?= e((string)$c['name']) ?></h2><span
+                        class="badge badge-<?= e(campaign_status_class((string)$c['status'])) ?>"><?= e(campaign_status_label((string)$c['status'])) ?></span>
+                </div>
+                <div class="small text-muted mb-2"><?= e((string)$c['merchant_name']) ?> ·
+                    <?= (int)$c['coupon_count'] ?> coupon</div>
+                <div><?= e(format_db_datetime((string)$c['starts_at'])) ?> →
+                    <?= e(format_db_datetime((string)$c['ends_at'])) ?></div><a
+                    class="btn btn-outline-primary btn-sm mt-3"
+                    href="<?= e(url('/merchant/campaigns/'.(int)$c['id'])) ?>">Quản lý</a>
+            </div>
+        </div>
+    </div><?php endforeach;?></div>

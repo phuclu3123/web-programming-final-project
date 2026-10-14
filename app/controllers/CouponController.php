@@ -41,7 +41,7 @@ final class CouponController extends Controller
     public function index(Request $request): void
     {
         $filters = $this->service->normalizeSearch($request->all());
-        $coupons = $this->service->search($filters);
+        [$coupons, $pagination] = $this->publicSearchPage($filters);
 
         $this->view('coupons/index', [
             'pageTitle' => 'Tìm coupon',
@@ -49,6 +49,7 @@ final class CouponController extends Controller
             'categories' => $this->categories->activeAll(),
             'merchants' => $this->merchants->publicFilterOptions(),
             'filters' => $filters,
+            'pagination' => $pagination,
             'pageScripts' => ['/js/search.js'],
         ]);
     }
@@ -123,7 +124,7 @@ final class CouponController extends Controller
     {
         try {
             $filters = $this->service->normalizeSearch($request->all());
-            $rows = $this->service->search($filters);
+            [$rows, $pagination] = $this->publicSearchPage($filters);
             $data = array_map(static function (array $row): array {
                 return [
                     'id' => (int) $row['id'],
@@ -147,13 +148,37 @@ final class CouponController extends Controller
                 ];
             }, $rows);
 
-            Response::json(['success' => true, 'data' => $data, 'filters' => $filters]);
+            Response::json(['success' => true, 'data' => $data, 'filters' => $filters, 'pagination' => $pagination]);
         } catch (Throwable $e) {
             Response::json([
                 'success' => false,
                 'message' => (bool) config('app.debug', false) ? $e->getMessage() : 'Không thể tải danh sách coupon.',
             ], 500);
         }
+    }
+
+    /**
+     * @param array<string,mixed> $filters
+     * @return array{0:array<int,array<string,mixed>>,1:array<string,int>}
+     */
+    private function publicSearchPage(array &$filters): array
+    {
+        // Same page size for server render, API, and navigation; do not trust a
+        // client-supplied page_size that could create inconsistent page counts.
+        $filters['page_size'] = 9;
+        $total = $this->coupons->countPublicSearch($filters);
+        $totalPages = max(1, (int) ceil($total / $filters['page_size']));
+        $filters['page'] = min(max(1, (int) $filters['page']), $totalPages);
+
+        return [
+            $this->service->search($filters),
+            [
+                'page' => $filters['page'],
+                'pageSize' => $filters['page_size'],
+                'total' => $total,
+                'totalPages' => $totalPages,
+            ],
+        ];
     }
 
     /** @param array<string,string> $errors @param array<string,mixed> $old */

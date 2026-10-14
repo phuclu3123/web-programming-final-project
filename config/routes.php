@@ -7,6 +7,10 @@ use App\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Controllers\Admin\CouponController as AdminCouponController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\MerchantController as AdminMerchantController;
+use App\Controllers\Admin\MerchantAccessController;
+use App\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Controllers\ArticleController;
+use App\Controllers\HolidayController;
 use App\Controllers\Admin\ReportController as AdminReportController;
 use App\Controllers\Admin\UserController as AdminUserController;
 use App\Controllers\AuthController;
@@ -14,15 +18,29 @@ use App\Controllers\CampaignController;
 use App\Controllers\CouponController;
 use App\Controllers\CouponInteractionController;
 use App\Controllers\HomeController;
+use App\Controllers\InfoController;
 use App\Controllers\MerchantController;
+use App\Controllers\SavedCouponController;
 use App\Core\Router;
 
 /** @var Router $router */
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/dashboard', [HomeController::class, 'dashboard']);
+$router->get('/about', [InfoController::class, 'about']);
+$router->get('/terms', [InfoController::class, 'terms']);
+$router->get('/privacy', [InfoController::class, 'privacy']);
+$router->get('/community-guidelines', [InfoController::class, 'communityGuidelines']);
+$router->get('/contact', [InfoController::class, 'contact']);
+$router->get('/articles', [ArticleController::class, 'index']);
+$router->get('/articles/{slug}', [ArticleController::class, 'show']);
+$router->get('/campaign-calendar', [HolidayController::class, 'index']);
 
 $router->get('/login', [AuthController::class, 'showLogin']);
 $router->post('/login', [AuthController::class, 'login']);
+$router->get('/forgot-password', [AuthController::class, 'showForgotPassword']);
+$router->post('/forgot-password', [AuthController::class, 'forgotPassword']);
+$router->get('/reset-password', [AuthController::class, 'showResetPassword']);
+$router->post('/reset-password', [AuthController::class, 'resetPassword']);
 $router->get('/register', [AuthController::class, 'showRegister']);
 $router->post('/register', [AuthController::class, 'register']);
 $router->post('/logout', [AuthController::class, 'logout']);
@@ -32,6 +50,8 @@ $router->get('/coupons', [CouponController::class, 'index']);
 $router->get('/coupons/create', [CouponController::class, 'create']);
 $router->post('/coupons', [CouponController::class, 'store']);
 $router->get('/my-coupons', [CouponController::class, 'myCoupons']);
+$router->get('/saved-coupons', [SavedCouponController::class, 'index']);
+$router->post('/saved-coupons/{id}/remove', [SavedCouponController::class, 'remove']);
 $router->get('/coupons/{id}', [CouponController::class, 'show']);
 $router->get('/campaigns/{id}', [CampaignController::class, 'show']);
 
@@ -69,6 +89,7 @@ $router->get('/admin', [AdminDashboardController::class, 'index']);
 $router->get('/admin/users', [AdminUserController::class, 'index']);
 $router->post('/admin/users/{id}/status', [AdminUserController::class, 'status']);
 $router->get('/admin/merchants', [AdminMerchantController::class, 'index']);
+$router->post('/admin/merchants/{id}/status', [AdminMerchantController::class, 'shopStatus']);
 $router->post('/admin/merchants/{id}/review', [AdminMerchantController::class, 'review']);
 $router->get('/admin/categories', [AdminCategoryController::class, 'index']);
 $router->post('/admin/categories', [AdminCategoryController::class, 'store']);
@@ -83,3 +104,14 @@ $router->get('/admin/coupons', [AdminCouponController::class, 'index']);
 $router->post('/admin/coupons/{id}/moderate', [AdminCouponController::class, 'moderate']);
 $router->get('/admin/reports', [AdminReportController::class, 'index']);
 $router->post('/admin/reports/{id}/resolve', [AdminReportController::class, 'resolve']);
+
+// Phase 5: independent User–Shop requests and revocation.
+$router->get('/admin/merchant-requests', [MerchantAccessController::class, 'index']);
+$router->post('/admin/merchant-requests/{id}/review', [MerchantAccessController::class, 'review']);
+$router->post('/admin/merchant-memberships/{userId}/{merchantId}/revoke', [MerchantAccessController::class, 'revoke']);
+// Admin articles use existing articles table; public users can only see PUBLISHED articles.
+$router->get('/admin/articles', [AdminArticleController::class, 'index']);
+$router->get('/admin/articles/create', [AdminArticleController::class, 'create']);
+$router->post('/admin/articles', [AdminArticleController::class, 'store']);
+$router->get('/admin/articles/{id}/edit', [AdminArticleController::class, 'edit']);
+$router->post('/admin/articles/{id}/edit', [AdminArticleController::class, 'update']);

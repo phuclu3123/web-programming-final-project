@@ -9,18 +9,22 @@ use RuntimeException;
 
 final class MerchantService
 {
-    public function __construct(private MerchantRepository $merchants)
-    {
-    }
+    public function __construct(private MerchantRepository $merchants) {}
 
     /** @param array<string,mixed> $input */
     public function requestMerchant(int $userId, array $input): void
     {
         $mode = (string) ($input['mode'] ?? 'claim');
+        if (!in_array($mode, ['claim', 'new'], true)) {
+            throw new RuntimeException('Hình thức đăng ký Merchant không hợp lệ.');
+        }
+        $evidence = trim((string)($input['evidence_reference'] ?? ''));
+        if (mb_strlen($evidence) > 1000) throw new RuntimeException('Bằng chứng sở hữu quá dài.');
+        if ($mode === 'claim' && $evidence === '') throw new RuntimeException('Cần cung cấp liên kết hoặc thông tin chứng minh quyền đại diện Shop.');
         if ($mode === 'claim') {
             $merchantId = filter_var($input['merchant_id'] ?? null, FILTER_VALIDATE_INT);
             if ($merchantId === false || (int) $merchantId <= 0) throw new RuntimeException('Vui lòng chọn Merchant cần xác nhận quyền sở hữu.');
-            $this->merchants->requestClaim($userId, (int) $merchantId);
+            $this->merchants->requestClaim($userId, (int) $merchantId, $evidence !== '' ? $evidence : null);
             return;
         }
 
@@ -32,7 +36,7 @@ final class MerchantService
         $slug = slugify($name);
         if ($slug === '') throw new RuntimeException('Không thể tạo slug cho Merchant.');
         try {
-            $this->merchants->requestNew($userId, $name, $slug, $description !== '' ? $description : null, $website !== '' ? $website : null);
+            $this->merchants->requestNew($userId, $name, $slug, $description !== '' ? $description : null, $website !== '' ? $website : null, $evidence !== '' ? $evidence : null);
         } catch (\PDOException $e) {
             if (stripos($e->getMessage(), 'Duplicate') !== false) throw new RuntimeException('Merchant/slug này đã tồn tại. Hãy dùng chức năng nhận quyền sở hữu nếu phù hợp.');
             throw $e;

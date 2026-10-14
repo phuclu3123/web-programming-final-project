@@ -1,4 +1,7 @@
 html, body { min-height: 100%; }
+/* Reserve vertical scrollbar width on every page. Bootstrap containers in the
+   navbar, main and footer now align even when Login has little content. */
+html { overflow-y: scroll; scrollbar-gutter: stable; }
 body {
     min-height: 100vh;
     display: flex;
@@ -185,4 +188,122 @@ footer { flex-shrink: 0; }
 
 @media (max-width: 991.98px) {
     .navbar .dropdown-menu { border: 0; background: rgba(255,255,255,.98); }
+}
+
+/* Phase 4 registration UX: account-type selection and Font Awesome input adornments. */
+.auth-card { border-radius: 14px; }
+.auth-card .form-control::placeholder { color: #868e96; opacity: 1; }
+.auth-input-icon { min-width: 45px; justify-content: center; color: #657487; background: #f8fafc; }
+.auth-card .input-group .form-control { min-width: 0; }
+.auth-card .password-toggle { min-width: 52px; }
+.account-type-card {
+    position: relative; display: flex; align-items: center; gap: 12px;
+    min-height: 92px; height: 100%; padding: 16px 13px;
+    border: 1.5px solid #d9e1eb; border-radius: 12px; background: #fff;
+    cursor: pointer; transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.account-type-card:hover { border-color: #80b5ff; background: #f9fbff; }
+.account-type-card.is-selected { border-color: #0d6efd; background: #eff6ff; box-shadow: inset 0 0 0 1px #0d6efd; }
+.account-type-card:focus-within { outline: 3px solid rgba(13,110,253,.28); outline-offset: 2px; }
+.account-type-card input[type="radio"] { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.account-type-icon { flex: 0 0 38px; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; background: #eaf0f6; color: #465c77; }
+.account-type-card.is-selected .account-type-icon { background: #d7e9ff; color: #0866db; }
+.account-type-content { display: flex; flex-direction: column; gap: 3px; padding-right: 8px; }
+.account-type-content strong { color: #253345; font-size: .96rem; }
+.account-type-content small { color: #6c757d; line-height: 1.4; font-size: .79rem; }
+.account-type-check { position: absolute; right: 10px; top: 9px; color: #0d6efd; display: none; }
+.account-type-card.is-selected .account-type-check { display: block; }
+.merchant-signup-section { border-color: #e5eaf0 !important; }
+@media (max-width: 575.98px) { .account-type-card { min-height: 78px; } }
+
+
+/* Phase 4 UI fix: calm, accessible password visibility controls.
+   Remove Bootstrap's dark outline-secondary hover/focus/active appearance. */
+.auth-card .input-group .password-toggle {
+    min-width: 52px;
+    border: 1px solid #ced4da;
+    background: #f8fafc;
+    color: #60758d;
+    border-radius: 0 .25rem .25rem 0;
+    transition: color .15s ease, background-color .15s ease, border-color .15s ease;
+}
+.auth-card .input-group .password-toggle:hover {
+    background: #eff6ff;
+    color: #0d6efd;
+    border-color: #99c2ff;
+}
+.auth-card .input-group .password-toggle.is-visible,
+.auth-card .input-group .password-toggle[aria-pressed="true"] {
+    background: #e7f1ff;
+    color: #0956bf;
+    border-color: #86b7fe;
+}
+.auth-card .input-group .password-toggle:active {
+    background: #dbeafe;
+    color: #074ca6;
+}
+.auth-card .input-group .password-toggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+.auth-card .input-group .password-toggle:focus-visible {
+    box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .20);
+    z-index: 3;
+}
+.auth-card .input-group .password-toggle .password-eye-symbol,
+.auth-card .input-group .password-toggle:hover .password-eye-symbol,
+.auth-card .input-group .password-toggle:focus .password-eye-symbol,
+.auth-card .input-group .password-toggle.is-visible .password-eye-symbol {
+    color: inherit;
+}
+
+
+/* Phase 5: persistent responsive navbar. Bootstrap sticky-top keeps header visible when scrolling. */
+.site-navbar { position: sticky; top: 0; z-index: 1030; width: 100%; }
+.site-navbar .nav-link, .site-navbar .navbar-text { white-space: nowrap; }
+.site-navbar .dropdown-menu { box-shadow: 0 8px 24px rgba(24,39,65,.12); border: 1px solid #e1e7ef; }
+@media (max-width: 1199.98px) {
+  .site-navbar .navbar-collapse { padding: .65rem 0 .4rem; max-height: calc(100vh - 72px); overflow-y: auto; }
+  .site-navbar .dropdown-menu { box-shadow: none; border-color: rgba(255,255,255,.15); }
+  .site-navbar .navbar-text { display: inline-block; }
+}
+
+/* Phase 6: saved-coupon library (Bootstrap 4.6.2) */
+.saved-coupon-card .saved-coupon-title { line-height: 1.35; }
+.saved-coupon-card .saved-status-badge { font-size: .74rem; padding: .37rem .56rem; }
+.saved-eligibility-note { color: #765627; background: #fff7e6; border-left: 3px solid #efbd55; padding: .42rem .55rem; border-radius: .25rem; }
+.saved-card-actions form { flex-shrink: 0; }
+.saved-card-actions .btn { white-space: nowrap; }
+@media (max-width: 380px) {
+    .saved-card-actions { flex-wrap: wrap; }
+    .saved-card-actions form, .saved-card-actions form .btn { width: 100%; }
+}
+
+
+/* Phase 6 UX update: consistent dashboard actions and current navigation. */
+.dashboard-action-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.dashboard-action-buttons .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; margin: 0; }
+.site-navbar .navbar-nav .nav-item.active > .nav-link {
+    color: #fff !important;
+    font-weight: 600;
+    background: rgba(255,255,255,.13);
+    box-shadow: inset 0 -2px 0 rgba(255,255,255,.9);
+    border-radius: .35rem;
+}
+#coupon-search-status { scroll-margin-top: 96px; }
+#coupon-pagination .page-item.active .page-link { z-index: 1; }
+#coupon-pagination .page-link { min-width: 40px; text-align: center; }
+
+/* Compact, working footer navigation. All link targets resolve locally. */
+.site-footer { flex-shrink: 0; margin-top: 2.5rem; background: #f9fbfe; border-top: 1px solid #e3e9f1; color: #44546a; }
+.site-footer .footer-brand { color: #1162c5; font-weight: 750; letter-spacing: .15px; }
+.site-footer .footer-title { color: #253245; font-weight: 700; margin-bottom: 1rem; }
+.site-footer .footer-description { line-height: 1.7; max-width: 320px; }
+.site-footer .footer-subtle { color: #78889d; }
+.site-footer .footer-links li { margin-bottom: .65rem; }
+.site-footer .footer-links a, .site-footer .footer-contact { color: #52657e; text-decoration: none; }
+.site-footer .footer-links a:hover, .site-footer .footer-contact:hover { color: #0069d9; text-decoration: underline; }
+.site-footer .footer-bottom { border-top: 1px solid #e3e9f1; color: #748399; font-size: .8rem; gap: .45rem; }
+@media (max-width: 767.98px) {
+    .site-footer .container { padding-top: 2rem !important; padding-bottom: 2rem !important; }
 }

@@ -14,14 +14,24 @@ if ($nextPoints !== null && (int) $nextPoints > 0) {
                 <h1 class="h4">Tài khoản của tôi</h1>
                 <hr>
                 <dl class="row mb-0">
-                    <dt class="col-sm-3">Họ tên</dt><dd class="col-sm-9"><?= e((string) (Auth::user()['full_name'] ?? '')) ?></dd>
-                    <dt class="col-sm-3">Email</dt><dd class="col-sm-9"><?= e((string) (Auth::user()['email'] ?? '')) ?></dd>
-                    <dt class="col-sm-3">Role</dt><dd class="col-sm-9"><span class="badge badge-info"><?= e((string) Auth::role()) ?></span></dd>
+                    <dt class="col-sm-3">Họ tên</dt>
+                    <dd class="col-sm-9"><?= e((string) (Auth::user()['full_name'] ?? '')) ?></dd>
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9"><?= e((string) (Auth::user()['email'] ?? '')) ?></dd>
+                    <dt class="col-sm-3">Role</dt>
+                    <dd class="col-sm-9"><span class="badge badge-info"><?= e((string) Auth::role()) ?></span></dd>
                 </dl>
-                <div class="mt-3">
-                    <?php if (Auth::role() === 'MERCHANT'): ?><a class="btn btn-sm btn-outline-primary" href="<?= e(url('/merchant')) ?>">Mở Merchant Center</a><?php endif; ?>
-                    <?php if (Auth::role() === 'USER'): ?><a class="btn btn-sm btn-outline-primary" href="<?= e(url('/merchant/apply')) ?>">Đăng ký Merchant</a><?php endif; ?>
-                    <?php if (Auth::role() === 'ADMIN'): ?><a class="btn btn-sm btn-outline-primary" href="<?= e(url('/admin')) ?>">Mở Admin Dashboard</a><?php endif; ?>
+                <div class="dashboard-action-buttons mt-3">
+                    <?php if (in_array(Auth::role(), ['USER', 'MERCHANT'], true)): ?><a
+                        class="btn btn-sm btn-outline-primary" href="<?= e(url('/saved-coupons')) ?>"><i
+                            class="fa-regular fa-bookmark mr-1" aria-hidden="true"></i>Coupon đã lưu
+                        (<?= (int) ($savedCount ?? 0) ?>)</a><?php endif; ?>
+                    <?php if (Auth::role() === 'MERCHANT'): ?><a class="btn btn-sm btn-outline-primary"
+                        href="<?= e(url('/merchant')) ?>">Mở Merchant Center</a><?php endif; ?>
+                    <?php if (Auth::role() === 'USER'): ?><a class="btn btn-sm btn-outline-primary"
+                        href="<?= e(url('/merchant/apply')) ?>">Đăng ký Merchant</a><?php endif; ?>
+                    <?php if (Auth::role() === 'ADMIN'): ?><a class="btn btn-sm btn-outline-primary"
+                        href="<?= e(url('/admin')) ?>">Mở Admin Dashboard</a><?php endif; ?>
                 </div>
             </div>
         </div>
@@ -32,12 +42,17 @@ if ($nextPoints !== null && (int) $nextPoints > 0) {
             <div class="card-body">
                 <div class="small text-muted">CouponPoint</div>
                 <div class="point-card-number"><?= $points ?></div>
-                <div class="mb-3">Cấp bậc: <strong><?= e((string) ($rewardSummary['level_name'] ?? 'Newbie')) ?></strong></div>
+                <div class="mb-3">Cấp bậc:
+                    <strong><?= e((string) ($rewardSummary['level_name'] ?? 'Newbie')) ?></strong></div>
                 <?php if ($nextPoints !== null): ?>
-                    <div class="small text-muted mb-1">Còn <?= max(0, (int) $nextPoints - $points) ?> điểm để lên <?= e((string) ($rewardSummary['next_level_name'] ?? 'cấp tiếp theo')) ?></div>
-                    <div class="progress progress-thin"><div class="progress-bar" role="progressbar" style="width: <?= $progress ?>%" aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"></div></div>
+                <div class="small text-muted mb-1">Còn <?= max(0, (int) $nextPoints - $points) ?> điểm để lên
+                    <?= e((string) ($rewardSummary['next_level_name'] ?? 'cấp tiếp theo')) ?></div>
+                <div class="progress progress-thin">
+                    <div class="progress-bar" role="progressbar" style="width: <?= $progress ?>%"
+                        aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
                 <?php else: ?>
-                    <div class="small text-success">Bạn đang ở cấp cao nhất hiện tại.</div>
+                <div class="small text-success">Bạn đang ở cấp cao nhất hiện tại.</div>
                 <?php endif; ?>
             </div>
         </div>
@@ -46,9 +61,30 @@ if ($nextPoints !== null && (int) $nextPoints > 0) {
 
 <?php if (in_array(Auth::role(), ['USER', 'MERCHANT'], true)): ?>
 <div class="row mb-4">
-    <div class="col-md-4 mb-3"><div class="card shadow-sm"><div class="card-body"><div class="small text-muted">Đã gửi</div><div class="h3 mb-0"><?= (int) ($rewardSummary['submitted_count'] ?? 0) ?></div></div></div></div>
-    <div class="col-md-4 mb-3"><div class="card shadow-sm"><div class="card-body"><div class="small text-muted">Được duyệt</div><div class="h3 mb-0 text-success"><?= (int) ($rewardSummary['approved_count'] ?? 0) ?></div></div></div></div>
-    <div class="col-md-4 mb-3"><div class="card shadow-sm"><div class="card-body"><div class="small text-muted">Bị từ chối</div><div class="h3 mb-0 text-danger"><?= (int) ($rewardSummary['rejected_count'] ?? 0) ?></div></div></div></div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="small text-muted">Đã gửi</div>
+                <div class="h3 mb-0"><?= (int) ($rewardSummary['submitted_count'] ?? 0) ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="small text-muted">Được duyệt</div>
+                <div class="h3 mb-0 text-success"><?= (int) ($rewardSummary['approved_count'] ?? 0) ?></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="small text-muted">Bị từ chối</div>
+                <div class="h3 mb-0 text-danger"><?= (int) ($rewardSummary['rejected_count'] ?? 0) ?></div>
+            </div>
+        </div>
+    </div>
 </div>
 <?php endif; ?>
 
@@ -56,23 +92,30 @@ if ($nextPoints !== null && (int) $nextPoints > 0) {
     <div class="card-body">
         <h2 class="h5">Lịch sử CouponPoint</h2>
         <?php if ($pointHistory === []): ?>
-            <div class="text-muted small">Chưa có giao dịch điểm.</div>
+        <div class="text-muted small">Chưa có giao dịch điểm.</div>
         <?php else: ?>
-            <div class="table-responsive">
-                <table class="table table-sm mb-0">
-                    <thead><tr><th>Thời gian</th><th>Coupon</th><th>Lý do</th><th class="text-right">Điểm</th></tr></thead>
-                    <tbody>
+        <div class="table-responsive">
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Coupon</th>
+                        <th>Lý do</th>
+                        <th class="text-right">Điểm</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <?php foreach ($pointHistory as $item): ?>
-                        <tr>
-                            <td><?= e(format_db_datetime((string) $item['created_at'])) ?></td>
-                            <td><?= e((string) $item['coupon_title']) ?></td>
-                            <td><?= e((string) ($item['note'] ?: $item['rule_code'])) ?></td>
-                            <td class="text-right font-weight-bold text-success">+<?= (int) $item['points'] ?></td>
-                        </tr>
+                    <tr>
+                        <td><?= e(format_db_datetime((string) $item['created_at'])) ?></td>
+                        <td><?= e((string) $item['coupon_title']) ?></td>
+                        <td><?= e((string) ($item['note'] ?: $item['rule_code'])) ?></td>
+                        <td class="text-right font-weight-bold text-success">+<?= (int) $item['points'] ?></td>
+                    </tr>
                     <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
+        </div>
         <?php endif; ?>
     </div>
 </div>

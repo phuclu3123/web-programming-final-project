@@ -38,7 +38,7 @@ $merchants = [
 $pdo = Database::connection();
 $stmt = $pdo->prepare(
     "INSERT INTO merchants(name, slug, status) " .
-    "SELECT ?, ?, 'UNCLAIMED' WHERE NOT EXISTS (SELECT 1 FROM merchants WHERE slug = ?)"
+        "SELECT ?, ?, 'UNCLAIMED' WHERE NOT EXISTS (SELECT 1 FROM merchants WHERE slug = ?)"
 );
 $count = 0;
 foreach ($merchants as [$name, $slug]) {
