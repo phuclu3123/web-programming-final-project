@@ -7,7 +7,7 @@ use App\Core\Session; ?>
             <div class="card-body p-4">
                 <h1 class="h4 mb-4">Đăng nhập CouponHub</h1>
                 <?php if (!empty($errors['auth'])): ?>
-                <div class="alert alert-danger" role="alert"><?= e($errors['auth']) ?></div>
+                    <div class="alert alert-danger" role="alert"><?= e($errors['auth']) ?></div>
                 <?php endif; ?>
                 <form method="post" action="<?= e(url('/login')) ?>">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
@@ -21,7 +21,7 @@ use App\Core\Session; ?>
                                 autocomplete="email" placeholder="Nhập email của bạn" required>
                         </div>
                         <?php if (isset($errors['email'])): ?><div class="invalid-feedback d-block">
-                            <?= e($errors['email']) ?></div><?php endif; ?>
+                                <?= e($errors['email']) ?></div><?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="password">Mật khẩu</label>
@@ -39,10 +39,9 @@ use App\Core\Session; ?>
                             </div>
                         </div>
                         <?php if (isset($errors['password'])): ?><div class="invalid-feedback d-block">
-                            <?= e($errors['password']) ?></div><?php endif; ?>
+                                <?= e($errors['password']) ?></div><?php endif; ?>
                     </div>
-                    <div class="text-right mb-3"><a class="small" href="<?= e(url('/forgot-password')) ?>"><i
-                                class="fa-solid fa-key mr-1" aria-hidden="true"></i>Quên mật khẩu?</a></div>
+                    <div class="text-right mb-3"><a class="small" href="<?= e(url('/forgot-password')) ?>">Quên mật khẩu?</a></div>
                     <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-right-to-bracket mr-1"
                             aria-hidden="true"></i> Đăng nhập</button>
                 </form>

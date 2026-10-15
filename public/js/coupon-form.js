@@ -33,7 +33,7 @@
 
         if (type === 'PERCENTAGE') {
             $valueLabel.text('Phần trăm giảm (%)');
-            $value.attr({max: '100', step: '0.01'});
+            $value.attr({ max: '100', step: '0.01' });
         } else if (type === 'FIXED_AMOUNT') {
             $valueLabel.text('Số tiền giảm (VND)');
             $value.removeAttr('max').attr('step', '1000');
@@ -41,7 +41,7 @@
             var unit = $cashback.val();
             if (unit === 'PERCENTAGE') {
                 $valueLabel.text('Phần trăm hoàn tiền (%)');
-                $value.attr({max: '100', step: '0.01'});
+                $value.attr({ max: '100', step: '0.01' });
             } else {
                 $valueLabel.text('Số tiền hoàn (VND)');
                 $value.removeAttr('max').attr('step', '1000');

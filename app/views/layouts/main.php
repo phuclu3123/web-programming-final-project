@@ -24,6 +24,10 @@ $navSection = match (true) {
 };
 $navActive = static fn(string $section): string => $navSection === $section ? ' active' : '';
 $navCurrent = static fn(string $section): string => $navSection === $section ? ' aria-current="page"' : '';
+$userMenuActive = in_array($navSection, ['account', 'merchant'], true);
+$menuItemActive = static fn(string $path): string => $currentPath === $path ? ' active' : '';
+$menuItemCurrent = static fn(string $path): string => $currentPath === $path ? ' aria-current="page"' : '';
+
 
 ?>
 <!doctype html>
@@ -59,32 +63,6 @@ $navCurrent = static fn(string $section): string => $navSection === $section ? '
                     <li class="nav-item<?= $navActive('campaigns') ?>"><a class="nav-link"
                             href="<?= e(url('/campaign-calendar')) ?>" <?= $navCurrent('campaigns') ?>>Lịch Campaign</a>
                     </li>
-                    <?php if (Auth::check()): ?>
-                        <li class="nav-item dropdown<?= $navActive('account') ?>">
-                            <a class="nav-link dropdown-toggle" href="#" id="accountNav" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tài khoản</a>
-                            <div class="dropdown-menu" aria-labelledby="accountNav">
-                                <a class="dropdown-item" href="<?= e(url('/dashboard')) ?>">Tổng quan tài khoản</a>
-                                <?php if (in_array($role, ['USER', 'MERCHANT'], true)): ?>
-                                    <a class="dropdown-item" href="<?= e(url('/my-coupons')) ?>">Coupon của tôi</a>
-                                    <a class="dropdown-item" href="<?= e(url('/saved-coupons')) ?>"><i
-                                            class="fa-regular fa-bookmark mr-2" aria-hidden="true"></i>Coupon đã lưu</a>
-                                    <a class="dropdown-item" href="<?= e(url('/merchant/apply')) ?>">Đăng ký quản lý Shop</a>
-                                <?php endif; ?>
-                            </div>
-                        </li>
-                    <?php endif; ?>
-                    <?php if ($role === 'MERCHANT'): ?>
-                        <li class="nav-item dropdown<?= $navActive('merchant') ?>">
-                            <a class="nav-link dropdown-toggle" href="#" id="merchantNav" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Merchant Center</a>
-                            <div class="dropdown-menu" aria-labelledby="merchantNav">
-                                <a class="dropdown-item" href="<?= e(url('/merchant')) ?>">Dashboard</a>
-                                <a class="dropdown-item" href="<?= e(url('/merchant/coupons')) ?>">Official Coupons</a>
-                                <a class="dropdown-item" href="<?= e(url('/merchant/campaigns')) ?>">Campaigns</a>
-                            </div>
-                        </li>
-                    <?php endif; ?>
                     <?php if ($role === 'ADMIN'): ?>
                         <li class="nav-item dropdown<?= $navActive('admin') ?>">
                             <a class="nav-link dropdown-toggle" href="#" id="adminNav" role="button" data-toggle="dropdown"
@@ -106,10 +84,42 @@ $navCurrent = static fn(string $section): string => $navSection === $section ? '
                 </ul>
                 <ul class="navbar-nav ml-auto align-items-xl-center">
                     <?php if (Auth::check()): ?>
-                        <li class="nav-item mr-xl-3"><span
-                                class="navbar-text text-white-50 small"><?= e((string) (Auth::user()['full_name'] ?? '')) ?></span>
+                        <li class="nav-item dropdown user-nav-item<?= $userMenuActive ? ' active' : '' ?>">
+                            <a class="nav-link dropdown-toggle user-nav-trigger" href="#" id="userMenuNav" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                <?= $userMenuActive ? ' aria-current="page"' : '' ?>><?= e((string) (Auth::user()['full_name'] ?? 'Tài khoản')) ?></a>
+                            <div class="dropdown-menu dropdown-menu-right user-nav-menu" aria-labelledby="userMenuNav">
+                                <h6 class="dropdown-header">Tài khoản</h6>
+                                <a class="dropdown-item<?= $menuItemActive('/dashboard') ?>"
+                                    href="<?= e(url('/dashboard')) ?>" <?= $menuItemCurrent('/dashboard') ?>>Tổng quan tài
+                                    khoản</a>
+                                <?php if (in_array($role, ['USER', 'MERCHANT'], true)): ?>
+                                    <a class="dropdown-item<?= $menuItemActive('/my-coupons') ?>"
+                                        href="<?= e(url('/my-coupons')) ?>" <?= $menuItemCurrent('/my-coupons') ?>>Coupon của
+                                        tôi</a>
+                                    <a class="dropdown-item<?= $menuItemActive('/saved-coupons') ?>"
+                                        href="<?= e(url('/saved-coupons')) ?>" <?= $menuItemCurrent('/saved-coupons') ?>><i
+                                            class="fa-regular fa-bookmark mr-2" aria-hidden="true"></i>Coupon đã lưu</a>
+                                    <a class="dropdown-item<?= $menuItemActive('/merchant/apply') ?>"
+                                        href="<?= e(url('/merchant/apply')) ?>" <?= $menuItemCurrent('/merchant/apply') ?>>Đăng
+                                        ký quản lý Shop</a>
+                                <?php endif; ?>
+                                <?php if ($role === 'MERCHANT'): ?>
+                                    <div class="dropdown-divider"></div>
+                                    <h6 class="dropdown-header">Merchant Center</h6>
+                                    <a class="dropdown-item<?= $menuItemActive('/merchant') ?>"
+                                        href="<?= e(url('/merchant')) ?>" <?= $menuItemCurrent('/merchant') ?>>Tổng quan
+                                        Shop</a>
+                                    <a class="dropdown-item<?= $menuItemActive('/merchant/coupons') ?>"
+                                        href="<?= e(url('/merchant/coupons')) ?>"
+                                        <?= $menuItemCurrent('/merchant/coupons') ?>>Official Coupons</a>
+                                    <a class="dropdown-item<?= $menuItemActive('/merchant/campaigns') ?>"
+                                        href="<?= e(url('/merchant/campaigns')) ?>"
+                                        <?= $menuItemCurrent('/merchant/campaigns') ?>>Campaigns</a>
+                                <?php endif; ?>
+                            </div>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item ml-xl-3 mt-2 mt-xl-0">
                             <form method="post" action="<?= e(url('/logout')) ?>" class="mb-0"><input type="hidden"
                                     name="_token" value="<?= e(Session::csrfToken()) ?>"><button
                                     class="btn btn-outline-light btn-sm">Đăng xuất</button></form>
@@ -137,9 +147,8 @@ $navCurrent = static fn(string $section): string => $navSection === $section ? '
             <div class="row">
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                     <h2 class="h5 footer-brand mb-3">CouponHub</h2>
-                    <p class="footer-description">Chia sẻ, khám phá và kiểm chứng ưu đãi từ cộng đồng. Tìm mã giảm giá
-                        phù hợp cho nhu cầu của bạn.</p>
-                    <span class="footer-subtle small">Nền tảng demo · PHP OOP + MVC</span>
+                    <p class="footer-description mb-0">Chia sẻ, khám phá và kiểm chứng ưu đãi từ cộng đồng. Tìm mã giảm
+                        giá phù hợp cho nhu cầu của bạn.</p>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
                     <h3 class="h6 footer-title">Khám phá</h3>
@@ -166,10 +175,8 @@ $navCurrent = static fn(string $section): string => $navSection === $section ? '
                             aria-hidden="true"></i>Thông tin liên hệ</a>
                 </div>
             </div>
-            <div
-                class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-4 pt-3">
+            <div class="footer-bottom mt-4 pt-3">
                 <span>© <?= date('Y') ?> CouponHub. Dự án học tập.</span>
-                <span>Thông tin ưu đãi cần được kiểm tra với Merchant.</span>
             </div>
         </div>
     </footer>

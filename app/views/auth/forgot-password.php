@@ -1,11 +1,9 @@
-<?php
-
-use App\Core\Session; ?>
+<?php use App\Core\Session; ?>
 <div class="row justify-content-center">
     <div class="col-md-7 col-lg-5">
         <div class="card shadow-sm auth-card">
             <div class="card-body p-4">
-                <h1 class="h4 mb-2"><i class="fa-solid fa-key text-primary mr-2" aria-hidden="true"></i>Quên mật khẩu?
+                <h1 class="h4 mb-2">Quên mật khẩu?
                 </h1>
                 <p class="text-muted small mb-4">Nhập email tài khoản CouponHub. Nếu email hợp lệ, chúng tôi sẽ gửi liên
                     kết đặt lại mật khẩu có hiệu lực trong 30 phút.</p>
@@ -22,7 +20,7 @@ use App\Core\Session; ?>
                                 required>
                         </div>
                         <?php if (isset($errors['email'])): ?><div class="invalid-feedback d-block">
-                                <?= e($errors['email']) ?></div><?php endif; ?>
+                            <?= e($errors['email']) ?></div><?php endif; ?>
                     </div>
                     <button class="btn btn-primary btn-block" type="submit"><i class="fa-solid fa-paper-plane mr-1"
                             aria-hidden="true"></i>Gửi liên kết đặt lại</button>
