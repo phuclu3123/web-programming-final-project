@@ -1,4 +1,7 @@
 <?php
+use App\Core\Session;
+?>
+<?php
 require __DIR__ . '/layouts/head.php';
 require __DIR__ . '/layouts/workspace-start.php';
 $errorFor = static fn (string $name): string => isset($errors[$name])

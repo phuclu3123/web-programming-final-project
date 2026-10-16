@@ -1,13 +1,27 @@
 <?php
 declare(strict_types=1);
 
-final class ShopController extends AbstractController
+namespace App\Controllers;
+
+use App\Core\Auth;
+use App\Core\Controller;
+use App\Core\Database;
+use App\Core\HttpError;
+use App\Core\Request;
+use App\Core\Response;
+use App\Core\Session;
+use App\Repositories\CatalogRepository;
+use DateTimeImmutable;
+use mysqli_sql_exception;
+
+
+final class ShopController extends Controller
 {
-    public function handle(): void
+    public function index(Request $request): void
     {
-        $method = $this->requireMethod('GET', 'POST');
-        $actor = Session::actor($this->db, $this->config, 'MERCHANT');
-        $model = new Coupon($this->db);
+        $method = $request->method();
+        $actor = Auth::requireRole(['MERCHANT']);
+        $model = new CatalogRepository(Database::connection());
         [$merchants, $categories, $coupons, $statRows] = $model->shop((int) $actor['id']);
         $stats = $statRows[0];
         $input = [
@@ -20,14 +34,16 @@ final class ShopController extends AbstractController
         ];
         $errors = [];
         if ($method === 'POST') {
-            Session::checkCsrf($this->request->post('csrf'));
-            foreach ($input as $key => $_) $input[$key] = $this->request->post($key);
+            Session::checkCsrf($request->post('csrf'));
+            foreach ($input as $key => $_) $input[$key] = $request->post($key);
             $errors = $this->validate($input);
             if ($errors === []) {
+                // ---- OWNER GUARD: sửa merchant_id trong request không đổi được chủ ----
+                Auth::requireMerchantOwner(Database::connection(), $actor, (int) $input['merchant_id']);
                 try {
                     $id = $model->create((int) $actor['id'], $input);
                     Session::flash('shop', 'Đã gửi mã #' . $id . ' để kiểm duyệt. Bạn có thể theo dõi trạng thái trong danh sách bên dưới.');
-                    $this->redirect('shop.php#my-coupons');
+                    Response::redirect('shop.php#my-coupons');
                 } catch (mysqli_sql_exception $error) {
                     if ($error->getCode() !== 1644) throw $error;
                     $errors['general'] = $error->getMessage();
@@ -36,8 +52,8 @@ final class ShopController extends AbstractController
             http_response_code(422);
         }
         $success = Session::flash('shop');
-        $role = 'shop'; $title = 'Quản lý mã giảm giá'; $demo = Session::localDemo($this->config);
-        $this->render('shop', compact('actor', 'merchants', 'categories', 'coupons', 'stats', 'input', 'errors', 'success', 'role', 'title', 'demo'));
+        $role = 'shop'; $title = 'Quản lý mã giảm giá'; $demo = false;
+        $this->view('shop', compact('actor', 'merchants', 'categories', 'coupons', 'stats', 'input', 'errors', 'success', 'role', 'title', 'demo'), null);
     }
     private function validate(array $input): array
     {

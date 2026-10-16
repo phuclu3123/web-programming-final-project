@@ -1,0 +1,10 @@
+Options -Indexes
+DirectoryIndex index.php
+RewriteEngine On
+
+# Application source/config/SQL are never public web resources.
+RewriteRule ^(?:app|config|database|docs|tests|scripts|storage|\.git)(?:/|$) - [F,L,NC]
+RewriteRule (^|/)\. - [F,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

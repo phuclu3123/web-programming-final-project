@@ -1,0 +1,63 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers\Admin;
+
+use App\Core\Auth;
+use App\Core\Controller;
+use App\Core\Database;
+use App\Core\Request;
+use App\Core\Response;
+use App\Core\Session;
+use App\Repositories\AdminRepository;
+use App\Repositories\CampaignRepository;
+use App\Services\AdminService;
+use Throwable;
+
+final class CategoryController extends Controller
+{
+    private AdminRepository $repo;
+    private AdminService $service;
+    public function __construct()
+    {
+        $db = Database::connection();
+        $this->repo = new AdminRepository($db);
+        $this->service = new AdminService($this->repo, new CampaignRepository($db));
+    }
+    public function index(Request $request): void
+    {
+        Auth::requireRole(['ADMIN']);
+        $this->view('admin/categories/index', ['pageTitle' => 'Quản lý danh mục', 'categories' => $this->repo->categories()]);
+    }
+    public function store(Request $request): void
+    {
+        Auth::requireRole(['ADMIN']);
+        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+            $this->renderError(419, 'Phiên làm việc đã hết hạn.');
+            return;
+        }
+        try {
+            $this->service->addCategory((int)Auth::id(), $request->all());
+            Session::flash('success', 'Đã thêm danh mục.');
+        } catch (Throwable $e) {
+            Session::flash('error', $e->getMessage());
+        }
+        Response::redirect(url('/admin/categories'));
+    }
+    public function toggle(Request $request, string $id): void
+    {
+        Auth::requireRole(['ADMIN']);
+        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+            $this->renderError(419, 'Phiên làm việc đã hết hạn.');
+            return;
+        }
+        try {
+            $this->repo->toggleCategory((int)$id, (string)$request->input('active', '0') === '1');
+            Session::flash('success', 'Đã cập nhật danh mục.');
+        } catch (Throwable $e) {
+            Session::flash('error', $e->getMessage());
+        }
+        Response::redirect(url('/admin/categories'));
+    }
+}

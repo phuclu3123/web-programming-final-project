@@ -2970,8 +2970,9 @@ body {
   align-items: center;
 }
 
-.moderation-actions {
+.panel-foot.moderation-actions {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
   gap: 16px;
 }
@@ -2985,11 +2986,12 @@ body {
 
 .reject-action {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: 8px 12px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
+  min-width: 0;
 }
 
 .reject-action label {
@@ -3000,7 +3002,9 @@ body {
 }
 
 .reject-action textarea {
-  min-height: 78px;
+  width: 100%;
+  min-width: 0;
+  min-height: 88px;
   resize: vertical;
 }
 

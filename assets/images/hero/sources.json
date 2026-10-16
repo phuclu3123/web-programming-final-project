@@ -1,0 +1,183 @@
+{
+  "processing": "Original photographs, resized down only; no AI or upscaling.",
+  "assets": [
+    {
+      "key": "brand-grab-bike",
+      "source": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabBike.jpg",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "rights": "Brand-owned photography, referenced for the corresponding brand in this local CouponHub project. Source access is not a blanket redistribution or advertising licence. Retain attribution and review brand permissions before a commercial handoff.",
+      "dimensions": [
+        1920,
+        1280
+      ],
+      "bytes": 354524
+    },
+    {
+      "key": "brand-grab-car",
+      "source": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabCar.JPG",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "rights": "Brand-owned photography, referenced for the corresponding brand in this local CouponHub project. Source access is not a blanket redistribution or advertising licence. Retain attribution and review brand permissions before a commercial handoff.",
+      "dimensions": [
+        1920,
+        1280
+      ],
+      "bytes": 255922
+    },
+    {
+      "key": "brand-grab-food",
+      "source": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood.jpg",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "rights": "Brand-owned photography, referenced for the corresponding brand in this local CouponHub project. Source access is not a blanket redistribution or advertising licence. Retain attribution and review brand permissions before a commercial handoff.",
+      "dimensions": [
+        1920,
+        1280
+      ],
+      "bytes": 217980
+    },
+    {
+      "key": "brand-coolmate-men",
+      "source": "https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_FW3459_2_2_copy.jpg",
+      "page": "https://www.coolmate.me/",
+      "rights": "Brand-owned photography, referenced for the corresponding brand in this local CouponHub project. Source access is not a blanket redistribution or advertising licence. Retain attribution and review brand permissions before a commercial handoff.",
+      "dimensions": [
+        2138,
+        1440
+      ],
+      "bytes": 97842
+    },
+    {
+      "key": "brand-coolmate-women",
+      "source": "https://n7media.coolmate.me/uploads/2026/10/16/FW3671_1_copy.jpg",
+      "page": "https://www.coolmate.me/",
+      "rights": "Brand-owned photography, referenced for the corresponding brand in this local CouponHub project. Source access is not a blanket redistribution or advertising licence. Retain attribution and review brand permissions before a commercial handoff.",
+      "dimensions": [
+        2138,
+        1440
+      ],
+      "bytes": 90296
+    },
+    {
+      "key": "category-shopping",
+      "source": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
+      "rights": "https://unsplash.com/license",
+      "dimensions": [
+        2560,
+        1709
+      ],
+      "bytes": 901546
+    },
+    {
+      "key": "category-travel",
+      "source": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+      "rights": "https://unsplash.com/license",
+      "dimensions": [
+        2560,
+        1702
+      ],
+      "bytes": 500408
+    },
+    {
+      "key": "category-technology",
+      "source": "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1498049794561-7780e7231661",
+      "rights": "https://unsplash.com/license",
+      "dimensions": [
+        2560,
+        1707
+      ],
+      "bytes": 113690
+    },
+    {
+      "key": "category-fashion",
+      "source": "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1483985988355-763728e1935b",
+      "rights": "https://unsplash.com/license",
+      "source_dimensions": [
+        2560,
+        1707
+      ],
+      "dimensions": [
+        2560,
+        1707
+      ],
+      "bytes": 570144
+    },
+    {
+      "key": "category-food",
+      "source": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+      "rights": "https://unsplash.com/license",
+      "source_dimensions": [
+        2560,
+        1707
+      ],
+      "dimensions": [
+        2560,
+        1707
+      ],
+      "bytes": 1471998
+    },
+    {
+      "key": "category-beauty",
+      "source": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1596462502278-27bfdc403348",
+      "rights": "https://unsplash.com/license",
+      "source_dimensions": [
+        2500,
+        2500
+      ],
+      "dimensions": [
+        1800,
+        1800
+      ],
+      "bytes": 287102
+    },
+    {
+      "key": "category-cinema",
+      "source": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba",
+      "rights": "https://unsplash.com/license",
+      "source_dimensions": [
+        2560,
+        1707
+      ],
+      "dimensions": [
+        2560,
+        1707
+      ],
+      "bytes": 123504
+    },
+    {
+      "key": "category-headphones-source",
+      "source": "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=max&w=2560&q=95",
+      "page": "https://images.unsplash.com/photo-1546435770-a3e426bf472b",
+      "rights": "https://unsplash.com/license",
+      "source_dimensions": [
+        2560,
+        1717
+      ],
+      "dimensions": [
+        2560,
+        1717
+      ],
+      "bytes": 103748
+    },
+    {
+      "key": "travel-vivid",
+      "source": "https://images.unsplash.com/photo-1746138810419-dfafd3603c02?auto=format&fit=max&w=2560&q=95",
+      "page": "https://unsplash.com/photos/OtjpzW_h8eA",
+      "rights": "https://unsplash.com/license",
+      "source_dimensions": [
+        2560,
+        1920
+      ],
+      "dimensions": [
+        2400,
+        1800
+      ],
+      "bytes": 1323986
+    }
+  ]
+}

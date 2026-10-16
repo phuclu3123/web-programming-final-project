@@ -39,6 +39,11 @@ $estimableCoupons = array_values(array_filter(
 ));
 $featuredCoupon = $estimableCoupons[0] ?? null;
 $featuredCoupon ??= $coupons[0] ?? null;
+if ($q==='' && $categoryId===0 && $merchantId===0) {
+    foreach ($estimableCoupons as $candidate) {
+        if (slugify($candidate['merchant_name'])==='coolmate') { $featuredCoupon=$candidate; break; }
+    }
+}
 $canEstimate = count($estimableCoupons) > 0;
 $exampleOrder = $canEstimate ? max(250000, (float) $featuredCoupon['min_order_amount']) : 0;
 $exampleSaving = 0;
@@ -83,31 +88,57 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
 };
 ?>
 
-<header class="site-header">
-    <div class="container-wide header-inner">
-        <a class="brand" href="index.php" aria-label="CouponHub - Trang chủ">
-            <span class="brand-mark"><span>C</span></span><span class="brand-word">Coupon<em>Hub</em><span class="brand-period">.</span></span>
-        </a>
-        <nav class="site-nav" aria-label="Điều hướng chính">
-            <a class="active" href="#coupons">Khám phá</a>
-            <a href="#categories">Danh mục</a>
-            <?php if ($canEstimate): ?><a href="#estimate" data-estimate-link>Ước tính</a><?php endif; ?>
-            <a href="#stores">Cửa hàng</a>
-        </nav>
-        <div class="header-account">
-            <a class="btn btn-outline-brand" href="<?= $canEstimate ? '#estimate' : '#coupons' ?>" data-estimate-action><span><?= $canEstimate ? 'Thử tính ưu đãi' : 'Xem ưu đãi' ?></span><?= icon('arrow') ?></a>
-        </div>
-    </div>
-</header>
+<?php $hasAuthModal = true; require __DIR__ . '/partials/public-header.php'; ?>
 
-<main id="main" class="container-wide">
-    <section class="hero hero-compact" aria-labelledby="hero-title">
+<main id="main" class="container-wide editorial-home">
+    <?php foreach (['success','error'] as $flashType): $flashMessage = \App\Core\Session::flash($flashType); if ($flashMessage): ?>
+    <div class="notice <?= $flashType === 'error' ? 'error' : '' ?> my-3" role="status"><?= e($flashMessage) ?></div>
+    <?php endif; endforeach; ?>
+    <section class="hero hero-compact cover-layout-feature" aria-labelledby="hero-title">
         <div class="hero-box">
-            <div class="hero-copy">
-                <div class="eyebrow"><span class="dot"></span>ƯU ĐÃI ĐÃ ĐƯỢC KIỂM CHỨNG</div>
-                <h1 id="hero-title">Giá tốt hơn.<br><span>Không cần tìm lâu.</span></h1>
-                <p>CouponHub tập hợp mã còn hiệu lực, giải thích điều kiện rõ ràng và giúp bạn ước tính khoản tiết kiệm trước khi thanh toán.</p>
+            <h1 id="hero-title" class="visually-hidden">Khám phá ưu đãi CouponHub</h1>
 
+            <?php require __DIR__.'/partials/hero-carousel.php'; ?>
+            <nav class="cover-shortcuts" aria-label="Khám phá thêm ưu đãi">
+                <?php
+                $coverMerchantIds = [];
+                foreach ($merchants as $coverMerchant) $coverMerchantIds[slugify($coverMerchant['name'])] = (int)$coverMerchant['id'];
+                $coverPicks = [
+                    ['merchant'=>'grab','link'=>'Grab'],
+                    ['merchant'=>'traveloka','link'=>'Du lịch'],
+                ];
+                foreach ($coverPicks as $pick):
+                    $pickQuery = isset($coverMerchantIds[$pick['merchant']]) ? '?merchant_id='.$coverMerchantIds[$pick['merchant']] : '';
+                ?>
+                <a href="<?= e(url('/coupons').$pickQuery) ?>"><?= e($pick['link']) ?> <?= icon('arrow') ?></a>
+                <?php endforeach; ?>
+                <a href="<?= e(url('/categories')) ?>">Tất cả nhu cầu <?= icon('arrow') ?></a>
+            </nav>
+        </div>
+    </section>
+
+    <div id="discovery-results"
+        data-category="<?= $categoryId ?>"
+        data-merchant="<?= $merchantId ?>"
+        data-discount-type="<?= e($discountType) ?>"
+        data-usage-channel="<?= e($usageChannel) ?>"
+        data-ending-soon="<?= $endingSoon ? '1' : '0' ?>"
+        data-sort="<?= e($sort) ?>">
+
+        <section id="categories" class="discovery-section" aria-labelledby="discovery-title">
+            <div class="section-heading discovery-heading">
+                <div>
+                    <div class="eyebrow muted mb-2">KHÁM PHÁ ƯU ĐÃI</div>
+                    <h2 id="discovery-title">Ưu đãi dành cho bạn</h2>
+                    <p>Chọn nhu cầu hoặc tìm trực tiếp để xem những mã phù hợp đang còn hiệu lực.</p>
+                </div>
+                <?php if ($q !== '' || $categoryId > 0 || $merchantId > 0 || $discountType !== '' || $usageChannel !== '' || $endingSoon): ?>
+                <a class="text-link" href="index.php#coupons" data-home-filter>Xóa tất cả bộ lọc <?= icon('arrow') ?></a>
+                <?php else: ?><a class="text-link" href="<?= e(url('/categories')) ?>">Xem tất cả danh mục <?= icon('arrow') ?></a>
+                <?php endif; ?>
+            </div>
+
+                <div class="discovery-search-shell catalog-search-shell">
                 <form id="home-filter-form" class="hero-search" role="search" method="get" action="index.php#coupons" autocomplete="off">
                     <?= icon('search') ?>
                     <label class="visually-hidden" for="q">Tìm ưu đãi</label>
@@ -123,72 +154,9 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                     <a class="search-clear" href="<?= e($urlFor(['q' => ''])) ?>" data-home-filter aria-label="Xóa từ khóa" <?= $q === '' ? 'hidden' : '' ?>>×</a>
                     <button type="submit" class="btn btn-lime search-submit">Khám phá <?= icon('arrow') ?></button>
                 </form>
+                <nav id="home-suggestions" class="discovery-suggestions" aria-label="Gợi ý coupon từ kết quả tìm kiếm" hidden></nav>
+                </div>
                 <div id="search-help" class="hero-tip">Tìm theo cửa hàng, tên ưu đãi hoặc mã giảm giá.</div>
-
-                <div class="hero-proof" aria-label="Điểm nổi bật">
-                    <span><?= icon('check') ?> Mã đã duyệt</span>
-                    <span><?= icon('clock') ?> Còn hiệu lực</span>
-                    <span><?= icon('grid') ?> Điều kiện rõ ràng</span>
-                </div>
-            </div>
-
-            <div class="hero-art">
-                <div class="hero-stage">
-                <?php if ($featuredCoupon): ?>
-                <article class="hero-feature" aria-label="Ưu đãi nổi bật">
-                    <div class="hero-feature-top"><span>ƯU ĐÃI ĐƯỢC CHỌN</span><span><?= e($featuredCoupon['category_name']) ?></span></div>
-                    <div class="hero-feature-main">
-                        <span class="hero-feature-merchant"><?= e($featuredCoupon['merchant_name']) ?></span>
-                        <div class="hero-feature-saving"><?= e(saving($featuredCoupon)) ?></div>
-                        <h2><?= e($featuredCoupon['title']) ?></h2>
-                        <div class="hero-feature-facts">
-                            <div><span>Đơn tối thiểu</span><strong><?= (float) $featuredCoupon['min_order_amount'] > 0 ? e(money($featuredCoupon['min_order_amount'])) : 'Không yêu cầu' ?></strong></div>
-                            <div><span>Kênh áp dụng</span><strong><?= e(channelLabel($featuredCoupon['usage_channel'])) ?></strong></div>
-                        </div>
-                    </div>
-                    <div class="hero-feature-bottom">
-                        <span><?= e(expiryLabel($featuredCoupon['ends_at'])) ?></span>
-                        <button type="button" class="hero-feature-copy" data-copy-code="<?= e($featuredCoupon['code']) ?>">
-                            <?= icon('copy') ?> <span>Sao chép mã</span>
-                        </button>
-                    </div>
-                </article>
-                <?php else: ?>
-                <div class="hero-feature hero-feature-empty" aria-hidden="true">
-                    <span>COUPONHUB</span><strong>%</strong><span>Ít thao tác hơn. Nhiều giá trị hơn.</span>
-                </div>
-                <?php endif; ?>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div id="discovery-results"
-        data-category="<?= $categoryId ?>"
-        data-merchant="<?= $merchantId ?>"
-        data-discount-type="<?= e($discountType) ?>"
-        data-usage-channel="<?= e($usageChannel) ?>"
-        data-ending-soon="<?= $endingSoon ? '1' : '0' ?>"
-        data-sort="<?= e($sort) ?>">
-
-        <section class="market-snapshot" aria-label="Tổng quan CouponHub">
-            <div class="snapshot-card snapshot-live"><small>KẾT QUẢ</small><strong><?= count($coupons) ?></strong><span>ưu đãi đang hiển thị</span></div>
-            <div class="snapshot-card snapshot-partners"><small>ĐỐI TÁC</small><strong><?= count($merchants) ?></strong><span>cửa hàng đã duyệt</span></div>
-            <div class="snapshot-card snapshot-needs"><small>PHẠM VI</small><strong><?= count($categories) ?></strong><span>nhóm nhu cầu</span></div>
-            <aside class="snapshot-note"><span><?= icon('check') ?></span><div><strong>Dữ liệu có kiểm chứng</strong><p>Cập nhật theo bộ lọc và chỉ bao gồm mã còn hiệu lực.</p></div></aside>
-        </section>
-
-        <section id="categories" class="discovery-section" aria-labelledby="discovery-title">
-            <div class="section-heading discovery-heading">
-                <div>
-                    <div class="eyebrow muted mb-2">KHÁM PHÁ ƯU ĐÃI</div>
-                    <h2 id="discovery-title">Ưu đãi dành cho bạn</h2>
-                    <p>Chọn nhu cầu hoặc tìm trực tiếp để xem những mã phù hợp đang còn hiệu lực.</p>
-                </div>
-                <?php if ($q !== '' || $categoryId > 0 || $merchantId > 0 || $discountType !== '' || $usageChannel !== '' || $endingSoon): ?>
-                <a class="text-link" href="index.php#coupons" data-home-filter>Xóa tất cả bộ lọc <?= icon('arrow') ?></a>
-                <?php endif; ?>
-            </div>
 
             <nav class="category-strip" aria-label="Danh mục ưu đãi">
                 <a class="category-chip <?= $categoryId === 0 && $q === '' && $merchantId === 0 && $discountType === '' && $usageChannel === '' && !$endingSoon ? 'selected' : '' ?>"
@@ -205,6 +173,8 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                 <?php endforeach; ?>
             </nav>
 
+            <details class="home-refine" <?= $discountType !== '' || $usageChannel !== '' || $endingSoon ? 'open' : '' ?>>
+            <summary><?= icon('filter') ?> Tinh chỉnh ưu đãi <span><?= $discountType !== '' || $usageChannel !== '' || $endingSoon ? 'Đang áp dụng' : 'Loại ưu đãi, kênh dùng, thời hạn' ?></span><?= icon('chevron') ?></summary>
             <form class="catalog-filters" method="get" action="index.php#coupons" data-catalog-filter-form>
                 <input type="hidden" name="q" value="<?= e($q) ?>">
                 <input type="hidden" name="category" value="<?= $categoryId ?>">
@@ -232,6 +202,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                 </label>
                 <button class="btn btn-outline-brand" type="submit">Áp dụng bộ lọc</button>
             </form>
+            </details>
 
             <?php if ($q !== '' || $categoryId > 0 || $merchantId > 0 || $discountType !== '' || $usageChannel !== '' || $endingSoon): ?>
             <div class="active-filters" aria-label="Bộ lọc đang áp dụng">
@@ -275,7 +246,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                     <strong><?= count($coupons) ?></strong> ưu đãi
                     <?php if ($q !== ''): ?> cho “<?= e($q) ?>”<?php endif; ?>
                     <?php if ($selectedMerchantName): ?> · <?= e($selectedMerchantName) ?><?php endif; ?>
-                    <span class="result-limit">· tối đa 60 kết quả</span>
+                    <span class="result-limit">· xem rõ điều kiện trước khi dùng</span>
                 </div>
 
                 <form id="sort-form" method="get" action="index.php#coupons" class="sort-form">
@@ -297,6 +268,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
             <div class="coupon-grid" id="coupon-grid" aria-busy="false">
                 <?php foreach ($coupons as $couponIndex => $coupon) require __DIR__ . '/partials/coupon-card.php'; ?>
             </div>
+            <?php if (count($coupons)>6): ?><div class="catalog-more"><button class="btn btn-outline-brand" type="button" data-catalog-more>Xem thêm <?= count($coupons)-6 ?> ưu đãi <?= icon('chevron') ?></button></div><?php endif; ?>
 
             <?php if (!$coupons): ?>
             <div class="empty-state">
@@ -353,56 +325,18 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
         </section>
         <?php endif; ?>
 
-        <section id="stores" class="stores-section" aria-labelledby="stores-title">
-            <div class="stores-intro">
-                <div class="eyebrow">HỆ SINH THÁI ĐỐI TÁC</div>
-                <h2 id="stores-title">Bắt đầu từ nơi bạn tin chọn.</h2>
-                <p>Mỗi cửa hàng là một lối vào riêng đến các ưu đãi đã được kiểm tra, trình bày rõ điều kiện và còn hiệu lực.</p>
-                <?php if ($merchantId > 0): ?>
-                <a class="stores-reset" href="<?= e($urlFor(['merchant' => 0])) ?>" data-home-filter>Tất cả cửa hàng <?= icon('arrow') ?></a>
-                <?php endif; ?>
-            </div>
-
-            <div class="store-gallery">
-                <?php foreach ($merchants as $storeIndex => $merchant): ?>
-                <a class="store-showcase <?= (int) $merchant['id'] === $merchantId ? 'selected' : '' ?>"
-                    href="<?= e($urlFor(['merchant' => (int) $merchant['id']])) ?>" data-home-filter
-                    <?= (int) $merchant['id'] === $merchantId ? 'aria-current="true"' : '' ?>>
-                    <span class="store-index"><?= str_pad((string) ($storeIndex + 1), 2, '0', STR_PAD_LEFT) ?></span>
-                    <span class="store-logo"><?= e(textPrefix($merchant['name'])) ?></span>
-                    <span class="store-showcase-copy"><strong><?= e($merchant['name']) ?></strong><small>Xem ưu đãi đang có</small></span>
-                    <span class="store-arrow"><?= icon('arrow') ?></span>
-                </a>
-                <?php endforeach; ?>
-                <?php if (!$merchants): ?><p>Chưa có cửa hàng được duyệt.</p><?php endif; ?>
-            </div>
-        </section>
+        <?php $brandMerchants = $merchants; $brandSectionId = 'stores'; require __DIR__.'/partials/brand-marquee.php'; ?>
+        <?php require __DIR__.'/home/editorial-sections.php'; ?>
     </div>
 </main>
 
-<footer class="site-footer">
-    <div class="container-wide">
-        <div class="footer-main">
-            <div class="footer-statement">
-                <a class="brand" href="index.php"><span class="brand-mark"><span>C</span></span><span class="brand-word">Coupon<em>Hub</em><span class="brand-period">.</span></span></a>
-                <div class="footer-kicker"><span aria-hidden="true"></span>Ưu đãi đã được kiểm chứng</div>
-                <h2>Ít thời gian tìm mã.<br>Nhiều giá trị giữ lại.</h2>
-                <p>Nền tảng khám phá ưu đãi rõ ràng cho người mua và không gian vận hành gọn gàng cho đối tác.</p>
-            </div>
-            <nav class="footer-nav" aria-label="Điều hướng cuối trang">
-                <div><strong>Khám phá</strong><a href="#coupons">Ưu đãi mới</a><a href="#categories">Danh mục</a><a href="#stores">Cửa hàng</a></div>
-                <div><strong>Công cụ</strong><?php if ($canEstimate): ?><a href="#estimate">Ước tính tiết kiệm</a><?php endif; ?><a href="shop.php">Không gian đối tác</a><a href="admin.php">Trung tâm quản trị</a></div>
-                <div><strong>Cam kết</strong><span>Mã còn hiệu lực</span><span>Điều kiện rõ ràng</span><span>Dữ liệu đã duyệt</span></div>
-            </nav>
-        </div>
-        <div class="footer-bottom"><span>© <?= date('Y') ?> CouponHub</span><span>Thiết kế cho trải nghiệm mua sắm sáng suốt hơn.</span><a href="#main">Về đầu trang ↑</a></div>
-    </div>
-</footer>
+<?php require __DIR__ . '/partials/public-footer.php'; ?>
 
 <div id="copy-toast" class="copy-toast" role="status" aria-live="polite" aria-atomic="true">
     <span class="toast-check" aria-hidden="true">✓</span>
     <span id="copy-toast-text">Đã sao chép mã</span>
 </div>
 
+<?php require __DIR__ . '/auth/auth-modal.php'; ?>
 </body>
 </html>

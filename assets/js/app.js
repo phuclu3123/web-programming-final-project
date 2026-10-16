@@ -14,7 +14,10 @@
   let searchTimer = null;
   let searchRequest = null;
   let revealObserver = null;
-  let publicNavObserver = null;
+  let publicNavSync = null;
+  let publicNavScrollEnd = null;
+  let publicNavFrame = 0;
+  let publicNavTimer = 0;
 
   function showToast(message) {
     const toast = get('copy-toast');
@@ -149,6 +152,7 @@
       const currentFeature = $('.hero-art');
       const incomingFeature = parsed.querySelector('.hero-art');
       if (currentFeature && incomingFeature) currentFeature.replaceWith(incomingFeature);
+        document.dispatchEvent(new CustomEvent('couponhub:hero-updated'));
       currentResults.replaceWith(incomingResults);
       initScrollReveal(incomingResults);
       initPublicScrollSpy();
@@ -173,6 +177,7 @@
           search.setSelectionRange(end, end);
         }
       }
+      window.dispatchEvent(new Event('couponhub:catalog-updated'));
     } catch (error) {
       if (error.name === 'AbortError') return;
       console.error('Không thể cập nhật danh sách coupon:', error);
@@ -192,9 +197,11 @@
 
     const search = get('q');
 
-    form.addEventListener('submit', event => {
+    document.addEventListener('submit', event => {
+      const activeForm=event.target.closest('#home-filter-form');
+      if (!activeForm) return;
       event.preventDefault();
-      const params = cleanParams(form);
+      const params = cleanParams(activeForm);
       updateHome(`index.php${params.toString() ? '?' + params : ''}#coupons`, { keepFocus: true });
     });
 
@@ -206,7 +213,11 @@
       updateHome(`index.php${params.toString() ? '?' + params : ''}#coupons`, { scrollToResults: true });
     });
 
-    search?.addEventListener('input', event => {
+    document.addEventListener('input', event => {
+      if (event.target.id!=='q') return;
+      const search=event.target;
+      const form=search.closest('#home-filter-form');
+      if (!form) return;
       if (event.isComposing) return;
       const clear = $('.search-clear', form);
       if (clear) clear.hidden = search.value.trim() === '';
@@ -490,22 +501,71 @@
 
   function initPublicScrollSpy() {
     const links = $$('.site-nav a[href^="#"]');
-    if (!links.length || !('IntersectionObserver' in window)) return;
+    if (!links.length) return;
 
-    if (publicNavObserver) publicNavObserver.disconnect();
     const sectionLinks = links
       .map(link => ({ link, section: get(link.getAttribute('href').slice(1)) }))
       .filter(item => item.section);
+    const exploreLink = sectionLinks.find(({ link }) => link.getAttribute('href') === '#coupons')?.link;
 
-    publicNavObserver = new IntersectionObserver(entries => {
-      const visible = entries
-        .filter(entry => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-      if (!visible) return;
-      links.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${visible.target.id}`));
-    }, { threshold: [0.12, 0.35, 0.6], rootMargin: '-22% 0px -58% 0px' });
+    if (publicNavSync) {
+      window.removeEventListener('scroll', publicNavSync);
+    }
+    if (publicNavScrollEnd) {
+      window.removeEventListener('scrollend', publicNavScrollEnd);
+      window.removeEventListener('resize', publicNavScrollEnd);
+    }
+    window.clearTimeout(publicNavTimer);
+    publicNavTimer = 0;
+    if (publicNavFrame) window.cancelAnimationFrame(publicNavFrame);
 
-    sectionLinks.forEach(({ section }) => publicNavObserver.observe(section));
+    const defaultLink = exploreLink || links[0];
+    const hysteresis = 32;
+    let activeLink = defaultLink;
+
+    const sync = () => {
+      publicNavFrame = 0;
+      const marker = ($('.site-header')?.getBoundingClientRect().bottom || 0) + 12;
+      const positionedSections = sectionLinks
+        .map(({ link, section }) => ({ link, top: section.getBoundingClientRect().top }))
+        .sort((a, b) => a.top - b.top);
+      const currentSection = positionedSections.find(item => item.link === activeLink);
+      const candidateSections = positionedSections.filter(item => item.top <= marker - hysteresis);
+      const candidate = candidateSections[candidateSections.length - 1];
+
+      if (!candidate) {
+        if (!currentSection || currentSection.top > marker + hysteresis) activeLink = defaultLink;
+      } else if (candidate.link !== activeLink) {
+        if (!currentSection) {
+          activeLink = candidate.link;
+        } else if (candidate.top > currentSection.top && candidate.top <= marker - hysteresis) {
+          activeLink = candidate.link;
+        } else if (candidate.top < currentSection.top && currentSection.top >= marker + hysteresis) {
+          activeLink = candidate.link;
+        }
+      }
+
+      links.forEach(link => {
+        const active = link === activeLink;
+        link.classList.toggle('active', active);
+        if (active) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+    };
+
+    publicNavSync = () => {
+      window.clearTimeout(publicNavTimer);
+      publicNavTimer = window.setTimeout(publicNavScrollEnd, 160);
+    };
+    publicNavScrollEnd = () => {
+      window.clearTimeout(publicNavTimer);
+      publicNavTimer = 0;
+      if (!publicNavFrame) publicNavFrame = window.requestAnimationFrame(sync);
+    };
+    window.addEventListener('scroll', publicNavSync, { passive: true });
+    window.addEventListener('scrollend', publicNavScrollEnd, { passive: true });
+    window.addEventListener('resize', publicNavScrollEnd);
+    sync();
   }
 
   function initFloatingSupport() {

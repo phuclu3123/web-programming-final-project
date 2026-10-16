@@ -1,0 +1,9 @@
+# Đồng bộ giao diện khám phá và đăng nhập — 16/10/2026
+
+- `/coupons`: thay form trải dài bằng thanh tìm kiếm, danh mục chọn nhanh và bộ lọc phụ có thể thu gọn. Giữ đủ cửa hàng, loại ưu đãi, kênh dùng, sắp xếp, sắp hết hạn và phân trang. Thẻ có mức giảm/điều kiện/hạn dùng, xác minh thật, sao chép và lưu theo tài khoản; khách được dẫn tới đăng nhập.
+- HTML ban đầu và API tìm kiếm dùng chung `partials/community-coupon-results.php` và `community-coupon-card.php`. API giữ hợp đồng JSON hiện có, bổ sung `cardsHtml`; không dựng lại thẻ cũ bằng chuỗi JavaScript. Kết quả theo tài khoản có `Cache-Control: no-store` từ Response.
+- `/login`, `/login.php`, `/register`: dùng biểu mẫu trực tiếp trong `auth/page.php`, header chung và phần giới thiệu riêng. Bỏ màn hình chào/nút mở popup/auto-open Bootstrap khỏi trang Auth. Trang chủ vẫn giữ popup dùng cùng các form và JS, không tạo luồng xác thực mới. Liên kết quên mật khẩu đi tới `/forgot-password` hiện có; các nút OAuth chưa triển khai ghi rõ sắp ra mắt.
+- Bộ lọc phụ trang chủ thu vào “Tinh chỉnh ưu đãi”, tự mở nếu có lọc đang áp dụng. Danh mục và sắp xếp vẫn truy cập trực tiếp.
+- Thêm `api/index.php` làm điểm chuyển tiếp mỏng cho PHP built-in server khi thiếu router: URL `/api/coupons/search` vẫn đi qua front controller, Auth và CSRF. Đây là chỗ đã trả 404 trên server local hiện tại. Vẫn nên chạy server với `router.php` theo README để có đầy đủ quy tắc bảo vệ source.
+
+Đã kiểm tra PHP/JS syntax, Auth registration, session/role/CSRF, Router và 6 kiểm thử JS Auth. HTTP thật: khách, tìm theo từ khóa/danh mục, phân trang và kết quả rỗng; SSR/AJAX cùng mẫu thẻ; guest không có form lưu và request ghi bị chặn. Trình duyệt: đăng nhập tài khoản demo → tìm kiếm giữ đúng trạng thái đã lưu → đăng xuất → trang Auth trực tiếp; màn hình desktop và 390px cho đăng nhập/coupon. Không seed, không thay schema hoặc ghi coupon thử vào `_v2`.

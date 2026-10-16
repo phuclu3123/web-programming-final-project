@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
+namespace App\Contracts;
+
 /**
- * Contract between the Model layer and the database infrastructure.
- * Models depend on this interface instead of a concrete mysqli connection.
+ * Hợp đồng gọi stored procedure cho repository và guard.
+ * Có thể thay bằng dữ liệu giả trong kiểm tra mà không mở MySQL.
  */
 interface RoutineGateway
 {

@@ -1,4 +1,4 @@
 <?php
 declare(strict_types=1);
-require __DIR__ . '/app/bootstrap.php';
-runPage(AdminController::class);
+// Compatibility URL: xu ly qua front controller chung.
+require __DIR__ . '/index.php';

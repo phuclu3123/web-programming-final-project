@@ -1,0 +1,127 @@
+{
+  "photos": {
+    "shopping": {
+      "source": "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "food": {
+      "source": "https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "travel": {
+      "source": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "technology": {
+      "source": "https://images.unsplash.com/photo-1498049794561-7780e7231661",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "beauty": {
+      "source": "https://images.unsplash.com/photo-1596462502278-27bfdc403348",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "cinema": {
+      "source": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "living": {
+      "source": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "fashion": {
+      "source": "https://images.unsplash.com/photo-1483985988355-763728e1935b",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    },
+    "headphones-source": {
+      "source": "https://images.unsplash.com/photo-1546435770-a3e426bf472b",
+      "license": "https://unsplash.com/license",
+      "type": "photograph; CDN resize only"
+    }
+  },
+  "logos": {
+    "shopee": {
+      "website": "https://shopee.vn",
+      "source": "https://www.google.com/s2/favicons?domain=shopee.vn&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "lazada": {
+      "website": "https://lazada.vn",
+      "source": "https://img.lazcdn.com/g/tps/images/ims-web/TB1T7K2d8Cw3KVjSZFuXXcAOpXa.png",
+      "type": "official website wordmark; symbol cropped without recoloring",
+      "local_file": true
+    },
+    "grab": {
+      "website": "https://grab.com",
+      "source": "https://www.google.com/s2/favicons?domain=grab.com&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "be": {
+      "website": "https://be.com.vn",
+      "source": "https://www.google.com/s2/favicons?domain=be.com.vn&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "tiki": {
+      "website": "https://tiki.vn",
+      "source": "https://www.google.com/s2/favicons?domain=tiki.vn&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "shopeefood": {
+      "website": "https://shopeefood.vn",
+      "source": "https://shopeefood.vn/favicon.ico",
+      "type": "official website icon",
+      "local_file": true
+    },
+    "traveloka": {
+      "website": "https://traveloka.com",
+      "source": "https://www.google.com/s2/favicons?domain=traveloka.com&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "cgv": {
+      "website": "https://cgv.vn",
+      "source": "https://www.google.com/s2/favicons?domain=cgv.vn&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "hasaki": {
+      "website": "https://hasaki.vn",
+      "source": "https://www.google.com/s2/favicons?domain=hasaki.vn&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "fpt-shop": {
+      "website": "https://fptshop.com.vn",
+      "source": "https://www.google.com/s2/favicons?domain=fptshop.com.vn&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "coolmate": {
+      "website": "https://coolmate.me",
+      "source": "https://www.google.com/s2/favicons?domain=coolmate.me&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    },
+    "highlands": {
+      "website": "https://highlandscoffee.com.vn",
+      "source": "https://www.google.com/s2/favicons?domain=highlandscoffee.com.vn&sz=128",
+      "type": "website icon; trademark belongs to its owner",
+      "local_file": true
+    }
+  },
+  "derivatives": {
+    "headphones-cutout.webp": "Hand-traced alpha mask, Pillow; scripts/prepare_editorial_assets.py. No AI, inpainting, added product or generative fill.",
+    "*-card.webp": "Pillow center crop 720x480 of the original photograph."
+  }
+}

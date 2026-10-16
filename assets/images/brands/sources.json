@@ -1,0 +1,17 @@
+{
+  "reviewed_on": "2026-10-16",
+  "usage": "Brand-owned photography, referenced for the corresponding brand in this local CouponHub project. Source access is not a blanket redistribution or advertising licence. Retain attribution and review brand permissions before a commercial handoff.",
+  "allowed_domains": ["grab.com", "coolmate.me", "be.com.vn"],
+  "assets": [
+    {"key":"grab-bike","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabBike.jpg","context":"Mobility press photograph"},
+    {"key":"grab-car","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabCar.JPG","context":"Mobility press photograph"},
+    {"key":"grab-food","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood.jpg","context":"Food delivery press photograph"},
+    {"key":"grab-delivery","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood-delivery-partners.jpg","context":"Delivery partner press photograph"},
+    {"key":"coolmate-men","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_FW3459_2_2_copy.jpg?aio=w-1069","context":"Menswear collection photograph"},
+    {"key":"coolmate-women","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/FW3671_1_copy.jpg?aio=w-1069","context":"Womenswear collection photograph"},
+    {"key":"coolmate-autumn","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_thu_dong-desk_1.jpg","context":"Autumn collection image"},
+    {"key":"coolmate-sport","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_do_the_thao-desk.jpg","context":"Sportswear collection image"},
+    {"key":"be-food","brand":"be","page":"https://be.com.vn/","image_url":"https://imgmainsite.be.com.vn/2022/12/1684217f-weborder_1920x990-2.jpg","context":"Official food service banner; no offer claim imported"},
+    {"key":"be-ride","brand":"be","page":"https://be.com.vn/","image_url":"https://imgmainsite.be.com.vn/2022/09/da356ba9-1920x990-be-copy-1.png","context":"Official mobility service banner; no offer claim imported"}
+  ]
+}

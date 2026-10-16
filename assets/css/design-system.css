@@ -122,6 +122,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .site-nav a.active { box-shadow: none; }
 .site-nav a.active::after { opacity: 1; transform: scaleX(1); }
 .header-account { display: flex; align-items: center; }
+.header-account { gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+.account-name { max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 650; }
+.account-logout { display: inline-flex; margin: 0; }
+.app-account { gap: 12px; flex-wrap: wrap; }
+.app-account .account-logout button { font-size: 12px; }
 .header-account .btn { min-height: 38px; padding: 8px 14px; background: transparent; font-size: 12px; }
 
 /* Hero: the coupon is treated as the product. */

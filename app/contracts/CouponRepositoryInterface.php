@@ -1,26 +1,24 @@
 <?php
 declare(strict_types=1);
+namespace App\Contracts;
 
-/** Business operations required by the three CouponHub controllers. */
+
+/** Repository contract: services do not depend on a specific SQL driver. */
 interface CouponRepositoryInterface
 {
-    public function search(
-        string $query,
-        int $categoryId,
-        int $merchantId,
-        string $discountType,
-        string $usageChannel,
-        bool $endingSoon,
-        string $sort
-    ): array;
-
-    public function shop(int $userId): array;
-
-    public function create(int $userId, array $input): int;
-
-    public function admin(int $userId, string $status, int $selectedId): array;
-
-    public function approve(int $userId, int $couponId): void;
-
-    public function reject(int $userId, int $couponId, string $reason): void;
+    public function search(array $filters): array;
+    public function countPublicSearch(array $filters): int;
+    public function findPublic(int $id): ?array;
+    public function isActive(int $couponId): bool;
+    public function findBySubmitter(int $userId): array;
+    public function submitCommunity(int $actorId, array $data): int;
+    public function pendingForModeration(): array;
+    public function submitOfficial(int $actorId, array $data): int;
+    public function officialByOwner(int $userId): array;
+    public function findOwnedOfficialForEdit(int $couponId, int $userId): ?array;
+    public function updateOwnedOfficial(int $actorId, int $couponId, array $data): void;
+    public function disableOwnedOfficial(int $actorId, int $couponId): void;
+    public function eligibleForMerchantCampaign(int $merchantId, int $userId): array;
+    public function hotDeals(int $limit = 6): array;
+    public function moderate(int $actorId, int $couponId, string $moderation, string $publication, ?string $note): void;
 }

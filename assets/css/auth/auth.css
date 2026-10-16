@@ -1,0 +1,222 @@
+#loginModal {
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+/* Chỉnh chiều rộng popup */
+#loginModal .modal-dialog {
+    max-width: 610px;
+}
+
+#loginModal .modal-content {
+    border: 0;
+    border-radius: 24px;
+}
+
+/* Giữ khung popup trong chiều cao màn hình, cuộn nội dung dài. */
+#loginModal .modal-content {
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.auth-message {
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.auth-message[data-state="error"] {
+    color: #9f2534;
+    background: #fff0f2;
+    border-color: #f3c6cc;
+}
+
+.auth-message[data-state="success"] {
+    color: #146c55;
+    background: #eaf7f1;
+    border-color: #bde4d3;
+}
+
+#loginModal .login-input:has(input[aria-invalid="true"]) {
+    border-color: #c84959;
+}
+
+@media (max-width: 575.98px) {
+    #loginModal .modal-header,
+    #loginModal .modal-body {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    #loginModal .modal-title { font-size: 1.65rem !important; }
+    #loginModal .auth-close { top: 28px; right: 20px; }
+    #loginModal .login-input { gap: 8px !important; }
+    #loginModal .login-input input { font-size: 16px; }
+    #loginModal [data-password-toggle] { min-width: 28px; min-height: 40px; }
+}
+
+/* Nút đóng chung, dùng cho cả ba giao diện. */
+#loginModal .auth-close {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    z-index: 1;
+}
+
+#loginModal .login-brand {
+    color: #2855d9;
+    font-weight: 800;
+}
+
+#loginModal .form-control {
+    min-height: 48px;
+}
+
+#loginModal .btn-primary {
+    background-color: #2855d9;
+    border-color: #2855d9;
+}
+
+#loginModal .btn-primary:hover {
+    background-color: #1e43b0;
+}
+
+
+.login-input {
+    --auth-input-bg: #f5f5f7;
+    padding: 1px 1px;
+    background-color: var(--auth-input-bg);
+    border: 1px solid #e2e3e7;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-input:focus-within {
+    border-color: #8ea6dc;
+    box-shadow: 0 0 0 3px rgba(40, 85, 217, 0.08);
+}
+
+.login-input input {
+    font-size: 18px;
+    min-width: 0;
+}
+
+/* Đồng bộ nền tự điền của trình duyệt với cả khung nhập có icon.
+   !important cần thiết để ghi đè utility shadow-none của Bootstrap. */
+#loginModal .login-input input:is(:-webkit-autofill, :autofill) {
+    -webkit-box-shadow: 0 0 0 1000px var(--auth-input-bg) inset !important;
+    box-shadow: 0 0 0 1000px var(--auth-input-bg) inset !important;
+    -webkit-text-fill-color: var(--ink, #16171b);
+    caret-color: var(--ink, #16171b);
+}
+
+.login-input input::placeholder {
+    color: #91949d;
+}
+
+.login-btn {
+    background-color: #2855d9;
+    border: none;
+    padding: 16px 16px;
+}
+
+.login-btn:hover {
+    background-color: #1e43b0;
+    color: white;
+}
+
+.social-btn {
+    height: 50px;
+    background-color: #ffffff;
+    border: 1px solid #e2e3e7;
+    color: #303239;
+    transition: all 0.2s ease;
+}
+
+.social-btn:hover {
+    background-color: #eaf0ff;
+    border-color: #2855d9;
+    color: #303239;
+}
+
+/* Màu đồng bộ với assets/css/design-system.css của trang chủ.
+   Giữ nguyên các class Bootstrap và bố cục HTML. */
+#loginModal .modal-content {
+    background-color: var(--surface, #ffffff);
+    color: var(--ink, #16171b);
+}
+
+#loginModal .text-success {
+    color: var(--blue, #2855d9) !important;
+}
+
+#loginModal .text-secondary {
+    color: var(--muted, #6e717a) !important;
+}
+
+#loginModal .form-control {
+    color: var(--ink, #16171b);
+}
+
+#loginModal .btn-link {
+    color: var(--blue, #2855d9);
+}
+
+#loginModal .btn-link:hover {
+    color: var(--blue-dark, #1e43b0);
+}
+
+#loginModal .modal-header,
+#loginModal .border-top {
+    border-color: var(--line, #e2e3e7) !important;
+}
+
+/* Cùng biểu mẫu cho popup trang chủ và trang Auth trực tiếp. */
+#loginModal .modal-title { font-size: clamp(25px,2.5vw,32px) !important; letter-spacing: -.045em; line-height: 1.2; }
+#loginModal .modal-header { border-bottom: 0; padding-bottom: 8px; }
+#loginModal .modal-header p:first-child { font-size: 11px; font-weight: 750; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px !important; }
+#loginModal .modal-header p:last-child { font-size: 13px; margin-top: 10px; }
+#loginModal .form-label { font-size: 12px; font-weight: 650; }
+#loginModal .login-input { border-radius: 12px; background: #f8f9fb; --auth-input-bg: #f8f9fb; gap: 8px !important; }
+#loginModal .login-input input { font-size: 14px; min-height: 47px; }
+#loginModal .login-input i { font-size: 17px !important; }
+#loginModal .btn-link { min-height: 0; font-size: 12px; }
+#loginModal .login-btn { min-height: 46px; padding: 12px; border-radius: 12px !important; font-size: 13px; }
+#loginModal .social-btn { height: 44px; min-height: 44px; font-size: 12px; border-radius: 12px !important; }
+#loginModal .social-btn:disabled { opacity: .45; }
+#loginModal .modal-body .my-4 { margin-top: 20px !important; margin-bottom: 20px !important; font-size: 11px; }
+.auth-page { background: #f5f5f7; }
+.auth-stage { display: grid; grid-template-columns: minmax(0,1.05fr) minmax(0,1fr); gap: clamp(35px,6vw,88px); align-items: center; padding-top: 38px; padding-bottom: 50px; }
+.auth-story { position: relative; overflow: hidden; padding: clamp(28px,3.5vw,48px); border-radius: 28px; background: radial-gradient(ellipse at 100% 0,#334878,transparent 65%),#14223e; color: #fff; }
+.auth-story-kicker { display: flex; gap: 10px; align-items: center; color: #b6c9f6; font-size: 10px; letter-spacing: .1em; font-weight: 650; }
+.auth-story h2 { margin: 30px 0 20px; color: #fff; font-size: clamp(32px,3.8vw,48px); line-height: 1.13; letter-spacing: -.055em; }
+.auth-story h2 span { color: #afbeff; }
+.auth-story > p { color: #afbdd5; font-size: 13px; max-width: 360px; line-height: 1.85; }
+.auth-collection { margin-top: 32px; padding: 19px 22px; border: 1px solid #ffffff24; border-radius: 19px; background: linear-gradient(135deg,#ffffff16,#ffffff08); box-shadow: 0 20px 35px #00000012; transform: rotate(-2deg); }
+.auth-collection-heading { display: flex; gap: 10px; align-items: center; padding-bottom: 17px; font-size: 12px; }
+.auth-collection-dot { width: 7px; height: 7px; margin-left: auto; border-radius: 50%; background: #95c6ad; }
+.auth-collection-row { display: flex; align-items: center; gap: 12px; padding: 16px 0; border-top: 1px solid #ffffff15; }
+.auth-mini-icon { display: grid; place-items: center; width: 36px; height: 38px; border-radius: 10px; background: #ffffff12; color: #c6d4ff; }
+.auth-collection-row > div { display: grid; gap: 4px; }
+.auth-collection-row strong { font-size: 12px; font-weight: 600; }
+.auth-collection-row div span { color: #a9bad7; font-size: 10px; }
+.auth-collection-row > .icon { margin-left: auto; color: #a6d5c0; width: 14px; }
+.auth-collection-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding-top: 16px; border-top: 1px dashed #ffffff24; color: #aebee2; font-size: 10px; }
+.auth-story-foot { display: flex; align-items: center; gap: 12px; margin-top: 34px; color: #a7b8d5; font-size: 10px; line-height: 1.7; }
+#loginModal.auth-inline { width: 100%; max-width: 465px; margin: 0 auto; padding: 30px; border: 1px solid #e6e8ed; border-radius: 24px; background: #fff; backdrop-filter: none; }
+#loginModal.auth-inline .modal-header, #loginModal.auth-inline .modal-body { padding: 0; margin: 0 !important; }
+#loginModal.auth-inline .modal-header { padding-bottom: 27px; }
+#loginModal.auth-inline .modal-header > div { width: 100%; }
+.auth-legal { margin: 20px 0 0; padding-top: 20px; border-top: 1px solid var(--line); text-align: center; font-size: 11px; }
+.auth-legal a { color: var(--blue); text-decoration: none; white-space: nowrap; }
+.auth-legal .icon { width: 13px; height: 13px; vertical-align: middle; }
+.auth-page [data-auth-view="register"] .login-input { margin-bottom: 12px !important; }
+.auth-page [data-auth-view="register"] .form-text { font-size: 10px; }
+@media(max-width: 1000px) { .auth-stage { gap: 28px; } .auth-story { padding: 28px; } }
+@media(max-width: 760px) { .auth-stage { display: block; max-width: 540px; padding-top: 28px; } .auth-story { display: none; } #loginModal.auth-inline { padding: 26px; } }
+@media(max-width: 420px) { .auth-stage { padding-inline: 16px; } #loginModal.auth-inline { padding: 23px; border-radius: 19px; } #loginModal .login-input input { font-size: 16px; } }

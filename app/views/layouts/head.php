@@ -3,12 +3,26 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8">
+  <base href="<?= e(rtrim((string) config('app.base_url', ''), '/') . '/') ?>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="<?= e(\App\Core\Session::token()) ?>">
   <title><?= e($title) ?> · CouponHub</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="stylesheet" href="assets/css/design-system.css">
-  <script src="assets/js/app.js" defer></script>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/discovery.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/discovery.css') ?>">
+  <script src="<?= e(url('/assets/js/discovery.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/discovery.js') ?>" defer></script>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/member.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/member.css') ?>">
+  <script src="<?= e(url('/assets/js/member.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/member.js') ?>" defer></script>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/editorial.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/editorial.css') ?>">
+  <script src="<?= e(url('/assets/js/editorial.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/editorial.js') ?>" defer></script>
+  <script src="<?= e(url('/assets/js/hero-carousel.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/hero-carousel.js') ?>" defer></script>
+  <script src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/campaign-clock.js') ?>" defer></script>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/product.css') ?>">
+  <link rel="stylesheet" href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/release.css') ?>">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
+  <script src="assets/js/app.js?v=<?= filemtime(__DIR__ . '/../../../assets/js/app.js') ?>" defer></script>
 </head>
 <body data-page="<?= e($role) ?>" data-demo="<?= $demo ? 'true' : 'false' ?>">
 <a href="#main" class="skip-link">Đến nội dung chính</a>
