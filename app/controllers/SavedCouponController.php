@@ -62,15 +62,15 @@ final class SavedCouponController extends Controller
             $this->renderError(404, 'Coupon không hợp lệ.');
             return;
         }
-        $pdo = Database::connection();
-        $repo = new InteractionRepository($pdo);
+        $db = Database::connection();
+        $repo = new InteractionRepository($db);
         $userId = (int) Auth::id();
         if (!$repo->isFavorite($userId, (int) $couponId)) {
             Session::flash('info', 'Coupon này không còn trong danh sách đã lưu.');
             Response::redirect(url('/saved-coupons'));
         }
         try {
-            $service = new InteractionService($repo, new CouponRepository($pdo));
+            $service = new InteractionService($repo, new CouponRepository($db));
             $service->setFavorite($userId, (int) $couponId, false);
             Session::flash('success', 'Đã bỏ lưu coupon.');
         } catch (RuntimeException $e) {

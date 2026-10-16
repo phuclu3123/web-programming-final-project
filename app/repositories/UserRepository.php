@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use PDO;
+use App\Core\MysqliConnection;
 
 final class UserRepository
 {
-    public function __construct(private PDO $pdo)
+    public function __construct(private MysqliConnection $db)
     {
     }
 
     /** @return array<string,mixed>|null */
     public function findByEmail(string $email): ?array
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             'SELECT id, email, password_hash, full_name, avatar_path, role, status, auth_version, created_at, updated_at ' .
             'FROM users WHERE email = ? AND deleted_at IS NULL LIMIT 1'
         );
@@ -27,7 +27,7 @@ final class UserRepository
     /** @return array<string,mixed>|null */
     public function findById(int $id): ?array
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             'SELECT id, email, full_name, avatar_path, role, status, auth_version, created_at, updated_at ' .
             'FROM users WHERE id = ? AND deleted_at IS NULL LIMIT 1'
         );
@@ -38,24 +38,24 @@ final class UserRepository
 
     public function emailExists(string $email): bool
     {
-        $stmt = $this->pdo->prepare('SELECT 1 FROM users WHERE email = ? LIMIT 1');
+        $stmt = $this->db->prepare('SELECT 1 FROM users WHERE email = ? LIMIT 1');
         $stmt->execute([$email]);
         return (bool) $stmt->fetchColumn();
     }
 
     public function createUser(string $email, string $passwordHash, string $fullName): int
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             "INSERT INTO users (email, password_hash, full_name, role, status) VALUES (?, ?, ?, 'USER', 'ACTIVE')"
         );
         $stmt->execute([$email, $passwordHash, $fullName]);
-        return (int) $this->pdo->lastInsertId();
+        return (int) $this->db->lastInsertId();
     }
 
     /** @return array<string,mixed> */
     public function rewardSummary(int $userId): array
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             'SELECT ul.earned_points, ul.level_name, cs.submitted_count, cs.approved_count, cs.rejected_count ' .
             'FROM v_user_level ul JOIN v_contributor_stats cs ON cs.user_id = ul.user_id WHERE ul.user_id = ? LIMIT 1'
         );
@@ -74,7 +74,7 @@ final class UserRepository
             ];
         }
 
-        $next = $this->pdo->prepare(
+        $next = $this->db->prepare(
             'SELECT name, min_points FROM levels WHERE min_points > ? ORDER BY min_points ASC LIMIT 1'
         );
         $next->execute([(int) $row['earned_points']]);
@@ -89,7 +89,7 @@ final class UserRepository
     public function pointHistory(int $userId, int $limit = 10): array
     {
         $limit = max(1, min(50, $limit));
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             'SELECT p.id, p.points, p.rule_code, p.note, p.created_at, c.id AS coupon_id, c.title AS coupon_title ' .
             'FROM point_transactions p JOIN coupons c ON c.id = p.coupon_id ' .
             'WHERE p.user_id = ? ORDER BY p.created_at DESC, p.id DESC LIMIT ' . $limit

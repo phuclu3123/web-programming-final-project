@@ -21,9 +21,9 @@ final class CategoryController extends Controller
     private AdminService $service;
     public function __construct()
     {
-        $pdo = Database::connection();
-        $this->repo = new AdminRepository($pdo);
-        $this->service = new AdminService($this->repo, new CampaignRepository($pdo));
+        $db = Database::connection();
+        $this->repo = new AdminRepository($db);
+        $this->service = new AdminService($this->repo, new CampaignRepository($db));
     }
     public function index(Request $request): void
     {

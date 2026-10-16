@@ -23,9 +23,9 @@ final class ReportController extends Controller
 
     public function __construct()
     {
-        $pdo = Database::connection();
-        $this->reports = new InteractionRepository($pdo);
-        $this->service = new InteractionService($this->reports, new CouponRepository($pdo));
+        $db = Database::connection();
+        $this->reports = new InteractionRepository($db);
+        $this->service = new InteractionService($this->reports, new CouponRepository($db));
     }
 
     public function index(Request $request): void

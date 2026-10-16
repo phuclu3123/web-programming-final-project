@@ -30,12 +30,12 @@ final class CouponController extends Controller
 
     public function __construct()
     {
-        $pdo = Database::connection();
-        $this->coupons = new CouponRepository($pdo);
-        $this->categories = new CategoryRepository($pdo);
-        $this->merchants = new MerchantRepository($pdo);
+        $db = Database::connection();
+        $this->coupons = new CouponRepository($db);
+        $this->categories = new CategoryRepository($db);
+        $this->merchants = new MerchantRepository($db);
         $this->service = new CouponService($this->coupons);
-        $this->interactions = new InteractionService(new InteractionRepository($pdo), $this->coupons);
+        $this->interactions = new InteractionService(new InteractionRepository($db), $this->coupons);
     }
 
     public function index(Request $request): void

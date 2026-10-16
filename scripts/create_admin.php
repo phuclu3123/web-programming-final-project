@@ -42,8 +42,8 @@ if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($passw
     exit(1);
 }
 
-$pdo = Database::connection();
-$check = $pdo->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
+$db = Database::connection();
+$check = $db->prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
 $check->execute([$email]);
 if ($check->fetchColumn()) {
     fwrite(STDERR, "Email already exists.\n");
@@ -51,7 +51,7 @@ if ($check->fetchColumn()) {
 }
 
 $hash = password_hash($password, PASSWORD_DEFAULT);
-$stmt = $pdo->prepare("INSERT INTO users(email,password_hash,full_name,role,status) VALUES(?,?,?,'ADMIN','ACTIVE')");
+$stmt = $db->prepare("INSERT INTO users(email,password_hash,full_name,role,status) VALUES(?,?,?,'ADMIN','ACTIVE')");
 $stmt->execute([$email, $hash, $fullName]);
 
-echo 'Created ADMIN user #' . $pdo->lastInsertId() . PHP_EOL;
+echo 'Created ADMIN user #' . $db->lastInsertId() . PHP_EOL;

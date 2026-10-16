@@ -29,10 +29,10 @@ final class MerchantController extends Controller
 
     public function __construct()
     {
-        $pdo = Database::connection();
-        $this->merchants = new MerchantRepository($pdo);
-        $this->coupons = new CouponRepository($pdo);
-        $this->categories = new CategoryRepository($pdo);
+        $db = Database::connection();
+        $this->merchants = new MerchantRepository($db);
+        $this->coupons = new CouponRepository($db);
+        $this->categories = new CategoryRepository($db);
         $this->service = new MerchantService($this->merchants);
         $this->couponService = new CouponService($this->coupons);
     }

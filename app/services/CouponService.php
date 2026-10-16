@@ -8,7 +8,7 @@ use App\Core\ValidationException;
 use App\Repositories\CouponRepository;
 use DateTimeImmutable;
 use DateTimeZone;
-use PDOException;
+use mysqli_sql_exception;
 use RuntimeException;
 
 final class CouponService
@@ -61,7 +61,7 @@ final class CouponService
                 throw new RuntimeException('Không thể xác định coupon vừa tạo.');
             }
             return $couponId;
-        } catch (PDOException $e) {
+        } catch (mysqli_sql_exception $e) {
             $message = $e->getMessage();
             if (stripos($message, 'Duplicate code with overlapping validity') !== false) {
                 throw new RuntimeException('Mã coupon này đã tồn tại ở cùng Merchant và bị trùng khoảng thời gian sử dụng.');
@@ -87,7 +87,7 @@ final class CouponService
             $couponId = $this->coupons->submitOfficial($actorId, $data);
             if ($couponId <= 0) throw new RuntimeException('Không thể xác định coupon Official vừa tạo.');
             return $couponId;
-        } catch (PDOException $e) {
+        } catch (mysqli_sql_exception $e) {
             $message = $e->getMessage();
             if (stripos($message, 'Only approved merchant owner') !== false) {
                 throw new RuntimeException('Chỉ chủ Merchant đã được duyệt mới có thể tạo Official Deal.');
@@ -119,7 +119,7 @@ final class CouponService
 
         try {
             $this->coupons->moderate($actorId, $couponId, $moderation, $publication, $note);
-        } catch (PDOException $e) {
+        } catch (mysqli_sql_exception $e) {
             $message = $e->getMessage();
             if (stripos($message, 'Duplicate code with overlapping validity') !== false) {
                 throw new RuntimeException('Không thể duyệt vì mã coupon bị trùng trong cùng khoảng thời gian.');

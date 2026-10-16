@@ -28,15 +28,17 @@ final class Auth
                 );
                 $stmt->execute([(int) ($user['id'] ?? 0)]);
                 $fresh = $stmt->fetch();
-                if (!is_array($fresh) || (string) $fresh['status'] !== 'ACTIVE'
-                    || (int) ($user['auth_version'] ?? 0) !== (int) $fresh['auth_version']) {
+                if (
+                    !is_array($fresh) || (string) $fresh['status'] !== 'ACTIVE'
+                    || (int) ($user['auth_version'] ?? 0) !== (int) $fresh['auth_version']
+                ) {
                     Session::forget('auth_user');
                     return null;
                 }
-                if((string)$fresh['role']!=='ADMIN'){
-                    $membership=Database::connection()->prepare("SELECT 1 FROM merchant_memberships mm JOIN merchants m ON m.id=mm.merchant_id WHERE mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL LIMIT 1");
+                if ((string)$fresh['role'] !== 'ADMIN') {
+                    $membership = Database::connection()->prepare("SELECT 1 FROM merchant_memberships mm JOIN merchants m ON m.id=mm.merchant_id WHERE mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL LIMIT 1");
                     $membership->execute([(int)$fresh['id']]);
-                    $fresh['role']=$membership->fetchColumn()?'MERCHANT':'USER';
+                    $fresh['role'] = $membership->fetchColumn() ? 'MERCHANT' : 'USER';
                 }
                 $user = [
                     'id' => (int) $fresh['id'],

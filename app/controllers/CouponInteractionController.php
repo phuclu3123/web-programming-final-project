@@ -22,10 +22,10 @@ final class CouponInteractionController extends Controller
 
     public function __construct()
     {
-        $pdo = Database::connection();
+        $db = Database::connection();
         $this->service = new InteractionService(
-            new InteractionRepository($pdo),
-            new CouponRepository($pdo)
+            new InteractionRepository($db),
+            new CouponRepository($db)
         );
     }
 

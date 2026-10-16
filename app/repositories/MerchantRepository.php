@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Merchant;
-use PDO;
+use App\Core\MysqliConnection;
 use RuntimeException;
 
 final class MerchantRepository
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(private MysqliConnection $db) {}
 
     /** @return Merchant[] */
     public function availableForCommunitySubmission(): array
     {
-        $stmt = $this->pdo->query(
+        $stmt = $this->db->query(
             "SELECT id, name, slug, status FROM merchants " .
                 "WHERE deleted_at IS NULL AND status IN ('UNCLAIMED','PENDING','APPROVED') ORDER BY name ASC"
         );
@@ -25,7 +25,7 @@ final class MerchantRepository
     /** @return Merchant[] */
     public function publicFilterOptions(): array
     {
-        $stmt = $this->pdo->query(
+        $stmt = $this->db->query(
             "SELECT DISTINCT m.id, m.name, m.slug, m.status FROM merchants m " .
                 "JOIN v_coupon_status c ON c.merchant_id = m.id " .
                 "WHERE c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci ORDER BY m.name ASC"
@@ -36,13 +36,13 @@ final class MerchantRepository
     /** @return array<int,array<string,mixed>> */
     public function claimable(): array
     {
-        return $this->pdo->query("SELECT id,name,slug,website_url,status FROM merchants WHERE status IN ('UNCLAIMED','APPROVED') AND deleted_at IS NULL ORDER BY name ASC")->fetchAll();
+        return $this->db->query("SELECT id,name,slug,website_url,status FROM merchants WHERE status IN ('UNCLAIMED','APPROVED') AND deleted_at IS NULL ORDER BY name ASC")->fetchAll();
     }
 
     /** @return array<int,array<string,mixed>> */
     public function applicationsByUser(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT r.id,r.request_type,r.status,r.review_note,r.created_at,m.id AS merchant_id,m.name,m.slug FROM merchant_requests r JOIN merchants m ON m.id=r.merchant_id WHERE r.user_id=? ORDER BY r.created_at DESC,r.id DESC");
+        $stmt = $this->db->prepare("SELECT r.id,r.request_type,r.status,r.review_note,r.created_at,m.id AS merchant_id,m.name,m.slug FROM merchant_requests r JOIN merchants m ON m.id=r.merchant_id WHERE r.user_id=? ORDER BY r.created_at DESC,r.id DESC");
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
     }
@@ -50,7 +50,7 @@ final class MerchantRepository
     /** @return array<int,array<string,mixed>> */
     public function ownedApproved(int $userId): array
     {
-        $stmt = $this->pdo->prepare("SELECT m.id,m.name,m.slug,m.description,m.website_url,m.logo_path,m.status,m.created_at,m.updated_at FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id WHERE mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL ORDER BY m.name");
+        $stmt = $this->db->prepare("SELECT m.id,m.name,m.slug,m.description,m.website_url,m.logo_path,m.status,m.created_at,m.updated_at FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id WHERE mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL ORDER BY m.name");
         $stmt->execute([$userId]);
         return $stmt->fetchAll();
     }
@@ -58,7 +58,7 @@ final class MerchantRepository
     /** @return array<string,mixed>|null */
     public function findOwnedApproved(int $merchantId, int $userId): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT m.id,m.name,m.slug,m.description,m.website_url,m.logo_path,m.status,m.created_at,m.updated_at FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id WHERE m.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL LIMIT 1");
+        $stmt = $this->db->prepare("SELECT m.id,m.name,m.slug,m.description,m.website_url,m.logo_path,m.status,m.created_at,m.updated_at FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id WHERE m.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL LIMIT 1");
         $stmt->execute([$merchantId, $userId]);
         $row = $stmt->fetch();
         return is_array($row) ? $row : null;
@@ -67,40 +67,40 @@ final class MerchantRepository
     /** Reuses a registration transaction only for legacy callers. All new registrations use /merchant/apply. */
     public function requestClaim(int $userId, int $merchantId, ?string $evidence = null): void
     {
-        $this->pdo->beginTransaction();
+        $this->db->beginTransaction();
         try {
-            $stmt = $this->pdo->prepare("SELECT id,status FROM merchants WHERE id=? AND deleted_at IS NULL FOR UPDATE");
+            $stmt = $this->db->prepare("SELECT id,status FROM merchants WHERE id=? AND deleted_at IS NULL FOR UPDATE");
             $stmt->execute([$merchantId]);
             $shop = $stmt->fetch();
             if (!is_array($shop) || !in_array($shop['status'], ['APPROVED', 'UNCLAIMED'], true)) throw new RuntimeException('Shop không thể nhận yêu cầu quản lý.');
-            $check = $this->pdo->prepare("SELECT 1 FROM merchant_memberships WHERE merchant_id=? AND user_id=? AND status='ACTIVE' LIMIT 1");
+            $check = $this->db->prepare("SELECT 1 FROM merchant_memberships WHERE merchant_id=? AND user_id=? AND status='ACTIVE' LIMIT 1");
             $check->execute([$merchantId, $userId]);
             if ($check->fetchColumn()) throw new RuntimeException('Bạn đang quản lý Shop này.');
-            $check = $this->pdo->prepare("SELECT 1 FROM merchant_requests WHERE merchant_id=? AND user_id=? AND status='PENDING' LIMIT 1");
+            $check = $this->db->prepare("SELECT 1 FROM merchant_requests WHERE merchant_id=? AND user_id=? AND status='PENDING' LIMIT 1");
             $check->execute([$merchantId, $userId]);
             if ($check->fetchColumn()) throw new RuntimeException('Bạn đã gửi đơn đăng ký Shop này, vui lòng chờ duyệt.');
-            $stmt = $this->pdo->prepare("INSERT INTO merchant_requests(user_id,merchant_id,request_type,evidence_reference) VALUES(?,?,'JOIN',?)");
+            $stmt = $this->db->prepare("INSERT INTO merchant_requests(user_id,merchant_id,request_type,evidence_reference) VALUES(?,?,'JOIN',?)");
             $stmt->execute([$userId, $merchantId, $evidence]);
-            $this->pdo->commit();
+            $this->db->commit();
         } catch (\Throwable $e) {
-            if ($this->pdo->inTransaction()) $this->pdo->rollBack();
+            if ($this->db->inTransaction()) $this->db->rollBack();
             throw $e;
         }
     }
 
     public function requestNew(int $userId, string $name, string $slug, ?string $description, ?string $websiteUrl, ?string $evidence = null): int
     {
-        $this->pdo->beginTransaction();
+        $this->db->beginTransaction();
         try {
-            $stmt = $this->pdo->prepare("INSERT INTO merchants(owner_user_id,name,slug,description,website_url,status) VALUES(NULL,?,?,?,?,'PENDING')");
+            $stmt = $this->db->prepare("INSERT INTO merchants(owner_user_id,name,slug,description,website_url,status) VALUES(NULL,?,?,?,?,'PENDING')");
             $stmt->execute([$name, $slug, $description, $websiteUrl]);
-            $id = (int)$this->pdo->lastInsertId();
-            $request = $this->pdo->prepare("INSERT INTO merchant_requests(user_id,merchant_id,request_type,evidence_reference) VALUES(?,?,'CREATE',?)");
+            $id = (int)$this->db->lastInsertId();
+            $request = $this->db->prepare("INSERT INTO merchant_requests(user_id,merchant_id,request_type,evidence_reference) VALUES(?,?,'CREATE',?)");
             $request->execute([$userId, $id, $evidence]);
-            $this->pdo->commit();
+            $this->db->commit();
             return $id;
         } catch (\Throwable $e) {
-            if ($this->pdo->inTransaction()) $this->pdo->rollBack();
+            if ($this->db->inTransaction()) $this->db->rollBack();
             throw $e;
         }
     }
@@ -108,14 +108,14 @@ final class MerchantRepository
     public function updateProfile(int $merchantId, int $userId, string $name, ?string $description, ?string $websiteUrl): void
     {
         if ($this->findOwnedApproved($merchantId, $userId) === null) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
-        $stmt = $this->pdo->prepare('UPDATE merchants SET name=?,description=?,website_url=? WHERE id=?');
+        $stmt = $this->db->prepare('UPDATE merchants SET name=?,description=?,website_url=? WHERE id=?');
         $stmt->execute([$name, $description, $websiteUrl, $merchantId]);
     }
 
     /** @return array<string,int> */
     public function stats(int $actorId, int $merchantId): array
     {
-        $stmt = $this->pdo->prepare('CALL sp_merchant_stats(?, ?)');
+        $stmt = $this->db->prepare('CALL sp_merchant_stats(?, ?)');
         $stmt->execute([$actorId, $merchantId]);
         $coupon = $stmt->fetch() ?: [];
         $stmt->nextRowset();
@@ -145,6 +145,6 @@ final class MerchantRepository
             "FROM merchants m JOIN v_coupon_status c ON c.merchant_id=m.id " .
             "WHERE m.deleted_at IS NULL AND c.effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci " .
             "GROUP BY m.id,m.name,m.slug ORDER BY active_coupon_count DESC,m.name ASC LIMIT " . $limit;
-        return $this->pdo->query($sql)->fetchAll();
+        return $this->db->query($sql)->fetchAll();
     }
 }

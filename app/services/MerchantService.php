@@ -37,7 +37,7 @@ final class MerchantService
         if ($slug === '') throw new RuntimeException('Không thể tạo slug cho Merchant.');
         try {
             $this->merchants->requestNew($userId, $name, $slug, $description !== '' ? $description : null, $website !== '' ? $website : null, $evidence !== '' ? $evidence : null);
-        } catch (\PDOException $e) {
+        } catch (\mysqli_sql_exception $e) {
             if (stripos($e->getMessage(), 'Duplicate') !== false) throw new RuntimeException('Merchant/slug này đã tồn tại. Hãy dùng chức năng nhận quyền sở hữu nếu phù hợp.');
             throw $e;
         }

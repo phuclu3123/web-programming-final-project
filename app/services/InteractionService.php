@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Repositories\CouponRepository;
 use App\Repositories\InteractionRepository;
-use PDOException;
+use mysqli_sql_exception;
 use RuntimeException;
 
 final class InteractionService
@@ -45,7 +45,7 @@ final class InteractionService
 
         try {
             $this->interactions->setFavorite($actorId, $couponId, $saved);
-        } catch (PDOException $e) {
+        } catch (mysqli_sql_exception $e) {
             throw new RuntimeException($this->businessMessage($e, 'Không thể cập nhật coupon đã lưu.'));
         }
 
@@ -66,7 +66,7 @@ final class InteractionService
 
         try {
             $this->interactions->setVote($actorId, $couponId, $vote);
-        } catch (PDOException $e) {
+        } catch (mysqli_sql_exception $e) {
             throw new RuntimeException($this->businessMessage($e, 'Không thể cập nhật xác nhận coupon.'));
         }
 
@@ -125,7 +125,7 @@ final class InteractionService
 
         try {
             $this->interactions->resolveReport($actorId, $reportId, $action, $note);
-        } catch (PDOException $e) {
+        } catch (mysqli_sql_exception $e) {
             throw new RuntimeException($this->businessMessage($e, 'Không thể xử lý báo cáo.'));
         }
     }
@@ -152,7 +152,7 @@ final class InteractionService
         }
     }
 
-    private function businessMessage(PDOException $e, string $fallback): string
+    private function businessMessage(mysqli_sql_exception $e, string $fallback): string
     {
         $message = $e->getMessage();
         $map = [

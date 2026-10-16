@@ -22,9 +22,9 @@ final class CampaignController extends Controller
     private CampaignService $service;
     public function __construct()
     {
-        $pdo = Database::connection();
-        $this->admin = new AdminRepository($pdo);
-        $this->campaigns = new CampaignRepository($pdo);
+        $db = Database::connection();
+        $this->admin = new AdminRepository($db);
+        $this->campaigns = new CampaignRepository($db);
         $this->service = new CampaignService($this->campaigns);
     }
     public function index(Request $request): void

@@ -31,12 +31,12 @@ final class AuthController extends Controller
 
     public function __construct()
     {
-        $pdo = Database::connection();
-        $this->auth = new AuthService(new UserRepository($pdo));
-        $this->merchants = new MerchantRepository($pdo);
-        $this->passwordResets = new PasswordResetService(new UserRepository($pdo), new PasswordResetRepository($pdo), new SmtpMailService());
+        $db = Database::connection();
+        $this->auth = new AuthService(new UserRepository($db));
+        $this->merchants = new MerchantRepository($db);
+        $this->passwordResets = new PasswordResetService(new UserRepository($db), new PasswordResetRepository($db), new SmtpMailService());
         $this->registration = new RegistrationService(
-            $pdo,
+            $db,
             $this->auth,
             new MerchantService($this->merchants)
         );
@@ -99,7 +99,9 @@ final class AuthController extends Controller
         }
         $this->setResetHeaders();
         $this->view('auth/forgot-password', [
-            'pageTitle' => 'Quên mật khẩu', 'errors' => [], 'old' => []
+            'pageTitle' => 'Quên mật khẩu',
+            'errors' => [],
+            'old' => []
         ]);
     }
 
@@ -114,7 +116,8 @@ final class AuthController extends Controller
         if (strlen($email) > 191 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $this->view('auth/forgot-password', [
                 'pageTitle' => 'Quên mật khẩu',
-                'errors' => ['email' => 'Email không hợp lệ.'], 'old' => ['email' => $email]
+                'errors' => ['email' => 'Email không hợp lệ.'],
+                'old' => ['email' => $email]
             ]);
             return;
         }
@@ -145,8 +148,10 @@ final class AuthController extends Controller
             $valid = false;
         }
         $this->view('auth/reset-password', [
-            'pageTitle' => 'Đặt lại mật khẩu', 'valid' => $valid,
-            'token' => $valid ? $token : '', 'errors' => []
+            'pageTitle' => 'Đặt lại mật khẩu',
+            'valid' => $valid,
+            'token' => $valid ? $token : '',
+            'errors' => []
         ]);
     }
 
@@ -185,8 +190,10 @@ final class AuthController extends Controller
             $valid = false;
         }
         $this->view('auth/reset-password', [
-            'pageTitle' => 'Đặt lại mật khẩu', 'valid' => $valid,
-            'token' => $valid ? $token : '', 'errors' => $errors
+            'pageTitle' => 'Đặt lại mật khẩu',
+            'valid' => $valid,
+            'token' => $valid ? $token : '',
+            'errors' => $errors
         ]);
     }
 
@@ -240,7 +247,10 @@ final class AuthController extends Controller
 
         try {
             $this->registration->register([
-                'full_name'=>$fullName, 'email'=>$email, 'password'=>$password, 'account_type'=>'user'
+                'full_name' => $fullName,
+                'email' => $email,
+                'password' => $password,
+                'account_type' => 'user'
             ]);
             Session::flash('success', 'Tạo tài khoản thành công. Vui lòng đăng nhập.');
             Response::redirect(url('/register'));

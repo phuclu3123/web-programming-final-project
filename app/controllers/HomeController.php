@@ -21,10 +21,10 @@ final class HomeController extends Controller
 {
     public function index(Request $request): void
     {
-        $pdo = Database::connection();
-        $campaigns = new CampaignRepository($pdo);
-        $coupons = new CouponRepository($pdo);
-        $merchants = new MerchantRepository($pdo);
+        $db = Database::connection();
+        $campaigns = new CampaignRepository($db);
+        $coupons = new CouponRepository($db);
+        $merchants = new MerchantRepository($db);
 
         $this->view('home/index', [
             'pageTitle' => 'CouponHub',
@@ -32,7 +32,7 @@ final class HomeController extends Controller
             'upcomingCampaigns' => $campaigns->publicUpcoming(4),
             'hotDeals' => $coupons->hotDeals(6),
             'popularMerchants' => $merchants->popular(6),
-            'recentArticles' => (new ArticleRepository($pdo))->published(3),
+            'recentArticles' => (new ArticleRepository($db))->published(3),
         ]);
     }
 
@@ -53,9 +53,9 @@ final class HomeController extends Controller
     public function apiHealth(Request $request): void
     {
         try {
-            $pdo = Database::connection();
-            $pdo->query('SELECT 1')->fetchColumn();
-            $collation = $pdo->query('SELECT @@collation_connection')->fetchColumn();
+            $db = Database::connection();
+            $db->query('SELECT 1')->fetchColumn();
+            $collation = $db->query('SELECT @@collation_connection')->fetchColumn();
             Response::json([
                 'success' => true,
                 'data' => [

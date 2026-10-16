@@ -35,8 +35,8 @@ $merchants = [
     ['CGV', 'cgv'],
 ];
 
-$pdo = Database::connection();
-$stmt = $pdo->prepare(
+$db = Database::connection();
+$stmt = $db->prepare(
     "INSERT INTO merchants(name, slug, status) " .
         "SELECT ?, ?, 'UNCLAIMED' WHERE NOT EXISTS (SELECT 1 FROM merchants WHERE slug = ?)"
 );

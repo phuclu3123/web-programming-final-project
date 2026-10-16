@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use PDO;
+use App\Core\MysqliConnection;
 use RuntimeException;
 
 final class AdminRepository
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(private MysqliConnection $db) {}
 
     /** @return array<string,int> */
     public function dashboardStats(): array
@@ -26,14 +26,14 @@ final class AdminRepository
             'published_campaigns' => "SELECT COUNT(*) FROM campaigns WHERE status='PUBLISHED' AND ends_at>UTC_TIMESTAMP()",
         ];
         $out = [];
-        foreach ($queries as $key => $sql) $out[$key] = (int) $this->pdo->query($sql)->fetchColumn();
+        foreach ($queries as $key => $sql) $out[$key] = (int) $this->db->query($sql)->fetchColumn();
         return $out;
     }
 
     /** @return array<int,array<string,mixed>> */
     public function users(): array
     {
-        return $this->pdo->query(
+        return $this->db->query(
             "SELECT u.id,u.full_name,u.email,u.role,u.status,u.created_at,COALESCE(v.earned_points,0) AS points " .
                 "FROM users u LEFT JOIN v_user_points v ON v.user_id=u.id WHERE u.deleted_at IS NULL ORDER BY u.created_at DESC,u.id DESC"
         )->fetchAll();
@@ -43,7 +43,7 @@ final class AdminRepository
     {
         if ($actorId === $userId) throw new RuntimeException('Admin không thể tự khóa chính mình.');
         if (!in_array($status, ['ACTIVE', 'LOCKED'], true)) throw new RuntimeException('Trạng thái User không hợp lệ.');
-        $stmt = $this->pdo->prepare('UPDATE users SET status=? WHERE id=? AND deleted_at IS NULL');
+        $stmt = $this->db->prepare('UPDATE users SET status=? WHERE id=? AND deleted_at IS NULL');
         $stmt->execute([$status, $userId]);
         if ($stmt->rowCount() === 0) throw new RuntimeException('Không tìm thấy User.');
     }
@@ -51,7 +51,7 @@ final class AdminRepository
     /** @return array<int,array<string,mixed>> */
     public function merchants(): array
     {
-        return $this->pdo->query(
+        return $this->db->query(
             "SELECT m.id,m.name,m.slug,m.website_url,m.status,m.review_note,m.created_at,u.id AS owner_id,u.full_name AS owner_name,u.email AS owner_email " .
                 "FROM merchants m LEFT JOIN users u ON u.id=m.owner_user_id WHERE m.deleted_at IS NULL ORDER BY FIELD(m.status,'PENDING','APPROVED','UNCLAIMED','REJECTED','LOCKED'),m.created_at DESC"
         )->fetchAll();
@@ -67,7 +67,7 @@ final class AdminRepository
         if (!in_array($action, ['LOCK', 'UNLOCK'], true)) throw new RuntimeException('Hành động không hợp lệ.');
         $current = $action === 'LOCK' ? 'APPROVED' : 'LOCKED';
         $next = $action === 'LOCK' ? 'LOCKED' : 'APPROVED';
-        $stmt = $this->pdo->prepare('UPDATE merchants SET status=?,reviewed_by=?,reviewed_at=UTC_TIMESTAMP() WHERE id=? AND status=? AND deleted_at IS NULL');
+        $stmt = $this->db->prepare('UPDATE merchants SET status=?,reviewed_by=?,reviewed_at=UTC_TIMESTAMP() WHERE id=? AND status=? AND deleted_at IS NULL');
         $stmt->execute([$next, $actorId, $merchantId, $current]);
         if ($stmt->rowCount() !== 1) throw new RuntimeException('Trạng thái Shop không phù hợp hoặc không tìm thấy Shop.');
     }
@@ -75,26 +75,26 @@ final class AdminRepository
     /** @return array<int,array<string,mixed>> */
     public function categories(): array
     {
-        return $this->pdo->query('SELECT id,name,slug,description,is_active,sort_order,created_at FROM categories ORDER BY sort_order,name')->fetchAll();
+        return $this->db->query('SELECT id,name,slug,description,is_active,sort_order,created_at FROM categories ORDER BY sort_order,name')->fetchAll();
     }
 
     public function addCategory(int $actorId, string $name, string $slug, ?string $description): void
     {
-        $stmt = $this->pdo->prepare('CALL sp_add_category(?, ?, ?, ?)');
+        $stmt = $this->db->prepare('CALL sp_add_category(?, ?, ?, ?)');
         $stmt->execute([$actorId, $name, $slug, $description]);
         $stmt->closeCursor();
     }
 
     public function toggleCategory(int $categoryId, bool $active): void
     {
-        $stmt = $this->pdo->prepare('UPDATE categories SET is_active=? WHERE id=?');
+        $stmt = $this->db->prepare('UPDATE categories SET is_active=? WHERE id=?');
         $stmt->execute([$active ? 1 : 0, $categoryId]);
     }
 
     /** @return array<int,array<string,mixed>> */
     public function campaigns(): array
     {
-        return $this->pdo->query(
+        return $this->db->query(
             "SELECT c.*,m.name AS merchant_name,u.full_name AS creator_name,(SELECT COUNT(*) FROM campaign_coupons cc WHERE cc.campaign_id=c.id) AS coupon_count " .
                 "FROM campaigns c LEFT JOIN merchants m ON m.id=c.owner_merchant_id JOIN users u ON u.id=c.created_by ORDER BY c.created_at DESC,c.id DESC"
         )->fetchAll();
@@ -103,7 +103,7 @@ final class AdminRepository
     public function setCampaignStatus(int $campaignId, string $status): void
     {
         if (!in_array($status, ['DRAFT', 'PUBLISHED', 'DISABLED', 'ARCHIVED'], true)) throw new RuntimeException('Trạng thái Campaign không hợp lệ.');
-        $stmt = $this->pdo->prepare('UPDATE campaigns SET status=? WHERE id=?');
+        $stmt = $this->db->prepare('UPDATE campaigns SET status=? WHERE id=?');
         $stmt->execute([$status, $campaignId]);
     }
 }

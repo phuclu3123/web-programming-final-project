@@ -25,10 +25,10 @@ final class CampaignController extends Controller
 
     public function __construct()
     {
-        $pdo = Database::connection();
-        $this->campaigns = new CampaignRepository($pdo);
-        $this->merchants = new MerchantRepository($pdo);
-        $this->coupons = new CouponRepository($pdo);
+        $db = Database::connection();
+        $this->campaigns = new CampaignRepository($db);
+        $this->merchants = new MerchantRepository($db);
+        $this->coupons = new CouponRepository($db);
         $this->service = new CampaignService($this->campaigns);
     }
 

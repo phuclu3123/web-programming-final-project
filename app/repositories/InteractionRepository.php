@@ -4,24 +4,24 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use PDO;
+use App\Core\MysqliConnection;
 use RuntimeException;
 use Throwable;
 
 final class InteractionRepository
 {
-    public function __construct(private PDO $pdo) {}
+    public function __construct(private MysqliConnection $db) {}
 
     public function setFavorite(int $actorId, int $couponId, bool $saved): void
     {
-        $stmt = $this->pdo->prepare('CALL sp_set_favorite(?, ?, ?)');
+        $stmt = $this->db->prepare('CALL sp_set_favorite(?, ?, ?)');
         $stmt->execute([$actorId, $couponId, $saved ? 1 : 0]);
         $stmt->closeCursor();
     }
 
     public function setVote(int $actorId, int $couponId, string $vote): void
     {
-        $stmt = $this->pdo->prepare('CALL sp_set_vote(?, ?, ?)');
+        $stmt = $this->db->prepare('CALL sp_set_vote(?, ?, ?)');
         $stmt->execute([$actorId, $couponId, $vote]);
         $stmt->closeCursor();
     }
@@ -32,7 +32,7 @@ final class InteractionRepository
      */
     public function voteRestriction(int $actorId, int $couponId): ?string
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             "SELECT CASE " .
                 "WHEN c.submitted_by = ? THEN 'AUTHOR' " .
                 "WHEN EXISTS (" .
@@ -49,14 +49,14 @@ final class InteractionRepository
 
     public function isFavorite(int $actorId, int $couponId): bool
     {
-        $stmt = $this->pdo->prepare('SELECT 1 FROM favorites WHERE user_id = ? AND coupon_id = ? LIMIT 1');
+        $stmt = $this->db->prepare('SELECT 1 FROM favorites WHERE user_id = ? AND coupon_id = ? LIMIT 1');
         $stmt->execute([$actorId, $couponId]);
         return (bool) $stmt->fetchColumn();
     }
 
     public function currentVote(int $actorId, int $couponId): ?string
     {
-        $stmt = $this->pdo->prepare('SELECT vote_type FROM votes WHERE user_id = ? AND coupon_id = ? LIMIT 1');
+        $stmt = $this->db->prepare('SELECT vote_type FROM votes WHERE user_id = ? AND coupon_id = ? LIMIT 1');
         $stmt->execute([$actorId, $couponId]);
         $value = $stmt->fetchColumn();
         return is_string($value) ? $value : null;
@@ -65,7 +65,7 @@ final class InteractionRepository
     /** @return array<string,mixed> */
     public function stats(int $couponId): array
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             'SELECT s.working_count, s.not_working_count, s.condition_changed_count, s.total_votes, s.trust_score, s.last_verification_at, ' .
                 'fs.total_favorites AS favorite_count,fs.qualified_favorites ' .
                 'FROM v_coupon_vote_stats s JOIN v_coupon_favorite_stats fs ON fs.coupon_id=s.coupon_id WHERE s.coupon_id = ? LIMIT 1'
@@ -88,7 +88,7 @@ final class InteractionRepository
     public function comments(int $couponId, int $limit = 50): array
     {
         $limit = max(1, min(100, $limit));
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->db->prepare(
             'SELECT c.id, c.body, c.created_at, c.updated_at, u.id AS user_id, u.full_name ' .
                 'FROM comments c JOIN users u ON u.id = c.user_id ' .
                 "WHERE c.coupon_id = ? AND c.status = 'VISIBLE' AND u.deleted_at IS NULL " .
@@ -102,7 +102,7 @@ final class InteractionRepository
     public function addComment(int $actorId, int $couponId, string $body): array
     {
         try {
-            $this->pdo->beginTransaction();
+            $this->db->beginTransaction();
 
             if (!$this->activeUserExists($actorId)) {
                 throw new RuntimeException('Tài khoản không còn hoạt động.');
@@ -111,16 +111,16 @@ final class InteractionRepository
                 throw new RuntimeException('Coupon phải đang hoạt động để bình luận.');
             }
 
-            $stmt = $this->pdo->prepare('INSERT INTO comments(coupon_id, user_id, body) VALUES(?, ?, ?)');
+            $stmt = $this->db->prepare('INSERT INTO comments(coupon_id, user_id, body) VALUES(?, ?, ?)');
             $stmt->execute([$couponId, $actorId, $body]);
-            $commentId = (int) $this->pdo->lastInsertId();
+            $commentId = (int) $this->db->lastInsertId();
 
-            $log = $this->pdo->prepare("INSERT INTO activity_logs(user_id, coupon_id, action) VALUES(?, ?, 'COMMENT_ADD')");
+            $log = $this->db->prepare("INSERT INTO activity_logs(user_id, coupon_id, action) VALUES(?, ?, 'COMMENT_ADD')");
             $log->execute([$actorId, $couponId]);
 
-            $this->pdo->commit();
+            $this->db->commit();
 
-            $fetch = $this->pdo->prepare(
+            $fetch = $this->db->prepare(
                 'SELECT c.id, c.body, c.created_at, c.updated_at, u.id AS user_id, u.full_name ' .
                     'FROM comments c JOIN users u ON u.id = c.user_id WHERE c.id = ? LIMIT 1'
             );
@@ -131,8 +131,8 @@ final class InteractionRepository
             }
             return $row;
         } catch (Throwable $e) {
-            if ($this->pdo->inTransaction()) {
-                $this->pdo->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
             }
             throw $e;
         }
@@ -141,10 +141,10 @@ final class InteractionRepository
     public function createReport(int $actorId, int $couponId, string $reason, ?string $details): int
     {
         try {
-            $this->pdo->beginTransaction();
+            $this->db->beginTransaction();
 
             // Lock the coupon row first so duplicate/open-report checks are stable.
-            $lock = $this->pdo->prepare('SELECT id FROM coupons WHERE id = ? AND deleted_at IS NULL FOR UPDATE');
+            $lock = $this->db->prepare('SELECT id FROM coupons WHERE id = ? AND deleted_at IS NULL FOR UPDATE');
             $lock->execute([$couponId]);
             if (!$lock->fetchColumn()) {
                 throw new RuntimeException('Không tìm thấy coupon để báo cáo.');
@@ -156,7 +156,7 @@ final class InteractionRepository
                 throw new RuntimeException('Coupon hiện không ở trạng thái có thể báo cáo.');
             }
 
-            $duplicate = $this->pdo->prepare(
+            $duplicate = $this->db->prepare(
                 "SELECT id FROM reports WHERE coupon_id = ? AND reported_by = ? AND status = 'OPEN' LIMIT 1"
             );
             $duplicate->execute([$couponId, $actorId]);
@@ -164,22 +164,22 @@ final class InteractionRepository
                 throw new RuntimeException('Bạn đã có một báo cáo đang chờ xử lý cho coupon này.');
             }
 
-            $stmt = $this->pdo->prepare(
+            $stmt = $this->db->prepare(
                 'INSERT INTO reports(coupon_id, reported_by, reason, details) VALUES(?, ?, ?, ?)'
             );
             $stmt->execute([$couponId, $actorId, $reason, $details]);
-            $reportId = (int) $this->pdo->lastInsertId();
+            $reportId = (int) $this->db->lastInsertId();
 
-            $log = $this->pdo->prepare(
+            $log = $this->db->prepare(
                 "INSERT INTO activity_logs(user_id, coupon_id, action, description) VALUES(?, ?, 'REPORT_CREATE', ?)"
             );
             $log->execute([$actorId, $couponId, $reason]);
 
-            $this->pdo->commit();
+            $this->db->commit();
             return $reportId;
         } catch (Throwable $e) {
-            if ($this->pdo->inTransaction()) {
-                $this->pdo->rollBack();
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
             }
             throw $e;
         }
@@ -195,26 +195,26 @@ final class InteractionRepository
             "JOIN merchants m ON m.id = c.merchant_id " .
             "JOIN users u ON u.id = r.reported_by " .
             "WHERE r.status = 'OPEN' ORDER BY r.created_at ASC, r.id ASC";
-        return $this->pdo->query($sql)->fetchAll();
+        return $this->db->query($sql)->fetchAll();
     }
 
     public function resolveReport(int $actorId, int $reportId, string $status, string $note): void
     {
-        $stmt = $this->pdo->prepare('CALL sp_resolve_report(?, ?, ?, ?)');
+        $stmt = $this->db->prepare('CALL sp_resolve_report(?, ?, ?, ?)');
         $stmt->execute([$actorId, $reportId, $status, $note]);
         $stmt->closeCursor();
     }
 
     private function activeUserExists(int $userId): bool
     {
-        $stmt = $this->pdo->prepare("SELECT 1 FROM users WHERE id = ? AND status = 'ACTIVE' AND deleted_at IS NULL LIMIT 1");
+        $stmt = $this->db->prepare("SELECT 1 FROM users WHERE id = ? AND status = 'ACTIVE' AND deleted_at IS NULL LIMIT 1");
         $stmt->execute([$userId]);
         return (bool) $stmt->fetchColumn();
     }
 
     private function activeCouponExists(int $couponId): bool
     {
-        $stmt = $this->pdo->prepare("SELECT 1 FROM v_coupon_status WHERE id = ? AND effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci LIMIT 1");
+        $stmt = $this->db->prepare("SELECT 1 FROM v_coupon_status WHERE id = ? AND effective_status COLLATE utf8mb4_unicode_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_unicode_ci LIMIT 1");
         $stmt->execute([$couponId]);
         return (bool) $stmt->fetchColumn();
     }
