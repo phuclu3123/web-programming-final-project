@@ -1,6 +1,7 @@
 -- ---- COUPONHUB: BẢN CÀI ĐẶT DATABASE DUY NHẤT ----
 -- Chỉ import một lần vào database mới, trống đã chọn trong phpMyAdmin.
 -- Đủ 21 bảng, 6 view, 21 procedure; không có tài khoản hoặc dữ liệu mẫu.
+-- Muốn có tài khoản/shop/coupon thử: import demo.sql riêng SAU schema.sql.
 -- Quy ước văn bản: utf8mb4 / utf8mb4_vietnamese_ci; thời gian lưu UTC.
 -- Mã token/hash/ID kỹ thuật dùng VARBINARY để so sánh chính xác từng byte.
 -- Database đang chạy đầy đủ không cần import lại. Xem README.md và RULES.md.

@@ -24,7 +24,8 @@ Token/hash, request key và ID provider là **mã kỹ thuật**, dùng `VARBINA
 ## 2. Một nguồn SQL chuẩn
 
 - `database/schema.sql` chứa đủ cấu trúc và procedure cho cài mới. Sửa trực tiếp file này khi cập nhật source; không sửa một bản dump khác rồi bỏ quên schema chuẩn.
-- Không commit thêm dump phpMyAdmin có tài khoản, dữ liệu thử, mật khẩu, token hoặc `DEFINER=root@localhost`.
+- Không commit dump phpMyAdmin chứa tài khoản/dữ liệu cá nhân, mật khẩu thật, token hoặc `DEFINER=root@localhost`.
+- `database/demo.sql` là bộ dữ liệu thử được yêu cầu riêng: chỉ danh tính giả từ fixture, mật khẩu hash, coupon ghi rõ DEMO. Giữ tách khỏi schema; không xuất database đang dùng để làm demo. Import sau schema vào database chưa có dữ liệu.
 - Không hardcode tên database/máy cá nhân bằng `USE ...` trong bản cài. Người import chọn database đích trước.
 - Không thêm file theo tên người thực hiện như `quang-*.sql`, nhiều bản `_v2`, `_final`, `_fix` có nội dung chồng nhau.
 - Khi cần thay đổi database đã có dữ liệu, gửi script cập nhật có phạm vi rõ ràng cùng thay đổi source. Không dùng schema cài mới để cập nhật tại chỗ.
@@ -49,7 +50,7 @@ Token/hash, request key và ID provider là **mã kỹ thuật**, dùng `VARBINA
 - Session/role dùng chung `App\Core\Session` và `App\Core\Auth`; định danh phiên là `user_id`.
 - Role/status/owner phải lấy và kiểm tra ở server. Không tin hidden input hoặc role từ JS.
 - Quyền quản lý shop dựa vào membership ACTIVE và trạng thái shop; không chỉ kiểm tra `owner_user_id`.
-- Mật khẩu lưu bằng `password_hash`, kiểm tra bằng `password_verify`; không lưu plaintext hay đưa dữ liệu tài khoản vào SQL nguồn.
+- Mật khẩu lưu bằng `password_hash`, kiểm tra bằng `password_verify`; không lưu plaintext hay đưa dữ liệu tài khoản thật vào SQL nguồn. Tài khoản giả trong demo.sql dùng hash; thông tin đăng nhập thử công khai nằm trong docs/DEMO_DATA.md.
 - Provider hiện tại là **Google và GitHub**. Không tự đổi sang Facebook hoặc thêm một luồng Auth độc lập.
 
 ## 6. Thời gian và cấu hình máy
@@ -61,6 +62,7 @@ Token/hash, request key và ID provider là **mã kỹ thuật**, dùng `VARBINA
 ## 7. Trước khi bàn giao để tổng hợp
 
 1. Import `schema.sql` vào database thử **mới, trống** để xác nhận source tự cài được.
+   Nếu gửi dữ liệu mẫu, import tiếp `demo.sql`, xác nhận đăng nhập/quyền shop, ngày hiệu lực và kiểm tra import lặp không đổi dữ liệu. Bộ kiểm tra có sẵn: `tests/sql-install.py`.
 2. Thử các truy vấn/routine bị ảnh hưởng bằng mysqli; chạy bộ kiểm tra liên quan, gồm dữ liệu sai và sai quyền khi có thay đổi nghiệp vụ.
 3. Kiểm tra alias/cột trả về khớp repository; giữ các tập kết quả của routine trang chủ/shop/Admin.
 4. Ghi rõ bảng/routine thay đổi, ảnh hưởng dữ liệu và script cập nhật nếu cần. Không tự chạy DDL hàng loạt lên database của thành viên khác.

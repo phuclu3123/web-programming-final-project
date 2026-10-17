@@ -22,7 +22,7 @@ CouponHub_UI/
 │   ├── models/                Đối tượng dữ liệu Category, Merchant
 │   └── views/                 PHP template, layout và partial giao diện
 ├── config/                    App, database, mail, OAuth và routes
-├── database/                  Một schema.sql đầy đủ, README và RULES
+├── database/                  schema.sql cấu trúc, demo.sql dữ liệu thử, README và RULES
 ├── assets/                    CSS/JS/icon của giao diện hiện tại
 ├── public/                    Asset của các module tích hợp
 ├── storage/                   Dữ liệu runtime của ứng dụng
@@ -109,7 +109,7 @@ Các kiểm tra phía server vẫn bắt buộc dù JS đã kiểm tra dữ li�
 - `CatalogRepository` phục vụ danh sách/bộ lọc và form shop/duyệt coupon hiện tại. `CouponRepository` phục vụ module coupon có tìm kiếm phân trang, chi tiết và đóng góp. Hai phần dùng chung bảng/kết nối; không có hai database.
 - Transaction giữ tại repository thực hiện một thao tác dữ liệu cần tính nguyên tử. Giữ nguyên procedure và quy tắc transaction đã có trong lần sắp xếp này.
 
-Bản cài đặt duy nhất là `database/schema.sql` (bảng + view + procedure). Xem [cách cài](../database/README.md) và [quy ước database](../database/RULES.md). Database đang hoạt động đầy đủ không cần import lại.
+Bản cài đặt cấu trúc duy nhất là `database/schema.sql` (bảng + view + procedure); `database/demo.sql` là dữ liệu thử tùy chọn, import riêng sau schema. Xem [cách cài](../database/README.md) và [quy ước database](../database/RULES.md). Database đang hoạt động đầy đủ không cần import lại.
 
 ## 6. Những lớp trung gian đã bỏ
 

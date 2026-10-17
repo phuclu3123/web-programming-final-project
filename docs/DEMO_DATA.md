@@ -1,6 +1,8 @@
 # Tài khoản và dữ liệu chạy thử
 
-Database local: **`dbcouponshubweb_v2`**. Dữ liệu được tạo qua AuthService, quy trình đăng ký/duyệt shop, CouponService và repository hiện có; dùng chung session, role, membership, lịch sử kiểm duyệt và quy tắc điểm của ứng dụng.
+Để cài trên máy mới, import **`database/schema.sql` trước, `database/demo.sql` sau** trong database mới, trống. Xem [hướng dẫn import](../database/README.md). Tên database tùy máy; máy hiện tại dùng `dbcouponshubweb_v2` đã có dữ liệu, không cần import lại.
+
+Bộ SQL được tạo từ fixture qua AuthService, quy trình đăng ký/duyệt shop, CouponService và repository trên database thử riêng; giữ đúng session, role, membership, lịch sử kiểm duyệt và quy tắc điểm của ứng dụng.
 
 ## Đăng nhập
 
@@ -41,7 +43,13 @@ Mỗi shop có yêu cầu CREATE đã được Admin duyệt, trạng thái APPR
 
 **Tất cả mã có tiền tố `DEMO_`, tiêu đề có `[DEMO]` và điều kiện ghi rõ chỉ dùng thử. Các mức giảm là tình huống minh họa, không phải mã có thể đổi trên Shopee/Lazada/Grab hoặc nền tảng thật.** Mã đang hoạt động có hiệu lực khoảng 90 ngày tính từ lúc nạp; riêng hai mã sắp hết hạn là 3 và 5 ngày. Khi hết hạn, hệ thống xử lý theo thời gian thật.
 
-## Nạp trên máy local
+## Import demo.sql — cách gửi cho nhóm
+
+Chọn database đã import schema và chưa có dữ liệu trong phpMyAdmin, rồi import `database/demo.sql`. Không cần chạy PHP CLI. Ngày hiệu lực được tính tương đối theo UTC lúc import; tài khoản và mật khẩu giữ như bảng trên. File từ chối nạp nếu có dữ liệu trong bất kỳ bảng nào, không ghi đè dữ liệu cũ; lỗi giữa chừng rollback toàn bộ INSERT.
+
+Gửi nhóm hai file SQL cùng hướng dẫn này. Không dùng demo.sql để cập nhật database đã có dữ liệu, và không chạy thêm seed_demo.php sau khi đã import thành công.
+
+## Công cụ CLI — lựa chọn dành cho người phát triển
 
 Sau khi đã import `database/schema.sql` vào database trống và cấu hình kết nối, chạy tại thư mục `CouponHub_UI`:
 
@@ -49,10 +57,10 @@ Sau khi đã import `database/schema.sql` vào database trống và cấu hình 
 C:\xampp\php\php.exe scripts/seed_demo.php --confirm-demo
 ```
 
-Lệnh chỉ chấp nhận host local và database `dbcouponshubweb_v2` (hoặc `couponhub_merge_test` để kiểm thử cô lập). Không import thêm SQL mẫu. Công cụ CLI này không xóa database, bảng hoặc dữ liệu.
+Đây là lựa chọn thay thế demo.sql, không phải bước tiếp theo. Lệnh chỉ chấp nhận host local và database `dbcouponshubweb_v2` (hoặc `couponhub_merge_test` để kiểm thử cô lập). Công cụ CLI này không xóa database, bảng hoặc dữ liệu.
 
 Danh tính cố định theo username/email, slug shop/danh mục và mã coupon. Chạy lại trên bộ dữ liệu còn nguyên sẽ không tạo trùng. Các bản ghi đã có được giữ nguyên: không reset mật khẩu, nội dung, lịch hiệu lực hay trạng thái đã sửa. Các mục mẫu còn thiếu có thể được thêm lại, kể cả tương tác mẫu đã xóa; vì vậy chỉ chạy khi cần khởi tạo/bổ sung bộ demo, không chạy tự động mỗi lần mở web. Nếu gặp lỗi giữa chừng, dừng và kiểm tra lỗi trước khi chạy tiếp; các bước nghiệp vụ có transaction riêng, toàn bộ lệnh seed không phải một transaction duy nhất.
 
 Riêng coupon lịch sử đã hết hạn được tạo hợp lệ rồi đặt lại mốc thời gian trên chính bản ghi mới và lịch sử của nó. Form gửi mã thật vẫn giữ quy tắc không cho gửi coupon hết hạn. Không tạo OAuth giả, token reset giả hoặc dữ liệu xác minh doanh nghiệp thật.
 
-Fixture nằm tại `scripts/demo_fixture.php`, công cụ nạp tại `scripts/seed_demo.php`. Muốn điều chỉnh bộ mẫu cho lần cài mới, sửa fixture; không nhét INSERT dữ liệu cá nhân vào `database/schema.sql`.
+Fixture nằm tại `scripts/demo_fixture.php`, công cụ nạp tại `scripts/seed_demo.php`. Muốn điều chỉnh bộ mẫu cho lần cài mới, sửa fixture và cập nhật demo.sql từ database thử sạch, rồi chạy `tests/sql-install.py`; không xuất dữ liệu cá nhân hay nhét seed vào `database/schema.sql`.

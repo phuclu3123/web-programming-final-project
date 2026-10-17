@@ -1,48 +1,57 @@
 # Database CouponHub
 
-Thư mục này chỉ giữ ba file:
+Hai file SQL có mục đích riêng:
 
-```text
-database/
-├── schema.sql    Bản cài đặt đầy đủ: bảng, index, khóa ngoại, view và procedure
-├── README.md     Hướng dẫn sử dụng
-└── RULES.md      Quy ước chung cho Quang và cả nhóm
+| File | Nội dung | Thứ tự import |
+|---|---|---|
+| [schema.sql](schema.sql) | Toàn bộ cấu trúc: 21 bảng, index, khóa ngoại, 6 view, 21 procedure | 1 — bắt buộc trên database mới, trống |
+| [demo.sql](demo.sql) | Tài khoản thử, shop, coupon, chiến dịch và tương tác mẫu | 2 — tùy chọn, sau schema, khi các bảng còn trống |
+
+`schema.sql` **không chứa dữ liệu demo**. Các INSERT/UPDATE/DELETE trong procedure chỉ chạy khi ứng dụng gọi nghiệp vụ tương ứng. `demo.sql` không thay cấu trúc hay logic backend/API.
+
+## Cài trên máy mới bằng phpMyAdmin
+
+1. Tạo một database **mới, trống**, chọn `utf8mb4_vietnamese_ci`. Tên database tùy máy.
+2. Chọn database vừa tạo → **Import → schema.sql → Go**.
+3. Muốn có dữ liệu dùng thử ngay: vẫn chọn database đó → **Import → demo.sql → Go**. Chỉ nạp một lần.
+4. Cấu hình kết nối bằng biến môi trường `COUPONHUB_HOST`, `COUPONHUB_PORT`, `COUPONHUB_DB`, `COUPONHUB_USER`, `COUPONHUB_PASSWORD`, hoặc `config/local.php` (không commit file này). Mặc định nằm tại `config/database.php`; cấu hình local ưu tiên hơn biến môi trường.
+5. Mở web và đăng nhập bằng [tài khoản demo](../docs/DEMO_DATA.md).
+
+SQL không hardcode `USE`, không tạo/xóa database và không tắt khóa ngoại. Tất cả thời gian lưu UTC; ứng dụng hiển thị giờ Việt Nam. Bản cài đã kiểm tra trên **MariaDB 10.4.32 / PHP 8.1 với mysqli (XAMPP)**; chưa xác nhận trên mọi phiên bản MySQL/MariaDB khác.
+
+## Dữ liệu trong demo.sql
+
+- **6 tài khoản**: 1 Admin, 3 Merchant, 2 User; email giả `.test`, mật khẩu bcrypt.
+- **12 shop**, 12 membership và yêu cầu shop đã duyệt, 8 danh mục.
+- **32 coupon**: 26 đang hoạt động, 1 sắp bắt đầu, 1 hết hạn, 2 chờ duyệt, 1 bị từ chối, 1 tạm tắt. Mã bị từ chối có publication DISABLED theo nghiệp vụ hiện tại.
+- **2 chiến dịch**, 10 liên kết coupon; 6 lượt lưu, 6 bình chọn, 4 bình luận, 2 báo cáo.
+- **4 cấp độ**, 3 quy tắc điểm, 2 giao dịch điểm cùng lịch sử kiểm duyệt/hoạt động.
+
+Mốc thời gian được tính lại từ lúc import: phần lớn mã có hiệu lực khoảng 90 ngày, hai mã sắp hết hạn còn khoảng 3/5 ngày, mã sắp bắt đầu sau khoảng 7 ngày. Không phải thay ngày thủ công khi gửi file vào dịp khác.
+
+Mọi coupon có `DEMO_`/`[DEMO]`, không dùng thanh toán thật. Bộ SQL được tạo từ fixture trên database thử riêng, **không xuất dữ liệu của database đang dùng**. Không có tài khoản OAuth hay token đặt lại mật khẩu. Bảng `articles` để trống; nội dung hướng dẫn có sẵn của ứng dụng vẫn hoạt động, không cần tạo bài viết giả.
+
+Tên đăng nhập, mật khẩu và phân quyền shop nằm tại [docs/DEMO_DATA.md](../docs/DEMO_DATA.md). Đây là tài khoản thử có mật khẩu công khai; không dùng nguyên bộ demo cho môi trường công khai.
+
+## Database đã có dữ liệu
+
+**Không import lại schema.sql**: đây là bản cài mới, không phải migration. Máy đang chạy `dbcouponshubweb_v2` đã có cấu trúc/dữ liệu, không cần nạp hai file này.
+
+`demo.sql` kiểm tra cả 21 bảng và từ chối nạp nếu bất kỳ bảng nào đã có dữ liệu. Mọi INSERT nằm trong một transaction; lỗi giữa chừng sẽ rollback toàn bộ dữ liệu demo, không ghi đè tài khoản hay mật khẩu có sẵn. Không nạp thêm bằng CLI sau khi đã import demo.sql.
+
+File demo dùng procedure tạm `couponhub_install_demo`, được xóa sau khi nạp thành công. Nếu công cụ CLI dừng ngay khi báo lỗi, procedure này có thể còn lại; sau khi kiểm tra lỗi có thể dọn bằng `DROP PROCEDURE IF EXISTS couponhub_install_demo;`. Không xóa dữ liệu để cố import lên database đang sử dụng.
+
+Nếu chỉ cài schema để phát triển với dữ liệu riêng, tạo User qua form đăng ký, Admin qua `scripts/create_admin.php`; chủ động cấu hình danh mục, cấp độ và quy tắc điểm trước khi dùng nghiệp vụ tương ứng. Có bảng `oauth_accounts` không đồng nghĩa đã bật đăng nhập OAuth thật.
+
+## Kiểm tra và phát triển
+
+[RULES.md](RULES.md) là quy ước chung. `schema.sql` là nguồn chuẩn duy nhất cho cấu trúc cài mới; `demo.sql` chỉ là bộ dữ liệu thử riêng. Khi đổi schema, cập nhật fixture và bộ demo tương ứng; không thêm nhiều bản dump `_final`, `_fix`, `_v2` song song.
+
+Kiểm tra bàn giao SQL (chỉ database thử `couponhub_merge_test` trên `127.0.0.1:13379`, không đọc cấu hình kết nối của web):
+
+```powershell
+$env:COUPONHUB_RUN_DB_TEST='1'
+python tests/sql-install.py
 ```
 
-## Database đang chạy
-
-Máy hiện tại dùng **`dbcouponshubweb_v2`**, cấu hình tại `config/database.php`. Database này đã cài đủ **21 bảng, 6 view, 21 procedure** với charset `utf8mb4`, collation `utf8mb4_vietnamese_ci`.
-
-**Không cần import lại.** Database cũ `dbcouponshubweb` đã được xóa theo yêu cầu; ứng dụng dùng `_v2`, đã nạp 6 tài khoản, 12 shop và 32 coupon thử nghiệm theo luồng nghiệp vụ hiện có. Xem [tài khoản, mật khẩu và bộ dữ liệu mẫu](../docs/DEMO_DATA.md).
-
-## Cài trên máy mới
-
-1. Trong phpMyAdmin, tạo một database **mới, trống**, chọn `utf8mb4_vietnamese_ci`.
-2. Chọn database vừa tạo → **Import → chọn `schema.sql` → Go**.
-3. Cấu hình `COUPONHUB_DB` hoặc `config/local.php` để ứng dụng trỏ tới database đó. Cấu hình mặc định của dự án nằm ở `config/database.php`.
-4. Mở trang web và thử đăng ký, đăng nhập.
-
-Chỉ import **một file `schema.sql`**, không còn thứ tự import nhiều file. Bản cài đặt không có `DROP TABLE`, không xóa database cũ và không kèm tài khoản/coupon mẫu. Không import lên database đã có bảng: đây là bản cài mới, không phải script cập nhật dữ liệu.
-
-`schema.sql` chứa các phần có chú thích riêng: cấu trúc bảng/index/FK, view, nghiệp vụ coupon, đăng ký, đăng nhập, guard, dữ liệu trang chủ/shop/Admin và thao tác từ form. Các lệnh INSERT/UPDATE/DELETE bên trong procedure chỉ chạy khi ứng dụng gọi procedure tương ứng, không tự tạo dữ liệu khi import.
-
-## Dữ liệu khởi tạo
-
-- Tài khoản thường có thể tạo qua form đăng ký.
-- Tài khoản Admin có thể tạo bằng công cụ CLI `scripts/create_admin.php` với thông tin bạn chọn.
-- Danh mục, cấp độ, quy tắc điểm, shop và coupon cần dữ liệu cấu hình/thử nghiệm phù hợp. Chúng không được seed vào bản cài này.
-- Muốn nạp bộ thử nghiệm trên máy mới sau khi import schema, dùng `scripts/seed_demo.php --confirm-demo` theo [DEMO_DATA.md](../docs/DEMO_DATA.md). Bộ này tách khỏi schema cài mới; máy hiện tại đã nạp xong, không cần chạy lại.
-- `oauth_accounts` chuẩn bị cho Google/GitHub; luồng OAuth thật vẫn cần phần đổi token/xác minh danh tính. Có bảng không đồng nghĩa đã bật đăng nhập OAuth.
-
-## Khi phát triển tiếp
-
-`schema.sql` là **nguồn chuẩn duy nhất cho cài đặt mới**. Đọc [RULES.md](RULES.md) trước khi thay schema/routine. Khi cần nâng cấp database có dữ liệu, chuẩn bị script cập nhật riêng cho thay đổi cụ thể; không chạy lại bản cài mới hoặc tạo thêm nhiều bản dump song song.
-
-Các thư mục `routines/`, `migrations/`, `quang-reference/`, bản dump cũ, manifest và công cụ sinh hotfix đã bỏ khỏi repository. Bản sao trước khi dọn nằm trong thư mục `.integration/` của workspace, ngoài repository, để khôi phục khi cần.
-
-## Hai lỗi đã gặp
-
-- **Illegal mix of collations:** biểu thức/column/parameter dùng các collation khác nhau. Quy ước hiện tại thống nhất `utf8mb4_vietnamese_ci` trong kết nối và SQL.
-- **InnoDB #1932:** MySQL không mở được bảng trong engine. Đây là vấn đề khác collation; không sửa bằng việc import lại hoặc CONVERT bảng hàng loạt. Database cũ đã gặp lỗi này; ứng dụng hiện dùng database mới.
-
-`utf8mb4_unicode_ci` là một collation hợp lệ, hỗ trợ văn bản Unicode. Vấn đề trong lần tích hợp là **không thống nhất cấu hình**, không phải bản thân collation đó sai hoặc đủ cơ sở kết luận lỗi do một thành viên.
+Lệnh **tạo lại database thử này**; cần chuẩn bị MariaDB riêng trên cổng 13379, Python và PHP/mysqli. Nó kiểm tra đủ object, import tách biệt, đăng nhập/quyền demo, từ chối import lặp và rollback khi gặp lỗi ràng buộc. Có thể truyền `--mysql` và `--php` để đổi đường dẫn executable. Không chạy trên database của thành viên khác.

@@ -7,7 +7,7 @@ Kiến trúc hiện tại và quy ước phát triển: [docs/ARCHITECTURE.md](d
 Đã tích hợp thủ công `origin/Quang` tại `cc8a2d8`, giữ UI/Auth hiện tại và dùng **mysqli** cho toàn dự án. MVC, abstract controller, repository/interface và session được dùng chung.
 
 - [Báo cáo đối chiếu, kiến trúc, phần đã ghép và kiểm thử](docs/INTEGRATION_QUANG.md).
-- [Cài database bằng một file SQL](database/README.md): chỉ import `database/schema.sql` vào database mới, trống.
+- [Cài database và dữ liệu thử](database/README.md): import `database/schema.sql` vào database mới, trống; tùy chọn import tiếp `database/demo.sql` để có tài khoản, shop và coupon demo.
 - [Quy ước database dành cho Quang và cả nhóm](database/RULES.md).
 - [Phần tích hợp chọn lọc nhánh Trúc và các kiểm tra](docs/INTEGRATION_TRUC.md).
 - [Hướng dẫn Auth trước khi tích hợp](docs/AUTH_PHASE1.md): đọc cùng báo cáo mới vì vị trí endpoint và schema đã được thống nhất lại.
