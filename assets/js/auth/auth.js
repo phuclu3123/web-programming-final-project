@@ -277,7 +277,7 @@
                 // ---- REDIRECT (BỔ SUNG): PHP chọn trang theo role/return_url ----
                 const destination = new URL(
                     result.redirect || "index.php",
-                    window.location.href,
+                    document.baseURI || window.location.href,
                 );
                 if (destination.origin !== window.location.origin) {
                     throw new Error("Invalid redirect origin");

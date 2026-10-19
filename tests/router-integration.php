@@ -30,5 +30,19 @@ foreach ($router->routes() as $route) {
 checkRoute(Auth::safeReturn('/admin/users', 'ADMIN') === '/admin/users', 'Admin routed return');
 checkRoute(Auth::safeReturn('/admin/users', 'USER') === 'index.php', 'User cannot return to Admin');
 checkRoute(Auth::safeReturn('//evil.example/admin', 'ADMIN') !== '//evil.example/admin', 'no external return');
+// Login targets must work at the host root and under a deployment folder.
+$initialBase = config('app.base_url', '');
+foreach (['', '/CouponHub_UI', 'http://localhost:8000/CouponHub_UI'] as $base) {
+    App\Core\App::init(['app' => ['base_url' => $base]]);
+    checkRoute(url(Auth::safeReturn('', 'ADMIN')) === $base . '/admin', 'Admin center with deployment base');
+    checkRoute(url(Auth::safeReturn('', 'MERCHANT')) === $base . '/merchant', 'Merchant center with deployment base');
+    checkRoute(url(Auth::safeReturn('', 'USER')) === $base . '/index.php', 'User home with deployment base');
+    checkRoute(Auth::safeReturn('/CouponHub_UI/admin/users?status=ACTIVE', 'ADMIN') === ($base ? '/admin/users?status=ACTIVE' : '/admin'), 'prefixed return normalized once');
+    checkRoute(Auth::safeReturn('/admin/reports', 'MERCHANT') === '/merchant', 'Merchant cannot return to Admin');
+    checkRoute(Auth::safeReturn('/merchant/coupons', 'ADMIN') === '/admin', 'Admin cannot acquire Merchant rights');
+    checkRoute(Auth::safeReturn('shop.php', 'USER') === 'index.php', 'User cannot return to legacy Shop');
+    checkRoute(Auth::safeReturn('admin.php?section=reports', 'ADMIN') === '/admin/reports', 'legacy Admin section goes to current module');
+}
+App\Core\App::init(['app' => ['base_url' => $initialBase]]);
 // JSON/redirect responses end the request; HTTP checks exercise their guard policies.
 echo "PASS: route reflection, parameter matching and shared Request.\n";

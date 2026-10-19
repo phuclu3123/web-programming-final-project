@@ -6,7 +6,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '../assets/js/auth/auth.js'), 'utf8');
 
-function setup(fetchResult, active = 'login') {
+function setup(fetchResult, active = 'login', location = 'http://localhost:8000/login.php', baseURI = location) {
     const input = (id, name, type, value, autocomplete = '') => ({
         id, name, type, value, autocomplete, required: type !== 'hidden', maxLength: -1,
         validity: { typeMismatch: false }, attrs: {},
@@ -49,8 +49,8 @@ function setup(fetchResult, active = 'login') {
         addEventListener() {}, setAttribute() {},
     };
     vm.runInNewContext(source, {
-        document: { getElementById() { return modal; } }, URL, TextEncoder,
-        window: { location: { href: 'http://localhost:8000/login.php', origin: 'http://localhost:8000', assign(url) { destinations.push(url); } } },
+        document: { baseURI, getElementById() { return modal; } }, URL, TextEncoder,
+        window: { location: { href: location, origin: new URL(location).origin, assign(url) { destinations.push(url); } } },
         FormData: class { constructor(form) { this.fields = Object.fromEntries(form.inputs.map(i => [i.name, i.value])); } },
         fetch: async (url, options) => { requests.push({ url, options }); return fetchResult(); },
     });
@@ -80,6 +80,18 @@ test('server errors, failed JSON and network failure leave inline feedback and u
         assert.equal(app.forms[0].message.dataset.state, 'error');
         assert.equal(app.forms[0].button.disabled, false);
         assert.equal(app.destinations.length, 0);
+    }
+});
+test('login from homepage without trailing slash and nested pages keeps the app folder', async () => {
+    for (const page of ['http://localhost:8000/CouponHub_UI', 'http://localhost:8000/CouponHub_UI/coupons/12']) {
+        for (const destination of ['/CouponHub_UI/admin', '/CouponHub_UI/merchant', '/CouponHub_UI/index.php']) {
+            const app = setup(() => response({ success: true, redirect: destination }), 'login', page, 'http://localhost:8000/CouponHub_UI/');
+            await app.submit(0);
+            assert.deepEqual(app.destinations, ['http://localhost:8000' + destination]);
+        }
+        const fallback = setup(() => response({ success: true }), 'login', page, 'http://localhost:8000/CouponHub_UI/');
+        await fallback.submit(0);
+        assert.deepEqual(fallback.destinations, ['http://localhost:8000/CouponHub_UI/index.php']);
     }
 });
 test('external redirect is not followed', async () => {

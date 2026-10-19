@@ -34,7 +34,7 @@ assert c.request('/login',{},method='PUT')[0]==405
 assert c.request('/missing-page')[0]==404
 assert c.request('/api/login.php',{'account':'test_user','password':'NewTestPass!123'})[0]==403
 print('PASS guest guards, source protection, method/CSRF/404 policies')
-user=Client();result=user.login('user','NewTestPass!123');assert result['redirect']=='index.php'
+user=Client();result=user.login('user','NewTestPass!123');assert result['redirect']=='/index.php'
 for path in ['/dashboard','/saved-coupons','/my-coupons','/merchant/apply','/coupons/create']:
  s,h,b=user.request(path);assert s==200,(path,s,b[:200])
 assert user.request('/admin')[0]==403

@@ -29,7 +29,7 @@ final class Auth
     // ---- ĐIỀU HƯỚNG: chỉ nhận trang nội bộ đã biết, không open redirect ----
     public static function home(string $role): string
     {
-        return match ($role) { 'ADMIN' => 'admin.php?section=dashboard', 'MERCHANT' => 'shop.php', default => 'index.php' };
+        return match ($role) { 'ADMIN' => '/admin', 'MERCHANT' => '/merchant', default => 'index.php' };
     }
 
     public static function safeReturn(string $url, string $role): string
@@ -38,19 +38,29 @@ final class Auth
         if ($url === '' || strlen($url) > 2000 || preg_match('/[\x00-\x20\\\\]/', $url)) return $fallback;
         $parts = parse_url($url);
         if (!$parts || isset($parts['scheme']) || isset($parts['host']) || isset($parts['user'])) return $fallback;
-        $allowed = ['index.php'];
-        if ($role === 'ADMIN') $allowed[] = 'admin.php';
-        if ($role === 'MERCHANT') $allowed[] = 'shop.php';
-        if (in_array($parts['path'] ?? '', $allowed, true)) return $url;
-        // Route mới của Quang: vẫn chỉ nhận đường nội bộ, cùng base path.
+        // Return app-relative paths; the HTTP controller adds the deployment base once.
         $path = $parts['path'] ?? '';
         $base = parse_url((string) config('app.base_url', ''), PHP_URL_PATH) ?: '';
         if ($base !== '' && str_starts_with($path, rtrim($base, '/') . '/')) $path = substr($path, strlen(rtrim($base, '/')));
+        $suffix = isset($parts['query']) ? '?' . $parts['query'] : '';
+        $suffix .= isset($parts['fragment']) ? '#' . $parts['fragment'] : '';
+        if (in_array($path, ['index.php', '/index.php', '/'], true)) return 'index.php' . $suffix;
+        // Old bookmarks/return parameters must lead to the same current centers.
+        if (in_array($path, ['admin.php', '/admin.php'], true)) {
+            if ($role !== 'ADMIN') return $fallback;
+            parse_str($parts['query'] ?? '', $query);
+            $section = $query['section'] ?? 'dashboard';
+            $sections = ['users','merchants','merchant-requests','categories','coupons','campaigns','reports','articles'];
+            $target = is_string($section) && in_array($section, $sections, true) ? '/admin/' . $section : '/admin';
+            unset($query['section']);
+            return $target . ($query ? '?' . http_build_query($query) : '') . (isset($parts['fragment']) ? '#' . $parts['fragment'] : '');
+        }
+        if (in_array($path, ['shop.php', '/shop.php'], true)) return $role === 'MERCHANT' ? '/merchant' . $suffix : $fallback;
         if (!str_starts_with($path, '/') || str_starts_with($path, '//') || str_contains($path, '%')) return $fallback;
         $public = preg_match('~\A/(?:dashboard|my-coupons|saved-coupons|categories|coupons(?:/[0-9]+|/create)?|campaigns(?:/[0-9]+)?|articles(?:/[A-Za-z0-9_-]+)?|portal|campaign-calendar|about|terms|privacy|community-guidelines|contact)\z~', $path);
         $merchant = preg_match('~\A/merchant(?:/apply|/coupons(?:/create|/[0-9]+/edit)?|/campaigns(?:/create|/[0-9]+(?:/edit)?)?|/profile/[0-9]+)?\z~', $path);
         $admin = preg_match('~\A/admin(?:/(?:users|merchants|merchant-requests|categories|coupons|campaigns(?:/[0-9]+)?|reports|articles(?:/create|/[0-9]+/edit)?))?\z~', $path);
-        return $public || ($merchant && ($role === 'MERCHANT' || $path === '/merchant/apply')) || ($admin && $role === 'ADMIN') ? $url : $fallback;
+        return $public || ($merchant && ($role === 'MERCHANT' || $path === '/merchant/apply')) || ($admin && $role === 'ADMIN') ? $path . $suffix : $fallback;
     }
 
     public static function check(): bool { return self::user() !== null; }

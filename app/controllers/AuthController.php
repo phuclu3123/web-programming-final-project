@@ -42,9 +42,11 @@ final class AuthController extends Controller
         $account = $request->input('account', $request->input('email', ''));
         if (!is_string($account)) throw new HttpError(400, 'Tài khoản không hợp lệ.');
         $result = $this->authService()->login($account, $this->field($request, 'password'), $this->field($request, 'return_url'));
+        // JSON and regular forms receive the same URL, including the deployment folder.
+        if ($result['success']) $result['redirect'] = url($result['redirect']);
         if ($request->expectsJson()) Response::json($result, $result['success'] ? 200 : 422);
         if (!$result['success']) Session::flash('error', $result['message']);
-        Response::redirect($result['success'] ? url($result['redirect']) : url('/login'), 303);
+        Response::redirect($result['success'] ? $result['redirect'] : url('/login'), 303);
     }
     public function register(Request $request): void
     {

@@ -19,7 +19,7 @@ Có thể nhập **username hoặc email** trên trang `login.php`.
 
 Mật khẩu trong DB được hash bằng bcrypt qua luồng đăng ký thật. Đây là tài khoản local có mật khẩu công khai để thử nghiệm; không triển khai nguyên bộ tài khoản này lên môi trường công khai. Email `.test` không nhận thư.
 
-Đăng nhập Admin chuyển tới `admin.php?section=dashboard`; Merchant tới `shop.php`; User tới `index.php`. Các trang `/admin`, `/merchant`, `/dashboard` dùng cùng tài khoản và session.
+Đăng nhập Admin chuyển thẳng tới `/admin`; Merchant tới `/merchant`; User tới `/index.php`. URL tự giữ tiền tố thư mục cài đặt (ví dụ `/CouponHub_UI/admin`). Các trung tâm dùng cùng tài khoản và session; Admin/Merchant có thể chọn “Xem trang người dùng” từ menu mà không đổi vai trò hay quyền truy cập.
 
 ## Quyền quản lý shop
 

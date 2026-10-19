@@ -78,9 +78,10 @@ check(Session::userId() === 0, 'pre-integration sessions must log in again');
 foreach (['https://evil.example','//evil.example','index.php/evil','../admin.php','admin.php', "index.php\r\nX: evil", 'index.php\\evil'] as $url) {
     check(Auth::safeReturn($url, 'USER') === 'index.php', 'unsafe return');
 }
-check(Auth::safeReturn('admin.php?section=reports','ADMIN') === 'admin.php?section=reports', 'admin return');
-check(Auth::safeReturn('', 'MERCHANT') === 'shop.php', 'merchant home');
-check(Auth::safeReturn('', 'ADMIN') === 'admin.php?section=dashboard', 'admin home');
+check(Auth::safeReturn('admin.php?section=reports','ADMIN') === '/admin/reports', 'legacy admin return');
+check(Auth::safeReturn('shop.php','MERCHANT') === '/merchant', 'legacy merchant return');
+check(Auth::safeReturn('', 'MERCHANT') === '/merchant', 'merchant home');
+check(Auth::safeReturn('', 'ADMIN') === '/admin', 'admin home');
 
 $db->user['role'] = 'MERCHANT';
 Session::establish($db->user);
