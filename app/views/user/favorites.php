@@ -3,8 +3,22 @@ $pageTitle = 'Mã giảm giá yêu thích - CouponHub';
 $activePage = 'favorites';
 
 require_once __DIR__ . '/data/coupons.php';
+$rawCoupons = publicCoupons(); // Lấy dữ liệu danh sách coupon
+
+// BỔ SUNG: Gán trực tiếp 'code' vào từng coupon trước khi xuất sang JSON
+$formattedCoupons = [];
+foreach ($rawCoupons as $code => $item) {
+    $item['code'] = $item['code'] ?? (string)$code;
+    $formattedCoupons[] = $item;
+}
+
 require_once __DIR__ . '/layouts/header.php';
 ?>
+
+<!-- Khai báo biến dữ liệu Coupon ĐÃ CÓ THUỘC TÍNH CODE cho JavaScript đọc -->
+<script>
+    window.ALL_COUPONS = <?= json_encode($formattedCoupons, JSON_UNESCAPED_UNICODE) ?>;
+</script>
 
 <main class="category-page">
     <section class="category-heading">
@@ -21,7 +35,7 @@ require_once __DIR__ . '/layouts/header.php';
     <!-- Khối hiển thị khi chưa thả tim mã nào -->
     <div class="category-empty" id="emptyFavoriteNotice" style="display: none;">
         <h3>Chưa có mã yêu thích nào</h3>
-        <p>Khám phá và bấm thả tim ❤️ các mã giảm giá hấp dẫn để lưu lại nhé!</p>
+        <p>Khám phá và bấm thả tim các mã giảm giá hấp dẫn để lưu lại nhé!</p>
 
         <a href="/app/views/user/categories.php" class="category-view-button" style="margin-top: 12px; display: inline-block;">
             Khám phá ưu đãi ngay ↗
