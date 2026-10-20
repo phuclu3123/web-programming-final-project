@@ -211,3 +211,185 @@ a.member-stat:hover { color: var(--ink); border-color: #b7c6ee; transform: trans
   .account-popover { animation: none; }
   .rail-mark, .rail-label, .account-chevron { transition: none; }
 }
+
+/* ==================================================
+   PUBLIC HEADER — BRAND & NAVIGATION
+================================================== */
+
+.public-header {
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 3px 16px rgba(23, 43, 77, 0.035);
+  backdrop-filter: blur(14px);
+}
+
+.public-header .header-inner {
+  min-height: 78px;
+  gap: 24px;
+}
+
+.public-header .brand {
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.public-header .brand-mark {
+  border-radius: 11px;
+  background: var(--blue);
+  color: #fff;
+  transform: none;
+}
+
+.public-header .brand-mark span {
+  transform: none;
+}
+
+.public-header .brand-word {
+  color: var(--ink);
+  font-size: 25px;
+  font-weight: 850;
+  letter-spacing: -0.045em;
+}
+
+.public-header .brand-word em {
+  color: var(--blue);
+  font-style: normal;
+}
+
+.public-header .site-nav {
+  gap: clamp(12px, 1.8vw, 25px);
+}
+
+.public-header .site-nav a {
+  position: relative;
+  padding-block: 10px;
+  color: #526078;
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.public-header .site-nav a:hover,
+.public-header .site-nav a.active {
+  color: var(--blue);
+}
+
+.public-header .site-nav a.active::after {
+  position: absolute;
+  right: 0;
+  bottom: 1px;
+  left: 0;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--blue);
+  content: "";
+}
+
+.public-header .header-search {
+  border-color: var(--line);
+  background: #f7f9fd;
+  color: var(--blue);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.public-header .header-search:hover {
+  border-color: #bdcaf0;
+  background: var(--blue-soft);
+}
+
+.public-header .header-account .header-register {
+  border: 1px solid var(--blue);
+  border-radius: 10px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.public-header .header-account .header-register:hover {
+  border-color: var(--blue-dark);
+  background: var(--blue-dark);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .public-header .header-inner {
+    gap: 12px;
+  }
+
+  .public-header .brand-word {
+    font-size: 22px;
+  }
+}
+/* MEMBER WORKSPACE */
+
+.unified-page .member-main {
+  background: var(--paper);
+}
+
+.unified-page .member-main .card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 20px rgba(23, 43, 77, 0.035);
+}
+
+.unified-page .member-main .card-body {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.unified-page .member-main .card-body > h1,
+.unified-page .member-main h2,
+.unified-page .member-main h3 {
+  color: var(--ink);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.unified-page .member-main .table thead th {
+  border-bottom: 1px solid var(--line);
+  background: #f2f5fb;
+  color: #526078;
+  font-weight: 750;
+}
+
+.unified-page .member-main .table td {
+  border-color: #edf1f7;
+}
+
+.unified-page .member-main .form-control {
+  min-height: 44px;
+  border: 1px solid #d4ddeb;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+.unified-page .member-main .form-control:focus {
+  border-color: #91a8ee;
+  box-shadow: 0 0 0 4px rgba(49, 86, 201, 0.09);
+}
+
+.unified-page .member-main .btn-primary {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+}
+
+.unified-page .member-main .btn-primary:hover {
+  border-color: var(--blue-dark);
+  background: var(--blue-dark);
+}

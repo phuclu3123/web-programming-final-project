@@ -105,3 +105,1416 @@ button:disabled { cursor:wait; opacity:.65; }
 .calendar-entry { color:#33445f; text-decoration:none; }.calendar-entry:hover { color:#3454d6; text-decoration:none; }.calendar-entry > .icon { width:17px; margin-left:auto; flex-shrink:0; }.calendar-entry > div > small { display:block; margin-bottom:7px; font-size:10px; color:#7b8aa0; }.calendar-holidays { margin-top:42px; }
 .hero-carousel-dots > button { width:24px; min-height:28px; }
 @media(prefers-reduced-motion:reduce) { .brand-section .brand-track,.brand-section:hover .brand-track,.brand-section:focus-within .brand-track { animation:none; }.brand-section .brand-track { width:100%; }.brand-section .brand-group { flex-wrap:wrap; justify-content:center; gap:8px; padding:0; }.brand-section .brand-group[aria-hidden] { display:none; }.brand-section .brand-window { mask-image:none; } }
+
+/* =========================================================
+   COUPONHUB — UI REFINEMENT
+   Mục tiêu: hiện đại, chuyên nghiệp, đồng bộ
+   Chỉ thay đổi giao diện, không thay đổi chức năng
+========================================================= */
+
+/* 1. FONT CHỮ VÀ HỆ THỐNG MÀU */
+
+:root {
+    --ch-brand: #3454d6;
+    --ch-brand-dark: #2442b8;
+    --ch-brand-light: #edf2ff;
+
+    --ch-heading: #172b4d;
+    --ch-text: #344054;
+    --ch-muted: #667085;
+
+    --ch-background: #f5f7fb;
+    --ch-surface: #ffffff;
+    --ch-border: #e3e8f2;
+
+    --ch-radius: 18px;
+    --ch-shadow:
+        0 8px 24px rgba(23, 43, 77, 0.06);
+}
+
+/* Dùng chung một hệ font cho toàn bộ giao diện */
+body,
+button,
+input,
+select,
+textarea {
+    font-family:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+body {
+    color: var(--ch-text);
+    background: var(--ch-background);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* Tiêu đề dùng cùng font, khác kích thước và độ đậm */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--ch-heading);
+    font-family:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+    font-weight: 750;
+    line-height: 1.3;
+    letter-spacing: -0.035em;
+}
+
+p {
+    line-height: 1.75;
+}
+
+small,
+.text-muted {
+    color: var(--ch-muted);
+}
+
+/* 2. NỀN VÀ KHUNG NỘI DUNG */
+
+.public-header .container-wide,
+.container-wide {
+    width: min(100% - 40px, 1320px);
+    margin-inline: auto;
+}
+
+.editorial-home {
+    padding-top: 28px;
+    padding-bottom: 40px;
+}
+
+.member-main {
+    background: var(--ch-background);
+}
+
+@media (max-width: 640px) {
+    .public-header .container-wide,
+    .container-wide {
+        width: min(100% - 28px, 1320px);
+    }
+
+    .editorial-home {
+        padding-top: 18px;
+    }
+}
+
+/* 3. HEADER VÀ MENU */
+
+.public-header {
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--ch-border);
+    box-shadow: 0 3px 14px rgba(23, 43, 77, 0.035);
+}
+
+.public-header .header-inner {
+    min-height: 78px;
+    gap: 24px;
+}
+
+.public-header .brand {
+    flex-shrink: 0;
+}
+
+.public-header .brand-word {
+    color: var(--ch-heading);
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+}
+
+.public-header .brand-word em {
+    color: var(--ch-brand);
+    font-style: normal;
+}
+
+.public-header .site-nav {
+    gap: 24px;
+}
+
+.public-header .site-nav a {
+    position: relative;
+    padding-block: 10px;
+    color: #526078;
+    font-size: 13px;
+    font-weight: 650;
+    transition: color 0.2s ease;
+}
+
+.public-header .site-nav a:hover,
+.public-header .site-nav a.active {
+    color: var(--ch-brand);
+}
+
+.public-header .site-nav a.active::after {
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+    left: 0;
+    height: 3px;
+    border-radius: 99px;
+    background: var(--ch-brand);
+    content: "";
+}
+
+.public-header .header-search {
+    border: 1px solid var(--ch-border);
+    border-radius: 12px;
+    background: #f7f9fd;
+    transition: border-color 0.2s ease,
+                background 0.2s ease;
+}
+
+.public-header .header-search:hover {
+    border-color: #b8c8f7;
+    background: var(--ch-brand-light);
+}
+
+/* 4. NÚT THƯƠNG HIỆU */
+
+.btn-brand {
+    border: 1px solid var(--ch-brand);
+    border-radius: 11px;
+    background: var(--ch-brand);
+    color: #fff;
+    font-weight: 700;
+    transition: background 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+}
+
+.btn-brand:hover {
+    border-color: var(--ch-brand-dark);
+    background: var(--ch-brand-dark);
+    color: #fff;
+    box-shadow: 0 5px 14px rgba(52, 84, 214, 0.2);
+    transform: translateY(-1px);
+}
+
+/* 5. TIÊU ĐỀ CÁC KHU VỰC */
+
+.editorial-home .section-heading h2,
+.editorial-home .editorial-section-head h2,
+.editorial-home .discovery-section h2 {
+    color: var(--ch-heading);
+    font-size: clamp(23px, 2.2vw, 30px);
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.04em;
+}
+
+.editorial-home .section-heading,
+.editorial-home .editorial-section-head {
+    margin-bottom: 22px;
+}
+
+.editorial-home .section-heading h2::after,
+.editorial-home .editorial-section-head h2::after {
+    display: block;
+    width: 44px;
+    height: 4px;
+    margin-top: 11px;
+    border-radius: 99px;
+    background: var(--ch-brand);
+    content: "";
+}
+
+.editorial-home .section-heading a,
+.editorial-home .editorial-section-head a {
+    color: var(--ch-brand);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.editorial-home .section-heading a:hover,
+.editorial-home .editorial-section-head a:hover {
+    color: var(--ch-brand-dark);
+}
+
+/* 6. BANNER ƯU ĐÃI */
+
+.editorial-home .studio-hero-art {
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 18px 42px rgba(23, 43, 77, 0.13);
+    isolation: isolate;
+}
+
+.editorial-home .studio-hero-photo {
+    transition: transform 0.7s ease;
+}
+
+.editorial-home .studio-hero-art:hover .studio-hero-photo {
+    transform: scale(1.025);
+}
+
+.editorial-home .studio-photo-credit {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    background: rgba(16, 30, 55, 0.72);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 650;
+    backdrop-filter: blur(12px);
+}
+
+.editorial-home .hero-feature {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 18px 48px rgba(12, 28, 58, 0.2);
+    backdrop-filter: blur(12px);
+}
+
+.editorial-home .hero-feature-merchant {
+    color: #526078;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.editorial-home .hero-feature-saving {
+    margin-block: 12px;
+    color: var(--ch-brand);
+    font-size: clamp(28px, 3.2vw, 43px);
+    font-weight: 850;
+    line-height: 1.15;
+    letter-spacing: -0.045em;
+}
+
+.editorial-home .hero-feature h2 {
+    margin-block: 10px;
+    color: var(--ch-heading);
+    font-size: clamp(21px, 2.2vw, 29px);
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: -0.04em;
+}
+
+.editorial-home .hero-feature h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.editorial-home .hero-feature h2 a:hover {
+    color: var(--ch-brand);
+}
+
+.editorial-home .hero-feature-bottom {
+    border-top: 1px solid var(--ch-border);
+    color: var(--ch-muted);
+    font-size: 12px;
+}
+
+.editorial-home .hero-feature-copy {
+    border: 0;
+    border-radius: 11px;
+    background: var(--ch-brand);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 750;
+    transition: background 0.2s ease,
+                transform 0.2s ease;
+}
+
+.editorial-home .hero-feature-copy:hover {
+    background: var(--ch-brand-dark);
+    transform: translateY(-1px);
+}
+
+/* 7. THẺ COUPON */
+
+.editorial-home .coupon-card {
+    overflow: hidden;
+    border: 1px solid var(--ch-border);
+    border-radius: 18px;
+    background: var(--ch-surface);
+    box-shadow: 0 3px 12px rgba(23, 43, 77, 0.025);
+    transition: border-color 0.22s ease,
+                box-shadow 0.22s ease,
+                transform 0.22s ease;
+}
+
+.editorial-home .coupon-card:hover {
+    border-color: #c3d0f8;
+    box-shadow: 0 14px 32px rgba(23, 43, 77, 0.09);
+    transform: translateY(-4px);
+}
+
+.editorial-home .coupon-photo {
+    overflow: hidden;
+    background: #edf1f8;
+}
+
+.editorial-home .coupon-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+
+.editorial-home .coupon-card:hover .coupon-photo img {
+    transform: scale(1.04);
+}
+
+.editorial-home .coupon-body {
+    padding: 19px 19px 17px;
+}
+
+.editorial-home .coupon-store {
+    gap: 10px;
+}
+
+.editorial-home .store-name {
+    color: var(--ch-heading);
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.editorial-home .store-category {
+    color: var(--ch-muted);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.editorial-home .coupon-value-label {
+    color: var(--ch-muted);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+}
+
+.editorial-home .coupon-saving {
+    color: var(--ch-brand);
+    font-size: 27px;
+    font-weight: 850;
+    line-height: 1.25;
+    letter-spacing: -0.035em;
+}
+
+.editorial-home .coupon-qualifier {
+    color: var(--ch-muted);
+    font-size: 11px;
+}
+
+.editorial-home .coupon-card h3 {
+    margin-top: 12px;
+    color: var(--ch-heading);
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.5;
+    letter-spacing: -0.025em;
+}
+
+.editorial-home .coupon-card h3 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.editorial-home .coupon-card h3 a:hover {
+    color: var(--ch-brand);
+}
+
+.editorial-home .coupon-description {
+    color: #667085;
+    font-size: 12px;
+    line-height: 1.75;
+}
+
+/* 8. NÚT LƯU YÊU THÍCH: GIỮ NGUYÊN CHỨC NĂNG */
+
+.editorial-home .discovery-save {
+    transition: background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.editorial-home .discovery-save:hover {
+    transform: scale(1.06);
+}
+
+/* 9. FORM TÌM KIẾM VÀ BỘ LỌC */
+
+input,
+select,
+textarea {
+    color: var(--ch-text);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #8fa8f7;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 84, 214, 0.1);
+}
+
+/* 10. TỐI ƯU TRÊN ĐIỆN THOẠI */
+
+@media (max-width: 768px) {
+    .public-header .header-inner {
+        gap: 12px;
+    }
+
+    .public-header .brand-word {
+        font-size: 23px;
+    }
+
+    .editorial-home .hero-feature {
+        border-radius: 16px;
+    }
+
+    .editorial-home .hero-feature h2 {
+        font-size: 22px;
+    }
+
+    .editorial-home .coupon-body {
+        padding: 15px;
+    }
+
+    .editorial-home .coupon-saving {
+        font-size: 24px;
+    }
+
+    .editorial-home .section-heading h2,
+    .editorial-home .editorial-section-head h2 {
+        font-size: 23px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .editorial-home .coupon-card,
+    .editorial-home .coupon-photo img,
+    .editorial-home .studio-hero-photo,
+    .btn-brand {
+        transition: none;
+    }
+
+    .editorial-home .coupon-card:hover,
+    .editorial-home .coupon-card:hover .coupon-photo img,
+    .editorial-home .studio-hero-art:hover .studio-hero-photo {
+        transform: none;
+    }
+}
+
+/* ==================================================
+   COUPONHUB — FINAL UI CONSISTENCY
+================================================== */
+
+:root {
+  --ui-ink: #172b4d;
+  --ui-muted: #66758a;
+  --ui-line: #e1e7f0;
+  --ui-blue: #3156c9;
+  --ui-surface: #ffffff;
+  --ui-radius: 18px;
+
+  --ui-font:
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+/* Một font xuyên suốt giao diện */
+body,
+button,
+input,
+select,
+textarea,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: var(--ui-font);
+}
+
+body {
+  color: var(--ui-ink);
+  background: #f5f7fb;
+  line-height: 1.65;
+}
+
+/* Tiêu đề chính */
+h1,
+.h1 {
+  font-size: clamp(30px, 3.5vw, 44px);
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+
+h2,
+.h2 {
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.04em;
+}
+
+h3,
+.h3 {
+  font-size: 19px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+/* Màu nút chính thống nhất */
+.btn-primary,
+.btn-brand {
+  border-color: var(--ui-blue);
+  background: var(--ui-blue);
+  color: #fff;
+  font-weight: 700;
+}
+
+.btn-primary:hover,
+.btn-brand:hover {
+  border-color: #2443a8;
+  background: #2443a8;
+  color: #fff;
+}
+
+/* Liên kết */
+.editorial-home a,
+.discovery-page a,
+.community-catalog a {
+  transition: color 0.18s ease;
+}
+
+/* Tiêu đề thẻ không bị đổi font riêng */
+.coupon-card h3,
+.hero-feature h2,
+.studio-section-title h2 {
+  font-family: var(--ui-font);
+}
+
+/* Tôn trọng thiết lập giảm chuyển động */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   BIẾN CÁC ĐƯỜNG DẪN DƯỚI BANNER THÀNH NÚT CHIP HIỆN ĐẠI (COVER SHORTCUTS)
+   ========================================================================== */
+.editorial-home .cover-shortcuts,
+.cover-shortcuts {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  margin-top: 14px !important;
+  padding: 0 !important;             /* Bỏ khoảng đệm khung ngoài */
+  background: transparent !important;/* Bỏ nền trắng khung ngoài */
+  border: none !important;           /* Bỏ viền khung ngoài */
+  box-shadow: none !important;       /* Bỏ bóng khung ngoài */
+}
+
+/* Các nút bấm hạt đậu độc lập */
+.cover-shortcuts > a {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 16px !important;
+  background: #ffffff !important;    /* Nút màu trắng sạch đè trên nền trang */
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 20px !important;
+  color: #1e293b !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.cover-shortcuts > a .icon,
+.cover-shortcuts > a svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke-width: 2.2 !important;
+  transition: transform 0.2s ease !important;
+}
+
+/* Hiệu ứng Rê chuột (Hover) */
+.cover-shortcuts > a:hover {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25) !important;
+  transform: translateY(-2px) !important;
+  text-decoration: none !important;
+}
+
+.cover-shortcuts > a:hover .icon,
+.cover-shortcuts > a:hover svg {
+  transform: translateX(3px) !important;
+  stroke: #ffffff !important;
+}
+
+/* Nút "Tất cả nhu cầu" điểm nhấn */
+.cover-shortcuts > a:last-child {
+  background: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+.cover-shortcuts > a:last-child:hover {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+}
+
+/* ==========================================================================
+   TỐI ƯU GIAO DIỆN DANH MỤC (CATEGORY DIRECTORY) - BLUE CORPORATE
+   ========================================================================== */
+
+/* 1. CẤU TRÚC 2 CỘT CÂN BẰNG */
+.category-directory {
+  display: grid !important;
+  grid-template-columns: 1fr 440px !important;
+  gap: 36px !important;
+  align-items: start !important;
+  margin-top: 24px !important;
+}
+
+/* 2. DANH SÁCH DANH MỤC DẠNG CARD PHẲNG HIỆN ĐẠI */
+.category-directory-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.category-directory-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 18px 24px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Hiệu ứng Rê chuột (Hover) nâng card & đổi viền Xanh */
+.category-directory-link:hover,
+.category-directory-link.active {
+  background: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.12) !important;
+  transform: translateX(6px) !important;
+}
+
+/* Số thứ tự 01, 02, 03... nổi bật */
+.category-directory-link small {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: #1d4ed8 !important;
+  background: #eff6ff !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  margin-right: 16px !important;
+}
+
+/* Tên danh mục & Mô tả */
+.category-directory-link h2 {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin: 0 0 3px 0 !important;
+}
+
+.category-directory-link p {
+  font-size: 13.5px !important;
+  color: #64748b !important;
+  margin: 0 !important;
+}
+
+/* Nhãn đếm mã (8 mã, 4 mã...) dạng Pill Xanh Doanh Nghiệp */
+.category-directory-link > span {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 5px 14px !important;
+  border-radius: 20px !important;
+  white-space: nowrap !important;
+  margin-left: auto !important;
+  margin-right: 14px !important;
+}
+
+/* Mũi tên hướng quyền */
+.category-directory-link .icon,
+.category-directory-link svg {
+  color: #94a3b8 !important;
+  transition: transform 0.2s ease, color 0.2s ease !important;
+}
+
+.category-directory-link:hover .icon,
+.category-directory-link:hover svg {
+  color: #1d4ed8 !important;
+  transform: translateX(4px) !important;
+}
+
+/* 3. KHUNG ẢNH MINH HỌA BÊN PHẢI (TRƯỢT THEO STICKY & BO GÓC) */
+.category-directory-visual {
+  position: sticky !important;
+  top: 90px !important;
+  height: 520px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12) !important;
+  background: #0f172a !important;
+}
+
+.category-directory-visual img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Lớp phủ Gradient giúp dòng chữ bên dưới ảnh rõ nét, không bị đè */
+.category-directory-visual figcaption,
+.category-directory-visual [class*="caption"] {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  padding: 30px 20px 20px !important;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 60%, transparent 100%) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-end !important;
+}
+
+.category-directory-visual figcaption * {
+  color: #ffffff !important;
+}
+/* ==========================================================================
+   BỎ KHUNG & PHÓNG TO SỐ 01, 02, 03... BẰNG CHIỀU CAO 2 DÒNG NỘI DUNG
+   ========================================================================== */
+.category-directory-link small {
+  font-size: 34px !important;         /* Phóng to số bằng chiều cao 2 dòng chữ */
+  font-weight: 800 !important;        /* Chữ số đậm, sắc nét */
+  color: #1d4ed8 !important;          /* Giữ tông màu xanh chủ đạo */
+  background: transparent !important; /* Xóa bỏ nền khung xanh/xám */
+  padding: 0 !important;              /* Bỏ khoảng đệm trong của khung */
+  border-radius: 0 !important;        /* Bỏ bo góc khung */
+  margin-right: 20px !important;      /* Khoảng cách từ số đến chữ */
+  line-height: 1 !important;          /* Căn đều chiều cao */
+  display: inline-block !important;
+}
+
+/* ==========================================================================
+   ẨN BREADCRUMB XÁM & PHÓNG TO TIÊU ĐỀ PHỤ (EYEBROW)
+   ========================================================================== */
+
+/* 1. Ẩn hoàn toàn dòng text nhỏ màu xám (CouponHub / Danh mục, Góc đọc...) */
+.member-breadcrumb {
+  display: none !important;
+}
+
+/* 2. Phóng to font chữ tiêu đề phụ màu xanh cho đỡ trống màn hình */
+.eyebrow, 
+span.eyebrow, 
+.panel-kicker {
+  font-size: 15px !important;         /* Tăng kích thước font chữ */
+  font-weight: 800 !important;        /* Đậm đặn chuẩn doanh nghiệp */
+  letter-spacing: 0.08em !important;  /* Giữ khoảng cách chữ thoáng đẹp */
+  color: #1d4ed8 !important;         /* Giữ tông màu xanh chủ đạo */
+  margin-bottom: 12px !important;     /* Tăng khoảng cách dưới cho đỡ trống */
+  display: inline-block !important;
+}
+
+/* ==========================================================================
+   CHỈNH MÀU TIÊU ĐỀ PHỤ (EYEBROW) DỊU VÀ NHẠT HƠN
+   ========================================================================== */
+.eyebrow, 
+span.eyebrow, 
+.panel-kicker {
+  font-size: 14.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  color: #3b82f6 !important;         /* Màu Xanh nhạt dịu mắt (không bị chói đậm) */
+  margin-bottom: 10px !important;
+  display: inline-block !important;
+}
+
+
+.category-directory-title {
+  display: flex !important;
+  flex-direction: column !important;  /* Dòng mô tả nằm bên dưới tiêu đề */
+  align-items: flex-start !important;
+  gap: 14px !important;
+  padding: 16px 0 28px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  margin-bottom: 32px !important;
+}
+
+/* Phóng to tiêu đề chính nổi bật trở lại */
+.category-directory-title h1 {
+  font-size: clamp(48px, 5vw, 64px) !important; /* Cỡ chữ to đậm, nổi bật */
+  line-height: 1.12 !important;
+  letter-spacing: -0.03em !important;
+  color: #0f172a !important;
+  font-weight: 850 !important;
+  margin: 0 !important;
+}
+
+.category-directory-title h1 em {
+  color: #1d4ed8 !important;          /* Nhấn màu xanh doanh nghiệp */
+  font-style: normal !important;
+}
+
+/* Đoạn mô tả đi kèm bên dưới */
+.category-directory-title > p {
+  max-width: 720px !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  color: #475569 !important;
+  margin: 0 !important;
+  font-weight: 450 !important;
+}
+
+/* ==========================================================================
+   XÓA BỎ LẰN KẺ MỜ BỊ TRÙNG DƯỚI TIÊU ĐỀ
+   ========================================================================== */
+.category-directory-title {
+  border-bottom: none !important;     /* Xóa lằn kẻ mờ trùng ở trên */
+  padding-bottom: 8px !important;
+  margin-bottom: 20px !important;
+}
+
+/* ==========================================================================
+   GỘP SIDEBAR & ĐỦ TRÙNG MÀU 100% VỚI NỀN WEB (NỀN TRONG SUỐT)
+   ========================================================================== */
+
+/* Khung chung bao ngoài cả 2 khối: Trùng màu nền web 100% */
+.community-sidebar {
+  background: transparent !important;     /* Ăn theo 100% màu nền của trang web */
+  border: none !important;               /* Bỏ viền để tiệp hẳn vào nền */
+  box-shadow: none !important;           /* Bỏ bóng */
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+}
+
+/* Xóa bỏ khung riêng, bóng và viền bên trái của 2 khối con */
+.community-side-brands,
+.community-side-guide {
+  background: transparent !important;
+  border: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Đường kẻ gạch mờ nhẹ phân cách giữa 2 khối */
+.community-side-guide {
+  border-top: 1px solid #e2e8f0 !important;
+  padding-top: 20px !important;
+}
+
+/* Tiêu đề tối giản */
+.community-sidebar h2 {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin: 0 0 14px 0 !important;
+}
+
+/* Tinh chỉnh từng dòng Thương hiệu */
+.community-brand-list > a {
+  border-top: 1px solid #e2e8f0 !important;
+  padding: 9px 6px !important;
+  min-height: 44px !important;
+  border-radius: 8px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.community-brand-list > a:hover {
+  background-color: rgba(226, 232, 240, 0.5) !important;
+}
+
+/* Khối văn bản bên dưới */
+.community-side-guide p {
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+  color: #64748b !important;
+  margin-bottom: 12px !important;
+}
+
+.community-side-guide > a {
+  color: #1d4ed8 !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  text-decoration: none !important;
+}
+
+.community-side-guide > a:hover {
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   BỎ KHUNG TRẮNG BÊN TRONG - CHỈ GIỮ LẠI KHUNG CARD NGOÀI
+   ========================================================================== */
+
+/* 1. XÓA BỎ NỀN, VIỀN VÀ BÓNG CỦA HỘP CHỨA BÊN TRONG */
+.discovery-search,
+.discovery-search-box,
+.discovery-search-form,
+.discovery-query-row,
+form:has(input[placeholder*="Tìm"]) > div:first-child {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin-bottom: 20px !important;
+}
+
+/* 2. CHO Ô NHẬP LỆNH NẰM TRỰC TIẾP TRÊN NỀN KHUNG CARD NGOÀI */
+form:has(input[placeholder*="Tìm"]) input[type="text"],
+form:has(input[placeholder*="Tìm"]) input[type="search"],
+form:has(input[placeholder*="Tìm"]) input {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 999px !important;
+  padding: 12px 24px !important;
+  font-size: 14.5px !important;
+  color: #0f172a !important;
+  outline: none !important;
+  flex: 1 !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Hiệu ứng khi bấm gõ vào ô tìm kiếm */
+form:has(input[placeholder*="Tìm"]) input:focus {
+  background: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12) !important;
+}
+/* ==========================================================================
+   XÓA VIỀN DƯỚI THANH TÌM KIẾM & THAY ICON KÍNH LÚP VÀO NÚT TÌM KIẾM
+   ========================================================================== */
+
+/* 1. XÓA VIỀN / LẰN KẺ GẠCH MỜ DƯỚI THANH TÌM KIẾM */
+form:has(input[placeholder*="Tìm"]) > div:first-child,
+form:has(input[placeholder*="Tìm"]) hr,
+.discovery-search,
+.discovery-search-box {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* 2. ẨN ICON KÍNH LÚP NẰM TRƠ TRỌI BÊN NGOÀI BÊN TRÁI Ô NHẬP */
+form:has(input[placeholder*="Tìm"]) > svg,
+form:has(input[placeholder*="Tìm"]) > .icon,
+form:has(input[placeholder*="Tìm"]) div > svg:first-child {
+  display: none !important;
+}
+
+/* 3. ẨN MŨI TÊN (->) CŨ TRONG NÚT TÌM KIẾM */
+form:has(input[placeholder*="Tìm"]) button svg,
+form:has(input[placeholder*="Tìm"]) button .icon {
+  display: none !important;
+}
+
+/* 4. TẠO ICON KÍNH LÚP TRẮNG THAY THẾ TRONG NÚT TÌM KIẾM */
+form:has(input[placeholder*="Tìm"]) button::after {
+  content: "" !important;
+  display: inline-block !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin-left: 6px !important;
+  background-color: #ffffff !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' stroke-width='2.2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'/%3E%3C/svg%3E") no-repeat center / contain !important;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='currentColor' stroke-width='2.2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'/%3E%3C/svg%3E") no-repeat center / contain !important;
+  vertical-align: -2px !important;
+}
+
+/* ==========================================================================
+   TRIỆT PHÁ TẤT CẢ LẰN KẺ NGANG TRONG KHU VỰC TÌM KIẾM
+   ========================================================================== */
+
+/* 1. Triệt tiêu border-top và border-bottom của tất cả khối con bên trong */
+.discovery-section div,
+.discovery-toolbar div,
+.discovery-filter-form div,
+form div,
+.category-pick-tabs,
+.discovery-tabs {
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* 2. Xóa các lằn kẻ tạo bằng phần tử ảo (::after / ::before) */
+.discovery-section *::after,
+.discovery-section *::before,
+.discovery-toolbar *::after,
+.discovery-toolbar *::before,
+form *::after,
+form *::before {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+  height: 0 !important;
+}
+
+/* 3. Ẩn thẻ kẻ ngang <hr> nếu có */
+.discovery-section hr,
+.discovery-toolbar hr,
+form hr {
+  display: none !important;
+}
+
+/* ==========================================================================
+   XÓA GIỚI HẠN MAX-WIDTH HẸP TẠI HEADER BÀI VIẾT (KÉO MÉP TRÁI BẰNG BANNER)
+   ========================================================================== */
+
+/* 1. Mở rộng khung chứa chữ (khối nằm trực tiếp phía trên ảnh banner) ra 100% */
+div:has(+ img),
+div:has(+ figure),
+div:has(+ [class*="banner"]),
+header:has(+ img),
+header:has(+ figure),
+.editorial-header,
+.editorial-detail-header,
+.article-header,
+.article-detail-header,
+.post-header {
+  max-width: 100% !important;      /* Xóa bỏ khung hẹp 700px/800px */
+  width: 100% !important;
+  margin-left: 0 !important;       /* Hủy lệnh margin: 0 auto gây căn giữa */
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+  align-items: flex-start !important;
+}
+
+/* 2. Ép tất cả các phần tử con (Sub-category, H1, Mô tả, Author) gióng mép trái */
+div:has(+ img) *,
+div:has(+ figure) *,
+header:has(+ img) *,
+.editorial-header *,
+.editorial-detail-header *,
+.article-header *,
+.article-detail-header * {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+  align-self: flex-start !important;
+}
+
+/* ==========================================================================
+   NÚT CHUÔNG THÔNG BÁO HEADER (ĐỒNG BỘ NÚT TÌM KIẾM)
+   ========================================================================== */
+
+/* Căn chỉnh khoảng cách giữa các nút trong header-account */
+.header-account {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Kiểu dáng nút Chuông thông báo */
+.header-notification {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 12px !important;            /* Bo góc giống nút search */
+  background-color: #f1f5f9 !important;      /* Nền xám nhạt */
+  border: 1px solid #e2e8f0 !important;      /* Viền xám mờ */
+  color: #3b82f6 !important;                 /* Màu xanh icon */
+  position: relative !important;
+  text-decoration: none !important;
+  font-size: 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Hiệu ứng Hover */
+.header-notification:hover {
+  background-color: #e2e8f0 !important;
+  color: #1d4ed8 !important;
+}
+
+/* Chấm đỏ báo thông báo mới */
+.header-notification .notification-dot {
+  position: absolute !important;
+  top: 7px !important;
+  right: 7px !important;
+  width: 7px !important;
+  height: 7px !important;
+  background-color: #ef4444 !important;      /* Đỏ nổi bật */
+  border-radius: 50% !important;
+  border: 1.5px solid #ffffff !important;
+}
+/* ==========================================================================
+   CẤU HÌNH NÚT CHUÔNG ĐỒNG BỘ 100% VỚI NÚT TÌM KIẾM
+   ========================================================================== */
+
+.header-notification {
+  position: relative !important;
+}
+
+/* Định vị chấm đỏ nhỏ xinh góc trên nút chuông */
+.header-notification .notification-dot {
+  position: absolute !important;
+  top: 5px !important;
+  right: 5px !important;
+  width: 6px !important;
+  height: 6px !important;
+  background-color: #ef4444 !important;
+  border-radius: 50% !important;
+  border: 1px solid #ffffff !important;
+}
+/* ==========================================================================
+   ÉP NÚT CHUÔNG VÀ NÚT TÌM KIẾM GIỐNG HỆT NHAU 100%
+   ========================================================================== */
+
+/* 1. Ép cả 2 nút chung khung kích thước, viền và màu nền */
+.header-account .header-search,
+.header-account .header-notification {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;              /* Kích thước khớp chuẩn vuông nút search */
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 10px !important;       /* Bo góc khớp chuẩn */
+  background: #f8fafc !important;       /* Nền nhạt đồng bộ */
+  border: 1px solid #e2e8f0 !important; /* Viền mảnh đồng bộ */
+  color: #3b82f6 !important;            /* Màu xanh icon */
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 2. Hiệu ứng Hover 2 nút giống hệt nhau */
+.header-account .header-search:hover,
+.header-account .header-notification:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #1d4ed8 !important;
+}
+
+/* 3. Kích thước Icon SVG bên trong 2 nút bằng chằn chặn */
+.header-account .header-search svg,
+.header-account .header-notification svg {
+  width: 15px !important;
+  height: 15px !important;
+  display: block !important;
+}
+
+/* 4. Định vị chấm đỏ nhỏ xinh nằm gọn góc trên nút chuông */
+.header-notification .notification-dot {
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  width: 6px !important;
+  height: 6px !important;
+  background-color: #ef4444 !important;
+  border-radius: 50% !important;
+  border: 1px solid #ffffff !important;
+}
+/* ==========================================================================
+   POP-UP BẢNG THÔNG BÁO TẠI HEADER
+   ========================================================================== */
+
+/* Khung bao ngoài & Xóa mũi tên mặc định của thẻ details */
+.header-notification-wrapper {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.header-notification-wrapper summary {
+  list-style: none !important;
+  cursor: pointer !important;
+}
+
+.header-notification-wrapper summary::-webkit-details-marker {
+  display: none !important;
+}
+
+/* Bảng Popover thông báo xổ xuống */
+.notification-dropdown {
+  position: absolute !important;
+  top: calc(100% + 10px) !important;
+  right: 0 !important;
+  width: 310px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12) !important;
+  z-index: 1000 !important;
+  overflow: hidden !important;
+  animation: notifSlideDown 0.2s ease !important;
+}
+
+@keyframes notifSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tiêu đề Popover */
+.notif-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  background: #f8fafc !important;
+}
+
+.notif-header strong {
+  font-size: 14px !important;
+  color: #0f172a !important;
+}
+
+.notif-header a {
+  font-size: 12px !important;
+  color: #2563eb !important;
+  text-decoration: none !important;
+}
+
+/* Danh sách từng thông báo */
+.notif-body {
+  max-height: 280px !important;
+  overflow-y: auto !important;
+}
+
+.notif-item {
+  display: block !important;
+  padding: 11px 16px !important;
+  border-bottom: 1px solid #f8fafc !important;
+  text-decoration: none !important;
+  transition: background 0.15s ease !important;
+}
+
+.notif-item:hover {
+  background: #f8fafc !important;
+}
+
+.notif-item.unread {
+  background: #eff6ff !important;
+}
+
+.notif-title {
+  font-size: 13px !important;
+  color: #1e293b !important;
+  margin: 0 0 4px 0 !important;
+  line-height: 1.4 !important;
+  font-weight: 500 !important;
+}
+
+.notif-time {
+  font-size: 11px !important;
+  color: #94a3b8 !important;
+}
+
+/* Chân bảng */
+.notif-footer {
+  padding: 10px !important;
+  text-align: center !important;
+  border-top: 1px solid #f1f5f9 !important;
+  background: #f8fafc !important;
+}
+
+.notif-footer a {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #2563eb !important;
+  text-decoration: none !important;
+}
+
+.notif-footer a:hover {
+  text-decoration: underline !important;
+}
+/* ==========================================================================
+   TINH CHỈNH PHÂN BIỆT THÔNG BÁO CHƯA ĐỌC VS ĐÃ ĐỌC
+   ========================================================================== */
+
+/* 1. Trạng thái mặc định (Dành cho Thông báo ĐÃ ĐỌC) */
+.notif-item {
+  display: block !important;
+  padding: 11px 16px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  border-left: 3px solid transparent !important; /* Mặc định không có vạch lề */
+  background: #ffffff !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.notif-item .notif-title {
+  font-size: 13px !important;
+  color: #64748b !important;                      /* Màu chữ nhạt cho tin đã đọc */
+  font-weight: 400 !important;                    /* Chữ thường */
+  margin: 0 0 4px 0 !important;
+  line-height: 1.4 !important;
+}
+
+.notif-item .notif-time {
+  font-size: 11px !important;
+  color: #94a3b8 !important;
+}
+
+.notif-item:hover {
+  background: #f8fafc !important;
+}
+
+/* 2. Trạng thái ĐẬM MÀU NỔI BẬT (Dành cho Thông báo CHƯA ĐỌC) */
+.notif-item.unread {
+  background: #eff6ff !important;                 /* Nền xanh nhạt nổi bật */
+  border-left: 3px solid #2563eb !important;      /* Vạch xanh nhấn bên lề trái */
+}
+
+.notif-item.unread .notif-title {
+  color: #0f172a !important;                      /* Chữ màu đen/xanh đậm rõ nét */
+  font-weight: 700 !important;                    /* In đậm tiêu đề */
+}
+
+.notif-item.unread .notif-time {
+  color: #2563eb !important;                      /* Thời gian màu xanh nổi bật */
+  font-weight: 600 !important;
+}
+

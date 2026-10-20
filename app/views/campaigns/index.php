@@ -1,6 +1,6 @@
 <div class="discovery-page editorial-campaign-page">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Chiến dịch</span></div>
-    <div class="editorial-section-head campaign-page-heading"><div><span class="eyebrow">04 / NHỮNG DỊP MUA SẮM ĐÁNG CHỜ</span><h1>Đúng thời điểm.<br><em>Thêm nhiều giá trị.</em></h1></div><a href="<?= e(url('/campaign-calendar')) ?>">Lịch ưu đãi <?= icon('arrow') ?></a></div>
+    <div class="editorial-section-head campaign-page-heading"><div><span class="eyebrow">NHỮNG DỊP MUA SẮM ĐÁNG CHỜ</span><h1>Đúng thời điểm.<br><em>Thêm nhiều giá trị.</em></h1></div><a href="<?= e(url('/campaign-calendar')) ?>">Lịch ưu đãi <?= icon('arrow') ?></a></div>
     <nav class="discovery-tabs" aria-label="Lọc chiến dịch">
         <?php foreach (['ALL'=>'Tất cả','ACTIVE'=>'Đang diễn ra','UPCOMING'=>'Sắp bắt đầu'] as $key=>$label): ?><a href="<?= e(url('/campaigns') . '?phase=' . $key) ?>" <?= $phase === $key ? 'aria-current="page"' : '' ?>><?= e($label) ?></a><?php endforeach; ?>
         <span class="discovery-result-count"><?= (int)$listing['total'] ?> chiến dịch phù hợp</span>
