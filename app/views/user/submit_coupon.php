@@ -24,13 +24,13 @@ require_once __DIR__ . '/layouts/header.php';
 
     <div class="form-container">
         <form id="submitCouponForm" class="coupon-form">
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="store">Tên cửa hàng / Thương hiệu (*)</label>
                 <input type="text" id="store" name="store" placeholder="Ví dụ: Shopee, Lazada, Highlands Coffee..." required>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
+            <div class="row g-3">
+                <div class="mb-3">
                     <label for="category">Danh mục (*)</label>
                     <select id="category" name="category" required>
                         <option value="">-- Chọn danh mục --</option>
@@ -40,30 +40,30 @@ require_once __DIR__ . '/layouts/header.php';
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="code">Mã coupon (*)</label>
                     <input type="text" id="code" name="code" placeholder="Ví dụ: SALE50K" required style="text-transform: uppercase;">
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
+            <div class="row g-3">
+                <div class="mb-3">
                     <label for="discount">Mức giảm (*)</label>
                     <input type="text" id="discount" name="discount" placeholder="Ví dụ: GIẢM 50K hoặc GIẢM 20%" required>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="expiry">Hạn sử dụng (*)</label>
                     <input type="date" id="expiry" name="expiry" required>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="source_url">Liên kết nguồn / Trang áp dụng mã</label>
                 <input type="url" id="source_url" name="source_url" placeholder="https://shopee.vn/...">
             </div>
 
-            <div class="form-group">
+            <div class="mb-3">
                 <label for="description">Mô tả & Điều kiện áp dụng</label>
                 <textarea id="description" name="description" rows="4" placeholder="Nhập chi tiết điều kiện sử dụng mã..."></textarea>
             </div>

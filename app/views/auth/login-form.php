@@ -39,7 +39,7 @@ use App\Core\Session;
             </div>
 
             <div class="login-input d-flex align-items-center gap-3 mb-3">
-                <i class="bi bi-lock fs-4 text-secondary ms-3 "></i>
+                <i class="bi bi-lock fs-4 text-secondary ms-3"></i>
 
                 <input id="loginPassword" type="password" class="form-control border-0 shadow-none bg-transparent"
                     placeholder="Nhập mật khẩu" name="password" autocomplete="current-password" required>
@@ -74,8 +74,7 @@ use App\Core\Session;
         <div class="row g-3 mb-4">
             <!-- OAuth Google: chuẩn bị cấu hình, chưa bật đăng nhập thật. -->
             <div class="col-6">
-                <button type="button" disabled title="Đăng nhập Google sẽ được bổ sung sau" class="btn social-btn w-100 rounded-4 fw-bold
-   d-flex align-items-center justify-content-center gap-3">
+                <button type="button" disabled title="Đăng nhập Google sẽ được bổ sung sau" class="btn social-btn w-100 rounded-4 fw-bold d-flex align-items-center justify-content-center gap-3">
 
                     <img src="https://www.google.com/favicon.ico" alt="" width="20" height="20">
 
@@ -85,8 +84,7 @@ use App\Core\Session;
 
             <!-- GitHub -->
             <div class="col-6">
-                <button type="button" disabled title="Đăng nhập GitHub sẽ được bổ sung sau" class="btn social-btn w-100 rounded-4 fw-bold
-   d-flex align-items-center justify-content-center gap-3">
+                <button type="button" disabled title="Đăng nhập GitHub sẽ được bổ sung sau" class="btn social-btn w-100 rounded-4 fw-bold d-flex align-items-center justify-content-center gap-3">
 
                     <i class="bi bi-github fs-5"></i>
 

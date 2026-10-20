@@ -9,11 +9,11 @@
                     kết đặt lại mật khẩu có hiệu lực trong 30 phút.</p>
                 <form method="post" action="<?= e(url('/forgot-password')) ?>">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label for="reset-email">Email</label>
                         <div class="input-group">
-                            <div class="input-group-prepend"><span class="input-group-text auth-input-icon"><i
-                                        class="fa-solid fa-envelope" aria-hidden="true"></i></span></div>
+                            <span class="input-group-text auth-input-icon"><i
+                                        class="fa-solid fa-envelope" aria-hidden="true"></i></span>
                             <input type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
                                 id="reset-email" name="email" maxlength="191" autocomplete="email"
                                 placeholder="Nhập email của bạn" value="<?= e((string) ($old['email'] ?? '')) ?>"
@@ -22,10 +22,10 @@
                         <?php if (isset($errors['email'])): ?><div class="invalid-feedback d-block">
                             <?= e($errors['email']) ?></div><?php endif; ?>
                     </div>
-                    <button class="btn btn-primary btn-block" type="submit"><i class="fa-solid fa-paper-plane mr-1"
+                    <button class="btn btn-primary w-100" type="submit"><i class="fa-solid fa-paper-plane me-1"
                             aria-hidden="true"></i>Gửi liên kết đặt lại</button>
                 </form>
-                <div class="mt-3 text-center"><a href="<?= e(url('/login')) ?>"><i class="fa-solid fa-arrow-left mr-1"
+                <div class="mt-3 text-center"><a href="<?= e(url('/login')) ?>"><i class="fa-solid fa-arrow-left me-1"
                             aria-hidden="true"></i>Quay lại đăng nhập</a></div>
             </div>
         </div>

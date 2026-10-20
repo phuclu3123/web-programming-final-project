@@ -10,15 +10,15 @@ use App\Core\Session; ?>
                     Merchant.</p>
                 <form method="post" action="<?= e(url('/admin/campaigns')) ?>"><input type="hidden" name="_token"
                         value="<?= e(Session::csrfToken()) ?>">
-                    <div class="form-group"><label>Tên</label><input aria-label="Tên chiến dịch" class="form-control" name="name" maxlength="200"
+                    <div class="mb-3"><label>Tên</label><input aria-label="Tên chiến dịch" class="form-control" name="name" maxlength="200"
                             required></div>
-                    <div class="form-group"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control" name="description"
+                    <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control" name="description"
                             rows="3"></textarea></div>
-                    <div class="form-group"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local" class="form-control"
+                    <div class="mb-3"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local" class="form-control"
                             name="starts_at" required></div>
-                    <div class="form-group"><label>Kết thúc</label><input aria-label="Kết thúc" type="datetime-local" class="form-control"
+                    <div class="mb-3"><label>Kết thúc</label><input aria-label="Kết thúc" type="datetime-local" class="form-control"
                             name="ends_at" required></div>
-                    <div class="form-group"><label>Trạng thái</label><select aria-label="Trạng thái" name="status" class="form-control">
+                    <div class="mb-3"><label>Trạng thái</label><select aria-label="Trạng thái" name="status" class="form-control">
                             <option value="DRAFT">Bản nháp</option>
                             <option value="PUBLISHED">Xuất bản</option>
                         </select></div><button class="btn btn-primary">Tạo Campaign</button>
@@ -49,9 +49,9 @@ use App\Core\Session; ?>
                                     <?= e(format_db_datetime((string)$c['ends_at'])) ?></td>
                                 <td><?= (int)$c['coupon_count'] ?></td>
                                 <td><span
-                                        class="badge badge-<?= e(campaign_status_class((string)$c['status'])) ?>"><?= e(campaign_status_label((string)$c['status'])) ?></span>
+                                        class="badge bg-<?= e(campaign_status_class((string)$c['status'])) ?>"><?= e(campaign_status_label((string)$c['status'])) ?></span>
                                 </td>
-                                <td><a class="btn btn-sm btn-outline-secondary btn-block mb-1"
+                                <td><a class="btn btn-sm btn-outline-secondary w-100 mb-1"
                                         href="<?= e(url('/admin/campaigns/' . (int)$c['id'])) ?>">Quản lý coupon</a>
                                     <form method="post"
                                         action="<?= e(url('/admin/campaigns/' . (int)$c['id'] . '/status')) ?>">
@@ -61,7 +61,7 @@ use App\Core\Session; ?>
                                             <option>PUBLISHED</option>
                                             <option>DISABLED</option>
                                             <option>ARCHIVED</option>
-                                        </select><button class="btn btn-sm btn-outline-primary btn-block">Cập nhật</button>
+                                        </select><button class="btn btn-sm btn-outline-primary w-100">Cập nhật</button>
                                     </form>
                                 </td>
                             </tr><?php endforeach; ?></tbody>

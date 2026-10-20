@@ -10,7 +10,7 @@
             event.preventDefault();
             pendingForm = this;
             $('#savedRemoveName').text($(this).attr('data-title') || 'coupon này');
-            $dialog.modal('show');
+            window.bootstrap.Modal.getOrCreateInstance($dialog[0]).show();
         });
 
         $('#savedConfirmRemove').on('click', function () {

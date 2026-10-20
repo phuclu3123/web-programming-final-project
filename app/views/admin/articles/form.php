@@ -5,13 +5,13 @@ use App\Core\Session; ?>
 <form method="post" class="card card-body shadow-sm"
     action="<?= e($article === null ? url('/admin/articles') : url('/admin/articles/' . (int)$article['id'] . '/edit')) ?>">
     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-    <div class="form-group"><label>Tiêu đề</label><input aria-label="Tiêu đề bài viết" name="title" class="form-control" required maxlength="200"
+    <div class="mb-3"><label>Tiêu đề</label><input aria-label="Tiêu đề bài viết" name="title" class="form-control" required maxlength="200"
             value="<?= e((string)($article['title'] ?? '')) ?>"></div>
-    <div class="form-group"><label>Tóm tắt</label><textarea aria-label="Tóm tắt bài viết" name="summary" class="form-control" maxlength="1000"
+    <div class="mb-3"><label>Tóm tắt</label><textarea aria-label="Tóm tắt bài viết" name="summary" class="form-control" maxlength="1000"
             rows="2"><?= e((string)($article['summary'] ?? '')) ?></textarea></div>
-    <div class="form-group"><label>Nội dung (văn bản thuần)</label><textarea aria-label="Nội dung bài viết" name="body" class="form-control" required
+    <div class="mb-3"><label>Nội dung (văn bản thuần)</label><textarea aria-label="Nội dung bài viết" name="body" class="form-control" required
             maxlength="30000" rows="12"><?= e((string)($article['body'] ?? '')) ?></textarea></div>
-    <div class="form-group"><label>Trạng thái</label><select aria-label="Trạng thái" name="status"
+    <div class="mb-3"><label>Trạng thái</label><select aria-label="Trạng thái" name="status"
             class="form-control"><?php foreach (['DRAFT' => 'Bản nháp', 'PUBLISHED' => 'Xuất bản', 'ARCHIVED' => 'Lưu trữ'] as $code => $name): ?>
             <option value="<?= e($code) ?>" <?= ($article['status'] ?? 'DRAFT') === $code ? 'selected' : '' ?>>
                 <?= e($name) ?>

@@ -6,7 +6,7 @@ use App\Core\Session; ?>
         <h1 class="h3 mb-1">Official Coupons</h1>
         <p class="text-muted mb-0">Coupon của Merchant vẫn phải qua Admin duyệt trước khi public.</p>
     </div><a class="btn btn-primary" href="<?= e(url('/merchant/coupons/create')) ?>"><i
-            class="fa-solid fa-plus mr-1"></i>Tạo Official Coupon</a>
+            class="fa-solid fa-plus me-1"></i>Tạo Official Coupon</a>
 </div>
 <div class="card shadow-sm">
     <div class="table-responsive">
@@ -32,9 +32,9 @@ use App\Core\Session; ?>
                         <td><?= e(format_db_datetime((string)$c['starts_at'])) ?><br><span class="text-muted">→
                                 <?= e(format_db_datetime((string)$c['ends_at'])) ?></span></td>
                         <td><span
-                                class="badge badge-<?= e(coupon_status_class((string)$c['effective_status'])) ?>"><?= e(coupon_status_label((string)$c['effective_status'])) ?></span>
+                                class="badge bg-<?= e(coupon_status_class((string)$c['effective_status'])) ?>"><?= e(coupon_status_label((string)$c['effective_status'])) ?></span>
                         </td>
-                        <td class="text-right"><a class="btn btn-sm btn-outline-primary"
+                        <td class="text-end"><a class="btn btn-sm btn-outline-primary"
                                 href="<?= e(url('/merchant/coupons/' . (int)$c['id'] . '/edit')) ?>">Sửa</a><?php if ((string)$c['publication_status'] !== 'DISABLED'): ?>
                                 <form class="d-inline" method="post"
                                     action="<?= e(url('/merchant/coupons/' . (int)$c['id'] . '/disable')) ?>"><input

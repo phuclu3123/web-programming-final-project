@@ -45,7 +45,7 @@
             $('#duplicateApprovalShop').text(form.dataset.merchantName || '');
             $('#duplicateApprovalEvidence').text(form.dataset.evidence || '');
             $('#duplicateApprovalCount').text('Đã có ' + (form.dataset.duplicateUsers || '1') + ' User khác nộp bằng chứng này trước đó cho cùng Shop.');
-            $modal.modal('show');
+            window.bootstrap.Modal.getOrCreateInstance($modal[0]).show();
         });
 
         $checkbox.on('change', function () {
@@ -60,7 +60,7 @@
             $confirm.prop('disabled', true);
             pendingForm = null;
             pendingSubmitter = null;
-            $modal.modal('hide');
+            window.bootstrap.Modal.getOrCreateInstance($modal[0]).hide();
             // requestSubmit preserves the approve button name/value and normal validation.
             confirmedForm.requestSubmit(approvedBy);
         });

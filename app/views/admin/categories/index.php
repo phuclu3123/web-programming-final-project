@@ -8,9 +8,9 @@ use App\Core\Session; ?>
                 <h1 class="h5">Thêm danh mục</h1>
                 <form method="post" action="<?= e(url('/admin/categories')) ?>"><input type="hidden" name="_token"
                         value="<?= e(Session::csrfToken()) ?>">
-                    <div class="form-group"><label>Tên danh mục</label><input aria-label="Tên danh mục" class="form-control" name="name"
+                    <div class="mb-3"><label>Tên danh mục</label><input aria-label="Tên danh mục" class="form-control" name="name"
                             maxlength="100" required></div>
-                    <div class="form-group"><label>Mô tả</label><textarea aria-label="Mô tả danh mục" class="form-control" name="description"
+                    <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả danh mục" class="form-control" name="description"
                             rows="3"></textarea></div><button class="btn btn-primary">Thêm danh mục</button>
                 </form>
             </div>
@@ -34,7 +34,7 @@ use App\Core\Session; ?>
                                 </td>
                                 <td><code><?= e((string)$c['slug']) ?></code></td>
                                 <td><?= (int)$c['is_active'] === 1 ? 'Đang bật' : 'Đã tắt' ?></td>
-                                <td class="text-right">
+                                <td class="text-end">
                                     <form method="post"
                                         action="<?= e(url('/admin/categories/' . (int)$c['id'] . '/toggle')) ?>"><input
                                             type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><input

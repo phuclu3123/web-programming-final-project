@@ -40,7 +40,7 @@ use App\Core\Session; ?>
                         <option value="">-- Chọn coupon --</option><?php foreach ($eligible as $c): ?><option
                                 value="<?= (int)$c['id'] ?>"><?= e((string)$c['merchant_name']) ?> ·
                                 <?= e((string)$c['title']) ?></option><?php endforeach; ?>
-                    </select><button class="btn btn-primary btn-block">Gắn vào Campaign</button>
+                    </select><button class="btn btn-primary w-100">Gắn vào Campaign</button>
                 </form><small class="text-muted d-block mt-2">Chiến dịch nền tảng có thể có mã từ nhiều cửa hàng. Coupon cần còn hiệu lực trong thời gian diễn ra chiến dịch.</small>
             </div>
         </div>

@@ -22,7 +22,7 @@ use App\Core\Session; ?>
                             gửi <?= e(format_db_datetime((string) $coupon['created_at'])) ?></div>
                         <h2 class="h5 mb-2"><?= e((string) $coupon['title']) ?></h2>
                         <div class="mb-3 d-flex flex-wrap align-items-center" style="gap:.35rem">
-                            <span class="font-weight-bold"><?= e((string) $coupon['merchant_name']) ?></span>
+                            <span class="fw-bold"><?= e((string) $coupon['merchant_name']) ?></span>
                             <span
                                 class="badge-soft <?= e(category_badge_class((string) $coupon['category_name'])) ?>"><?= e((string) $coupon['category_name']) ?></span>
                             <span
@@ -67,7 +67,7 @@ use App\Core\Session; ?>
                     <div class="col-lg-4 mt-3 mt-lg-0">
                         <form method="post" action="<?= e(url('/admin/coupons/' . (int) $coupon['id'] . '/moderate')) ?>">
                             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="small" for="note-<?= (int) $coupon['id'] ?>">Ghi chú kiểm duyệt</label>
                                 <textarea class="form-control" id="note-<?= (int) $coupon['id'] ?>" name="note" rows="4"
                                     placeholder="Ghi lý do nếu từ chối; có thể ghi chú khi duyệt."></textarea>

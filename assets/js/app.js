@@ -61,6 +61,7 @@
 
       try {
         await copyText(code);
+        void window.CouponHubEvents?.copy(button.dataset.couponId);
         if (label) label.textContent = 'Đã chép';
         button.classList.add('copied');
         showToast(`Đã sao chép mã ${code}`);

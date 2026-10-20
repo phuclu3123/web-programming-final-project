@@ -19,25 +19,25 @@ $makePageLink = static function (int $next) use ($filters): string {
 ?>
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
     <div>
-        <h1 class="h3 mb-1"><i class="fa-regular fa-bookmark text-primary mr-2" aria-hidden="true"></i>Coupon đã lưu
+        <h1 class="h3 mb-1"><i class="fa-regular fa-bookmark text-primary me-2" aria-hidden="true"></i>Coupon đã lưu
         </h1>
         <p class="text-muted mb-0">Lưu coupon để dễ tìm lại. Bạn đang lưu <strong><?= (int) $totalSaved ?></strong>
             coupon.</p>
     </div>
     <a class="btn btn-primary mt-3 mt-md-0" href="<?= e(url('/coupons')) ?>"><i
-            class="fa-solid fa-magnifying-glass mr-1" aria-hidden="true"></i>Tìm thêm coupon</a>
+            class="fa-solid fa-magnifying-glass me-1" aria-hidden="true"></i>Tìm thêm coupon</a>
 </div>
 
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form method="get" action="<?= e(url('/saved-coupons')) ?>" aria-label="Bộ lọc coupon đã lưu">
-            <div class="form-row">
-                <div class="form-group col-md-6 col-lg-4">
+            <div class="row g-3">
+                <div class="mb-3 col-md-6 col-lg-4">
                     <label for="saved-keyword">Từ khóa</label>
                     <input class="form-control" id="saved-keyword" type="search" name="q" maxlength="100"
                         value="<?= e((string) $filters['keyword']) ?>" placeholder="Tên coupon, mã hoặc Merchant...">
                 </div>
-                <div class="form-group col-md-6 col-lg-3">
+                <div class="mb-3 col-md-6 col-lg-3">
                     <label for="saved-category">Danh mục</label>
                     <select class="form-control" id="saved-category" name="category_id">
                         <option value="">Tất cả</option>
@@ -48,7 +48,7 @@ $makePageLink = static function (int $next) use ($filters): string {
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="form-group col-md-6 col-lg-3">
+                <div class="mb-3 col-md-6 col-lg-3">
                     <label for="saved-status">Trạng thái</label>
                     <select class="form-control" id="saved-status" name="status">
                         <?php foreach (['ALL' => 'Tất cả', 'ACTIVE' => 'Đang hoạt động', 'SCHEDULED' => 'Sắp diễn ra', 'UNAVAILABLE' => 'Hết hạn / Không khả dụng'] as $status => $label): ?>
@@ -57,7 +57,7 @@ $makePageLink = static function (int $next) use ($filters): string {
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="form-group col-md-6 col-lg-2">
+                <div class="mb-3 col-md-6 col-lg-2">
                     <label for="saved-sort">Sắp xếp</label>
                     <select class="form-control" id="saved-sort" name="sort">
                         <option value="RECENT" <?= $filters['sort'] === 'RECENT' ? 'selected' : '' ?>>Mới lưu</option>
@@ -68,7 +68,7 @@ $makePageLink = static function (int $next) use ($filters): string {
             </div>
             <div class="d-flex justify-content-end flex-wrap" style="gap:.5rem">
                 <a class="btn btn-outline-secondary" href="<?= e(url('/saved-coupons')) ?>">Xóa lọc</a>
-                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter mr-1"
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter me-1"
                         aria-hidden="true"></i>Áp dụng</button>
             </div>
         </form>
@@ -106,8 +106,8 @@ $makePageLink = static function (int $next) use ($filters): string {
                     <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-start mb-2" style="gap:.5rem">
                             <span
-                                class="badge badge-<?= e(coupon_status_class($currentStatus)) ?> saved-status-badge"><?= e(coupon_status_label($currentStatus)) ?></span>
-                            <span class="small text-muted text-right">#<?= (int) $item['id'] ?></span>
+                                class="badge bg-<?= e(coupon_status_class($currentStatus)) ?> saved-status-badge"><?= e(coupon_status_label($currentStatus)) ?></span>
+                            <span class="small text-muted text-end">#<?= (int) $item['id'] ?></span>
                         </div>
                         <div class="mb-2">
                             <span
@@ -122,12 +122,12 @@ $makePageLink = static function (int $next) use ($filters): string {
                             <div class="coupon-code mb-2"><code><?= e((string) $item['code']) ?></code></div>
                         <?php endif; ?>
                         <div class="small text-muted mt-auto">
-                            <div><i class="fa-regular fa-calendar mr-1" aria-hidden="true"></i>Hết hạn:
+                            <div><i class="fa-regular fa-calendar me-1" aria-hidden="true"></i>Hết hạn:
                                 <?= e(format_db_datetime((string) $item['ends_at'])) ?></div>
-                            <div><i class="fa-regular fa-bookmark mr-1" aria-hidden="true"></i>Đã lưu:
+                            <div><i class="fa-regular fa-bookmark me-1" aria-hidden="true"></i>Đã lưu:
                                 <?= e(format_db_datetime((string) $item['saved_at'])) ?></div>
                             <?php if (!$isQualified): ?>
-                                <div class="saved-eligibility-note mt-2"><i class="fa-solid fa-circle-info mr-1"
+                                <div class="saved-eligibility-note mt-2"><i class="fa-solid fa-circle-info me-1"
                                         aria-hidden="true"></i>Lượt lưu này không tính vào xếp hạng hoặc CouponPoint.</div>
                             <?php endif; ?>
                         </div>
@@ -144,7 +144,7 @@ $makePageLink = static function (int $next) use ($filters): string {
                                 <input type="hidden" name="_token" value="<?= e(\App\Core\Session::csrfToken()) ?>">
                                 <button type="submit" class="btn btn-outline-danger btn-sm" title="Bỏ lưu coupon"
                                     aria-label="Bỏ lưu <?= e((string) $item['title']) ?>"><i
-                                        class="fa-regular fa-trash-can mr-1" aria-hidden="true"></i>Bỏ lưu</button>
+                                        class="fa-regular fa-trash-can me-1" aria-hidden="true"></i>Bỏ lưu</button>
                             </form>
                         </div>
                     </div>
@@ -175,12 +175,11 @@ $makePageLink = static function (int $next) use ($filters): string {
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title h5" id="savedRemoveTitle">Xác nhận bỏ lưu coupon</h2><button type="button"
-                    class="close" data-dismiss="modal" aria-label="Đóng"><span
-                        aria-hidden="true">&times;</span></button>
+                    class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body">Bạn muốn bỏ lưu <strong id="savedRemoveName"></strong>? Hành động này không xóa
                 coupon khỏi hệ thống.</div>
-            <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Quay
+            <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Quay
                     lại</button><button type="button" class="btn btn-danger" id="savedConfirmRemove">Xác nhận bỏ
                     lưu</button></div>
         </div>

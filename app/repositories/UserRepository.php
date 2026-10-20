@@ -58,6 +58,31 @@ final class UserRepository implements \App\Contracts\UserProfileRepositoryInterf
         return (bool) $stmt->fetchColumn();
     }
 
+    public function updateProfile(int $userId, string $name, string $phone): bool
+    {
+        $stmt = $this->db->prepare("UPDATE users SET full_name=?, phone=? WHERE id=? AND status='ACTIVE' AND deleted_at IS NULL");
+        $stmt->execute([$name, $phone, $userId]);
+        $stmt->closeCursor();
+        // Zero affected rows can also mean the data was unchanged.
+        return $this->findById($userId) !== null;
+    }
+
+    public function passwordHashForUser(int $userId): ?string
+    {
+        $stmt = $this->db->prepare("SELECT password_hash FROM users WHERE id=? AND status='ACTIVE' AND deleted_at IS NULL");
+        $stmt->execute([$userId]);
+        $hash = $stmt->fetchColumn();
+        return is_string($hash) ? $hash : null;
+    }
+
+    public function changePassword(int $userId, string $oldHash, string $newHash): bool
+    {
+        // Guard against a concurrent password change and invalidate all sessions.
+        $stmt = $this->db->prepare("UPDATE users SET password_hash=?, auth_version=auth_version+1 WHERE id=? AND password_hash=? AND status='ACTIVE' AND deleted_at IS NULL");
+        $stmt->execute([$newHash, $userId, $oldHash]);
+        return $stmt->rowCount() === 1;
+    }
+
     /** @return array<string,mixed> */
     public function rewardSummary(int $userId): array
     {

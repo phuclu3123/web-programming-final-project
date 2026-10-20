@@ -45,7 +45,7 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                         <div class="coupon-code-large mb-4">
                             <div class="small text-muted">Mã coupon</div>
                             <code id="coupon-code-value"><?= e((string) $coupon['code']) ?></code>
-                            <button type="button" class="btn btn-outline-secondary btn-sm ml-2" id="copy-coupon-code"
+                            <button type="button" class="btn btn-outline-secondary btn-sm ms-2" id="copy-coupon-code" data-coupon-id="<?= (int)$coupon['id'] ?>"
                                 data-code="<?= e((string) $coupon['code']) ?>">Sao chép mã</button>
                         </div>
                     <?php endif; ?>
@@ -71,8 +71,8 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                                 data-saved="<?= $saved ? '1' : '0' ?>">
                                 <?= $saved ? '★ Đã lưu' : '☆ Lưu coupon' ?>
                             </button>
-                            <button type="button" class="btn btn-outline-danger" data-toggle="modal"
-                                data-target="#reportCouponModal">Báo cáo</button>
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                                data-bs-target="#reportCouponModal">Báo cáo</button>
                         <?php else: ?>
                             <a class="btn btn-outline-secondary" href="<?= e(url('/login').'?return='.rawurlencode(url('/coupons/'.(int)$coupon['id']))) ?>">Đăng nhập để lưu / xác
                                 nhận</a>
@@ -124,7 +124,7 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                     </ul></details>
 
                     <?php if ($isLoggedIn && $voteRestriction === null): ?>
-                        <div class="small font-weight-bold mb-2">Coupon này có dùng được không?</div>
+                        <div class="small fw-bold mb-2">Coupon này có dùng được không?</div>
                         <div class="d-flex flex-column">
                             <button type="button"
                                 class="btn btn-sm btn-outline-success vote-btn mb-2 <?= $currentVote === 'WORKING' ? 'active' : '' ?>"
@@ -141,7 +141,7 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                             không thể tự xác nhận.</div>
                     <?php elseif ($isLoggedIn && $voteRestriction === 'SHOP_MANAGER'): ?>
                         <div class="alert alert-light border small mb-0" role="status">
-                            <i class="fas fa-shield-halved mr-1" aria-hidden="true"></i>
+                            <i class="fas fa-shield-halved me-1" aria-hidden="true"></i>
                             Bạn đang quản lý Shop phát hành coupon này nên không thể tham gia xác minh cộng đồng.
                         </div>
                     <?php else: ?>
@@ -160,7 +160,7 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                             <div class="small text-muted">Chia sẻ trải nghiệm hoặc lưu ý về điều kiện sử dụng coupon.
                             </div>
                         </div>
-                        <span class="badge badge-light border" id="comment-count"><?= count($comments) ?> bình
+                        <span class="badge bg-light text-dark border" id="comment-count"><?= count($comments) ?> bình
                             luận</span>
                     </div>
 
@@ -168,12 +168,12 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                         <form id="comment-form" class="mb-3" method="post"
                             action="<?= e(url('/api/coupons/' . (int) $coupon['id'] . '/comments')) ?>">
                             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                            <div class="form-group mb-2">
+                            <div class="mb-3 mb-2">
                                 <textarea class="form-control" id="comment-body" name="body" rows="3" maxlength="3000" aria-label="Nội dung bình luận"
                                     placeholder="Viết bình luận..." required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary btn-sm">Gửi bình luận</button>
-                            <span class="small text-muted ml-2"><span id="comment-char-count">0</span>/3000</span>
+                            <span class="small text-muted ms-2"><span id="comment-char-count">0</span>/3000</span>
                         </form>
                     <?php else: ?>
                         <div class="alert alert-light border small">Bạn cần <a href="<?= e(url('/login')) ?>">đăng nhập</a>
@@ -208,12 +208,11 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                         action="<?= e(url('/api/coupons/' . (int) $coupon['id'] . '/reports')) ?>">
                         <div class="modal-header">
                             <h5 class="modal-title" id="reportCouponModalLabel">Báo cáo coupon</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Đóng"><span
-                                    aria-hidden="true">&times;</span></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="report-reason">Lý do</label>
                                 <select class="form-control" id="report-reason" name="reason" required>
                                     <option value="NOT_WORKING">Coupon không hoạt động</option>
@@ -226,7 +225,7 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                                     <option value="OTHER">Khác</option>
                                 </select>
                             </div>
-                            <div class="form-group mb-0">
+                            <div class="mb-3 mb-0">
                                 <label for="report-details">Chi tiết</label>
                                 <textarea class="form-control" id="report-details" name="details" rows="4" maxlength="2000"
                                     placeholder="Mô tả để Admin kiểm tra nhanh hơn..."></textarea>
@@ -234,7 +233,7 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                             <button type="submit" class="btn btn-danger">Gửi báo cáo</button>
                         </div>
                     </form>
