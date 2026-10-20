@@ -11,7 +11,9 @@ interface CampaignRepositoryInterface
     public function publicUpcoming(int $limit = 4): array;
     public function publicListing(string $phase, int $page, int $pageSize = 9): array;
     public function findPublic(int $id): ?array;
-    public function publicCoupons(int $campaignId): array;
+    public function publicCoupons(int $campaignId, int $categoryId = 0, string $usageChannel = 'ALL'): array;
+
+    public function publicCategories(): array;
     public function findAdmin(int $campaignId): ?array;
     public function allActiveCoupons(): array;
     public function detachAdmin(int $campaignId, int $couponId): void;

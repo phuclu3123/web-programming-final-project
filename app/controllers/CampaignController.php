@@ -43,11 +43,33 @@ final class CampaignController extends Controller
             $this->renderError(404, 'Campaign không tồn tại hoặc chưa public.');
             return;
         }
-        $this->view('campaigns/show', [
-            'pageTitle' => (string) $campaign['name'],
-            'campaign' => $campaign,
-            'coupons' => $this->campaigns->publicCoupons((int) $campaign['id']),
-        ]);
+        $categoryId = positiveId(
+    $request->query('category_id', '0'),
+    true
+);
+
+$usageChannel = $request->query('usage_channel', 'ALL');
+
+if (!in_array(
+    $usageChannel,
+    ['ALL', 'ONLINE', 'OFFLINE', 'BOTH'],
+    true
+)) {
+    $usageChannel = 'ALL';
+}
+
+$this->view('campaigns/show', [
+    'pageTitle' => (string) $campaign['name'],
+    'campaign' => $campaign,
+    'coupons' => $this->campaigns->publicCoupons(
+        (int) $campaign['id'],
+        $categoryId,
+        $usageChannel
+    ),
+    'categories' => $this->campaigns->publicCategories(),
+    'selectedCategory' => $categoryId,
+    'selectedChannel' => $usageChannel,
+]);
     }
 
     public function index(Request $request): void

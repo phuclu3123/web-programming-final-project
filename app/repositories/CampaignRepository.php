@@ -36,7 +36,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return ['items'=>$stmt->fetchAll(),'total'=>$total,'page'=>$page,'pages'=>$pages];
     }
 
-    /** @return array<int,array<string,mixed>> */
+    /* @return array<int,array<string,mixed>> */
     public function publicCurrent(int $limit = 3): array
     {
         $limit = max(1, min(12, $limit));
@@ -46,7 +46,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return $this->db->query($sql)->fetchAll();
     }
 
-    /** @return array<int,array<string,mixed>> */
+    /*@return array<int,array<string,mixed>> */
     public function publicUpcoming(int $limit = 4): array
     {
         $limit = max(1, min(12, $limit));
@@ -56,7 +56,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return $this->db->query($sql)->fetchAll();
     }
 
-    /** @return array<string,mixed>|null */
+    /* @return array<string,mixed>|null */
     public function findPublic(int $id): ?array
     {
         $stmt = $this->db->prepare(
@@ -68,24 +68,69 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return is_array($row) ? $row : null;
     }
 
-    /** @return array<int,array<string,mixed>> */
-    public function publicCoupons(int $campaignId): array
-    {
-        $stmt = $this->db->prepare(
-            "SELECT c.id,c.title,c.code,c.discount_type,c.discount_value,c.cashback_unit,c.min_order_amount,c.max_discount_amount,c.usage_channel,c.ends_at, " .
-                "m.name AS merchant_name,cat.name AS category_name,s.trust_score,s.total_votes, " .
-                "(SELECT total_favorites FROM v_coupon_favorite_stats fs WHERE fs.coupon_id=c.id) AS favorite_count " .
-                "FROM campaign_coupons cc JOIN v_coupon_status c ON c.id=cc.coupon_id " .
-                "JOIN merchants m ON m.id=c.merchant_id JOIN categories cat ON cat.id=c.category_id " .
-                "JOIN v_coupon_vote_stats s ON s.coupon_id=c.id " .
-                "WHERE cc.campaign_id=? AND c.effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci " .
-                "ORDER BY c.created_at DESC,c.id DESC"
-        );
-        $stmt->execute([$campaignId]);
-        return $stmt->fetchAll();
+    /*@return array<int,array<string,mixed>> */
+    /*Lấy coupon công khai thuộc chiến dịch.
+ * @return array<int,array<string,mixed>>*/
+    public function publicCoupons(int $campaignId, int $categoryId = 0, string $usageChannel = 'ALL'): array {
+        $sql = " SELECT c.id, c.title, c.code, c.discount_type, c.discount_value, c.cashback_unit, c.min_order_amount, c.max_discount_amount, c.usage_channel, c.ends_at, m.name 
+            AS merchant_name, cat.name 
+            AS category_name, s.trust_score,
+            s.total_votes,
+            (
+                SELECT total_favorites
+                FROM v_coupon_favorite_stats fs
+                WHERE fs.coupon_id = c.id
+            ) AS favorite_count
+        FROM campaign_coupons cc
+        JOIN v_coupon_status c ON c.id = cc.coupon_id
+        JOIN merchants m ON m.id = c.merchant_id
+        JOIN categories cat ON cat.id = c.category_id
+        JOIN v_coupon_vote_stats s ON s.coupon_id = c.id
+        WHERE cc.campaign_id = ?
+          AND c.effective_status COLLATE utf8mb4_vietnamese_ci
+              = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci
+    ";
+
+    $params = [$campaignId];
+
+    if ($categoryId > 0) {
+        $sql .= " AND c.category_id = ?";
+        $params[] = $categoryId;
     }
 
-    /** @return array<string,mixed>|null */
+    if ($usageChannel === 'ONLINE' || $usageChannel === 'OFFLINE') {
+        $sql .= " AND (
+            c.usage_channel = ?
+            OR c.usage_channel = 'BOTH'
+        )";
+        $params[] = $usageChannel;
+    } elseif ($usageChannel === 'BOTH') {
+        $sql .= " AND c.usage_channel = 'BOTH'";
+    }
+
+    $sql .= " ORDER BY c.created_at DESC, c.id DESC";
+
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute($params);
+
+    return $stmt->fetchAll();
+}
+
+/**Danh mục đang hoạt động để hiển thị trong bộ lọc.
+ * @return array<int,array<string,mixed>>*/
+    public function publicCategories(): array
+    {
+        $sql = "
+        SELECT id, name
+        FROM categories
+        WHERE is_active = 1
+        ORDER BY sort_order ASC, name ASC
+    ";
+
+    return $this->db->query($sql)->fetchAll();
+    }
+
+    /* @return array<string,mixed>|null */
     public function findAdmin(int $campaignId): ?array
     {
         $stmt = $this->db->prepare(
@@ -96,7 +141,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return is_array($row) ? $row : null;
     }
 
-    /** @return array<int,array<string,mixed>> */
+    /* @return array<int,array<string,mixed>> */
     public function allActiveCoupons(): array
     {
         return $this->db->query(
@@ -111,7 +156,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         $stmt->execute([$campaignId, $couponId]);
     }
 
-    /** @return array<int,array<string,mixed>> */
+    /*@return array<int,array<string,mixed>> */
     public function merchantCampaigns(int $userId): array
     {
         $stmt = $this->db->prepare(
@@ -123,7 +168,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return $stmt->fetchAll();
     }
 
-    /** @return array<string,mixed>|null */
+    /* @return array<string,mixed>|null */
     public function findOwned(int $campaignId, int $userId): ?array
     {
         $stmt = $this->db->prepare(
@@ -182,7 +227,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         $stmt->execute([$campaignId, $couponId]);
     }
 
-    /** @return array<int,array<string,mixed>> */
+    /* @return array<int,array<string,mixed>> */
     public function attachedCoupons(int $campaignId): array
     {
         $stmt = $this->db->prepare(
