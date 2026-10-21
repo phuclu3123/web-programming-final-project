@@ -36,6 +36,101 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return ['items'=>$stmt->fetchAll(),'total'=>$total,'page'=>$page,'pages'=>$pages];
     }
 
+    
+public function publicFilteredListing(
+    string $phase,
+    int $categoryId,
+    string $usageChannel,
+    int $page,
+    int $pageSize = 9
+): array {
+    $where = $this->publicEligibility();
+
+    if ($phase === 'ACTIVE') {
+        $where .= ' AND c.starts_at <= UTC_TIMESTAMP()';
+    } elseif ($phase === 'UPCOMING') {
+        $where .= ' AND c.starts_at > UTC_TIMESTAMP()';
+    }
+
+    $params = [];
+
+    if ($categoryId > 0 || $usageChannel !== 'ALL') {
+        $couponConditions = [
+            'cc.campaign_id = c.id',
+            "vc.effective_status COLLATE utf8mb4_vietnamese_ci
+                = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci",
+        ];
+
+        if ($categoryId > 0) {
+            $couponConditions[] = 'vc.category_id = ?';
+            $params[] = $categoryId;
+        }
+
+        if ($usageChannel === 'ONLINE' || $usageChannel === 'OFFLINE') {
+            $couponConditions[] =
+                "(vc.usage_channel = ? OR vc.usage_channel = 'BOTH')";
+            $params[] = $usageChannel;
+        } elseif ($usageChannel === 'BOTH') {
+            $couponConditions[] = "vc.usage_channel = 'BOTH'";
+        }
+
+        $where .= ' AND EXISTS (
+            SELECT 1
+            FROM campaign_coupons cc
+            INNER JOIN v_coupon_status vc ON vc.id = cc.coupon_id
+            WHERE ' . implode(' AND ', $couponConditions) . '
+        )';
+    }
+
+    $from = ' FROM campaigns c
+        LEFT JOIN merchants m ON m.id = c.owner_merchant_id
+        WHERE ' . $where;
+
+    $countStatement = $this->db->prepare(
+        'SELECT COUNT(*)' . $from
+    );
+    $countStatement->execute($params);
+
+    $total = (int) $countStatement->fetchColumn();
+
+    $pageSize = max(1, min(24, $pageSize));
+    $pages = max(1, (int) ceil($total / $pageSize));
+    $page = max(1, min($page, $pages));
+    $offset = ($page - 1) * $pageSize;
+
+    $sql = "
+        SELECT
+            c.*,
+            m.name AS merchant_name,
+            (c.starts_at > UTC_TIMESTAMP()) AS upcoming,
+            (
+                SELECT COUNT(*)
+                FROM campaign_coupons cc
+                INNER JOIN v_coupon_status vc ON vc.id = cc.coupon_id
+                WHERE cc.campaign_id = c.id
+                  AND vc.effective_status COLLATE utf8mb4_vietnamese_ci
+                      = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci
+            ) AS coupon_count
+        " . $from . "
+        ORDER BY
+            (c.starts_at > UTC_TIMESTAMP()),
+            c.starts_at DESC,
+            c.id DESC
+        LIMIT ? OFFSET ?
+    ";
+
+    $statement = $this->db->prepare($sql);
+    $statement->execute(array_merge($params, [$pageSize, $offset]));
+
+    return [
+        'items' => $statement->fetchAll(),
+        'total' => $total,
+        'page' => $page,
+        'pages' => $pages,
+    ];
+}
+
+
     /* @return array<int,array<string,mixed>> */
     public function publicCurrent(int $limit = 3): array
     {
