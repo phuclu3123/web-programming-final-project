@@ -91,6 +91,54 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
         $stmt->execute([$active ? 1 : 0, $categoryId]);
     }
 
+    public function updateCategory(int $actorId, int $categoryId, string $name, string $slug, ?string $description, int $sortOrder): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $lock = $this->db->prepare('SELECT id FROM categories WHERE id=? FOR UPDATE');
+            $lock->execute([$categoryId]);
+            if (!$lock->fetch()) throw new RuntimeException('Không tìm thấy danh mục.');
+            $duplicate = $this->db->prepare('SELECT id FROM categories WHERE slug=? AND id<>? LIMIT 1');
+            $duplicate->execute([$slug, $categoryId]);
+            if ($duplicate->fetch()) throw new RuntimeException('Danh mục có tên hoặc slug này đã tồn tại.');
+            $stmt = $this->db->prepare('UPDATE categories SET name=?,slug=?,description=?,sort_order=? WHERE id=?');
+            $stmt->execute([$name, $slug, $description, $sortOrder, $categoryId]);
+            $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')
+                ->execute([$actorId, 'CATEGORY_EDIT', 'Updated category #' . $categoryId]);
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    /** Chỉ xóa danh mục trống; danh mục đã dùng nên tắt thay vì phá quan hệ dữ liệu. */
+    public function deleteUnusedCategory(int $actorId, int $categoryId): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $lock = $this->db->prepare('SELECT id FROM categories WHERE id=? FOR UPDATE');
+            $lock->execute([$categoryId]);
+            if (!$lock->fetch()) throw new RuntimeException('Không tìm thấy danh mục.');
+            foreach (['coupons', 'articles'] as $table) {
+                $count = $this->db->prepare("SELECT COUNT(*) FROM {$table} WHERE category_id=?");
+                $count->execute([$categoryId]);
+                if ((int)$count->fetchColumn() > 0) {
+                    throw new RuntimeException('Danh mục đã được sử dụng. Hãy tắt danh mục thay vì xóa.');
+                }
+            }
+            $stmt = $this->db->prepare('DELETE FROM categories WHERE id=?');
+            $stmt->execute([$categoryId]);
+            if ($stmt->rowCount() !== 1) throw new RuntimeException('Không thể xóa danh mục.');
+            $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')
+                ->execute([$actorId, 'CATEGORY_DELETE', 'Deleted unused category #' . $categoryId]);
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     /** @return array<int,array<string,mixed>> */
     public function campaigns(): array
     {

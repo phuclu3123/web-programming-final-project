@@ -122,6 +122,8 @@ $router->post('/admin/merchants/{id}/review', [AdminMerchantController::class, '
 $router->get('/admin/categories', [AdminCategoryController::class, 'index']);
 $router->post('/admin/categories', [AdminCategoryController::class, 'store']);
 $router->post('/admin/categories/{id}/toggle', [AdminCategoryController::class, 'toggle']);
+$router->post('/admin/categories/{id}/edit', [AdminCategoryController::class, 'update']);
+$router->post('/admin/categories/{id}/delete', [AdminCategoryController::class, 'delete']);
 $router->get('/admin/campaigns', [AdminCampaignController::class, 'index']);
 $router->get('/admin/campaigns/{id}', [AdminCampaignController::class, 'show']);
 $router->post('/admin/campaigns/{id}/attach', [AdminCampaignController::class, 'attach']);
@@ -130,6 +132,10 @@ $router->post('/admin/campaigns', [AdminCampaignController::class, 'store']);
 $router->post('/admin/campaigns/{id}/status', [AdminCampaignController::class, 'status']);
 $router->get('/admin/coupons', [AdminCouponController::class, 'index']);
 $router->post('/admin/coupons/{id}/moderate', [AdminCouponController::class, 'moderate']);
+$router->get('/admin/coupons/{id}/edit', [AdminCouponController::class, 'edit']);
+$router->post('/admin/coupons/{id}/edit', [AdminCouponController::class, 'update']);
+$router->post('/admin/coupons/{id}/expire', [AdminCouponController::class, 'expire']);
+$router->post('/admin/coupons/{id}/delete', [AdminCouponController::class, 'delete']);
 $router->get('/admin/reports', [AdminReportController::class, 'index']);
 $router->post('/admin/reports/{id}/resolve', [AdminReportController::class, 'resolve']);
 
