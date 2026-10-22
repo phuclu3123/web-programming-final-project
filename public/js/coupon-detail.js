@@ -134,12 +134,12 @@
         $submit.prop('disabled', true);
         request($page.data('report-url') || $form.attr('action'), {reason: reason, details: details})
             .done(function (response) {
-                $('#reportCouponModal').modal('hide');
+                window.bootstrap.Modal.getOrCreateInstance(document.getElementById('reportCouponModal')).hide();
                 $form[0].reset();
                 window.CouponHub.showMessage($message, 'success', response.message || 'Đã gửi báo cáo.', 12000);
             })
             .fail(function (xhr) {
-                $('#reportCouponModal').modal('hide');
+                window.bootstrap.Modal.getOrCreateInstance(document.getElementById('reportCouponModal')).hide();
                 window.CouponHub.showMessage($message, 'danger', errorMessage(xhr, 'Không thể gửi báo cáo.'), 20000);
             })
             .always(function () {
@@ -153,6 +153,7 @@
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(code).then(function () {
+                void window.CouponHubEvents?.copy($('#copy-coupon-code').attr('data-coupon-id'));
                 window.CouponHub.showMessage($message, 'success', 'Đã sao chép mã ' + code + '.', 8000);
             }).catch(function () {
                 window.CouponHub.showMessage($message, 'warning', 'Không thể tự sao chép. Hãy chọn mã và sao chép thủ công.', 12000);

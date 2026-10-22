@@ -51,7 +51,7 @@
         <?php if (!empty($coupon['code'])): ?>
         <span class="coupon-code"><small>MÃ ƯU ĐÃI</small><?= e($coupon['code']) ?></span>
         <button type="button" class="btn btn-outline-brand copy-code-button"
-            data-copy-code="<?= e($coupon['code']) ?>" title="Sao chép mã <?= e($coupon['code']) ?>">
+            data-copy-code="<?= e($coupon['code']) ?>" data-coupon-id="<?= (int)$coupon['id'] ?>" title="Sao chép mã <?= e($coupon['code']) ?>">
             <?= icon('copy') ?> <span>Sao chép</span>
         </button>
         <?php else: ?><a class="btn btn-outline-brand" href="<?= e(url('/coupons/' . (int)$coupon['id'])) ?>">Xem ưu đãi <?= icon('arrow') ?></a><?php endif; ?>

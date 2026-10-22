@@ -3084,3 +3084,724 @@ textarea {
         justify-content: space-around;
     }
 }
+
+/* ===== CHUẨN HÓA MÀU CHỮ TRẮNG RÕ NÉT CHO TẤT CẢ NÚT BẤM DẠNG LINK ===== */
+
+.category-view-button,
+a.category-view-button,
+a.category-view-button:link,
+a.category-view-button:visited,
+a.category-view-button:hover,
+a.category-view-button:active,
+.detail-primary-button,
+a.detail-primary-button,
+a.detail-primary-button:link,
+a.detail-primary-button:visited,
+.category-filter-button {
+    color: #ffffff !important;                   /* Màu chữ trắng tương phản cao */
+    -webkit-text-fill-color: #ffffff !important; /* Khử các thuộc tính màu chìm */
+    text-decoration: none !important;            /* Bỏ gạch chân link */
+    font-weight: 700 !important;                 /* Chữ đậm rõ ràng */
+    opacity: 1 !important;                       /* Không bị mờ độ trong suốt */
+}
+
+/* Hiệu ứng khi rê chuột vào nút */
+a.category-view-button:hover,
+.detail-primary-button:hover {
+    background: #5234d5 !important;
+    color: #ffffff !important;
+}
+
+/* ===== NÚT YÊU THÍCH ICON VECTOR MONOCHROME ===== */
+
+.favorite-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid #e3daff;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #5234d5;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.favorite-toggle-btn .heart-icon {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    transition: all 0.2s ease;
+}
+
+.favorite-toggle-btn:hover {
+    border-color: #6c4cf1;
+    background: #f8f6ff;
+}
+
+/* Trạng thái khi ĐÃ LƯU / YÊU THÍCH */
+.favorite-toggle-btn.active {
+    background: #fff0f3 !important;
+    border-color: #ffccd5 !important;
+    color: #e63946 !important;
+}
+
+.favorite-toggle-btn.active .heart-icon {
+    fill: #e63946 !important;
+    stroke: #e63946 !important;
+}
+
+/* ===== SỬA LỖI CHỮ TIÊU ĐỀ BỊ CHÌM TRONG BANNER CHIẾN DỊCH TÍM TỐI ===== */
+
+.campaign-hero h1,
+.campaign-hero h1 span {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: none !important;
+    filter: none !important;
+    font-weight: 850 !important;
+}
+
+/* ===== ÉP NỀN TÍM ĐẬM VÀ MÀU CHỮ NỔI BẬT CHO BANNER DANH MỤC ===== */
+
+/* 1. Nền Gradient Tím Đêm Đậm (Thay thế hẳn nền sáng cũ) */
+main .category-heading,
+.category-page .category-heading,
+.category-heading {
+    background: linear-gradient(135deg, #1e1346 0%, #3e2798 55%, #633ee8 100%) !important;
+    border-radius: 18px !important;
+    padding: 32px 36px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 12px 32px rgba(29, 19, 70, 0.25) !important;
+    color: #ffffff !important;
+}
+
+/* 2. Tiêu đề H1 trắng tinh 100% không bị tàng hình */
+main .category-heading h1,
+.category-heading h1 {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: none !important;
+    filter: none !important;
+    font-weight: 850 !important;
+}
+
+/* 3. Đoạn văn mô tả */
+main .category-heading p,
+.category-heading p {
+    color: #d8d0fc !important;
+    font-size: 14px !important;
+}
+
+/* 4. Thẻ Tag Eyebrow (COUPONHUB / KHÁM PHÁ) nền trắng chữ tím */
+main .category-heading .category-eyebrow,
+.category-eyebrow {
+    background: #ffffff !important;
+    color: #4f2ed3 !important;
+    font-weight: 800 !important;
+    border: none !important;
+}
+
+/* 5. Khung Thống Kê Bên Phải (Stats) */
+main .category-heading .category-heading-stats,
+.category-heading-stats {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(8px);
+}
+
+.category-heading-stats .stat-number {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+.category-heading-stats .stat-label {
+    color: #d8d0fc !important;
+}
+
+.category-heading-stats .stat-divider {
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ===== ÉP NỀN TÍM ĐẬM VÀ MÀU CHỮ NỔI BẬT CHO BANNER DANH MỤC ===== */
+
+/* 1. Nền Gradient Tím Đêm Đậm (Thay thế hẳn nền sáng cũ) */
+main .category-heading,
+.category-page .category-heading,
+.category-heading {
+    background: linear-gradient(135deg, #1e1346 0%, #3e2798 55%, #633ee8 100%) !important;
+    border-radius: 18px !important;
+    padding: 32px 36px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 12px 32px rgba(29, 19, 70, 0.25) !important;
+    color: #ffffff !important;
+}
+
+/* 2. Tiêu đề H1 trắng tinh 100% không bị tàng hình */
+main .category-heading h1,
+.category-heading h1 {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: none !important;
+    filter: none !important;
+    font-weight: 850 !important;
+}
+
+/* 3. Đoạn văn mô tả */
+main .category-heading p,
+.category-heading p {
+    color: #d8d0fc !important;
+    font-size: 14px !important;
+}
+
+/* 4. Thẻ Tag Eyebrow (COUPONHUB / KHÁM PHÁ) nền trắng chữ tím */
+main .category-heading .category-eyebrow,
+.category-eyebrow {
+    background: #ffffff !important;
+    color: #4f2ed3 !important;
+    font-weight: 800 !important;
+    border: none !important;
+}
+
+/* 5. Khung Thống Kê Bên Phải (Stats) */
+main .category-heading .category-heading-stats,
+.category-heading-stats {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(8px);
+}
+
+.category-heading-stats .stat-number {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+.category-heading-stats .stat-label {
+    color: #d8d0fc !important;
+}
+
+.category-heading-stats .stat-divider {
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ===== ĐẶC TRỊ KHỬ GRADIENT - ĐƯA TẤT CẢ BANNER VỀ MÀU TÍM ĐẲNG CẤP ĐƠN SẮC (#2d1a6d) ===== */
+
+.hero,
+.category-heading,
+.campaign-hero,
+.campaigns-intro,
+.campaign-intro,
+.categories-intro,
+.submit-heading,
+.my-coupons-heading,
+.favorites-heading,
+.page-banner,
+main .category-heading,
+.category-page .category-heading,
+div.campaign-hero {
+    background: #2d1a6d !important; /* Màu tím đậm phẳng, hoàn toàn không chuyển màu */
+    border-radius: 18px !important;
+    padding: 32px 36px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 10px 24px rgba(28, 21, 56, 0.2) !important;
+    color: #ffffff !important;
+}
+
+/* Tiêu đề trắng đơn sắc phẳng */
+.hero h1,
+.category-heading h1,
+.category-heading h2,
+.campaign-hero h1,
+.campaign-hero h2,
+.categories-intro h1,
+.submit-heading h1,
+.my-coupons-heading h1,
+.favorites-heading h1 {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    color: #ffffff !important;
+    filter: none !important;
+    font-weight: 850 !important;
+}
+
+/* Văn bản mô tả */
+.category-heading p,
+.campaign-hero p,
+.categories-intro p,
+.submit-heading p,
+.my-coupons-heading p,
+.favorites-heading p {
+    color: #d8d0fc !important;
+    font-size: 14px !important;
+}
+
+/* Nhãn Eyebrow nhỏ góc trên */
+.category-eyebrow,
+.campaign-eyebrow,
+.submit-eyebrow,
+.my-coupons-eyebrow,
+.favorites-eyebrow,
+.hero-label,
+.detail-eyebrow {
+    background: #ffffff !important;
+    color: #4f2ed3 !important;
+    border: none !important;
+    font-weight: 800 !important;
+    padding: 5px 12px !important;
+    border-radius: 8px !important;
+    display: inline-block !important;
+    margin-bottom: 10px !important;
+}
+
+/* ===== CHUYỂN SANG TÍM SÁNG TƯƠI TẮM (KHÔNG BỊ TỐI / ĐEN XÌ) ===== */
+
+/* 1. Tiêu đề chữ (Danh mục nổi bật, Mã giảm giá nổi bật...) màu Tím Sáng nổi bật */
+.featured-heading h2,
+.section-heading h2,
+.category-section-heading h2,
+.categories-intro h1,
+.categories-section-heading h2,
+.heading-text-group h2,
+.heading-text-group h1 {
+    color: #5234d5 !important;
+    -webkit-text-fill-color: #5234d5 !important;
+    background: none !important;
+    filter: none !important;
+    font-weight: 850 !important;
+}
+
+
+/* 3. Chữ tiêu đề bên trong Banner giữ màu Trắng Sáng 100% */
+.hero h1,
+.category-heading h1,
+.campaign-hero h1,
+.categories-intro h1,
+.submit-heading h1,
+.my-coupons-heading h1,
+.favorites-heading h1 {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 4. Đoạn văn mô tả trong Banner */
+.category-heading p,
+.campaign-hero p,
+.categories-intro p,
+.submit-heading p,
+.my-coupons-heading p,
+.favorites-heading p {
+    color: #f0ecff !important;
+}
+
+/* =========================================================
+   ĐỔI TÔNG MÀU SANG XANH NGỌC (TEAL) THEO WEB MẪU THE MONA
+========================================================= */
+
+/* 1. Khai báo lại hệ màu chủ đạo */
+:root {
+    --primary: #00a896 !important;        /* Màu xanh ngọc chính */
+    --primary-dark: #008072 !important;   /* Xanh ngọc đậm khi rê chuột */
+    --primary-light: #e6f7f5 !important;  /* Nền xanh ngọc nhạt */
+    --heading: #132b38 !important;        /* Màu chữ tiêu đề xanh đen */
+    --muted: #627482 !important;          /* Chữ phụ xám xanh */
+    --background: #f4f7f8 !important;     /* Nền trang xám nhạt */
+    --border: #e1e8ed !important;         /* Viền xám nhạt */
+}
+
+/* 2. Logo & Thanh Điều Hướng (Navbar) */
+.logo span {
+    color: #00a896 !important;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: #00a896 !important;
+}
+
+/* 3. Tiêu đề các mục (Danh mục nổi bật, Mã giảm giá nổi bật...) dùng màu Xanh Ngọc */
+.featured-heading h2,
+.section-heading h2,
+.category-section-heading h2,
+.categories-intro h1,
+.categories-section-heading h2,
+.heading-text-group h2,
+.heading-text-group h1 {
+    color: #00a896 !important;
+    -webkit-text-fill-color: #00a896 !important;
+    background: none !important;
+    filter: none !important;
+    font-weight: 850 !important;
+}
+
+/* 4. Banner đầu trang chuyển sang Xanh Đậm Hải Quân giống trang mẫu */
+.hero,
+.category-heading,
+.campaign-hero,
+.campaigns-intro,
+.campaign-intro,
+.categories-intro,
+.submit-heading,
+.my-coupons-heading,
+.favorites-heading,
+.page-banner,
+main .category-heading,
+.category-page .category-heading,
+div.campaign-hero {
+    background: #132b38 !important; /* Màu xanh đậm hải quân sang trọng */
+    border-radius: 18px !important;
+    padding: 32px 36px !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(19, 43, 56, 0.18) !important;
+    color: #ffffff !important;
+}
+
+/* Chữ tiêu đề trong Banner giữ màu trắng tinh */
+.hero h1,
+.category-heading h1,
+.campaign-hero h1,
+.categories-intro h1,
+.submit-heading h1,
+.my-coupons-heading h1,
+.favorites-heading h1 {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* 5. Nhãn nhỏ Eyebrow nền xanh nhạt chữ xanh ngọc */
+.featured-eyebrow,
+.section-label,
+.category-eyebrow,
+.detail-eyebrow,
+.hero-label {
+    color: #00a896 !important;
+    background: #e6f7f5 !important;
+    border: 1px solid #bce8e3 !important;
+}
+
+/* 6. Toàn bộ Nút bấm chính (Button) chuyển sang Xanh Ngọc */
+.auth-btn,
+.copy-button,
+.detail-primary-button,
+.category-view-button,
+.category-filter-button,
+a.category-view-button,
+a.detail-primary-button,
+.header-search button,
+.hero-search button {
+    background: #00a896 !important;
+    border-color: #00a896 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.auth-btn:hover,
+.copy-button:hover,
+.detail-primary-button:hover,
+.category-view-button:hover,
+.category-filter-button:hover,
+a.category-view-button:hover,
+a.detail-primary-button:hover,
+.header-search button:hover,
+.hero-search button:hover {
+    background: #008072 !important;
+    border-color: #008072 !important;
+}
+
+/* 7. Thẻ lọc nhanh (Category Chip) */
+.category-chip:hover,
+.category-chip.active {
+    border-color: #00a896 !important;
+    background: #e6f7f5 !important;
+    color: #008072 !important;
+}
+
+/* 8. Chân trang (Footer) màu xanh đen đồng bộ */
+.site-footer {
+    background: #0c1b24 !important;
+}
+
+/* ===== CHUYỂN TOÀN BỘ CHỮ TÍM BÊN TRONG THẺ SANG TÔNG XANH NGỌC ===== */
+
+/* 1. Mức giảm giá (GIẢM 20%, GIẢM 15%...) */
+.coupon-discount,
+.category-coupon-discount,
+.detail-discount {
+    color: #00a896 !important;
+    background: transparent !important;
+}
+
+/* 2. Thẻ Tag danh mục nhỏ trong card (Ăn uống, Thời trang...) */
+.category-coupon-type {
+    background: #e6f7f5 !important;
+    color: #008072 !important;
+    font-weight: 700 !important;
+}
+
+/* 3. Nhãn Eyebrow nhỏ trong Banner (COUPONHUB / KHÁM PHÁ) */
+.category-eyebrow,
+.hero-label,
+.detail-eyebrow,
+.featured-eyebrow,
+.section-label,
+main .category-heading .category-eyebrow {
+    background: #ffffff !important;
+    color: #00a896 !important;
+    border: none !important;
+    font-weight: 800 !important;
+}
+
+/* 4. Con số thống kê bên phải Banner (6 Danh mục, 17+ Mã giảm giá) */
+.category-heading-stats .stat-number {
+    color: #00a896 !important;
+    -webkit-text-fill-color: #00a896 !important;
+}
+
+.category-heading-stats .stat-label {
+    color: #a0b2c6 !important;
+}
+
+/* 5. Nút Yêu thích (Icon trái tim) */
+.favorite-toggle-btn {
+    color: #00a896 !important;
+    border-color: #bce8e3 !important;
+}
+
+.favorite-toggle-btn:hover {
+    background: #e6f7f5 !important;
+}
+
+/* =========================================================
+   ĐỔI TÔNG MÀU THEO BẢNG MÀU MỚI (#F7444E | #F7F8F3 | #78BCC4 | #002C3E)
+========================================================= */
+
+/* 1. Khai báo hệ thống màu chủ đạo */
+:root {
+    --primary: #F7444E !important;        /* Nút bấm / Mức giảm giá (Đỏ San Hô) */
+    --primary-dark: #d6333c !important;   /* Nút bấm khi rê chuột */
+    --primary-light: #fde8e9 !important;  /* Nền nhạt san hô */
+    --accent: #78BCC4 !important;         /* Chi tiết trang trí (Xanh Nhạt Teal) */
+    --heading: #002C3E !important;        /* Chữ tiêu đề (Xanh Đêm Navy) */
+    --muted: #536e7a !important;          /* Chữ phụ xám xanh */
+    --background: #F7F8F3 !important;     /* Nền toàn bộ website (Trắng Kem Nhạt) */
+    --border: #d2e4e8 !important;         /* Đường viền xám nhạt */
+}
+
+/* 2. Nền trang & Thanh Điều Hướng (Navbar) */
+body {
+    background-color: #F7F8F3 !important;
+    color: #002C3E !important;
+}
+
+.logo span {
+    color: #F7444E !important;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: #F7444E !important;
+}
+
+/* 3. Tiêu đề các mục trên nền sáng (Danh mục nổi bật, Mã giảm giá nổi bật...) */
+.featured-heading h2,
+.section-heading h2,
+.category-section-heading h2,
+.categories-intro h1,
+.categories-section-heading h2,
+.heading-text-group h2,
+.heading-text-group h1 {
+    color: #002C3E !important;
+    -webkit-text-fill-color: #002C3E !important;
+    background: none !important;
+    filter: none !important;
+    font-weight: 850 !important;
+}
+
+/* 4. Banner đầu trang chuyển sang Xanh Đêm Navy (#002C3E) */
+.hero,
+.category-heading,
+.campaign-hero,
+.campaigns-intro,
+.campaign-intro,
+.categories-intro,
+.submit-heading,
+.my-coupons-heading,
+.favorites-heading,
+.page-banner,
+main .category-heading,
+.category-page .category-heading,
+div.campaign-hero {
+    background: #002C3E !important;
+    border-radius: 18px !important;
+    padding: 32px 36px !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(0, 44, 62, 0.2) !important;
+    color: #ffffff !important;
+}
+
+/* Chữ tiêu đề trong Banner giữ màu trắng tinh */
+.hero h1,
+.category-heading h1,
+.campaign-hero h1,
+.categories-intro h1,
+.submit-heading h1,
+.my-coupons-heading h1,
+.favorites-heading h1 {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Văn bản mô tả trong Banner */
+.category-heading p,
+.campaign-hero p,
+.categories-intro p,
+.submit-heading p,
+.my-coupons-heading p,
+.favorites-heading p {
+    color: #d8eaee !important;
+}
+
+/* 5. Nhãn nhỏ Eyebrow nền Xanh Nhạt Teal (#78BCC4) chữ Xanh Đêm */
+.category-eyebrow,
+.hero-label,
+.detail-eyebrow,
+.featured-eyebrow,
+.section-label,
+main .category-heading .category-eyebrow {
+    background: #78BCC4 !important;
+    color: #002C3E !important;
+    border: none !important;
+    font-weight: 800 !important;
+}
+
+/* 6. Mức giảm giá & Thẻ Tag loại coupon */
+.coupon-discount,
+.category-coupon-discount,
+.detail-discount {
+    color: #F7444E !important;
+    background: transparent !important;
+}
+
+.category-coupon-type {
+    background: #e2f2f4 !important;
+    color: #002C3E !important;
+    font-weight: 700 !important;
+}
+
+/* 7. Toàn bộ Nút bấm chính (Button) chuyển sang Đỏ San Hô (#F7444E) */
+.auth-btn,
+.copy-button,
+.detail-primary-button,
+.category-view-button,
+.category-filter-button,
+a.category-view-button,
+a.detail-primary-button,
+.header-search button,
+.hero-search button {
+    background: #F7444E !important;
+    border-color: #F7444E !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+.auth-btn:hover,
+.copy-button:hover,
+.detail-primary-button:hover,
+.category-view-button:hover,
+.category-filter-button:hover,
+a.category-view-button:hover,
+a.detail-primary-button:hover,
+.header-search button:hover,
+.hero-search button:hover {
+    background: #d6333c !important;
+    border-color: #d6333c !important;
+}
+
+/* 8. Thẻ lọc nhanh (Category Chip) & Con số thống kê */
+.category-chip:hover,
+.category-chip.active {
+    border-color: #78BCC4 !important;
+    background: #e2f2f4 !important;
+    color: #002C3E !important;
+}
+
+.category-heading-stats .stat-number {
+    color: #78BCC4 !important;
+    -webkit-text-fill-color: #78BCC4 !important;
+}
+
+/* 9. Nút Yêu thích */
+.favorite-toggle-btn {
+    color: #F7444E !important;
+    border-color: #fca8ad !important;
+}
+
+.favorite-toggle-btn:hover {
+    background: #fde8e9 !important;
+}
+
+/* 10. Chân trang (Footer) */
+.site-footer {
+    background: #001f2c !important;
+}
+
+/* ===== TÁCH MÀU NÚT BẤM VÀ MỨC GIẢM GIÁ (TRÁNH LỖI ĐỎ CHÓT) ===== */
+
+/* 1. Con số Mức giảm giá giữ màu Đỏ San Hô làm điểm nhấn (#F7444E) */
+.coupon-discount,
+.category-coupon-discount,
+.detail-discount {
+    color: #F7444E !important;
+    font-weight: 850 !important;
+    background: transparent !important;
+}
+
+/* 2. Đổi toàn bộ Nút Bấm Hành Động (Xem ưu đãi, Áp dụng bộ lọc...) sang Xanh Đêm Navy (#002C3E) */
+.auth-btn,
+.copy-button,
+.detail-primary-button,
+.category-view-button,
+.category-filter-button,
+a.category-view-button,
+a.detail-primary-button,
+.header-search button,
+.hero-search button {
+    background: #002C3E !important;
+    border-color: #002C3E !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Hiệu ứng rê chuột vào nút bấm (Hover) */
+.auth-btn:hover,
+.copy-button:hover,
+.detail-primary-button:hover,
+.category-view-button:hover,
+.category-filter-button:hover,
+a.category-view-button:hover,
+a.detail-primary-button:hover,
+.header-search button:hover,
+.hero-search button:hover {
+    background: #004561 !important;
+    border-color: #004561 !important;
+    color: #ffffff !important;
+}
+
+/* 3. Nút Xóa bộ lọc (Nút phụ) dạng nền trắng viền nhạt */
+.category-clear-button {
+    border: 1px solid #c2dbe0 !important;
+    background: #ffffff !important;
+    color: #002C3E !important;
+}
+
+.category-clear-button:hover {
+    background: #e2f2f4 !important;
+}

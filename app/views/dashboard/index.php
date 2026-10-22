@@ -19,7 +19,7 @@ $sectionLinks = [['account-overview','Tổng quan'],['account-saved','Coupon đ�
         <div class="member-overview">
             <article class="member-profile">
                 <div class="member-profile-top"><span class="account-avatar" aria-hidden="true"><?= e(accountInitials($actor['full_name'])) ?></span><div><h2><?= e($actor['full_name']) ?></h2><span class="member-role"><?= e($memberRole) ?></span></div></div>
-                <dl><div><dt>Email tài khoản</dt><dd><?= e($actor['email']) ?></dd></div><div><dt>Trạng thái</dt><dd>Đang hoạt động</dd></div></dl>
+                <dl><div><dt>Email tài khoản</dt><dd><?= e($actor['email']) ?></dd></div><div><dt>Trạng thái</dt><dd>Đang hoạt động</dd></div></dl><a class="btn btn-outline-brand" href="<?= e(url('/account')) ?>">Chỉnh sửa thông tin cá nhân</a>
             </article>
             <article class="member-points" aria-label="Số dư CouponPoint">
                 <div class="member-points-top"><strong>COUPONPOINT</strong><span><?= e($rewardSummary['level_name'] ?? 'Thành viên mới') ?></span></div>

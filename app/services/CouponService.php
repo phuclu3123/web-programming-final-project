@@ -257,7 +257,8 @@ final class CouponService
     {
         if ($value === '') return null;
         $timezone = new DateTimeZone((string) config('app.timezone', 'Asia/Ho_Chi_Minh'));
-        $date = DateTimeImmutable::createFromFormat('!Y-m-d\\TH:i', $value, $timezone);
+        $format = preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/D', $value) ? '!Y-m-d\\TH:i:s' : '!Y-m-d\\TH:i';
+        $date = DateTimeImmutable::createFromFormat($format, $value, $timezone);
         $errors = DateTimeImmutable::getLastErrors();
         if ($date === false || (is_array($errors) && ($errors['warning_count'] > 0 || $errors['error_count'] > 0))) {
             return null;

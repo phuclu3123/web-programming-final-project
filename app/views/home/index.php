@@ -5,11 +5,11 @@ use App\Core\Auth; ?>
     <?php $campaign = $currentCampaigns[0]; ?>
     <section class="campaign-hero card shadow-sm border-0 mb-4">
         <div class="card-body p-4 p-lg-5">
-            <span class="badge badge-light mb-3">Campaign đang diễn ra</span>
-            <h1 class="display-4 font-weight-bold mb-2"><?= e((string)$campaign['name']) ?></h1>
+            <span class="badge bg-light text-dark mb-3">Campaign đang diễn ra</span>
+            <h1 class="display-4 fw-bold mb-2"><?= e((string)$campaign['name']) ?></h1>
             <?php if (!empty($campaign['description'])): ?><p class="lead mb-3"><?= e((string)$campaign['description']) ?>
                 </p><?php endif; ?>
-            <div class="mb-4"><i class="fa-regular fa-clock mr-1"></i>Đến
+            <div class="mb-4"><i class="fa-regular fa-clock me-1"></i>Đến
                 <?= e(format_db_datetime((string)$campaign['ends_at'])) ?></div>
             <a class="btn btn-light btn-lg" href="<?= e(url('/campaigns/' . (int)$campaign['id'])) ?>">Xem deal Campaign</a>
         </div>
@@ -17,11 +17,11 @@ use App\Core\Auth; ?>
 <?php else: ?>
     <section class="jumbotron bg-white shadow-sm border">
         <div class="row align-items-center">
-            <div class="col-lg-8"><span class="badge badge-primary mb-3">CouponHub</span>
-                <h1 class="display-4 font-weight-bold">Tìm coupon tốt hơn. Chia sẻ coupon đáng tin hơn.</h1>
+            <div class="col-lg-8"><span class="badge bg-primary mb-3">CouponHub</span>
+                <h1 class="display-4 fw-bold">Tìm coupon tốt hơn. Chia sẻ coupon đáng tin hơn.</h1>
                 <p class="lead text-muted">Tìm deal đang hoạt động, kiểm chứng bằng cộng đồng và theo dõi Campaign của
                     Merchant.</p>
-                <div class="mt-4"><a href="<?= e(url('/coupons')) ?>" class="btn btn-primary btn-lg mr-2">Tìm
+                <div class="mt-4"><a href="<?= e(url('/coupons')) ?>" class="btn btn-primary btn-lg me-2">Tìm
                         coupon</a><?php if (in_array(Auth::role(), ['USER', 'MERCHANT'], true)): ?><a
                             href="<?= e(url('/coupons/create')) ?>" class="btn btn-outline-primary btn-lg">Chia sẻ
                             coupon</a><?php elseif (!Auth::check()): ?><a href="<?= e(url('/register')) ?>"
@@ -31,7 +31,7 @@ use App\Core\Auth; ?>
                 <div class="card border-0 bg-light">
                     <div class="card-body">
                         <h5 class="card-title">CouponHub</h5>
-                        <ul class="mb-0 pl-3 text-muted">
+                        <ul class="mb-0 ps-3 text-muted">
                             <li>Merchant Center</li>
                             <li>Official Deal</li>
                             <li>Campaign</li>
@@ -86,7 +86,7 @@ use App\Core\Auth; ?>
                     <div><strong><?= e((string)$c['name']) ?></strong>
                         <div class="small text-muted"><?= e((string)($c['merchant_name'] ?? 'CouponHub')) ?></div>
                     </div>
-                    <div class="text-right small"><span class="badge badge-info">Sắp diễn ra</span>
+                    <div class="text-end small"><span class="badge bg-info text-dark">Sắp diễn ra</span>
                         <div class="mt-1"><?= e(format_db_datetime((string)$c['starts_at'])) ?></div>
                     </div>
                 </div>
@@ -99,8 +99,8 @@ use App\Core\Auth; ?>
                         class="list-group-item text-muted">Chưa đủ dữ liệu.</div>
                     <?php endif; ?><?php foreach ($popularMerchants as $m): ?><div
                         class="list-group-item d-flex justify-content-between align-items-center"><span><i
-                                class="fa-solid fa-store mr-2 text-primary"></i><?= e((string)$m['name']) ?></span><span
-                            class="badge badge-primary badge-pill"><?= (int)$m['active_coupon_count'] ?> deal</span></div>
+                                class="fa-solid fa-store me-2 text-primary"></i><?= e((string)$m['name']) ?></span><span
+                            class="badge bg-primary rounded-pill"><?= (int)$m['active_coupon_count'] ?> deal</span></div>
                 <?php endforeach; ?></div>
         </div>
     </div>

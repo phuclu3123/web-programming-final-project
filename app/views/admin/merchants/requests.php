@@ -17,12 +17,12 @@
           <td><?= e((string)$r['full_name']) ?><div class="small text-muted"><?= e((string)$r['email']) ?></div></td>
           <td><?= e((string)$r['merchant_name']) ?></td>
           <td><?= e((string)$r['request_type']) ?></td>
-          <td><span class="badge badge-<?= $r['status']==='APPROVED' ? 'success' : ($r['status']==='PENDING' ? 'warning' : 'secondary') ?>"><?= e((string)$r['status']) ?></span></td>
+          <td><span class="badge bg-<?= $r['status']==='APPROVED' ? 'success' : ($r['status']==='PENDING' ? 'warning' : 'secondary') ?>"><?= e((string)$r['status']) ?></span></td>
           <td>
             <span style="overflow-wrap:anywhere"><?= e((string)($r['evidence_reference'] ?: 'Chưa cung cấp')) ?></span>
             <?php if ($r['status'] === 'PENDING' && (int)($r['duplicate_evidence_users'] ?? 0) > 0): ?>
               <div class="mt-2">
-                <span class="badge badge-warning">Bằng chứng đã được <?= (int)$r['duplicate_evidence_users'] ?> User khác nộp trước đó cho cùng Shop</span>
+                <span class="badge bg-warning text-dark">Bằng chứng đã được <?= (int)$r['duplicate_evidence_users'] ?> User khác nộp trước đó cho cùng Shop</span>
                 <div class="small text-muted mt-1">Đơn mới cần xác minh riêng; đơn đã duyệt trước đó không bị ảnh hưởng.</div>
               </div>
             <?php endif; ?>
@@ -62,17 +62,17 @@
 <?php foreach($memberships as $m):?><tr><td><?=e((string)$m['full_name'])?></td><td><?=e((string)$m['merchant_name'])?></td><td><?=e((string)$m['status'])?></td><td><?php if($m['status']==='ACTIVE'):?><form method="post" action="<?=e(url('/admin/merchant-memberships/'.(int)$m['user_id'].'/'.(int)$m['merchant_id'].'/revoke'))?>"><input type="hidden" name="_token" value="<?=e(Session::csrfToken())?>"><input aria-label="Ghi chú xét duyệt" type="text" class="form-control form-control-sm d-inline-block" style="max-width:240px" name="note" required placeholder="Lý do thu hồi quyền"><button class="btn btn-sm btn-outline-danger">Thu hồi</button></form><?php endif;?></td></tr><?php endforeach;?></tbody></table></div>
 
 
-<!-- Second confirmation for duplicate evidence: Bootstrap 4.6.2 modal. -->
+<!-- Second confirmation for duplicate evidence: Bootstrap 5.3.8 modal. -->
 <div class="modal fade" id="merchantDuplicateApprovalModal" tabindex="-1" role="dialog"
      aria-labelledby="merchantDuplicateApprovalTitle" aria-describedby="merchantDuplicateApprovalDescription" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="merchantDuplicateApprovalTitle">
-          <i class="fas fa-triangle-exclamation text-warning mr-1" aria-hidden="true"></i>
+          <i class="fas fa-triangle-exclamation text-warning me-1" aria-hidden="true"></i>
           Xác nhận duyệt đơn có bằng chứng trùng
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Đóng"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
       <div class="modal-body" id="merchantDuplicateApprovalDescription">
         <div class="alert alert-warning" role="alert">
@@ -86,17 +86,17 @@
           <dt class="col-sm-4">Bằng chứng</dt><dd class="col-sm-8 text-break" id="duplicateApprovalEvidence"></dd>
         </dl>
         <p class="small text-muted" id="duplicateApprovalCount"></p>
-        <div class="custom-control custom-checkbox">
-          <input type="checkbox" class="custom-control-input" id="duplicateApprovalAck">
-          <label class="custom-control-label" for="duplicateApprovalAck">
+        <div class="form-check form-check">
+          <input type="checkbox" class="form-check-input" id="duplicateApprovalAck">
+          <label class="form-check-label" for="duplicateApprovalAck">
             Tôi đã kiểm tra độc lập quyền quản lý Shop của người đăng ký này và muốn phê duyệt đơn.
           </label>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Quay lại</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Quay lại</button>
         <button type="button" id="duplicateApprovalConfirm" class="btn btn-warning" disabled>
-          <i class="fas fa-check-circle mr-1" aria-hidden="true"></i> Xác nhận phê duyệt
+          <i class="fas fa-check-circle me-1" aria-hidden="true"></i> Xác nhận phê duyệt
         </button>
       </div>
     </div>

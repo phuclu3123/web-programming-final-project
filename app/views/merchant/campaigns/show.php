@@ -7,7 +7,7 @@
             <?= e(format_db_datetime((string)$campaign['ends_at'])) ?></div>
     </div>
     <div><span
-            class="badge badge-<?= e(campaign_status_class((string)$campaign['status'])) ?> mr-2"><?= e(campaign_status_label((string)$campaign['status'])) ?></span><a
+            class="badge bg-<?= e(campaign_status_class((string)$campaign['status'])) ?> me-2"><?= e(campaign_status_label((string)$campaign['status'])) ?></span><a
             class="btn btn-outline-primary btn-sm"
             href="<?= e(url('/merchant/campaigns/'.(int)$campaign['id'].'/edit')) ?>">Sửa</a></div>
 </div>
@@ -40,7 +40,7 @@
                         <option value="">-- Chọn coupon --</option><?php foreach($eligible as $c):?><option
                             value="<?= (int)$c['id'] ?>"><?= e((string)$c['title']) ?>
                             (<?= e(coupon_status_label((string)$c['effective_status'])) ?>)</option><?php endforeach;?>
-                    </select><button class="btn btn-primary btn-block" <?= $eligible===[]?'disabled':'' ?>>Gắn vào
+                    </select><button class="btn btn-primary w-100" <?= $eligible===[]?'disabled':'' ?>>Gắn vào
                         chiến dịch</button></form><small class="text-muted d-block mt-2">Chọn mã của cùng cửa hàng, có thời gian hiệu lực trong đợt chiến dịch.</small>
             </div>
         </div>

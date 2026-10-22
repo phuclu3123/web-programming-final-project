@@ -41,7 +41,7 @@ require_once __DIR__ . '/layouts/header.php';
                     <p><?= htmlspecialchars($camp['description']) ?></p>
                     
                     <a href="/app/views/user/campaign_detail.php?id=<?= urlencode($camp['id']) ?>" class="category-view-button">
-                        Khám phá ưu đãi ↗
+                        Khám phá ưu đãi
                     </a>
                 </div>
             </article>

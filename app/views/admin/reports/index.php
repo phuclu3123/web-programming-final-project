@@ -38,7 +38,7 @@ use App\Core\Session; ?>
                     <div class="col-lg-4 mt-3 mt-lg-0">
                         <form method="post" action="<?= e(url('/admin/reports/' . (int) $report['id'] . '/resolve')) ?>">
                             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label for="resolution-note-<?= (int) $report['id'] ?>">Ghi chú xử lý <span
                                         class="text-danger">*</span></label>
                                 <textarea class="form-control" id="resolution-note-<?= (int) $report['id'] ?>" name="note"

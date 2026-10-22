@@ -39,6 +39,7 @@
     if (!button) return;
     try {
       await navigator.clipboard.writeText(button.dataset.communityCopy);
+      void window.CouponHubEvents?.copy(button.dataset.couponId);
       notify('Đã sao chép mã. Xem điều kiện trước khi sử dụng.');
     } catch { notify('Chưa thể sao chép tự động. Bạn có thể chọn và sao chép mã trên thẻ.',true); }
   });

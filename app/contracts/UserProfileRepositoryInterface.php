@@ -7,6 +7,9 @@ namespace App\Contracts;
 interface UserProfileRepositoryInterface extends UserRepositoryInterface
 {
     public function findByEmail(string $email): ?array;
+    public function updateProfile(int $userId, string $name, string $phone): bool;
+    public function passwordHashForUser(int $userId): ?string;
+    public function changePassword(int $userId, string $oldHash, string $newHash): bool;
     public function findById(int $id): ?array;
     public function emailExists(string $email): bool;
     public function rewardSummary(int $userId): array;

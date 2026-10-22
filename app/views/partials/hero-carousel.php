@@ -26,7 +26,7 @@ $heroCount=count($heroCoupons);
                 <?php if ($heroCoupon['max_discount_amount']!==null): ?><span class="hero-discount-cap">Giảm tối đa <?= e(money($heroCoupon['max_discount_amount'])) ?></span><?php endif; ?>
             </div>
             <div class="hero-feature-bottom"><span><?= (float)$heroCoupon['min_order_amount']>0 ? 'Đơn từ '.e(money($heroCoupon['min_order_amount'])).'<br>' : 'Không yêu cầu đơn tối thiểu<br>' ?><?= e(expiryLabel($heroCoupon['ends_at'])) ?></span>
-                <?php if (!empty($heroCoupon['code'])): ?><button type="button" class="hero-feature-copy" data-copy-code="<?= e($heroCoupon['code']) ?>"><?= icon('copy') ?><span>Sao chép mã</span></button><?php else: ?><a class="hero-feature-copy" href="<?= e(url('/coupons/'.(int)$heroCoupon['id'])) ?>">Xem ưu đãi <?= icon('arrow') ?></a><?php endif; ?>
+                <?php if (!empty($heroCoupon['code'])): ?><button type="button" class="hero-feature-copy" data-copy-code="<?= e($heroCoupon['code']) ?>" data-coupon-id="<?= (int)$heroCoupon['id'] ?>"><?= icon('copy') ?><span>Sao chép mã</span></button><?php else: ?><a class="hero-feature-copy" href="<?= e(url('/coupons/'.(int)$heroCoupon['id'])) ?>">Xem ưu đãi <?= icon('arrow') ?></a><?php endif; ?>
             </div>
         </article></div>
     </div>

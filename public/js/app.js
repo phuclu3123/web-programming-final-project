@@ -26,7 +26,9 @@
 
         window.setTimeout(function () {
             if (!$alert.closest('html').length) return;
-            $alert.alert('close');
+            var element = $alert[0];
+            if (window.bootstrap && element) window.bootstrap.Alert.getOrCreateInstance(element).close();
+            else $alert.remove();
         }, timeout);
     };
 
@@ -43,10 +45,10 @@
         $alert.append(
             $('<button>', {
                 type: 'button',
-                'class': 'close',
-                'data-dismiss': 'alert',
+                'class': 'btn-close',
+                'data-bs-dismiss': 'alert',
                 'aria-label': 'Đóng'
-            }).append($('<span>', {'aria-hidden': 'true'}).html('&times;'))
+            })
         );
 
         $container.empty().append($alert);

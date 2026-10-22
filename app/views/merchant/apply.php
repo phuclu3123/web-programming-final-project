@@ -10,7 +10,7 @@ use App\Core\Session; ?>
                     hồi độc lập.</p>
                 <form method="post" action="<?= e(url('/merchant/apply')) ?>">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                    <div class="form-group">
+                    <div class="mb-3">
                         <label>Hình thức</label>
                         <select aria-label="Hình thức yêu cầu" name="mode" id="merchant-apply-mode" class="form-control">
                             <option value="claim">Xin quản lý Merchant/Shop đã có trên hệ thống</option>
@@ -18,7 +18,7 @@ use App\Core\Session; ?>
                         </select>
                     </div>
                     <div id="merchant-claim-block">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label>Chọn Merchant/Shop</label>
                             <select aria-label="Cửa hàng" name="merchant_id" class="form-control">
                                 <option value="">-- Chọn Merchant --</option>
@@ -31,14 +31,14 @@ use App\Core\Session; ?>
                         </div>
                     </div>
                     <div id="merchant-new-block" class="d-none">
-                        <div class="form-group"><label>Tên Merchant</label><input aria-label="Tên" name="name" maxlength="160"
+                        <div class="mb-3"><label>Tên Merchant</label><input aria-label="Tên" name="name" maxlength="160"
                                 class="form-control"></div>
-                        <div class="form-group"><label>Website</label><input aria-label="Website cửa hàng" name="website_url" type="url"
+                        <div class="mb-3"><label>Website</label><input aria-label="Website cửa hàng" name="website_url" type="url"
                                 class="form-control" placeholder="https://..."></div>
-                        <div class="form-group"><label>Mô tả</label><textarea aria-label="Mô tả" name="description" class="form-control"
+                        <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả" name="description" class="form-control"
                                 rows="4"></textarea></div>
                     </div>
-                    <div class="form-group"><label for="evidence_reference">Bằng chứng quyền đại diện (link hoặc mã tài
+                    <div class="mb-3"><label for="evidence_reference">Bằng chứng quyền đại diện (link hoặc mã tài
                             liệu)</label><input id="evidence_reference" name="evidence_reference" class="form-control"
                             maxlength="1000" placeholder="https://... hoặc thông tin xác minh"><small
                             class="text-muted">Đây là thông tin do bạn cung cấp, không phải mã đơn hệ thống. Admin phải
@@ -57,13 +57,7 @@ use App\Core\Session; ?>
                     <div class="border rounded p-3 mb-2">
                         <strong><?= e((string)$item['name']) ?></strong> <span class="small text-muted">— Mã đơn
                             #<?= (int)$item['id'] ?></span><br>
-                        <span class="badge badge-<?= e(match ((string)$item['status']) {
-                                                        'APPROVED' => 'success',
-                                                        'PENDING' => 'warning',
-                                                        'REJECTED' => 'danger',
-                                                        'LOCKED' => 'dark',
-                                                        default => 'secondary'
-                                                    }) ?>"><?= e((string)$item['status']) ?></span>
+                        <span class="badge bg-<?= e(match ((string)$item['status']) { 'APPROVED' => 'success', 'PENDING' => 'warning', 'REJECTED' => 'danger', 'LOCKED' => 'dark', default => 'secondary' }) ?>"><?= e((string)$item['status']) ?></span>
                         <?php if (!empty($item['review_note'])): ?><div class="small text-muted mt-2">Ghi chú:
                                 <?= e((string)$item['review_note']) ?></div><?php endif; ?>
                     </div>

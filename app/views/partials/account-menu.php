@@ -16,6 +16,7 @@ $currentUser = $currentUser ?? null;
             <a href="<?= e(url('/')) ?>"><?= icon('search') ?>Xem trang người dùng</a>
             <?php endif; ?>
             <a href="<?= e(url('/dashboard')) ?>"><?= icon('grid') ?>Tổng quan tài khoản</a>
+            <a href="<?= e(url('/account')) ?>"><?= icon('users') ?>Chỉnh sửa hồ sơ</a>
             <?php if (in_array($currentUser['role'], ['USER', 'MERCHANT'], true)): ?>
             <a href="<?= e(url('/saved-coupons')) ?>"><?= icon('ticket') ?>Coupon đã lưu</a>
             <a href="<?= e(url('/my-coupons')) ?>"><?= icon('flag') ?>Đóng góp của tôi</a>

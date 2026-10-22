@@ -38,7 +38,7 @@
 <div id="authModal" class="modal-overlay" style="display: none;">
     <div class="modal-content auth-modal-content">
         <button type="button" class="close-modal-btn" id="closeAuthModal">&times;</button>
-        
+
         <div class="auth-tabs">
             <button type="button" class="auth-tab-btn active" data-target="loginFormContent">Đăng nhập</button>
             <button type="button" class="auth-tab-btn" data-target="registerFormContent">Đăng ký</button>
@@ -47,11 +47,11 @@
         <!-- Form Đăng nhập -->
         <div id="loginFormContent" class="auth-form-content">
             <form onsubmit="event.preventDefault(); alert('Đăng nhập Demo thành công!'); document.getElementById('authModal').style.display='none';">
-                <div class="form-group">
+                <div class="mb-3">
                     <label>Email / Tên đăng nhập</label>
                     <input type="text" placeholder="nhapemail@gmail.com" required>
                 </div>
-                <div class="form-group" style="margin-top: 12px;">
+                <div class="mb-3" style="margin-top: 12px;">
                     <label>Mật khẩu</label>
                     <input type="password" placeholder="••••••••" required>
                 </div>
@@ -62,15 +62,15 @@
         <!-- Form Đăng ký -->
         <div id="registerFormContent" class="auth-form-content" style="display: none;">
             <form onsubmit="event.preventDefault(); alert('Đăng ký tài khoản Demo thành công!'); document.getElementById('authModal').style.display='none';">
-                <div class="form-group">
+                <div class="mb-3">
                     <label>Họ và tên</label>
                     <input type="text" placeholder="Nguyễn Văn A" required>
                 </div>
-                <div class="form-group" style="margin-top: 12px;">
+                <div class="mb-3" style="margin-top: 12px;">
                     <label>Email</label>
                     <input type="email" placeholder="email@gmail.com" required>
                 </div>
-                <div class="form-group" style="margin-top: 12px;">
+                <div class="mb-3" style="margin-top: 12px;">
                     <label>Mật khẩu</label>
                     <input type="password" placeholder="Tạo mật khẩu" required>
                 </div>

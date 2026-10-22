@@ -24,8 +24,8 @@ use App\Core\Session; ?>
             <div class="card-body p-4">
                 <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
+                <div class="row g-3">
+                    <div class="mb-3 col-md-6">
                         <label for="merchant_id">Merchant <span class="text-danger">*</span></label>
                         <select class="form-control <?= isset($errors['merchant_id']) ? 'is-invalid' : '' ?>"
                             id="merchant_id" name="merchant_id" required>
@@ -39,7 +39,7 @@ use App\Core\Session; ?>
                         <?php if (isset($errors['merchant_id'])): ?><div class="invalid-feedback">
                                 <?= e($errors['merchant_id']) ?></div><?php endif; ?>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         <label for="category_id">Danh mục <span class="text-danger">*</span></label>
                         <select class="form-control <?= isset($errors['category_id']) ? 'is-invalid' : '' ?>"
                             id="category_id" name="category_id" required>
@@ -55,7 +55,7 @@ use App\Core\Session; ?>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="title">Tên coupon <span class="text-danger">*</span></label>
                     <input class="form-control <?= isset($errors['title']) ? 'is-invalid' : '' ?>" id="title"
                         name="title" maxlength="200" value="<?= e((string) ($old['title'] ?? '')) ?>" required>
@@ -63,8 +63,8 @@ use App\Core\Session; ?>
                     <?php endif; ?>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
+                <div class="row g-3">
+                    <div class="mb-3 col-md-6">
                         <label for="code">Mã coupon</label>
                         <input class="form-control <?= isset($errors['code']) ? 'is-invalid' : '' ?>" id="code"
                             name="code" maxlength="100" value="<?= e((string) ($old['code'] ?? '')) ?>"
@@ -72,7 +72,7 @@ use App\Core\Session; ?>
                         <?php if (isset($errors['code'])): ?><div class="invalid-feedback"><?= e($errors['code']) ?>
                             </div><?php endif; ?>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         <label for="promotion_url">Promotion URL</label>
                         <input type="url"
                             class="form-control <?= isset($errors['promotion_url']) ? 'is-invalid' : '' ?>"
@@ -84,13 +84,13 @@ use App\Core\Session; ?>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="description">Mô tả</label>
                     <textarea class="form-control" id="description" name="description"
                         rows="3"><?= e((string) ($old['description'] ?? '')) ?></textarea>
                 </div>
 
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="terms">Điều kiện sử dụng <span class="text-danger">*</span></label>
                     <textarea class="form-control <?= isset($errors['terms']) ? 'is-invalid' : '' ?>" id="terms"
                         name="terms" rows="4" required><?= e((string) ($old['terms'] ?? '')) ?></textarea>
@@ -98,8 +98,8 @@ use App\Core\Session; ?>
                     <?php endif; ?>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-4">
+                <div class="row g-3">
+                    <div class="mb-3 col-md-4">
                         <label for="discount_type">Loại giảm <span class="text-danger">*</span></label>
                         <select class="form-control <?= isset($errors['discount_type']) ? 'is-invalid' : '' ?>"
                             id="discount_type" name="discount_type" required>
@@ -113,7 +113,7 @@ use App\Core\Session; ?>
                                 <?= e($errors['discount_type']) ?></div><?php endif; ?>
                     </div>
 
-                    <div class="form-group col-md-4" id="discount-value-group">
+                    <div class="mb-3 col-md-4" id="discount-value-group">
                         <label for="discount_value" id="discount-value-label">Giá trị giảm</label>
                         <input type="number" step="0.01" min="0"
                             class="form-control <?= isset($errors['discount_value']) ? 'is-invalid' : '' ?>"
@@ -123,7 +123,7 @@ use App\Core\Session; ?>
                                 <?= e($errors['discount_value']) ?></div><?php endif; ?>
                     </div>
 
-                    <div class="form-group col-md-4" id="cashback-unit-group">
+                    <div class="mb-3 col-md-4" id="cashback-unit-group">
                         <label for="cashback_unit">Đơn vị hoàn tiền</label>
                         <select class="form-control <?= isset($errors['cashback_unit']) ? 'is-invalid' : '' ?>"
                             id="cashback_unit" name="cashback_unit">
@@ -139,8 +139,8 @@ use App\Core\Session; ?>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-4">
+                <div class="row g-3">
+                    <div class="mb-3 col-md-4">
                         <label for="min_order_amount">Đơn tối thiểu (VND)</label>
                         <input type="number" min="0" step="1000"
                             class="form-control <?= isset($errors['min_order_amount']) ? 'is-invalid' : '' ?>"
@@ -149,7 +149,7 @@ use App\Core\Session; ?>
                         <?php if (isset($errors['min_order_amount'])): ?><div class="invalid-feedback">
                                 <?= e($errors['min_order_amount']) ?></div><?php endif; ?>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="mb-3 col-md-4">
                         <label for="max_discount_amount">Giảm tối đa (VND)</label>
                         <input type="number" min="0" step="1000"
                             class="form-control <?= isset($errors['max_discount_amount']) ? 'is-invalid' : '' ?>"
@@ -158,7 +158,7 @@ use App\Core\Session; ?>
                         <?php if (isset($errors['max_discount_amount'])): ?><div class="invalid-feedback">
                                 <?= e($errors['max_discount_amount']) ?></div><?php endif; ?>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="mb-3 col-md-4">
                         <label for="usage_channel">Hình thức sử dụng <span class="text-danger">*</span></label>
                         <select class="form-control <?= isset($errors['usage_channel']) ? 'is-invalid' : '' ?>"
                             id="usage_channel" name="usage_channel" required>
@@ -175,8 +175,8 @@ use App\Core\Session; ?>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group col-md-6">
+                <div class="row g-3">
+                    <div class="mb-3 col-md-6">
                         <label for="starts_at">Bắt đầu <span class="text-danger">*</span></label>
                         <input type="datetime-local"
                             class="form-control <?= isset($errors['starts_at']) ? 'is-invalid' : '' ?>" id="starts_at"
@@ -185,7 +185,7 @@ use App\Core\Session; ?>
                                 <?= e($errors['starts_at']) ?></div><?php endif; ?>
                         <div id="starts-at-feedback" class="small datetime-feedback mt-1" aria-live="polite"></div>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="mb-3 col-md-6">
                         <label for="ends_at">Kết thúc <span class="text-danger">*</span></label>
                         <input type="datetime-local"
                             class="form-control <?= isset($errors['ends_at']) ? 'is-invalid' : '' ?>" id="ends_at"

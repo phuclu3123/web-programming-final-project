@@ -9,7 +9,7 @@
     <div class="col-6 col-lg-3 mb-3"><a class="text-decoration-none text-reset" href="<?= e(url($href)) ?>">
             <div class="card shadow-sm h-100 admin-stat-card">
                 <div class="card-body">
-                    <div class="text-muted small"><i class="fa-solid <?= e($icon) ?> mr-1"></i><?= e($label) ?></div>
+                    <div class="text-muted small"><i class="fa-solid <?= e($icon) ?> me-1"></i><?= e($label) ?></div>
                     <div class="display-4 admin-stat-number"><?= (int)($stats[$key]??0) ?></div>
                 </div>
             </div>
@@ -18,14 +18,14 @@
 </div>
 <div class="card shadow-sm">
     <div class="card-body">
-        <h2 class="h5">Quản trị nhanh</h2><a class="btn btn-outline-primary mr-2 mb-2"
-            href="<?= e(url('/admin/users')) ?>">Users</a><a class="btn btn-outline-primary mr-2 mb-2"
-            href="<?= e(url('/admin/merchants')) ?>">Merchants</a><a class="btn btn-outline-primary mr-2 mb-2"
+        <h2 class="h5">Quản trị nhanh</h2><a class="btn btn-outline-primary me-2 mb-2"
+            href="<?= e(url('/admin/users')) ?>">Users</a><a class="btn btn-outline-primary me-2 mb-2"
+            href="<?= e(url('/admin/merchants')) ?>">Merchants</a><a class="btn btn-outline-primary me-2 mb-2"
             href="<?= e(url('/admin/merchant-requests')) ?>">Duyệt quyền Shop</a><a
-            class="btn btn-outline-primary mr-2 mb-2" href="<?= e(url('/admin/articles')) ?>">Bài viết</a><a
-            class="btn btn-outline-primary mr-2 mb-2" href="<?= e(url('/admin/categories')) ?>">Categories</a><a
-            class="btn btn-outline-primary mr-2 mb-2" href="<?= e(url('/admin/coupons')) ?>">Coupon Moderation</a><a
-            class="btn btn-outline-primary mr-2 mb-2" href="<?= e(url('/admin/campaigns')) ?>">Campaigns</a><a
+            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/articles')) ?>">Bài viết</a><a
+            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/categories')) ?>">Categories</a><a
+            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/coupons')) ?>">Coupon Moderation</a><a
+            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/campaigns')) ?>">Campaigns</a><a
             class="btn btn-outline-danger mb-2" href="<?= e(url('/admin/reports')) ?>">Reports</a>
     </div>
 </div>

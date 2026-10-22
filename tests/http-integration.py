@@ -24,7 +24,7 @@ c=Client()
 for path in ['/login','/register','/forgot-password','/about','/terms','/privacy','/community-guidelines','/contact','/portal','/coupons','/coupons/1','/articles','/']:
  s,h,b=c.request(path);assert s==200,(path,s,b[:300])
 print('PASS public/module routes, preserved login UI and public coupon detail')
-for path in ['/admin','/admin/users','/merchant','/merchant/coupons','/admin.php?section=dashboard','/shop.php']:
+for path in ['/admin','/admin/users','/merchant','/merchant/coupons','/admin.php?section=dashboard','/shop.php','/account']:
  s,h,b=c.request(path);assert s==303 and '/login' in h['Location'],(path,s,b)
 s,h,b=c.request('/api/coupons/1/favorite',{'saved':'1'},headers={'Accept':'application/json'});assert s==401,(s,b)
 for path in ['/app/core/Database.php','/config/database.php','/database/schema.sql','/.env','/tests/mysqli-integration.php']:
@@ -35,7 +35,7 @@ assert c.request('/missing-page')[0]==404
 assert c.request('/api/login.php',{'account':'test_user','password':'NewTestPass!123'})[0]==403
 print('PASS guest guards, source protection, method/CSRF/404 policies')
 user=Client();result=user.login('user','NewTestPass!123');assert result['redirect']=='/index.php'
-for path in ['/dashboard','/saved-coupons','/my-coupons','/merchant/apply','/coupons/create']:
+for path in ['/dashboard','/account','/saved-coupons','/my-coupons','/merchant/apply','/coupons/create']:
  s,h,b=user.request(path);assert s==200,(path,s,b[:200])
 assert user.request('/admin')[0]==403
 assert user.request('/merchant')[0]==403

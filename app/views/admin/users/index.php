@@ -23,13 +23,13 @@ use App\Core\Session; ?>
                         <td><strong><?= e((string)$u['full_name']) ?></strong>
                             <div class="small text-muted"><?= e((string)$u['email']) ?></div>
                         </td>
-                        <td><span class="badge badge-info"><?= e((string)$u['role']) ?></span></td>
+                        <td><span class="badge bg-info text-dark"><?= e((string)$u['role']) ?></span></td>
                         <td><?= (int)$u['points'] ?></td>
                         <td><span
-                                class="badge badge-<?= $u['status'] === 'ACTIVE' ? 'success' : 'danger' ?>"><?= e((string)$u['status']) ?></span>
+                                class="badge bg-<?= $u['status'] === 'ACTIVE' ? 'success' : 'danger' ?>"><?= e((string)$u['status']) ?></span>
                         </td>
                         <td><?= e(format_db_datetime((string)$u['created_at'])) ?></td>
-                        <td class="text-right"><?php if ((int)$u['id'] !== (int)Auth::id()): ?><form method="post"
+                        <td class="text-end"><?php if ((int)$u['id'] !== (int)Auth::id()): ?><form method="post"
                                     action="<?= e(url('/admin/users/' . (int)$u['id'] . '/status')) ?>"><input type="hidden"
                                         name="_token" value="<?= e(Session::csrfToken()) ?>"><input type="hidden" name="status"
                                         value="<?= $u['status'] === 'ACTIVE' ? 'LOCKED' : 'ACTIVE' ?>"><button

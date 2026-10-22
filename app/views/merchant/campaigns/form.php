@@ -7,25 +7,25 @@
                 <form method="post"
                     action="<?= e($isEdit?url('/merchant/campaigns/'.(int)$campaign['id'].'/edit'):url('/merchant/campaigns')) ?>">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                    <?php if(!$isEdit):?><div class="form-group"><label>Merchant</label><select aria-label="Cửa hàng" name="merchant_id"
+                    <?php if(!$isEdit):?><div class="mb-3"><label>Merchant</label><select aria-label="Cửa hàng" name="merchant_id"
                             class="form-control" required><?php foreach($shops as $shop):?><option
                                 value="<?= (int)$shop['id'] ?>"><?= e((string)$shop['name']) ?></option>
-                            <?php endforeach;?></select></div><?php else:?><div class="form-group">
+                            <?php endforeach;?></select></div><?php else:?><div class="mb-3">
                         <label>Cửa hàng</label><input aria-label="Cửa hàng của chiến dịch" class="form-control" disabled
                             value="<?= e((string)$campaign['merchant_name']) ?>"></div><?php endif;?>
-                    <div class="form-group"><label>Tên Campaign</label><input aria-label="Tên chiến dịch" class="form-control" name="name"
+                    <div class="mb-3"><label>Tên Campaign</label><input aria-label="Tên chiến dịch" class="form-control" name="name"
                             maxlength="200" required value="<?= e((string)($old['name']??'')) ?>"></div>
-                    <div class="form-group"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control" name="description"
+                    <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control" name="description"
                             rows="4"><?= e((string)($old['description']??'')) ?></textarea></div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local"
+                    <div class="row g-3">
+                        <div class="mb-3 col-md-6"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local"
                                 class="form-control" name="starts_at" required
                                 value="<?= e((string)($old['starts_at']??'')) ?>"></div>
-                        <div class="form-group col-md-6"><label>Kết thúc</label><input aria-label="Kết thúc" type="datetime-local"
+                        <div class="mb-3 col-md-6"><label>Kết thúc</label><input aria-label="Kết thúc" type="datetime-local"
                                 class="form-control" name="ends_at" required
                                 value="<?= e((string)($old['ends_at']??'')) ?>"></div>
                     </div>
-                    <div class="form-group"><label>Trạng thái</label><select aria-label="Trạng thái" class="form-control" name="status">
+                    <div class="mb-3"><label>Trạng thái</label><select aria-label="Trạng thái" class="form-control" name="status">
                             <option value="DRAFT" <?= ($old['status']??'DRAFT')==='DRAFT'?'selected':'' ?>>Bản nháp
                             </option>
                             <option value="PUBLISHED" <?= ($old['status']??'')==='PUBLISHED'?'selected':'' ?>>Xuất bản

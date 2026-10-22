@@ -2,7 +2,8 @@
    COUPONHUB - USER INTERACTIONS (JS)
 ========================================= */
 
-document.addEventListener('DOMContentLoaded', function () {
+// Tự động khởi chạy ngay khi DOM sẵn sàng hoặc nếu JS load sau
+function startApp() {
     initFavorites();
     initMobileMenu();
     initAuthModal();
@@ -11,11 +12,16 @@ document.addEventListener('DOMContentLoaded', function () {
     initComments();
     initSubmitCouponForm();
     initMyCoupons();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp);
+} else {
+    startApp();
+}
 
 /* ===== 1. CHỨC NĂNG SAO CHÉP MÃ COUPON ===== */
 
-// Hàm sao chép dùng chung cho nút "Sao chép" ở thẻ Coupon
 function copyCoupon(btnElement, code) {
     if (!code) return;
 
@@ -30,7 +36,6 @@ function copyCoupon(btnElement, code) {
     }
 }
 
-// Fallback tương thích cho các trình duyệt hoặc môi trường HTTP (localhost)
 function fallbackCopyTextToClipboard(text, btnElement) {
     var textArea = document.createElement('textarea');
     textArea.value = text;
@@ -52,12 +57,11 @@ function fallbackCopyTextToClipboard(text, btnElement) {
     document.body.removeChild(textArea);
 }
 
-// Hiệu ứng phản hồi chữ trên nút khi sao chép thành công
 function showCopyFeedback(btnElement) {
     if (!btnElement) return;
 
     var originalText = btnElement.innerHTML;
-    btnElement.innerHTML = 'Đã chép! ✓';
+    btnElement.innerHTML = 'Đã chép!';
     btnElement.style.background = '#18834b';
     btnElement.style.color = '#ffffff';
     btnElement.style.borderColor = '#18834b';
@@ -70,7 +74,6 @@ function showCopyFeedback(btnElement) {
     }, 2000);
 }
 
-// Gắn sự kiện sao chép cho trang Chi tiết Coupon (coupon_detail.php)
 function initCopyDetailCode() {
     var copyBtn = document.getElementById('copyDetailCode');
     var codeElem = document.getElementById('couponCode');
@@ -83,10 +86,14 @@ function initCopyDetailCode() {
     }
 }
 
-/* ===== QUẢN LÝ YÊU THÍCH (RENDER ĐỘNG BẰNG JS) ===== */
+/* ===== 2. QUẢN LÝ YÊU THÍCH (SVG MONOCHROME ICON) ===== */
 
 function getFavorites() {
-    return JSON.parse(localStorage.getItem('couponhub_favorites') || '[]');
+    try {
+        return JSON.parse(localStorage.getItem('couponhub_favorites') || '[]');
+    } catch (e) {
+        return [];
+    }
 }
 
 function saveFavorites(favs) {
@@ -96,7 +103,7 @@ function saveFavorites(favs) {
 function initFavorites() {
     var favs = getFavorites();
 
-    // Đổi trạng thái nút thả tim trên các trang khác (Trang chủ, Chi tiết,...)
+    // Cập nhật trạng thái active cho nút thả tim trên toàn bộ các trang
     document.querySelectorAll('[data-favorite-code]').forEach(function (btn) {
         var code = btn.getAttribute('data-favorite-code');
         if (favs.includes(code)) {
@@ -120,7 +127,6 @@ function initFavorites() {
     }
 }
 
-// Hàm render duy nhất các mã đã thả tim từ localStorage
 function renderFavoritesPage() {
     var list = document.getElementById('favoriteCouponList');
     var emptyNotice = document.getElementById('emptyFavoriteNotice');
@@ -129,12 +135,11 @@ function renderFavoritesPage() {
     var favs = getFavorites();
     var allCoupons = window.ALL_COUPONS || [];
 
-    // Lọc duy nhất các mã có trong mảng favorites
+    // Lọc các mã đã được bấm lưu
     var favCoupons = allCoupons.filter(function (item) {
-        return favs.includes(item.code);
+        return favs.indexOf(item.code) !== -1;
     });
 
-    // Nếu mảng rỗng -> Hiện thông báo chưa có mã yêu thích
     if (favCoupons.length === 0) {
         list.innerHTML = '';
         if (emptyNotice) emptyNotice.style.display = 'block';
@@ -160,7 +165,10 @@ function renderFavoritesPage() {
                         data-favorite-code="${escapeHtml(coupon.code)}"
                         onclick="toggleFavorite('${escapeHtml(coupon.code)}', this)"
                     >
-                        ❤️ <span class="fav-text">Đã lưu</span>
+                        <svg class="heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        <span class="fav-text">Đã lưu</span>
                     </button>
                 </div>
 
@@ -174,7 +182,7 @@ function renderFavoritesPage() {
                         href="/app/views/user/coupon_detail.php?code=${encodeURIComponent(coupon.code)}" 
                         class="category-view-button"
                     >
-                        Chi tiết
+                        Xem ưu đãi
                     </a>
                 </div>
             </article>
@@ -185,6 +193,7 @@ function renderFavoritesPage() {
 }
 
 function toggleFavorite(code, btnElement) {
+    if (!code) return;
     var favs = getFavorites();
     var index = favs.indexOf(code);
 
@@ -206,7 +215,7 @@ function toggleFavorite(code, btnElement) {
 
     saveFavorites(favs);
 
-    // Nếu đang ở trang Yêu thích, xóa bớt mã vừa bỏ tim
+    // Nếu đang ở trang Yêu thích thì gỡ thẻ mã vừa bỏ tim
     var card = document.getElementById('coupon-card-' + code);
     if (card && document.getElementById('favoriteCouponList')) {
         card.style.transition = 'all 0.3s ease';
@@ -227,6 +236,7 @@ function formatDate(dateStr) {
     var parts = dateStr.split('-');
     return parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : dateStr;
 }
+
 /* ===== 3. MOBILE MENU ===== */
 
 function initMobileMenu() {
@@ -302,11 +312,11 @@ function initLiveSearch() {
         }
 
         var matches = coupons.filter(function (item) {
-            return item.store.toLowerCase().includes(query) ||
-                   item.title.toLowerCase().includes(query) ||
-                   item.code.toLowerCase().includes(query) ||
-                   item.category.toLowerCase().includes(query) ||
-                   item.discount.toLowerCase().includes(query);
+            return (item.store && item.store.toLowerCase().includes(query)) ||
+                   (item.title && item.title.toLowerCase().includes(query)) ||
+                   (item.code && item.code.toLowerCase().includes(query)) ||
+                   (item.category && item.category.toLowerCase().includes(query)) ||
+                   (item.discount && item.discount.toLowerCase().includes(query));
         });
 
         if (matches.length === 0) {
@@ -352,12 +362,13 @@ function initLiveSearch() {
 }
 
 function escapeHtml(text) {
+    if (!text) return '';
     var div = document.createElement('div');
-    div.innerText = text;
+    div.innerText = String(text);
     return div.innerHTML;
 }
 
-/* ===== TÍNH NĂNG ĐĂNG BÌNH LUẬN DYNAMIC ===== */
+/* ===== 6. TÍNH NĂNG ĐĂNG BÌNH LUẬN DYNAMIC ===== */
 
 function initComments() {
     var input = document.getElementById('commentInput');
@@ -373,7 +384,6 @@ function initComments() {
             return;
         }
 
-        // Tạo thẻ bình luận mới
         var newComment = document.createElement('div');
         newComment.className = 'comment-item';
         newComment.style.opacity = '0';
@@ -388,23 +398,18 @@ function initComments() {
             <p class="comment-text">${escapeHtml(text)}</p>
         `;
 
-        // Thêm bình luận mới vào đầu danh sách
         list.insertBefore(newComment, list.firstChild);
 
-        // Hiệu ứng hiện mượt mà
         setTimeout(function () {
             newComment.style.opacity = '1';
             newComment.style.transform = 'translateY(0)';
         }, 10);
 
-        // Làm sạch ô nhập liệu
         input.value = '';
     }
 
-    // Sự kiện click nút Gửi
     sendBtn.addEventListener('click', handleSendComment);
 
-    // Sự kiện gõ Enter trong ô nhập
     input.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -413,7 +418,7 @@ function initComments() {
     });
 }
 
-/* ===== XỬ LÝ ĐÓNG GÓP MÃ & ĐỌC MÃ CỦA TÔI ===== */
+/* ===== 7. XỬ LÝ ĐÓNG GÓP MÃ & ĐỌC MÃ CỦA TÔI ===== */
 
 function getMyCoupons() {
     var defaultCoupons = [
@@ -450,7 +455,11 @@ function getMyCoupons() {
     if (!stored) {
         return defaultCoupons;
     }
-    return JSON.parse(stored);
+    try {
+        return JSON.parse(stored);
+    } catch (e) {
+        return defaultCoupons;
+    }
 }
 
 function saveMyCoupons(coupons) {
@@ -485,7 +494,7 @@ function initSubmitCouponForm() {
         };
 
         var myCoupons = getMyCoupons();
-        myCoupons.unshift(newCoupon); // Đưa mã mới lên đầu danh sách
+        myCoupons.unshift(newCoupon);
         saveMyCoupons(myCoupons);
 
         form.reset();
