@@ -4,6 +4,9 @@
 // For real email, use TLS + a reputable SMTP provider, configured through
 // server environment variables. Never commit SMTP passwords into Git.
 return [
+    'driver' => getenv('COUPONHUB_MAIL_DRIVER') ?: (getenv('RESEND_API_KEY') ? 'resend' : 'smtp'),
+    'resend_api_key' => getenv('RESEND_API_KEY') ?: '',
+    'resend_from' => getenv('RESEND_FROM_EMAIL') ?: '',
     'host'       => getenv('COUPONHUB_SMTP_HOST') ?: '127.0.0.1',
     'port'       => (int) (getenv('COUPONHUB_SMTP_PORT') ?: 1025),
     'encryption' => getenv('COUPONHUB_SMTP_ENCRYPTION') ?: 'none', // none | tls | ssl

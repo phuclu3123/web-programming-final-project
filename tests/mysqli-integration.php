@@ -16,9 +16,13 @@ use App\Services\AuthService;
 if (getenv('COUPONHUB_RUN_DB_TEST') !== '1' || getenv('COUPONHUB_DB') !== 'couponhub_merge_test'
     || getenv('COUPONHUB_PORT') !== '13379') { echo "SKIP: isolated test DB required.\n"; exit; }
 require __DIR__ . '/../app/bootstrap.php';
+if (config('database.database') !== 'couponhub_merge_test' || (int)config('database.port') !== 13379
+    || is_file(__DIR__.'/../config/local.php')) throw new RuntimeException('Unsafe test database configuration');
 session_save_path(sys_get_temp_dir());
 function verify(bool $condition, string $label): void { if (!$condition) throw new RuntimeException('FAIL: ' . $label); }
 $db = Database::connection();
+verify((int)$db->query('SELECT @@port')->fetchColumn() === 13379, 'isolated database port');
+verify((int)$db->query('SELECT COUNT(*) FROM users')->fetchColumn() === 0, 'this test requires schema only, without demo data');
 $gateway = Database::connection();
 verify(Database::connection() === App\Core\Database::connection(), 'one mysqli connection');
 // Tham số routine phải thống nhất với bảng và kết nối theo vietnamese_ci.

@@ -36,5 +36,20 @@
         </div></div>
       </section>
     </div>
+    <section class="card mt-4" aria-labelledby="linked-providers-title"><div class="card-body">
+      <h2 class="h5" id="linked-providers-title">Tài khoản liên kết</h2>
+      <p class="text-muted">Liên kết để đăng nhập nhanh. Tài khoản có cùng email chỉ được liên kết khi bạn chủ động xác nhận tại đây.</p>
+      <div class="d-flex flex-wrap gap-3">
+      <?php foreach (['google'=>'Google','github'=>'GitHub'] as $provider=>$label):
+          $ready=(new \App\Core\OAuthPreparation((array)config('oauth')))->status($provider)['ready']; ?>
+        <?php if (in_array($provider,$oauthLinks ?? [],true)): ?><span class="badge bg-success align-self-center p-3"><?= e($label) ?> · Đã liên kết</span>
+        <?php else: ?><form method="post" action="<?= e(url('/auth/oauth/'.$provider)) ?>">
+          <input type="hidden" name="csrf" value="<?= e(Session::token()) ?>">
+          <input type="hidden" name="mode" value="link">
+          <button class="btn btn-outline-primary" type="submit" <?= $ready?'':'disabled title="Chưa cấu hình nhà cung cấp"' ?>>Liên kết <?= e($label) ?></button>
+        </form><?php endif; ?>
+      <?php endforeach; ?>
+      </div>
+    </div></section>
   </div>
 </div>

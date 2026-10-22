@@ -1,4 +1,4 @@
-// Đăng nhập + đăng ký gửi POST tới API PHP; quên mật khẩu vẫn thử giao diện.
+// Login, registration and password recovery use the same PHP session and CSRF.
 // Luồng đọc code: lấy phần tử → kiểm tra dữ liệu → submit/fetch → tương tác popup.
 (() => {
     // Tìm popup trong HTML đã được PHP ghép; trang không có popup thì dừng.
@@ -6,7 +6,7 @@
     if (!modal) return;
 
     // forms: ba biểu mẫu để bắt submit, kiểm tra input và gom dữ liệu gửi.
-    const forms = [...modal.querySelectorAll("form")];
+    const forms = [...modal.querySelectorAll("form")].filter(form => !form.hasAttribute?.('data-oauth-form'));
     // account: một input để đặt con trỏ khi mở popup, không phải mảng.
     const account = modal.querySelector("#loginAccount");
     // views: ba div bọc cả tiêu đề + form + nút để chuyển màn hình trong popup.
@@ -129,11 +129,31 @@
         return errors;
     }
 
-    // ---- PHẦN QUÊN MẬT KHẨU: vẫn thử UI, chưa gửi OTP ----
-    const previewMessages = {
-        forgotPasswordForm:
-            "Email hợp lệ về định dạng. Đây là bản thử giao diện, chưa gửi email hoặc mã OTP.",
-    };
+    async function submitRecovery(form) {
+        const button = [...form.elements].find(element => element.type === 'submit');
+        if (button?.disabled) return;
+        const original = button?.textContent;
+        try {
+            if (button) { button.disabled = true; button.textContent = 'Đang xử lý...'; }
+            const response = await fetch(form.action, {method:'POST', credentials:'same-origin', headers:{Accept:'application/json'}, body:new FormData(form)});
+            const result = await response.json();
+            if (!response.ok || result.success !== true) { showMessage(form, result.message || 'Không thể xử lý. Hãy thử lại.', 'error'); return; }
+            if (result.redirect) {
+                const target = new URL(result.redirect, document.baseURI);
+                if (target.origin !== window.location.origin) throw new Error('Invalid redirect');
+                window.location.assign(target.href);
+                return;
+            }
+            // Do not reopen a dialog that the user closed while delivery was pending.
+            if (!modal.open && !modal.classList.contains('show')) return;
+            const current = views.find(view => !view.hidden);
+            if (current?.dataset.authView !== 'forgot') return;
+            showView('reset');
+            const resetForm = modal.querySelector('#resetOtpForm');
+            if (resetForm) showMessage(resetForm, result.message, 'success');
+        } catch { showMessage(form, 'Không thể kết nối. Vui lòng thử lại.', 'error'); }
+        finally { if (button) { button.disabled = false; button.textContent = original; } }
+    }
 
     // ---- PHẦN ĐĂNG KÝ (BỔ SUNG): gửi dữ liệu và chuyển về đăng nhập ----
     async function submitRegistration(form) {
@@ -182,7 +202,7 @@
             );
             const loginForm = modal.querySelector("#loginForm");
             if (
-                modal.classList.contains("show") &&
+                (modal.open || modal.classList.contains("show")) &&
                 registerView &&
                 !registerView.hidden
             ) {
@@ -234,9 +254,8 @@
                 await submitRegistration(form);
                 return;
             }
-            // ---- PHẦN QUÊN MẬT KHẨU: giữ thông báo thử ----
-            if (form.id === "forgotPasswordForm") {
-                showMessage(form, previewMessages[form.id], "success");
+            if (form.id === "forgotPasswordForm" || form.id === "resetOtpForm") {
+                await submitRecovery(form);
                 return;
             }
 
@@ -388,8 +407,7 @@
         let trigger;
         const openAuth = (name = 'login', returnUrl) => {
             trigger = document.activeElement;
-            const returnField = modal.querySelector('[name="return_url"]');
-            if (returnField && returnUrl !== undefined) returnField.value = returnUrl;
+            if (returnUrl !== undefined) modal.querySelectorAll('[name="return_url"]').forEach(field => { field.value = returnUrl; });
             showView(name, false);
             if (!modal.open) modal.showModal();
             document.documentElement.classList.add('auth-dialog-open');
@@ -400,10 +418,10 @@
             if (!link || event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) return;
             let target;
             try { target = new URL(link.href || '', document.baseURI); } catch { return; }
-            const authUrl = /\/(login(?:\.php)?|register)\/?$/.test(target.pathname);
+            const authUrl = /\/(login(?:\.php)?|register|forgot-password)\/?$/.test(target.pathname);
             if (!link.dataset.authOpen && (!authUrl || target.origin !== window.location.origin)) return;
             event.preventDefault();
-            openAuth(link.dataset.authOpen || (target.pathname.endsWith('/register') ? 'register' : 'login'), target.searchParams.get('return') || '');
+            openAuth(link.dataset.authOpen || (target.pathname.endsWith('/register') ? 'register' : target.pathname.endsWith('/forgot-password') ? 'forgot' : 'login'), target.searchParams.get('return') || '');
         });
         modal.querySelector('[data-auth-close]')?.addEventListener('click', () => modal.close());
         modal.addEventListener('click', event => {

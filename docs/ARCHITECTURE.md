@@ -142,6 +142,6 @@ Không `require` view/model vào nhau. Chỉ view nhúng partial view. Các clas
 
 Đã kiểm tra cú pháp PHP, 92 handler dùng chung abstract Controller, Auth/guard/Router, 6 trường hợp JS Auth, và luồng mysqli/HTTP với MariaDB tạm trên port 13379. Kiểm tra dữ liệu gồm đăng ký/đăng nhập, membership, coupon, transaction, reset token/session và các trang Admin.
 
-Giữ giao diện và hợp đồng request/response hiện tại. Database thật, SQL nguồn và cấu hình OAuth bí mật không bị sửa. OAuth Google/GitHub vẫn ở giai đoạn chuẩn bị; việc sắp xếp này không bổ sung đổi token hoặc đăng nhập OAuth thật. Form quên mật khẩu trong modal vẫn là bản thử như trước; các route reset tích hợp có sẵn không thay đổi.
+Giữ giao diện và các hợp đồng API đang dùng. Cập nhật xác thực 22/10/2026: Google/GitHub đã có đổi code, kiểm tra danh tính và tạo session; quên mật khẩu trong popup dùng OTP qua Resend. Cần tự điền `.env` và thử nhà cung cấp thật theo [AUTH_SETUP.md](AUTH_SETUP.md). Không tự thay đổi schema hay nhập dữ liệu vào DB đang dùng. Các route reset bằng link cũ tiếp tục hoạt động với token hợp lệ đã phát hành trước đó.
 
 Tài liệu [INTEGRATION_QUANG.md](INTEGRATION_QUANG.md) ghi lại giai đoạn ghép hai nhánh trước lần sắp xếp này. Dùng tài liệu hiện tại để xác định vị trí class và kiến trúc mới.

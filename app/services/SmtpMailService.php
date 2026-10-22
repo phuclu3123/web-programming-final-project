@@ -8,9 +8,19 @@ use App\Core\App;
 use RuntimeException;
 
 /** Small SMTP transport for local Mailpit and authenticated TLS/SSL SMTP. */
-final class SmtpMailService
+final class SmtpMailService implements \App\Contracts\AuthMailerInterface
 {
     public function sendPasswordReset(string $recipient, string $resetUrl): void
+    {
+        $this->sendText($recipient, 'Đặt lại mật khẩu CouponHub', "Mở liên kết để đặt mật khẩu mới (30 phút, chỉ dùng một lần):\n" . $resetUrl . "\nNếu không yêu cầu, hãy bỏ qua email này.");
+    }
+
+    public function sendOtp(string $recipient, string $code): void
+    {
+        $this->sendText($recipient, 'Mã khôi phục mật khẩu CouponHub', "Mã xác minh của bạn: " . $code . "\nMã có hiệu lực 10 phút, chỉ sử dụng một lần. Không cung cấp mã cho bất kỳ ai. Nếu không yêu cầu, hãy bỏ qua email này.");
+    }
+
+    private function sendText(string $recipient, string $subjectText, string $body): void
     {
         $cfg = (array) App::config('mail', []);
         $host = (string) ($cfg['host'] ?? '127.0.0.1');
@@ -69,12 +79,7 @@ final class SmtpMailService
             $this->command($socket, 'RCPT TO:<' . $recipient . '>', [250, 251]);
             $this->command($socket, 'DATA', [354]);
 
-            $subject = '=?UTF-8?B?' . base64_encode('Đặt lại mật khẩu CouponHub') . '?=';
-            $body = "Có yêu cầu đặt lại mật khẩu tài khoản CouponHub của bạn.\n\n"
-                . "Mở liên kết này để đặt mật khẩu mới (hiệu lực 30 phút, chỉ sử dụng một lần):\n"
-                . $resetUrl . "\n\n"
-                . "Nếu bạn không thực hiện yêu cầu, hãy bỏ qua email này.\n"
-                . "Không cung cấp liên kết này cho người khác.\n";
+            $subject = '=?UTF-8?B?' . base64_encode($subjectText) . '?=';
             $mime = 'From: CouponHub <' . $from . ">\r\n"
                 . 'To: <' . $recipient . ">\r\n"
                 . 'Subject: ' . $subject . "\r\n"

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// ---- CHUẨN BỊ OAUTH: chỉ đọc biến môi trường, không ghi secret vào Git ----
+// OAuth secrets stay on the server; callbacks must match the provider dashboard.
 $baseUrl = rtrim(getenv('COUPONHUB_APP_URL') ?: 'http://localhost:8000', '/');
 return [
     'base_url' => $baseUrl,

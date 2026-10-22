@@ -16,11 +16,20 @@ final class Session
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) return;
+        $lifetime = (int)config('auth.session_lifetime', self::MAX_SECONDS);
+        ini_set('session.gc_maxlifetime', (string)$lifetime);
+        $savePath = getenv('COUPONHUB_SESSION_PATH') ?: '';
+        if ($savePath !== '') {
+            if (!preg_match('~^(?:[A-Za-z]:[\\\\/]|/)~', $savePath)) $savePath = dirname(__DIR__, 2) . '/' . $savePath;
+            if (!is_dir($savePath) && !mkdir($savePath, 0700, true) && !is_dir($savePath)) throw new RuntimeException('Không thể tạo nơi lưu phiên.');
+            session_save_path($savePath);
+        }
         session_name('COUPONHUBSESSID');
         if (!session_start([
             'cookie_httponly' => true, 'cookie_samesite' => 'Lax',
-            'cookie_secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-            'use_strict_mode' => true, 'cookie_lifetime' => 0,
+            'cookie_secure' => parse_url((string)config('app.base_url', ''), PHP_URL_SCHEME) === 'https' || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+            'cookie_path' => '/', 'cookie_domain' => '',
+            'use_only_cookies' => true, 'use_strict_mode' => true, 'use_trans_sid' => false, 'cookie_lifetime' => 0,
         ])) throw new RuntimeException('Không thể mở session.');
     }
 
@@ -34,7 +43,12 @@ final class Session
         $_SESSION['auth_version'] = (int) ($user['auth_version'] ?? 0);
         $_SESSION['auth_schema'] = self::AUTH_SCHEMA;
         $_SESSION['authenticated_at'] = $_SESSION['last_activity'] = time();
-        unset($_SESSION['csrf'], $_SESSION['oauth_pending']);
+        $ttl = min((int)config('auth.session_lifetime', self::MAX_SECONDS), max(1, (int)($user['session_ttl'] ?? config('auth.session_lifetime', self::MAX_SECONDS))));
+        $_SESSION['expires_at'] = time() + $ttl;
+        $params = session_get_cookie_params();
+        unset($params['lifetime']);
+        setcookie(session_name(), session_id(), ['expires'=>$_SESSION['expires_at']] + $params);
+        unset($_SESSION['csrf'], $_SESSION['oauth_pending'], $_SESSION['oauth_login_pending'], $_SESSION['password_reset_flow']);
     }
 
     public static function userId(): int
@@ -45,8 +59,8 @@ final class Session
         // ID trong database cũ có thể khác ID của dump Quang: bắt buộc đăng nhập lại.
         if (($_SESSION['auth_schema'] ?? '') !== self::AUTH_SCHEMA) { self::clearAuthentication(); return 0; }
         $now = time();
-        if ($now - (int) ($_SESSION['last_activity'] ?? 0) > self::IDLE_SECONDS
-            || $now - (int) ($_SESSION['authenticated_at'] ?? 0) > self::MAX_SECONDS) {
+        if ($now - (int) ($_SESSION['last_activity'] ?? 0) > (int)config('auth.session_idle', self::IDLE_SECONDS)
+            || $now >= (int)($_SESSION['expires_at'] ?? ((int)($_SESSION['authenticated_at'] ?? 0) + self::MAX_SECONDS))) {
             self::clearAuthentication();
             return 0;
         }
@@ -56,7 +70,7 @@ final class Session
 
     public static function clearAuthentication(): void
     {
-        foreach (['user_id', 'user_role', 'user_name', 'auth_version', 'auth_schema', 'authenticated_at', 'last_activity', 'csrf', 'oauth_pending'] as $key) {
+        foreach (['user_id', 'user_role', 'user_name', 'auth_version', 'auth_schema', 'authenticated_at', 'last_activity', 'expires_at', 'csrf', 'oauth_pending', 'oauth_login_pending', 'password_reset_flow'] as $key) {
             unset($_SESSION[$key]);
         }
     }

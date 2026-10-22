@@ -14,7 +14,7 @@ final class PasswordResetService
     public function __construct(
         private UserProfileRepositoryInterface $users,
         private PasswordResetRepositoryInterface $tokens,
-        private SmtpMailService $mail
+        private \App\Contracts\AuthMailerInterface $mail
     ) {}
 
     /** Always return a generic result; the caller never discloses account existence. */

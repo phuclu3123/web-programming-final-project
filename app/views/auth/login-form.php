@@ -33,7 +33,7 @@ use App\Core\Session;
                     Mật khẩu
                 </label>
 
-                <a href="<?= e(url('/forgot-password')) ?>" class="btn btn-link p-0 text-decoration-none">
+                <a href="<?= e(url('/forgot-password')) ?>" data-auth-open="forgot" class="btn btn-link p-0 text-decoration-none">
                     Quên mật khẩu?
                 </a>
             </div>
@@ -64,7 +64,7 @@ use App\Core\Session;
             <div class="flex-grow-1 border-top"></div>
 
             <span class="text-secondary fw-semibold text-nowrap">
-                Đăng nhập nhanh · Sắp ra mắt
+                Hoặc tiếp tục với
             </span>
 
             <div class="flex-grow-1 border-top"></div>
@@ -72,25 +72,17 @@ use App\Core\Session;
 
 
         <div class="row g-3 mb-4">
-            <!-- OAuth Google: chuẩn bị cấu hình, chưa bật đăng nhập thật. -->
-            <div class="col-6">
-                <button type="button" disabled title="Đăng nhập Google sẽ được bổ sung sau" class="btn social-btn w-100 rounded-4 fw-bold d-flex align-items-center justify-content-center gap-3">
-
-                    <img src="https://www.google.com/favicon.ico" alt="" width="20" height="20">
-
-                    Google
+            <?php foreach (['google'=>'Google','github'=>'GitHub'] as $provider=>$label):
+                $ready=(new \App\Core\OAuthPreparation((array)config('oauth')))->status($provider)['ready']; ?>
+            <div class="col-6"><form method="post" action="<?= e(url('/auth/oauth/'.$provider)) ?>" data-oauth-form>
+                <input type="hidden" name="csrf" value="<?= e(Session::token()) ?>">
+                <input type="hidden" name="return_url" value="<?= e(is_string($_GET['return'] ?? null)?$_GET['return']:'') ?>">
+                <button type="submit" <?= $ready?'':'disabled title="Chưa cấu hình nhà cung cấp này"' ?> class="btn social-btn w-100 rounded-4 fw-bold d-flex align-items-center justify-content-center gap-3">
+                    <?php if ($provider==='google'): ?><img src="https://www.google.com/favicon.ico" alt="" width="20" height="20"><?php else: ?><i class="bi bi-github fs-5" aria-hidden="true"></i><?php endif; ?>
+                    <?= e($label) ?>
                 </button>
-            </div>
-
-            <!-- GitHub -->
-            <div class="col-6">
-                <button type="button" disabled title="Đăng nhập GitHub sẽ được bổ sung sau" class="btn social-btn w-100 rounded-4 fw-bold d-flex align-items-center justify-content-center gap-3">
-
-                    <i class="bi bi-github fs-5"></i>
-
-                    GitHub
-                </button>
-            </div>
+            </form></div>
+            <?php endforeach; ?>
         </div>
 
         <div class="d-flex flex-row justify-content-center align-items-center mb-3 gap-1">

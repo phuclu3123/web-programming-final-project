@@ -2,6 +2,10 @@
 
 Kiến trúc hiện tại và quy ước phát triển: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Dự án dùng MVC, repository/interface và **mysqli**, một Router và một abstract Controller chung.
 
+Cấu hình đăng nhập email/Google/GitHub và OTP qua Resend: [docs/AUTH_SETUP.md](docs/AUTH_SETUP.md). PHP tự nạp `.env` tại project root; dùng `.env.example` làm mẫu. Không cần import lại schema cho phần xác thực này.
+
+Rà soát giai đoạn 2 của Phúc: [kết quả kiểm thử, lỗi đã sửa và phần còn chờ nghiệm thu thật](docs/PHUC_PHASE2_REVIEW.md).
+
 ## Bản tích hợp Phúc + Quang
 
 Đã tích hợp thủ công `origin/Quang` tại `cc8a2d8`, giữ UI/Auth hiện tại và dùng **mysqli** cho toàn dự án. MVC, abstract controller, repository/interface và session được dùng chung.
@@ -12,7 +16,7 @@ Kiến trúc hiện tại và quy ước phát triển: [docs/ARCHITECTURE.md](d
 - [Phần tích hợp chọn lọc nhánh Trúc và các kiểm tra](docs/INTEGRATION_TRUC.md).
 - [Hướng dẫn Auth trước khi tích hợp](docs/AUTH_PHASE1.md): đọc cùng báo cáo mới vì vị trí endpoint và schema đã được thống nhất lại.
 
-Code không tự chạy migration hoặc thay đổi database của bạn. OAuth tiếp tục là Google + GitHub ở giai đoạn chuẩn bị.
+Code không tự chạy migration hoặc thay đổi cấu trúc database. Google/GitHub và OTP Resend đã có luồng backend; cần cấu hình riêng và thử tài khoản nhà cung cấp thật theo [AUTH_SETUP.md](docs/AUTH_SETUP.md). Các báo cáo tích hợp cũ bên trên mô tả lịch sử trước khi hoàn thiện xác thực.
 
 Đồ án Web Programming viết bằng PHP OOP theo mô hình MVC.
 

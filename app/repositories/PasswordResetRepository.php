@@ -6,7 +6,7 @@ namespace App\Repositories;
 
 use App\Core\Database;
 
-final class PasswordResetRepository implements \App\Contracts\PasswordResetRepositoryInterface
+final class PasswordResetRepository implements \App\Contracts\OtpResetRepositoryInterface
 {
     public function __construct(private Database $db) {}
 
@@ -26,7 +26,7 @@ final class PasswordResetRepository implements \App\Contracts\PasswordResetRepos
         }
         $user = $this->db->prepare(
             'SELECT COUNT(*) FROM password_reset_tokens WHERE user_id=? '
-            . 'AND created_at > UTC_TIMESTAMP() - INTERVAL 5 MINUTE'
+            . 'AND created_at > UTC_TIMESTAMP() - INTERVAL 1 MINUTE'
         );
         $user->execute([$userId]);
         return (int) $user->fetchColumn() === 0;
@@ -39,6 +39,23 @@ final class PasswordResetRepository implements \App\Contracts\PasswordResetRepos
             . 'VALUES (?, ?, ?, UTC_TIMESTAMP() + INTERVAL 30 MINUTE)'
         );
         $stmt->execute([$userId, $tokenHash, $ipHash]);
+    }
+
+    public function issueOtp(int $userId, string $tokenHash, string $ipHash): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $lock=$this->db->prepare("SELECT id FROM users WHERE id=? AND status='ACTIVE' AND deleted_at IS NULL FOR UPDATE");
+            $lock->execute([$userId]);
+            if (!$lock->fetch()) throw new \RuntimeException('Tài khoản không khả dụng.');
+            if (!$this->canRequest($ipHash,$userId)) { $this->db->rollBack(); return; }
+            $this->db->prepare('UPDATE password_reset_tokens SET used_at=UTC_TIMESTAMP() WHERE user_id=? AND used_at IS NULL')->execute([$userId]);
+            $this->db->prepare('INSERT INTO password_reset_tokens(user_id,token_hash,request_ip_hash,expires_at) VALUES(?,?,?,UTC_TIMESTAMP()+INTERVAL 10 MINUTE)')->execute([$userId,$tokenHash,$ipHash]);
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function delete(string $tokenHash): void
@@ -62,6 +79,14 @@ final class PasswordResetRepository implements \App\Contracts\PasswordResetRepos
     {
         $this->db->beginTransaction();
         try {
+            // All password writes lock user before token to avoid opposite lock order.
+            $lookup = $this->db->prepare('SELECT user_id FROM password_reset_tokens WHERE token_hash=?');
+            $lookup->execute([$tokenHash]);
+            $candidate = $lookup->fetchColumn();
+            if ($candidate === false) { $this->db->rollBack(); return false; }
+            $lock = $this->db->prepare("SELECT id FROM users WHERE id=? AND status='ACTIVE' AND deleted_at IS NULL FOR UPDATE");
+            $lock->execute([(int)$candidate]);
+            if (!$lock->fetch()) { $this->db->rollBack(); return false; }
             $stmt = $this->db->prepare(
                 'SELECT p.user_id FROM password_reset_tokens p JOIN users u ON u.id=p.user_id '
                 . "WHERE p.token_hash=? AND p.used_at IS NULL AND p.expires_at>UTC_TIMESTAMP() "

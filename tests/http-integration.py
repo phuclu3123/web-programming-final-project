@@ -47,7 +47,8 @@ for path in ['/shop.php','/merchant','/merchant/profile/1','/merchant/coupons','
  s,h,b=manager.request(path);assert s==200,(path,s,b[:300])
 assert manager.request('/admin')[0]==403
 print('PASS logged-in User/Admin/Merchant routes and role isolation')
-# OAuth stays preparation only, provider names and state route are fixed.
+# Local diagnostic probes never authenticate; replay is rejected independently
+# of the real provider exchange tested in auth-complete-http.py/oauth-auth.php.
 s,h,b=c.request('/oauth-setup.php');assert s==200 and 'accounts.google.com' in b and 'Facebook' not in b
 csrf=re.search(r'name="csrf" value="([a-f0-9]+)"',b).group(1)
 for provider in ['google','github']:

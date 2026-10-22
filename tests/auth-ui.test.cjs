@@ -35,8 +35,11 @@ function setup(fetchResult, active = 'login', location = 'http://localhost:8000/
         };
     }
     const forms = [form('loginForm', loginFields), form('registerForm', registerFields),
-        form('forgotPasswordForm', [input('forgotPasswordEmail', 'email', 'email', 'demo@example.com', 'email')])];
-    const views = ['login', 'register', 'forgot-password'].map((name, i) => ({
+        form('forgotPasswordForm', [csrf(),input('forgotPasswordEmail', 'email', 'email', 'demo@example.com', 'email')]),
+        form('resetOtpForm', [csrf(),input('resetOtp','otp','text','123456'),input('resetNewPassword','new_password','password','NewPass!2026','new-password'),input('resetConfirmation','password_confirmation','password','NewPass!2026','new-password')])];
+    forms[2].action='http://localhost:8000/forgot-password';
+    forms[3].action='http://localhost:8000/auth/reset-otp';
+    const views = ['login', 'register', 'forgot','reset'].map((name, i) => ({
         dataset: { authView: name }, hidden: name !== active,
         querySelector(s) { return s === '.modal-title' ? { id: name + 'Title' } : forms[i].inputs.find(i => i.type !== 'hidden'); },
     }));
@@ -44,7 +47,7 @@ function setup(fetchResult, active = 'login', location = 'http://localhost:8000/
     const modal = {
         classList: { contains() { return true; } },
         querySelector(s) {
-            return s === '#loginForm' ? forms[0] : loginFields.find(i => '#' + i.id === s);
+            return s === '#loginForm' ? forms[0] : s === '#resetOtpForm' ? forms[3] : loginFields.find(i => '#' + i.id === s);
         }, querySelectorAll(s) { return s === 'form' ? forms : s === '[data-auth-view]' ? views : []; },
         addEventListener() {}, setAttribute() {},
     };
@@ -129,9 +132,22 @@ test('register returns to login with username, without password or redirect', as
     assert.equal(app.forms[0].message.dataset.state, 'success');
     assert.equal(app.destinations.length, 0);
 });
-test('forgot-password remains preview and does not send OTP', async () => {
-    const app = setup(() => { throw new Error('Must not fetch'); });
+test('forgot-password sends CSRF to PHP and moves to OTP reset only after success', async () => {
+    const app = setup(() => response({success:true,message:'Generic response',step:'reset'}),'forgot');
     await app.submit(2);
-    assert.equal(app.requests.length, 0);
-    assert.equal(app.forms[2].message.dataset.state, 'success');
+    assert.equal(app.requests.length, 1);
+    assert.equal(app.requests[0].url,'http://localhost:8000/forgot-password');
+    assert.equal(app.requests[0].options.body.fields.csrf,'test-csrf');
+    assert.equal(app.views[3].hidden,false);
+    assert.equal(app.forms[3].message.dataset.state, 'success');
+});
+test('OTP reset uses backend result and only follows a same-origin login redirect', async () => {
+    const app=setup(()=>response({success:true,redirect:'/login'}),'reset');
+    await app.submit(3);
+    assert.equal(app.requests[0].options.body.fields.otp,'123456');
+    assert.deepEqual(app.destinations,['http://localhost:8000/login']);
+    const bad=setup(()=>response({success:true,redirect:'https://evil.test/'}),'reset');
+    await bad.submit(3);
+    assert.equal(bad.destinations.length,0);
+    assert.equal(bad.forms[3].message.dataset.state,'error');
 });

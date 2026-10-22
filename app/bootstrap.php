@@ -11,9 +11,12 @@ spl_autoload_register(static function (string $class): void {
     if (is_file($file)) require_once $file;
 });
 
+App\Core\Env::load(dirname(__DIR__) . '/.env');
 require_once __DIR__ . '/helpers.php';
 App\Core\App::init([
     'app' => require __DIR__ . '/../config/app.php',
     'database' => require __DIR__ . '/../config/database.php',
     'mail' => require __DIR__ . '/../config/mail.php',
+    'oauth' => require __DIR__ . '/../config/oauth.php',
+    'auth' => require __DIR__ . '/../config/auth.php',
 ]);

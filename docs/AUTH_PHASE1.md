@@ -1,5 +1,7 @@
 # Hoàn thiện session, guard, chuẩn bị OAuth và khung Admin
 
+> Hiện tại: xác thực Google/GitHub và OTP đã có backend. Cấu hình theo [AUTH_SETUP.md](AUTH_SETUP.md), kết quả rà soát mới tại [PHUC_PHASE2_REVIEW.md](PHUC_PHASE2_REVIEW.md). Chính sách phiên/route bên dưới thuộc bản cũ, không dùng để cấu hình hiện tại.
+
 > SQL đã được gom vào [database/schema.sql](../database/schema.sql). Các thư mục routines, migrations, quang-reference và hướng dẫn import nhiều bước bên dưới thuộc lịch sử, đã bỏ. Khi cài mới chỉ theo [database/README.md](../database/README.md); không thực hiện lại các bước SQL cũ.
 
 > Cập nhật 16/10/2026: dự án đã tích hợp nhánh Quang bằng mysqli. Xem [INTEGRATION_QUANG.md](INTEGRATION_QUANG.md) và [SQL tích hợp](../database/README.md) trước khi import/chỉnh endpoint. URL cũ vẫn giữ nhưng xử lý qua router chung; phần hướng dẫn bên dưới mô tả giai đoạn trước tích hợp.

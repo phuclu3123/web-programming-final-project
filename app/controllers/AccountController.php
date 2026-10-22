@@ -25,6 +25,7 @@ final class AccountController extends Controller
         }
         $this->view('account/profile', [
             'pageTitle' => 'Hồ sơ cá nhân', 'actor' => array_replace($profile, $actor),
+            'oauthLinks' => (new \App\Repositories\OAuthRepository(Database::connection()))->linkedProviders((int)$actor['id']),
         ]);
     }
 
