@@ -5,7 +5,7 @@ foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategor
 ?>
 <div class="discovery-page">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Danh mục</span></div>
-    <header class="category-directory-title"><div><span class="eyebrow">02 / DANH MỤC CUỘC SỐNG</span><h1>Có gì<br><em>trong ngày bạn?</em></h1></div><p><?= count($categories) ?> nhu cầu, <?= (int)$total ?> ưu đãi đang hoạt động. Từ bữa trưa quen thuộc đến một chuyến đi bất chợt. Bắt đầu bằng điều bạn đang tìm.</p></header>
+    <header class="category-directory-title"><div><span class="eyebrow">DANH MỤC CUỘC SỐNG</span><h1>Có gì<br><em>trong ngày bạn?</em></h1></div><p><?= count($categories) ?> nhu cầu, <?= (int)$total ?> ưu đãi đang hoạt động. Từ bữa trưa quen thuộc đến một chuyến đi bất chợt. Bắt đầu bằng điều bạn đang tìm.</p></header>
     <?php if (!$categories): ?><div class="member-empty"><strong>Danh mục đang được cập nhật.</strong><p>Bạn có thể quay lại trang khám phá để xem các ưu đãi hiện có.</p></div><?php else: ?>
     <div class="category-directory">
         <nav class="category-directory-list" aria-label="Khám phá ưu đãi theo nhu cầu">

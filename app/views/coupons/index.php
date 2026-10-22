@@ -22,19 +22,84 @@ $types = ['PERCENTAGE'=>'Giảm phần trăm','FIXED_AMOUNT'=>'Giảm số tiề
             <label><input type="radio" name="category_id" value="" <?= empty($filters['category_id']) ? 'checked' : '' ?>><span><?= icon('grid') ?> Tất cả</span></label>
             <?php foreach ($categories as $category): ?><label><input type="radio" name="category_id" value="<?= $category->id ?>" <?= (int)($filters['category_id'] ?? 0) === $category->id ? 'checked' : '' ?>><span><?= e($category->name) ?></span></label><?php endforeach; ?>
         </fieldset>
+        <!-- BỘ LỌC NÚT BẤM CÓ THỂ ĐÓNG / MỞ (COLLAPSIBLE FILTER) -->
         <div class="community-controls">
             <details class="community-advanced" <?= $advancedCount ? 'open' : '' ?>>
-                <summary><?= icon('filter') ?> Bộ lọc <span class="community-filter-count" <?= !$advancedCount ? 'hidden' : '' ?>><?= $advancedCount ?></span><?= icon('chevron') ?></summary>
-                <div class="community-filter-panel">
-                    <div><label for="merchant_id">Cửa hàng</label><select class="form-control" id="merchant_id" name="merchant_id"><option value="">Tất cả cửa hàng</option><?php foreach ($merchants as $merchant): ?><option value="<?= $merchant->id ?>" <?= (int)($filters['merchant_id'] ?? 0) === $merchant->id ? 'selected' : '' ?>><?= e($merchant->name) ?></option><?php endforeach; ?></select></div>
-                    <div><label for="discount_type">Loại ưu đãi</label><select class="form-control" id="discount_type" name="discount_type"><option value="">Tất cả loại ưu đãi</option><?php foreach ($types as $value=>$label): ?><option value="<?= e($value) ?>" <?= ($filters['discount_type'] ?? '') === $value ? 'selected' : '' ?>><?= e($label) ?></option><?php endforeach; ?></select></div>
-                    <div><label for="usage_channel">Kênh sử dụng</label><select class="form-control" id="usage_channel" name="usage_channel"><option value="">Tất cả kênh</option><?php foreach (['ONLINE'=>'Trực tuyến','OFFLINE'=>'Tại cửa hàng','BOTH'=>'Cả hai kênh'] as $value=>$label): ?><option value="<?= $value ?>" <?= ($filters['usage_channel'] ?? '') === $value ? 'selected' : '' ?>><?= e($label) ?></option><?php endforeach; ?></select></div>
-                    <label class="community-ending"><input type="checkbox" id="ending_soon" name="ending_soon" value="1" <?= $filters['ending_soon'] ? 'checked' : '' ?>><span>Sắp hết hạn<small>Trong 3 ngày tới</small></span></label>
-                    <button type="submit" class="btn btn-brand">Áp dụng</button>
+                <summary class="btn-filter-toggle">
+                    <?= icon('filter') ?>
+                    <span>Bộ lọc</span>
+                    <span class="community-filter-count" <?= !$advancedCount ? 'hidden' : '' ?>><?= $advancedCount ?></span>
+                    <?= icon('chevron') ?>
+                </summary>
+
+                <!-- BỘ LỌC DÀN NGANG (CHỈ HIỆN KHI MỞ BỘ LỌC) -->
+                <div class="community-filter-row">
+                    <!-- 1. Cửa hàng -->
+                    <div class="filter-field">
+                        <label for="merchant_id">Cửa hàng</label>
+                        <select class="form-select" id="merchant_id" name="merchant_id">
+                            <option value="">Tất cả cửa hàng</option>
+                            <?php foreach ($merchants as $merchant): ?>
+                                <option value="<?= $merchant->id ?>" <?= (int)($filters['merchant_id'] ?? 0) === (int)$merchant->id ? 'selected' : '' ?>>
+                                    <?= e($merchant->name) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- 2. Loại ưu đãi -->
+                    <div class="filter-field">
+                        <label for="discount_type">Loại ưu đãi</label>
+                        <select class="form-select" id="discount_type" name="discount_type">
+                            <option value="">Tất cả loại ưu đãi</option>
+                            <?php foreach ($types as $value => $label): ?>
+                                <option value="<?= e($value) ?>" <?= ($filters['discount_type'] ?? '') === $value ? 'selected' : '' ?>>
+                                    <?= e($label) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- 3. Kênh sử dụng -->
+                    <div class="filter-field">
+                        <label for="usage_channel">Kênh sử dụng</label>
+                        <select class="form-select" id="usage_channel" name="usage_channel">
+                            <option value="">Tất cả kênh</option>
+                            <?php foreach (['ONLINE' => 'Trực tuyến', 'OFFLINE' => 'Tại cửa hàng', 'BOTH' => 'Cả hai kênh'] as $value => $label): ?>
+                                <option value="<?= $value ?>" <?= ($filters['usage_channel'] ?? '') === $value ? 'selected' : '' ?>>
+                                    <?= e($label) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <!-- 4. Checkbox Sắp hết hạn -->
+                    <div class="filter-field-checkbox">
+                        <label class="checkbox-label" for="ending_soon">
+                            <input type="checkbox" id="ending_soon" name="ending_soon" value="1" <?= !empty($filters['ending_soon']) ? 'checked' : '' ?>>
+                            <span>Sắp hết hạn<br><small>Trong 3 ngày tới</small></span>
+                        </label>
+                    </div>
+
+                    <!-- 5. Nút Áp dụng & Xóa lọc -->
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-brand">Áp dụng</button>
+                        <?php if ($advancedCount): ?>
+                            <a class="community-reset" href="<?= e(url('/coupons')) ?>">Xóa lọc</a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </details>
-            <a class="community-reset" href="<?= e(url('/coupons')) ?>">Xóa lọc</a>
-            <div class="community-sort"><label for="sort">Sắp xếp</label><select id="sort" name="sort"><option value="NEWEST" <?= $filters['sort'] === 'NEWEST' ? 'selected' : '' ?>>Mới nhất</option><option value="POPULAR" <?= $filters['sort'] === 'POPULAR' ? 'selected' : '' ?>>Nhiều lượt lưu</option><option value="ENDING_SOON" <?= $filters['sort'] === 'ENDING_SOON' ? 'selected' : '' ?>>Sắp hết hạn</option></select></div>
+
+            <!-- SẮP XẾP GÓC PHẢI -->
+            <div class="community-sort">
+                <label for="sort">Sắp xếp</label>
+                <select id="sort" name="sort">
+                    <option value="NEWEST" <?= ($filters['sort'] ?? '') === 'NEWEST' ? 'selected' : '' ?>>Mới nhất</option>
+                    <option value="POPULAR" <?= ($filters['sort'] ?? '') === 'POPULAR' ? 'selected' : '' ?>>Nhiều lượt lưu</option>
+                    <option value="ENDING_SOON" <?= ($filters['sort'] ?? '') === 'ENDING_SOON' ? 'selected' : '' ?>>Sắp hết hạn</option>
+                </select>
+            </div>
         </div>
     </form>
     <div class="community-results-heading"><p id="coupon-search-status" role="status" aria-live="polite"><strong><?= (int)$pagination['total'] ?></strong> ưu đãi phù hợp <span>· Trang <?= (int)$pagination['page'] ?>/<?= (int)$pagination['totalPages'] ?></span></p><span class="community-results-note"><?= icon('shield') ?>Chỉ hiển thị mã còn hiệu lực</span></div>

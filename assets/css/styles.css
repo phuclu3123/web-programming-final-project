@@ -3230,3 +3230,70 @@ body {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/*MỚI*/
+:root {
+  --ink: #172b4d;
+  --muted: #66758a;
+  --paper: #f5f7fb;
+  --line: #e1e7f0;
+
+  --lime: #dce7ff;
+  --white: #fff;
+  --forest: #3156c9;
+
+  --radius: 18px;
+
+  --bs-body-font-family:
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+  --bs-body-color: var(--ink);
+  --bs-body-bg: var(--paper);
+  --bs-border-color: var(--line);
+}
+
+.btn-brand {
+  background: var(--forest);
+  color: #fff;
+  border: 1px solid var(--forest);
+  border-radius: 11px;
+  font-weight: 700;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-brand {
+  background: var(--forest);
+  color: #fff;
+  border: 1px solid var(--forest);
+  border-radius: 11px;
+  font-weight: 700;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-brand:hover,
+.btn-brand:focus {
+  background: #2443a8;
+  border-color: #2443a8;
+  color: #fff;
+  box-shadow: 0 5px 14px rgba(49, 86, 201, 0.2);
+}
+
+.btn-lime {
+  background: #edf2ff;
+  color: #2443a8;
+  border: 1px solid #d7e2ff;
+}
+
+.btn-lime:hover {
+  background: #dce7ff;
+  color: #2443a8;
+}

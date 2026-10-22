@@ -220,3 +220,43 @@
 @media(max-width: 1000px) { .auth-stage { gap: 28px; } .auth-story { padding: 28px; } }
 @media(max-width: 760px) { .auth-stage { display: block; max-width: 540px; padding-top: 28px; } .auth-story { display: none; } #loginModal.auth-inline { padding: 26px; } }
 @media(max-width: 420px) { .auth-stage { padding-inline: 16px; } #loginModal.auth-inline { padding: 23px; border-radius: 19px; } #loginModal .login-input input { font-size: 16px; } }
+
+/* AUTH — SHARED TYPOGRAPHY AND FORM STYLE */
+
+#loginModal .modal-content {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(23, 43, 77, 0.18);
+}
+
+#loginModal h1,
+#loginModal h2,
+#loginModal h3,
+.auth-page h1,
+.auth-page h2 {
+  color: var(--ink);
+  font-family: var(--bs-body-font-family);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+#loginModal input,
+#loginModal select,
+#loginModal textarea,
+.auth-page input,
+.auth-page select,
+.auth-page textarea {
+  font-family: var(--bs-body-font-family);
+  border-radius: 10px;
+}
+
+#loginModal input:focus,
+#loginModal select:focus,
+#loginModal textarea:focus,
+.auth-page input:focus,
+.auth-page select:focus,
+.auth-page textarea:focus {
+  border-color: #91a8ee;
+  box-shadow: 0 0 0 4px rgba(49, 86, 201, 0.09);
+}

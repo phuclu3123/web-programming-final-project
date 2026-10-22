@@ -9,8 +9,22 @@
         <article class="contribution-card">
             <div><span class="eyebrow"><?= e($coupon['merchant_name']) ?> · <?= e($coupon['category_name']) ?></span><h2><?= e($coupon['title']) ?></h2><p><code><?= e($coupon['code'] ?: 'Ưu đãi không cần mã') ?></code> · <?= e(format_discount($coupon)) ?> · <?= e(usage_channel_label($coupon['usage_channel'])) ?></p>
                 <div class="contribution-meta"><span>Đã gửi <?= e(format_db_datetime($coupon['created_at'])) ?></span><span>Hạn dùng <?= e(format_db_datetime($coupon['ends_at'])) ?></span><?php if ($moderation === 'APPROVED'): ?><span><?= e(coupon_status_label($coupon['effective_status'])) ?></span><?php endif; ?><?php if ($coupon['effective_status'] === 'ACTIVE'): ?><a href="<?= e(url('/coupons/' . (int)$coupon['id'])) ?>">Xem chi tiết ↗</a><?php endif; ?></div>
-                <?php if (!empty($coupon['review_note'])): ?><div class="contribution-review"><strong><?= $moderation === 'REJECTED' ? 'Lý do từ chối' : 'Ghi chú kiểm duyệt' ?></strong><div><?= nl2br(e($coupon['review_note'])) ?></div></div><?php endif; ?>
-            </div>
+<?php if (!empty($coupon['review_note'])): ?>
+    <div class="contribution-review">
+        <strong><?= $moderation === 'REJECTED' ? 'Lý do từ chối' : 'Ghi chú kiểm duyệt' ?></strong>
+        <div><?= nl2br(e($coupon['review_note'])) ?></div>
+    </div>
+<?php endif; ?>
+
+<?php if (
+    in_array($moderation, ['APPROVED', 'REJECTED'], true)
+    && !empty($coupon['reviewed_at'])
+): ?>
+    <small class="text-muted d-block mt-2">
+        <?= $moderation === 'REJECTED' ? 'Thời gian từ chối: ' : 'Thời gian duyệt: ' ?>
+        <?= e(format_db_datetime($coupon['reviewed_at'])) ?>
+    </small>
+<?php endif; ?>            </div>
             <span class="contribution-state is-<?= e(strtolower($moderation)) ?>"><?= e($moderationLabel) ?></span>
         </article>
         <?php endforeach; ?>

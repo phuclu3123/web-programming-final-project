@@ -233,3 +233,2156 @@ html:not(.editorial-ready) .brand-motion-button { display: none; }
 @media(max-width:1000px) { .community-intro.community-signature { gap: 28px; padding: 31px; grid-template-columns: 1.3fr 1fr; }.community-invite { padding: 20px; }.category-studio-hero { gap: 28px; }.category-studio-scene > img { height: 290px; }.campaign-signature-copy { padding: 29px; }.campaign-signature-visual { min-height: 370px; } }
 @media(max-width:760px) { .community-intro.community-signature { grid-template-columns: 1fr; gap: 23px; padding: 29px; }.community-invite { display: grid; grid-template-columns: 1fr auto; gap: 8px 15px; align-items: center; }.community-invite-icon { display: none; }.community-invite > strong { font-size: 14px; }.community-invite b { font-size: 21px; }.community-invite > p { display: none; }.community-invite .btn { grid-column: 2; grid-row: 1; white-space: nowrap; }.category-studio-hero { grid-template-columns: 1fr 1fr; gap: 20px; }.category-studio-copy h1 { font-size: 39px; }.category-studio-scene > img { height: 275px; }.category-scene-note { left: -15px; padding: 13px; min-width: 180px; }.category-studio-copy p { font-size: 12px; }.campaign-signature { grid-template-columns: 1fr; }.campaign-signature-visual { min-height: 240px; order: -1; border-left: 0; border-bottom: 1px dashed #ffffff55; }.campaign-signature-visual::before,.campaign-signature-visual::after { top: auto; bottom: -11px; }.campaign-signature-visual::before { left: -11px; }.campaign-signature-visual::after { left: auto; right: -11px; }.campaign-signature-visual > img { object-position: 50% 32%; }.campaign-signature-copy { padding: 28px; }.campaign-signature-copy h2 { max-width: 100%; }.campaign-signature-copy p { max-width: 100%; }.reading-tools { grid-template-columns: 1fr; gap: 12px; } }
 @media(max-width:600px) { .community-intro.community-signature { padding: 26px 23px; border-radius: 20px; margin-bottom: 22px; }.community-intro.community-signature h1 { font-size: 30px; }.community-signature > div > p { font-size: 11px; }.community-principles { gap: 9px; margin-top: 19px; }.community-principles > span { font-size: 11px; gap: 5px; }.community-principles > i { width: 12px; }.community-invite { padding: 16px; }.community-invite .btn { padding: 8px 10px; font-size: 11px; }.community-invite > strong { font-size: 11px; }.community-invite b { font-size: 20px; }.category-studio-hero { grid-template-columns: 1fr; margin-bottom: 38px; padding-top: 10px; }.category-studio-copy h1 { font-size: 45px; }.category-studio-copy p { max-width: 100%; }.category-studio-copy .btn { margin-top: 5px; }.category-studio-scene { margin-top: 15px; margin-left: 12px; }.category-studio-scene > img { height: 240px; border-radius: 20px 65px 20px 65px; }.category-scene-note { left: -12px; bottom: 0; }.campaign-page-heading { display: block; margin-top: 6px; }.campaign-page-heading h1 { font-size: 36px; }.campaign-page-heading > a { margin-top: 17px; }.campaign-signature-copy h2 { font-size: 29px; }.campaign-signature-visual { min-height: 210px; }.campaign-brand-stamp { bottom: 20px; left: 20px; min-width: 180px; padding: 12px 15px; }.campaign-secondary-grid .discovery-campaign-card { grid-template-columns: 1fr; }.campaign-secondary-grid .discovery-campaign-cover { height: 180px; min-height: 180px; }.community-ticket .coupon-photo { height: 140px; } }
+
+/* Campaign popup */
+#campaign-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+#campaign-modal .campaign-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(12, 18, 32, .68);
+    backdrop-filter: blur(4px);
+}
+
+#campaign-modal .campaign-modal-content {
+    position: relative;
+    z-index: 1;
+    width: min(820px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 18px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .3);
+}
+
+#campaign-modal .campaign-modal-heading {
+    padding: 8px 52px 16px 4px;
+    color: #e74736;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .06em;
+}
+
+#campaign-modal .campaign-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: #333;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .2);
+}
+
+#campaign-modal .campaign-poster {
+    min-height: 390px;
+    height: auto;
+}
+
+#campaign-modal .campaign-poster-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#campaign-modal .poster-main {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#campaign-modal .campaign-poster-content {
+    padding: clamp(24px, 5vw, 48px);
+}
+
+#campaign-modal .campaign-poster-content h3 {
+    font-size: clamp(28px, 5vw, 46px);
+    line-height: 1.12;
+}
+
+#campaign-modal .poster-actions {
+    margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+    #campaign-modal {
+        padding: 12px;
+    }
+
+    #campaign-modal .campaign-modal-content {
+        padding: 10px;
+        max-height: 88vh;
+    }
+
+    #campaign-modal .campaign-poster {
+        min-height: 420px;
+    }
+
+    #campaign-modal .campaign-poster-content {
+        padding: 22px;
+    }
+}
+
+
+/* Campaign popup: show one complete poster, no scrolling */
+#campaign-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    overflow: hidden !important;
+}
+
+#campaign-modal .campaign-modal-content {
+    position: relative !important;
+    width: min(760px, 92vw) !important;
+    max-height: calc(100dvh - 40px) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#campaign-modal .campaign-modal-heading {
+    display: none !important;
+}
+
+#campaign-modal .campaign-modal-content > .campaign-poster {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: min(78vh, 680px) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 40px) !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+}
+
+#campaign-modal .campaign-poster-photo {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+#campaign-modal .campaign-poster-content {
+    position: absolute !important;
+    inset: 0 !important;
+    overflow: hidden !important;
+    padding: clamp(16px, 3vw, 32px) !important;
+}
+
+#campaign-modal .campaign-modal-close {
+    top: 10px !important;
+    right: 10px !important;
+    z-index: 20 !important;
+}
+
+@media (max-width: 600px) {
+    #campaign-modal {
+        padding: 12px !important;
+    }
+
+    #campaign-modal .campaign-modal-content {
+        width: 94vw !important;
+        max-height: calc(100dvh - 24px) !important;
+    }
+
+    #campaign-modal .campaign-modal-content > .campaign-poster {
+        height: min(76dvh, 620px) !important;
+        max-height: calc(100dvh - 24px) !important;
+    }
+
+    #campaign-modal .campaign-poster-content {
+        padding: 16px !important;
+    }
+}
+
+
+/* Campaign popup: show one complete poster, no scrolling */
+#campaign-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    overflow: hidden !important;
+}
+
+#campaign-modal .campaign-modal-content {
+    position: relative !important;
+    width: min(760px, 92vw) !important;
+    max-height: calc(100dvh - 40px) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#campaign-modal .campaign-modal-heading {
+    display: none !important;
+}
+
+#campaign-modal .campaign-modal-content > .campaign-poster {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: min(78vh, 680px) !important;
+    min-height: 0 !important;
+    max-height: calc(100dvh - 40px) !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+}
+
+#campaign-modal .campaign-poster-photo {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+}
+
+#campaign-modal .campaign-poster-content {
+    position: absolute !important;
+    inset: 0 !important;
+    overflow: hidden !important;
+    padding: clamp(16px, 3vw, 32px) !important;
+}
+
+#campaign-modal .campaign-modal-close {
+    top: 10px !important;
+    right: 10px !important;
+    z-index: 20 !important;
+}
+
+@media (max-width: 600px) {
+    #campaign-modal {
+        padding: 12px !important;
+    }
+
+    #campaign-modal .campaign-modal-content {
+        width: 94vw !important;
+        max-height: calc(100dvh - 24px) !important;
+    }
+
+    #campaign-modal .campaign-modal-content > .campaign-poster {
+        height: min(76dvh, 620px) !important;
+        max-height: calc(100dvh - 24px) !important;
+    }
+
+    #campaign-modal .campaign-poster-content {
+        padding: 16px !important;
+    }
+}
+
+
+/* Bộ lọc chiến dịch trên trang danh sách */
+.editorial-campaign-page .campaign-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 16px;
+    margin: 24px 0;
+    padding: 20px;
+    border: 1px solid var(--line, #e5e5e5);
+    border-radius: 12px;
+    background: var(--surface, #fff);
+}
+
+.editorial-campaign-page .campaign-filter-field {
+    display: flex;
+    flex: 1 1 180px;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.editorial-campaign-page .campaign-filter-field label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.editorial-campaign-page .campaign-filter-field select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--line, #ddd);
+    border-radius: 8px;
+    background: #fff;
+    color: inherit;
+    font: inherit;
+}
+
+.editorial-campaign-page .campaign-filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 600px) {
+    .editorial-campaign-page .campaign-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .editorial-campaign-page .campaign-filter-field {
+        flex-basis: auto;
+        width: 100%;
+    }
+
+    .editorial-campaign-page .campaign-filter-actions {
+        width: 100%;
+    }
+
+    .editorial-campaign-page .campaign-filter-actions .btn {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+
+/* Ẩn popup hoàn toàn khi đã đóng hoặc chưa đến lượt hiển thị */
+#campaign-modal[hidden],
+.campaign-modal[hidden] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Không khóa cuộn trang chỉ vì phần tử popup còn tồn tại */
+body:has(#campaign-modal) {
+    overflow: auto;
+}
+
+/* ==========================================================================
+   ENTERPRISE CAMPAIGN STYLING - SANG TRỌNG & CHUẨN DOANH NGHIỆP
+   ========================================================================== */
+
+/* 1. KHỐI HEADER TIÊU ĐỀ & KHUNG BỘ LỌC */
+.campaign-hero-block {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 26px 32px;
+  margin-bottom: 24px;
+}
+
+.eyebrow-tag {
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  margin: 6px 0 4px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+}
+
+.hero-subtitle {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.campaign-filter-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 22px 30px;
+  margin-bottom: 28px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+}
+
+.filter-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.filter-field label {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.form-select {
+  width: 100%;
+  height: 40px;
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-apply-filter {
+  background: #1e293b;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-apply-filter:hover {
+  background: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.btn-reset-filter {
+  color: #64748b;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.btn-reset-filter:hover {
+  color: #0f172a;
+  text-decoration: underline;
+}
+
+.campaign-section-block {
+  margin-bottom: 28px;
+}
+
+.section-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+/* 2. CẤU TRÚC LƯỚI 2 CỘT CHO KHỐI 4 */
+.other-campaigns-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 768px) {
+  .filter-grid, 
+  .other-campaigns-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 3. THẺ CHIẾN DỊCH TỔNG THỂ (CAMPAIGN POSTER) */
+.campaign-poster {
+  position: relative;
+  border-radius: 18px !important;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.campaign-poster:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 35px -5px rgba(15, 23, 42, 0.18) !important;
+}
+
+.campaign-poster::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.92) 0%,
+    rgba(15, 23, 42, 0.75) 45%,
+    rgba(15, 23, 42, 0.2) 80%,
+    transparent 100%
+  ) !important;
+  pointer-events: none;
+}
+
+/* Tông 1: Deep Crimson / Wine cho Shopee (Poster Coral) */
+.poster-coral {
+  background: linear-gradient(135deg, #111827 0%, #4c0519 50%, #881337 100%) !important;
+}
+
+/* Tông 2: Midnight Navy / Indigo cho Đa nền tảng */
+.campaign-poster:not(.poster-coral) {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%) !important;
+}
+
+.campaign-poster-content {
+  padding: 28px 32px !important;
+}
+
+.poster-small .campaign-poster-content {
+  padding: 22px 24px !important;
+}
+
+/* Glassmorphism Badges */
+.poster-phase, 
+.poster-demo {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 99px !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  padding: 4px 10px !important;
+}
+
+.poster-merchant {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #0f172a !important;
+  border-radius: 99px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 4px 11px !important;
+}
+
+.campaign-poster h3 {
+  color: #ffffff !important;
+  font-size: clamp(20px, 2.2vw, 28px) !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.03em !important;
+  margin: 10px 0 !important;
+}
+
+.campaign-poster p {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+}
+
+/* Đồng hồ đếm ngược */
+.campaign-clock {
+  background: rgba(15, 23, 42, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(8px) !important;
+  border-radius: 12px !important;
+  padding: 6px 12px !important;
+}
+
+.campaign-clock-parts > span {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 6px !important;
+  min-width: 34px !important;
+  padding: 3px 5px !important;
+}
+
+.campaign-clock-parts strong {
+  color: #0f172a !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+
+.campaign-clock-parts small {
+  color: #64748b !important;
+  font-size: 9px !important;
+}
+
+.poster-actions > .btn {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  border-radius: 99px !important;
+  padding: 8px 18px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.2s ease !important;
+}
+
+.poster-actions > .btn:hover {
+  background: #f8fafc !important;
+  transform: scale(1.02);
+}
+
+.poster-actions > span {
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 11px !important;
+}
+
+/* 4. THẺ LỊCH MÀU VÀNG KEM (CHAMPAGNE GOLD PLANNER) */
+.other-campaigns-grid .campaign-planner,
+.campaign-planner {
+  min-height: 247px;
+  height: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  border: 1px solid #fcd34d !important;
+  border-radius: 18px !important;
+  padding: 24px 28px !important;
+  box-shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.campaign-planner .eyebrow {
+  color: #92400e !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.06em !important;
+}
+
+.planner-date {
+  border-bottom: 1px solid rgba(180, 83, 9, 0.18) !important;
+  padding-bottom: 12px !important;
+  margin: 10px 0 !important;
+}
+
+.planner-date > strong {
+  color: #78350f !important;
+  font-size: 56px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.planner-date div > span,
+.planner-date small,
+.campaign-planner p {
+  color: #78350f !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+.planner-date time {
+  color: #451a03 !important;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+}
+
+.campaign-planner > a {
+  color: #78350f !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  text-decoration: none !important;
+  margin-top: 4px;
+}
+
+.campaign-planner > a:hover {
+  color: #451a03 !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   KHẮC PHỤC LỖI ĐÈ MẶT & ĐỒNG BỘ TONE MÀU 100%
+   ========================================================================== */
+
+/* 1. GIỚI HẠN NỘI DUNG CHỮ Ở NỬA BÊN TRÁI - KHÔNG ĐÈ LÊN HÌNH BÊN PHẢI */
+.campaign-poster-content {
+  max-width: 52% !important; /* Đảm bảo chữ & đếm ngược chỉ nằm ở nửa trái */
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.poster-small .campaign-poster-content {
+  max-width: 58% !important;
+}
+
+/* 2. THU GỌN ĐỒNG HỒ ĐẾM NGƯỢC (CHỈ ÔM VỪA NÓ, KHÔNG CẮT NGANG HÌNH) */
+.campaign-clock {
+  display: inline-flex !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin: 12px 0 16px !important;
+  padding: 6px 14px !important;
+  background: rgba(15, 23, 42, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 10px !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.campaign-clock-parts > span {
+  background: #ffffff !important;
+  border-radius: 6px !important;
+  min-width: 32px !important;
+  padding: 3px 5px !important;
+}
+
+.campaign-clock-parts strong {
+  color: #0f172a !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+/* 3. ĐỒNG BỘ 100% TONE MÀU SANG TRỌNG CHO CẢ 3 THẺ (MIDNIGHT SLATE THEME) */
+.campaign-poster,
+.campaign-poster.poster-coral,
+.campaign-poster:not(.poster-coral) {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Lớp phủ chuyển màu mịn màng từ trái sang phải */
+.campaign-poster::before {
+  background: linear-gradient(
+    90deg,
+    #0f172a 0%,
+    rgba(15, 23, 42, 0.85) 45%,
+    rgba(15, 23, 42, 0.2) 75%,
+    transparent 100%
+  ) !important;
+}
+
+.campaign-poster-photo {
+  opacity: 0.9 !important;
+}
+
+/* 4. ĐỒNG BỘ THẺ LỊCH (PLANNER CARD) THEO ĐÚNG TONE SANG TRỌNG CỦA BANNER */
+.other-campaigns-grid .campaign-planner,
+.campaign-planner {
+  min-height: 247px;
+  height: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 18px !important;
+  padding: 24px 28px !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.campaign-planner .eyebrow {
+  color: #38bdf8 !important; /* Xanh Cyan nổi bật */
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.planner-date {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+  padding-bottom: 12px !important;
+  margin: 10px 0 !important;
+}
+
+.planner-date > strong {
+  color: #ffffff !important;
+  font-size: 52px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.planner-date div > span,
+.planner-date small,
+.campaign-planner p {
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+}
+
+.planner-date time {
+  color: #ffffff !important;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+}
+
+.campaign-planner > a {
+  color: #38bdf8 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  margin-top: 4px;
+}
+
+.campaign-planner > a:hover {
+  color: #7dd3fc !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   HỆ THỐNG MÀU CHUYÊN NGHIỆP - RICH SATURATED THEME (KHÔNG BỊ TỐI OM / NHẠT MÀU)
+   ========================================================================== */
+
+/* 1. KHÓA CỘT CHỮ NẰM GỌN NỬA BÊN TRÁI (CHỪA NỬA PHẢI CHO HÌNH ẢNH RÕ NÉT) */
+.campaign-poster-content {
+  max-width: 52% !important;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.poster-small .campaign-poster-content {
+  max-width: 58% !important;
+}
+
+/* Hiển thị hình ảnh rực rỡ, tự nhiên bên phải */
+.campaign-poster-photo {
+  opacity: 1 !important;
+}
+
+/* Lớp phủ chuyển màu mịn màng chỉ ở nửa bên trái để chữ trắng dễ đọc */
+.campaign-poster::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.85) 0%,
+    rgba(15, 23, 42, 0.55) 42%,
+    transparent 75%
+  ) !important;
+  pointer-events: none;
+}
+
+/* 2. CARD 1: SHOPEE (MÀU ĐỎ CAM SAN HÔ ĐẬM - RỰC RỠ & NỔI BẬT) */
+.campaign-poster.poster-coral {
+  background: linear-gradient(135deg, #881337 0%, #c2410c 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 10px 25px -5px rgba(194, 65, 12, 0.25) !important;
+}
+
+.campaign-poster.poster-coral h3,
+.campaign-poster.poster-coral p {
+  color: #ffffff !important;
+}
+
+.campaign-poster.poster-coral .poster-actions > .btn {
+  background: #ffffff !important;
+  color: #c2410c !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 3. CARD 2: ĐA NỀN TẢNG (MÀU XANH INDIGO ĐẬM - SANG TRỌNG) */
+.campaign-poster:not(.poster-coral) {
+  background: linear-gradient(135deg, #1e1b4b 0%, #2563eb 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.25) !important;
+}
+
+.campaign-poster:not(.poster-coral) h3,
+.campaign-poster:not(.poster-coral) p {
+  color: #ffffff !important;
+}
+
+.campaign-poster:not(.poster-coral) .poster-actions > .btn {
+  background: #ffffff !important;
+  color: #1d4ed8 !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* BADGES MỜ KÍNH VỚI CHỮ TRẮNG RÕ RÀNG */
+.poster-phase, 
+.poster-demo {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(8px) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.poster-merchant {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+.poster-actions > span {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 11px !important;
+}
+
+/* 4. ĐỒNG HỒ ĐẾM NGƯỢC GỌN GÀNG (GOM KHỐI NỐI NỬA TRÁI) */
+.campaign-clock {
+  display: inline-flex !important;
+  width: fit-content !important;
+  margin: 10px 0 14px !important;
+  padding: 6px 12px !important;
+  background: rgba(15, 23, 42, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 10px !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+.campaign-clock-label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 11px !important;
+}
+
+.campaign-clock-parts > span {
+  background: #ffffff !important;
+  border-radius: 6px !important;
+  min-width: 32px !important;
+  padding: 3px 5px !important;
+}
+
+.campaign-clock-parts strong {
+  color: #0f172a !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+/* 5. CARD 3: THẺ LỊCH SĂN MÃ (ENTERPRISE SLATE - ĐỒNG BỘ NỀN WEB) */
+.other-campaigns-grid .campaign-planner,
+.campaign-planner {
+  min-height: 247px;
+  height: 100%;
+  box-sizing: border-box;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 18px !important;
+  padding: 24px 28px !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.campaign-planner .eyebrow {
+  color: #2563eb !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.planner-date {
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding-bottom: 12px !important;
+  margin: 10px 0 !important;
+}
+
+.planner-date > strong {
+  color: #0f172a !important;
+  font-size: 52px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+.planner-date div > span,
+.planner-date small,
+.campaign-planner p {
+  color: #64748b !important;
+  font-size: 12px !important;
+}
+
+.planner-date time {
+  color: #0f172a !important;
+  font-size: 18px !important;
+  font-weight: 750 !important;
+}
+
+.campaign-planner > a {
+  color: #2563eb !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  text-decoration: none !important;
+  margin-top: 4px;
+}
+
+.campaign-planner > a:hover {
+  color: #1d4ed8 !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   BỘ LỌC BẰNG PHẲNG 1 HÀNG NGANG (SINGLE ROW FILTER)
+   ========================================================================== */
+
+/* 1. Xóa bỏ hoàn toàn khung card trắng cũ */
+.campaign-filter-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* 2. Dàn 2 ô chọn và nút bấm trên 1 hàng duy nhất */
+.campaign-filter-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important; /* Căn đáy nút bấm bằng với đáy ô select */
+  gap: 16px !important;
+  width: 100% !important;
+  margin-bottom: 32px !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Ô Select 1 & Select 2 tự động co giãn đều nhau */
+.campaign-filter-row .filter-field {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+}
+
+.campaign-filter-row label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin-bottom: 6px !important;
+  white-space: nowrap !important;
+}
+
+.campaign-filter-row .form-select {
+  height: 42px !important;
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  padding: 0 14px !important;
+  font-size: 13px !important;
+  color: #0f172a !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Khối nút bấm nằm ngang ngay bên cạnh ô Select 2 */
+.campaign-filter-row .filter-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  height: 42px !important;
+  flex-shrink: 0 !important; /* Không cho phép nút bị co lại hoặc rớt dòng */
+  margin: 0 !important;
+}
+
+.btn-apply-filter {
+  height: 42px !important;
+  padding: 0 22px !important;
+  border-radius: 10px !important;
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-reset-filter {
+  color: #64748b !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  line-height: 42px !important;
+}
+
+.btn-reset-filter:hover {
+  color: #0f172a !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   BỘ LỌC 3 Ô DÀN NGANG THẲNG HÀNG (KHÔNG BOX TRẮNG, KHÔNG XUỐNG DÒNG)
+   ========================================================================== */
+
+/* Triệt tiêu hoàn toàn box trắng bao ngoài cũ */
+.campaign-filter-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Dàn tất cả phần tử trên 1 hàng duy nhất */
+.campaign-filter-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important; /* Căn chân nút bấm bằng đáy các ô select */
+  gap: 14px !important;
+  width: 100% !important;
+  margin-bottom: 32px !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* 3 ô chọn (Danh mục, Kênh, Thời gian) chia đều độ rộng */
+.campaign-filter-row .filter-field {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+}
+
+.campaign-filter-row label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin-bottom: 6px !important;
+  white-space: nowrap !important;
+}
+
+.campaign-filter-row .form-select {
+  height: 42px !important;
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  color: #0f172a !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Cụm nút bấm nằm sát mép phải ô Thời gian */
+.campaign-filter-row .filter-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  height: 42px !important;
+  flex-shrink: 0 !important; /* Cố định kích thước nút, không cho co rớt dòng */
+  margin: 0 !important;
+}
+
+.btn-apply-filter {
+  height: 42px !important;
+  padding: 0 18px !important;
+  border-radius: 10px !important;
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-reset-filter {
+  color: #64748b !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  line-height: 42px !important;
+}
+
+.btn-reset-filter:hover {
+  color: #0f172a !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   BỘ LỌC CỘNG ĐỒNG 1 HÀNG NGANG (XÓA BỎ BOX TRẮNG BỌC NGOÀI)
+   ========================================================================== */
+
+/* Triệt tiêu box mờ/trắng bao ngoài cũ */
+.community-controls,
+.community-advanced,
+.community-filter-panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Ép dàn hàng ngang duy nhất */
+.community-filter-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important; /* Căn đáy nút bấm và checkbox bằng đáy ô select */
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 18px 0 24px 0 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Các ô chọn tự động co giãn đều nhau */
+.community-filter-row .filter-field {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+}
+
+.community-filter-row .filter-sort-field {
+  flex: 0 0 140px !important; /* Cố định kích thước ô Sắp xếp góc phải */
+}
+
+.community-filter-row label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin-bottom: 6px !important;
+  white-space: nowrap !important;
+}
+
+.community-filter-row .form-select {
+  height: 42px !important;
+  border-radius: 10px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  padding: 0 12px !important;
+  font-size: 13px !important;
+  color: #0f172a !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Ô Checkbox "Sắp hết hạn" */
+.community-filter-row .filter-field-checkbox {
+  display: flex !important;
+  align-items: center !important;
+  height: 42px !important;
+  padding: 0 4px !important;
+  flex-shrink: 0 !important;
+}
+
+.community-filter-row .checkbox-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+.community-filter-row .checkbox-label input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  accent-color: #2563eb !important;
+  cursor: pointer !important;
+}
+
+.community-filter-row .checkbox-label span {
+  font-size: 12px !important;
+  color: #475569 !important;
+  line-height: 1.2 !important;
+}
+
+.community-filter-row .checkbox-label small {
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+}
+
+/* Nút bấm Áp dụng & Xóa lọc */
+.community-filter-row .filter-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  height: 42px !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.community-filter-row .btn-brand {
+  height: 42px !important;
+  padding: 0 20px !important;
+  border-radius: 10px !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s ease !important;
+}
+
+.community-filter-row .btn-brand:hover {
+  background: #1d4ed8 !important;
+}
+
+.community-filter-row .community-reset {
+  color: #64748b !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  line-height: 42px !important;
+}
+
+.community-filter-row .community-reset:hover {
+  color: #0f172a !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   BỘ LỌC COUPON DÀN NGANG DẦU HÀNG - CO GIÃN TỰ ĐỘNG (FLEXIBLE FULL-ROW)
+   ========================================================================== */
+
+/* Khung chứa tổng */
+.community-controls {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  gap: 16px !important;
+  margin: 16px 0 24px 0 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Hàng bộ lọc co giãn chiếm trọn phần không gian bên trái */
+.community-filter-panel,
+.community-filter-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important;
+  gap: 12px !important;
+  flex: 1 1 auto !important; /* Tự động dãn ra lấp đầy hàng */
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 3 ô chọn (Cửa hàng, Loại ưu đãi, Kênh) DÀN ĐỀU BẰNG NHAU theo chiều ngang */
+.community-filter-panel > div:not(.community-ending):not(.filter-actions),
+.community-filter-row .filter-field {
+  flex: 1 1 0% !important; /* Dàn đều 100% không gian trống */
+  min-width: 150px !important; /* Đảm bảo không bao giờ bị cắt chữ */
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+}
+
+/* Tiêu đề góc trên */
+.community-filter-panel label,
+.community-filter-row label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin-bottom: 6px !important;
+  white-space: nowrap !important;
+  display: block !important;
+}
+
+/* Khung Ô Select tự điều chỉnh 100% theo khoảng dàn đều */
+.community-filter-panel select,
+.community-filter-row select,
+.community-filter-panel .form-control,
+.community-filter-row .form-select {
+  height: 40px !important;
+  width: 100% !important; /* Dãn full ô */
+  font-size: 13px !important;
+  padding: 0 28px 0 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  box-sizing: border-box !important;
+  color: #0f172a !important;
+}
+
+/* Ô Checkbox "Sắp hết hạn" giữ nguyên kích thước vừa vặn */
+.community-filter-panel .community-ending,
+.community-filter-row .filter-field-checkbox {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 40px !important;
+  margin: 0 4px !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+}
+
+/* Nút Áp dụng */
+.community-filter-panel .btn,
+.community-filter-row .filter-actions,
+.community-filter-row .btn-brand {
+  flex: 0 0 auto !important;
+  height: 40px !important;
+  margin: 0 !important;
+}
+
+.community-filter-row .btn-brand,
+.community-filter-panel button[type="submit"] {
+  height: 40px !important;
+  padding: 0 20px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border: none !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+/* Khối Sắp xếp góc phải */
+.community-sort {
+  flex: 0 0 auto !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-left: auto !important;
+}
+
+/* ==========================================================================
+   NÚT TẮT/MỞ BỘ LỌC (COLLAPSIBLE FILTER SYSTEM)
+   ========================================================================== */
+
+/* Khung bọc ngoài */
+.community-controls {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  margin: 16px 0 24px 0 !important;
+  gap: 16px !important;
+}
+
+.community-advanced {
+  flex: 1 1 auto !important;
+}
+
+/* Nút bấm "Bộ lọc" toggle gọn gàng */
+.btn-filter-toggle,
+.community-advanced summary {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  height: 38px !important;
+  padding: 0 16px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  cursor: pointer !important;
+  list-style: none !important;
+  user-select: none !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Xóa icon mũi tên đen mặc định của trình duyệt */
+.community-advanced summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.btn-filter-toggle:hover {
+  border-color: #94a3b8 !important;
+  background-color: #f8fafc !important;
+}
+
+/* Huy hiệu hiển thị số lượng lọc đang chọn (nếu có) */
+.community-filter-count {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  padding: 1px 7px !important;
+  line-height: 1.4 !important;
+}
+
+/* Khối bộ lọc mở ra bên dưới nút bấm */
+.community-advanced[open] .community-filter-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin-top: 14px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* 3 ô select dàn đều đẹp mắt khi mở ra */
+.community-advanced[open] .filter-field {
+  flex: 1 1 0% !important;
+  min-width: 150px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.community-advanced[open] label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin-bottom: 5px !important;
+}
+
+.community-advanced[open] .form-select {
+  height: 38px !important;
+  width: 100% !important;
+  font-size: 13px !important;
+  padding: 0 28px 0 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  box-sizing: border-box !important;
+}
+
+/* Checkbox & Nút Áp Dụng */
+.community-advanced[open] .filter-field-checkbox {
+  height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+}
+
+.community-advanced[open] .filter-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  height: 38px !important;
+  flex-shrink: 0 !important;
+}
+
+.community-advanced[open] .btn-brand {
+  height: 38px !important;
+  padding: 0 18px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* Nút Sắp xếp nằm đúng hàng với nút Toggle Bộ lọc */
+.community-sort {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  height: 38px !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+}
+
+/* ==========================================================================
+   CHUYỂN NÚT BỘ LỌC VỀ DẠNG TEXT THUẦN (TRONG SUỐT, BỎ KHUNG TRẮNG)
+   ========================================================================== */
+
+.btn-filter-toggle,
+.community-advanced summary {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  height: auto !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  user-select: none !important;
+  transition: color 0.2s ease !important;
+}
+
+.btn-filter-toggle:hover,
+.community-advanced summary:hover {
+  color: #2563eb !important; /* Chuyển màu xanh mượt khi hover */
+  background: transparent !important;
+}
+
+/* Giữ icon mũi tên & số đếm gọn gàng bên cạnh chữ */
+.community-advanced summary svg {
+  flex-shrink: 0 !important;
+}
+
+/* Nút bấm Bộ lọc trang Chiến dịch dạng text trong suốt */
+.campaign-advanced {
+  margin-bottom: 24px !important;
+}
+
+.campaign-advanced summary,
+.campaign-advanced .btn-filter-toggle {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  height: auto !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  user-select: none !important;
+  list-style: none !important;
+  transition: color 0.2s ease !important;
+}
+
+.campaign-advanced summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.campaign-advanced summary:hover {
+  color: #2563eb !important;
+}
+
+/* Khi bấm mở ra: Dàn 3 ô select + nút bấm trên 1 hàng ngang */
+.campaign-advanced[open] .campaign-filter-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-end !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin-top: 14px !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.campaign-advanced[open] .filter-field {
+  flex: 1 1 0% !important;
+  min-width: 150px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: 0 !important;
+}
+
+.campaign-advanced[open] label {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  margin-bottom: 6px !important;
+  white-space: nowrap !important;
+}
+
+.campaign-advanced[open] .form-select {
+  height: 40px !important;
+  width: 100% !important;
+  font-size: 13px !important;
+  padding: 0 28px 0 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  background-color: #ffffff !important;
+  box-sizing: border-box !important;
+}
+
+.campaign-advanced[open] .filter-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  height: 40px !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+.campaign-advanced[open] .btn-apply-filter {
+  height: 40px !important;
+  padding: 0 20px !important;
+  border-radius: 8px !important;
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+
+.campaign-advanced[open] .btn-reset-filter {
+  color: #64748b !important;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  line-height: 40px !important;
+}
+
+.campaign-advanced[open] .btn-reset-filter:hover {
+  color: #0f172a !important;
+  text-decoration: underline !important;
+}
+
+/* ==========================================================================
+   KHÔI PHỤC MÀU THƯƠNG HIỆU + LÀM SÁNG TOÀN BỘ BANNER & CARD
+   ========================================================================== */
+
+/* 1. Khôi phục lại màu nền riêng biệt & gradient gốc của từng Card */
+.campaign-poster,
+.campaign-poster-card,
+.other-campaigns-grid .campaign-poster {
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  /* Bỏ !important nền cố định để nhận lại màu sắc động riêng từ PHP */
+}
+
+/* 2. Ảnh bên phải: Giữ nguyên 100% độ sáng và màu sắc thực */
+.campaign-poster img,
+.campaign-poster .campaign-poster-bg,
+.other-campaigns-grid .campaign-poster img {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 55% !important; /* Ảnh chiếm 55% góc phải */
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  opacity: 1 !important; /* Độ sáng tối đa */
+  filter: none !important;
+  z-index: 1 !important;
+}
+
+/* 3. Lớp phủ độ bóng nhẹ CHỈ NẰM DƯỚI PHẦN CHỮ (không làm tối ảnh) */
+.campaign-poster::before,
+.campaign-poster-card::before,
+.other-campaigns-grid .campaign-poster::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  /* Lớp mờ tan nhanh từ trái sang phải, chừa hẳn 60% diện tích ảnh bên phải luôn sáng */
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.75) 0%,
+    rgba(15, 23, 42, 0.4) 35%,
+    transparent 65%
+  ) !important;
+  z-index: 2 !important;
+}
+
+/* 4. Định dạng chữ nổi bật rõ ràng trên mọi nền màu */
+.campaign-poster-content,
+.campaign-poster-info,
+.campaign-poster-body,
+.campaign-poster > div:not(.campaign-poster-bg) {
+  position: relative !important;
+  z-index: 3 !important;
+  padding: 32px 36px !important;
+  max-width: 520px !important;
+}
+
+.campaign-poster h2,
+.campaign-poster h3,
+.campaign-poster .campaign-title {
+  color: #ffffff !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important; /* Đổ bóng nhẹ giúp chữ luôn đọc tốt */
+}
+
+.campaign-poster p,
+.campaign-poster .campaign-subtitle {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 13px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ==========================================================================
+   FIX BANNER CHIẾN DỊCH: HÒA TRỘN MẦU TỰ NHIÊN (XÓA VỆT CẮT DỌC THÔ CỨNG)
+   ========================================================================== */
+
+/* 1. Khung chứa Banner chính & Card nhỏ */
+.campaign-poster,
+.campaign-poster-card,
+.campaign-section-block > .campaign-poster,
+.other-campaigns-grid .campaign-poster {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-height: 320px !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 2. Khối nội dung chữ bên trái: Bỏ hoàn toàn màu nền riêng gây vệt dọc */
+.campaign-poster-content,
+.campaign-poster-info,
+.campaign-poster-body,
+.campaign-poster > div:not(.campaign-poster-bg):not(.campaign-poster-media) {
+  position: relative !important;
+  z-index: 3 !important;
+  width: 55% !important;
+  max-width: 580px !important;
+  padding: 36px 40px !important;
+  box-sizing: border-box !important;
+  background: transparent !important; /* Xóa sạch màu nền khối thô */
+}
+
+/* 3. Ảnh bên phải tràn 65% khung */
+.campaign-poster-bg,
+.campaign-poster-media,
+.campaign-poster img,
+.campaign-poster .campaign-poster-bg img {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 65% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  z-index: 1 !important;
+  background: transparent !important;
+  
+  /* Kỹ thuật Masking: Làm mép trái của ảnh hòa tan mượt mà vào màu nền Card */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 35%, black 100%) !important;
+  mask-image: linear-gradient(to right, transparent 0%, black 35%, black 100%) !important;
+}
+
+/* 4. Lớp phủ tối nhẹ dưới chân chữ giúp đọc tốt trên mọi màu nền */
+.campaign-poster::before,
+.campaign-poster-card::before,
+.other-campaigns-grid .campaign-poster::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.65) 0%,
+    rgba(15, 23, 42, 0.3) 40%,
+    transparent 75%
+  ) !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+}
+
+/* 5. Ép kiểu chữ & nút bấm đồng nhất sang trọng */
+.campaign-poster h2,
+.campaign-poster h3,
+.campaign-poster .campaign-title {
+  color: #ffffff !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  margin: 10px 0 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.campaign-poster p,
+.campaign-poster .campaign-subtitle {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  margin-bottom: 16px !important;
+}
+
+/* ==========================================================================
+   GIAO DIỆN LỊCH ƯU ĐÃI (CAMPAIGN CALENDAR ENTERPRISE STYLE)
+   ========================================================================== */
+
+/* Header trang */
+.calendar-page-heading {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-end !important;
+  padding-bottom: 28px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  margin-bottom: 32px !important;
+}
+
+.calendar-page-heading h1 {
+  font-size: 32px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.02em !important;
+  margin: 6px 0 8px 0 !important;
+}
+
+.calendar-page-heading .section-desc {
+  color: #64748b !important;
+  font-size: 14px !important;
+  max-width: 560px !important;
+}
+
+/* Timeline Container */
+.calendar-timeline-section {
+  margin-top: 10px !important;
+}
+
+.timeline-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 16px !important;
+}
+
+.timeline-header h2 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+.timeline-count {
+  font-size: 12px !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
+}
+
+/* Danh sách Timeline dạng thẻ Row tối giản */
+.calendar-timeline-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.timeline-row-card {
+  display: grid !important;
+  grid-template-columns: 80px 1fr auto !important;
+  align-items: center !important;
+  gap: 20px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+.timeline-row-card:hover {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Khối Ngày tháng vuông vức */
+.timeline-date-badge {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 8px 0 !important;
+  width: 80px !important;
+}
+
+.timeline-date-badge .day {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  line-height: 1 !important;
+}
+
+.timeline-date-badge .month {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: #64748b !important;
+  margin-top: 4px !important;
+  text-transform: uppercase !important;
+}
+
+/* Nội dung thông tin */
+.timeline-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.timeline-meta {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Status Badges */
+.status-pill {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+}
+
+.status-running {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+}
+
+.status-upcoming {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+
+.merchant-tag {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+}
+
+.timeline-title {
+  margin: 2px 0 !important;
+}
+
+.timeline-title a {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  text-decoration: none !important;
+}
+
+.timeline-title a:hover {
+  color: #2563eb !important;
+}
+
+.timeline-timeframe {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 12px !important;
+  color: #64748b !important;
+}
+
+/* Nút hành động */
+.btn-timeline-detail {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  text-decoration: none !important;
+  padding: 8px 14px !important;
+  border-radius: 6px !important;
+  background: #f1f5f9 !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-timeline-detail:hover {
+  background: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   BỘ LỌC THÁNG & NĂM TRANG LỊCH ƯU ĐÃI
+   ========================================================================== */
+
+.calendar-filter-bar {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 12px !important;
+  margin-bottom: 24px !important;
+  padding: 14px 18px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  width: fit-content !important;
+}
+
+.calendar-filter-bar .filter-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.calendar-filter-bar label {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #64748b !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
+}
+
+.calendar-filter-bar .form-select {
+  height: 38px !important;
+  border-radius: 6px !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0 28px 0 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  cursor: pointer !important;
+}
+
+.calendar-filter-bar .filter-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  height: 38px !important;
+}
+
+.calendar-filter-bar .btn-calendar-filter {
+  height: 38px !important;
+  padding: 0 18px !important;
+  background: #0f172a !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+}
+
+.calendar-filter-bar .btn-calendar-filter:hover {
+  background: #1e293b !important;
+}
+
+.calendar-filter-bar .btn-calendar-reset {
+  font-size: 13px !important;
+  color: #64748b !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+}
+
+.calendar-filter-bar .btn-calendar-reset:hover {
+  color: #0f172a !important;
+  text-decoration: underline !important;
+}

@@ -206,3 +206,127 @@
   .discovery-detail-page .coupon-code-large { align-items: flex-start; flex-direction: column; }
 }
 @media (prefers-reduced-motion: reduce) { .discovery-category, .discovery-feedback { transition: none; } }
+
+/* ==================================================
+   DISCOVERY — SEARCH & CATEGORY
+================================================== */
+
+.community-catalog,
+.discovery-page {
+  color: var(--ink);
+}
+
+.community-intro h1,
+.discovery-page h1 {
+  color: var(--ink);
+  font-size: clamp(30px, 3.4vw, 44px);
+  font-weight: 850;
+  line-height: 1.18;
+  letter-spacing: -0.045em;
+}
+
+.community-intro p,
+.discovery-page .page-description {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.community-search-input {
+  gap: 12px;
+  padding: 8px 9px 8px 18px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(23, 43, 77, 0.035);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.community-search-input:focus-within {
+  border-color: #91a8ee;
+  box-shadow: 0 0 0 4px rgba(49, 86, 201, 0.09);
+}
+
+.community-search-input input {
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.community-search-input input::placeholder {
+  color: #96a1b2;
+}
+
+.community-search-input .btn {
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.community-categories label > span {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: #526078;
+  font-size: 12px;
+  font-weight: 650;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.community-categories label:hover > span {
+  border-color: #aebfee;
+  background: #f4f7ff;
+  color: var(--blue);
+}
+
+/* Trạng thái được chọn phải tiếp tục tương thích với input hiện tại */
+.community-categories input:checked + span {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: #fff;
+}
+
+.discovery-page .section-heading h2,
+.community-catalog .section-heading h2 {
+  color: var(--ink);
+  font-size: clamp(23px, 2.4vw, 31px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.discovery-page .results-toolbar,
+.community-catalog .results-toolbar {
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.discovery-page .results-toolbar strong,
+.community-catalog .results-toolbar strong {
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .community-intro {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .community-intro h1,
+  .discovery-page h1 {
+    font-size: 31px;
+  }
+
+  .community-search-input {
+    padding-left: 12px;
+  }
+
+  .community-search-input .btn {
+    min-width: 88px;
+    padding-inline: 12px;
+  }
+}

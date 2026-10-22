@@ -1,10 +1,112 @@
-<div class="calendar-page">
-    <div class="member-breadcrumb"><a href="<?= e(url('/campaigns')) ?>">Chiến dịch</a><span>/</span><span>Lịch ưu đãi</span></div>
-    <header class="calendar-masthead"><div><span class="eyebrow">DÀNH CHỖ CHO KẾ HOẠCH TIẾP THEO</span><h1>Lịch ưu đãi <?= (int)$year ?>.</h1><p>Theo dõi các chiến dịch đang diễn ra và sắp bắt đầu. Chọn một mốc để xem coupon và điều kiện riêng của từng ưu đãi.</p></div><a class="btn btn-outline-brand" href="<?= e(url('/campaigns')) ?>">Xem chiến dịch <?= icon('arrow') ?></a></header>
-    <h2 class="h5 mb-3">Đang diễn ra &amp; sắp tới</h2>
-    <?php if (!$campaigns): ?><div class="member-empty"><strong>Chưa có lịch chiến dịch mới.</strong><p>Bạn vẫn có thể tìm các coupon còn hiệu lực trong cộng đồng.</p><a href="<?= e(url('/coupons')) ?>">Khám phá coupon <?= icon('arrow') ?></a></div><?php else: ?><div class="calendar-list">
-    <?php foreach ($campaigns as $entry): $upcoming=strtotime($entry['starts_at'].' UTC')>time(); $eventDate=$upcoming ? $entry['starts_at'] : $entry['ends_at']; ?>
-        <a class="calendar-entry" href="<?= e(url('/campaigns/'.(int)$entry['id'])) ?>"><time datetime="<?= e(format_db_datetime($eventDate,'Y-m-d')) ?>"><strong><?= e(format_db_datetime($eventDate,'d')) ?></strong>THÁNG <?= e(format_db_datetime($eventDate,'m')) ?></time><div><small><?= $upcoming ? 'Bắt đầu' : 'Kết thúc' ?> · <?= e($entry['merchant_name'] ?: 'CouponHub') ?></small><h2><?= e(editorialTitle($entry['name'])) ?></h2></div><?= icon('arrow') ?></a>
-    <?php endforeach; ?></div><?php endif; ?>
-    <?php $futureHolidays=array_filter($holidays,static fn($holiday)=>$holiday['date']>=date('Y-m-d')); if ($futureHolidays): ?><section class="calendar-holidays"><h2 class="h5">Mốc tham khảo trong năm</h2><div class="calendar-list"><?php foreach ($futureHolidays as $holiday): ?><div class="calendar-entry"><time datetime="<?= e($holiday['date']) ?>"><strong><?= e(date('d',strtotime($holiday['date']))) ?></strong>THÁNG <?= e(date('m',strtotime($holiday['date']))) ?></time><h2><?= e($holiday['name']) ?></h2></div><?php endforeach; ?></div><p class="calendar-source-note">Ngày lễ tham khảo từ Nager.Holidays, không phải lịch khuyến mãi hay thông báo nghỉ chính thức.</p></section><?php endif; ?>
+<div class="discovery-page editorial-calendar-page">
+    <div class="member-breadcrumb">
+        <a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Lịch ưu đãi</span>
+    </div>
+
+    <!-- HERO HEADLINE CHUẨN ENTERPRISE -->
+    <div class="editorial-section-head calendar-page-heading">
+        <div class="heading-content">
+            <span class="eyebrow">DÀNH CHỖ CHO KẾ HOẠCH TIẾP THEO</span>
+            <h1>Lịch ưu đãi 2026</h1>
+            <p class="section-desc">Theo dõi tiến độ các chiến dịch đang diễn ra và chuẩn bị cho các đợt phát hành mã ưu đãi tiếp theo.</p>
+        </div>
+        <div class="heading-actions">
+            <a href="<?= e(url('/campaigns')) ?>" class="btn-secondary-link">
+                Xem danh sách chiến dịch <?= icon('arrow') ?>
+            </a>
+        </div>
+    </div>
+
+    <?php
+    $selectedMonth = $_GET['month'] ?? '';
+    $selectedYear  = (int)($_GET['year'] ?? date('Y'));
+    ?>
+
+    <!-- BỘ LỌC THEO THÁNG & NĂM -->
+    <form class="calendar-filter-bar" method="GET" action="<?= e(url('/campaign-calendar')) ?>">
+        <!-- 1. Chọn Tháng -->
+        <div class="filter-group">
+            <label for="filter-month">Tháng</label>
+            <select id="filter-month" name="month" class="form-select">
+                <option value="">Tất cả các tháng</option>
+                <?php for ($m = 1; $m <= 12; $m++): ?>
+                    <?php $mVal = sprintf('%02d', $m); ?>
+                    <option value="<?= $mVal ?>" <?= $selectedMonth === $mVal ? 'selected' : '' ?>>
+                        Tháng <?= $m ?>
+                    </option>
+                <?php endfor; ?>
+            </select>
+        </div>
+
+        <!-- 2. Chọn Năm -->
+        <div class="filter-group">
+            <label for="filter-year">Năm</label>
+            <select id="filter-year" name="year" class="form-select">
+                <?php 
+                $currentYear = (int)date('Y');
+                for ($y = $currentYear - 1; $y <= $currentYear + 2; $y++): 
+                ?>
+                    <option value="<?= $y ?>" <?= $selectedYear === $y ? 'selected' : '' ?>>
+                        Năm <?= $y ?>
+                    </option>
+                <?php endfor; ?>
+            </select>
+        </div>
+
+        <!-- 3. Nút thao tác -->
+        <div class="filter-actions">
+            <button type="submit" class="btn-calendar-filter">Lọc lịch</button>
+            <?php if (!empty($selectedMonth) || $selectedYear !== (int)date('Y')): ?>
+                <a href="<?= e(url('/campaign-calendar')) ?>" class="btn-calendar-reset">Đặt lại</a>
+            <?php endif; ?>
+        </div>
+    </form>
+    
+    <!-- TIMELINE CONTAINER -->
+    <section class="calendar-timeline-section">
+        <div class="timeline-header">
+            <h2>Đang diễn ra & Sắp tới</h2>
+            <span class="timeline-count"><?= count($campaigns ?? []) ?> chiến dịch</span>
+        </div>
+
+        <div class="calendar-timeline-list">
+            <?php foreach ($campaigns as $item): ?>
+                <article class="timeline-row-card">
+                    <!-- Khối ngày tháng vuông vức, tối giản -->
+                    <div class="timeline-date-badge">
+                        <span class="day"><?= date('d', strtotime($item['start_at'])) ?></span>
+                        <span class="month">THÁNG <?= date('m', strtotime($item['start_at'])) ?></span>
+                    </div>
+
+                    <!-- Nội dung chi tiết -->
+                    <div class="timeline-info">
+                        <div class="timeline-meta">
+                            <span class="status-pill status-<?= strtolower($item['status'] ?? 'running') ?>">
+                                <?= ($item['status'] ?? '') === 'RUNNING' ? 'Đang diễn ra' : 'Sắp diễn ra' ?>
+                            </span>
+                            <span class="merchant-tag"><?= e($item['merchant_name'] ?? 'CouponHub') ?></span>
+                        </div>
+
+                        <h3 class="timeline-title">
+                            <a href="<?= e(url('/campaigns/'.(int)$item['id'])) ?>">
+                                <?= e($item['name']) ?>
+                            </a>
+                        </h3>
+
+                        <div class="timeline-timeframe">
+                            <?= icon('clock') ?>
+                            <span><?= date('d/m/Y H:i', strtotime($item['start_at'])) ?> — <?= date('d/m/Y H:i', strtotime($item['end_at'])) ?></span>
+                        </div>
+                    </div>
+
+                    <!-- Nút thao tác góc phải -->
+                    <div class="timeline-action">
+                        <a href="<?= e(url('/campaigns/'.(int)$item['id'])) ?>" class="btn-timeline-detail">
+                            Chi tiết <?= icon('arrow') ?>
+                        </a>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
 </div>

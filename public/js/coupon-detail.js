@@ -5,6 +5,8 @@
     var $page = $('#coupon-detail-page');
     if (!$page.length) return;
 
+    
+
     var token = window.CouponHub.csrfToken();
     var $message = $('#interaction-message');
 
