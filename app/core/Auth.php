@@ -57,7 +57,7 @@ final class Auth
         }
         if (in_array($path, ['shop.php', '/shop.php'], true)) return $role === 'MERCHANT' ? '/merchant' . $suffix : $fallback;
         if (!str_starts_with($path, '/') || str_starts_with($path, '//') || str_contains($path, '%')) return $fallback;
-        $public = preg_match('~\A/(?:dashboard|my-coupons|saved-coupons|categories|coupons(?:/[0-9]+|/create)?|campaigns(?:/[0-9]+)?|articles(?:/[A-Za-z0-9_-]+)?|portal|campaign-calendar|about|terms|privacy|community-guidelines|contact)\z~', $path);
+        $public = preg_match('~\A/(?:notifications|dashboard|my-coupons|saved-coupons|categories|coupons(?:/[0-9]+|/create)?|campaigns(?:/[0-9]+)?|articles(?:/[A-Za-z0-9_-]+)?|portal|campaign-calendar|about|terms|privacy|community-guidelines|contact)\z~', $path);
         $merchant = preg_match('~\A/merchant(?:/apply|/coupons(?:/create|/[0-9]+/edit)?|/campaigns(?:/create|/[0-9]+(?:/edit)?)?|/profile/[0-9]+)?\z~', $path);
         $admin = preg_match('~\A/admin(?:/(?:users|merchants|merchant-requests|categories|coupons|campaigns(?:/[0-9]+)?|reports|articles(?:/create|/[0-9]+/edit)?))?\z~', $path);
         return $public || ($merchant && ($role === 'MERCHANT' || $path === '/merchant/apply')) || ($admin && $role === 'ADMIN') ? $path . $suffix : $fallback;

@@ -14,7 +14,7 @@
 
     <?php 
     // Tự động mở bộ lọc nếu người dùng đang chọn lọc
-    $hasCampaignFilters = !empty($selectedCategory) || ($selectedChannel !== 'ALL') || (($selectedStatus ?? 'ALL') !== 'ALL'); 
+    $hasCampaignFilters = !empty($selectedCategory) || ($selectedChannel !== 'ALL') || $phase !== 'ALL';
     ?>
 
     <!-- BỘ LỌC CHIẾN DỊCH (TẮT/MỞ DẠNG TEXT TRONG SUỐT) -->
@@ -56,11 +56,10 @@
             <!-- 3. Thời gian -->
             <div class="filter-field">
                 <label for="campaign-status">Thời gian</label>
-                <select id="campaign-status" name="status" class="form-select">
-                    <option value="ALL" <?= ($selectedStatus ?? 'ALL') === 'ALL' ? 'selected' : '' ?>>Tất cả thời gian</option>
-                    <option value="RUNNING" <?= ($selectedStatus ?? '') === 'RUNNING' ? 'selected' : '' ?>>Đang diễn ra</option>
-                    <option value="UPCOMING" <?= ($selectedStatus ?? '') === 'UPCOMING' ? 'selected' : '' ?>>Sắp diễn ra</option>
-                    <option value="ENDED" <?= ($selectedStatus ?? '') === 'ENDED' ? 'selected' : '' ?>>Đã kết thúc</option>
+                <select id="campaign-status" name="phase" class="form-select">
+                    <option value="ALL" <?= $phase === 'ALL' ? 'selected' : '' ?>>Tất cả thời gian</option>
+                    <option value="ACTIVE" <?= $phase === 'ACTIVE' ? 'selected' : '' ?>>Đang diễn ra</option>
+                    <option value="UPCOMING" <?= $phase === 'UPCOMING' ? 'selected' : '' ?>>Sắp diễn ra</option>
                 </select>
             </div>
 
@@ -77,7 +76,7 @@
         
         <!-- CHIẾN DỊCH ĐANG DIỄN RA (BANNER LỚN NỔI BẬT) -->
         <section class="campaign-section-block">
-            <span class="section-label">CHIẾN DỊCH ĐANG DIỄN RA</span>
+            <span class="section-label"><?= !empty($mainCampaign['upcoming']) ? 'CHIẾN DỊCH SẮP BẮT ĐẦU' : 'CHIẾN DỊCH ĐANG DIỄN RA' ?></span>
             
             <?php 
                 $campaign = $mainCampaign; 
@@ -133,4 +132,9 @@
 
     <!-- DEALS TRONG CHIẾN DỊCH -->
     <?php require __DIR__ . '/../partials/campaign-deals.php'; ?>
+    <?php if ($listing['pages'] > 1): ?><nav class="campaign-pagination" aria-label="Phân trang chiến dịch">
+        <?php for ($target=max(1,$listing['page']-2); $target<=min($listing['pages'],$listing['page']+2); ++$target): ?>
+        <a href="<?= e(url('/campaigns').'?'.http_build_query(['phase'=>$phase,'category_id'=>$selectedCategory,'usage_channel'=>$selectedChannel,'page'=>$target])) ?>" <?= $target===$listing['page'] ? 'aria-current="page"' : '' ?>><?= $target ?></a>
+        <?php endfor; ?>
+    </nav><?php endif; ?>
 </div>

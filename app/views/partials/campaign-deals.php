@@ -44,8 +44,7 @@
         action="<?= e(url('/campaigns')) ?>#campaign-deals"
     >
         <input type="hidden" name="phase" value="<?= e($phase) ?>">
-        <input type="hidden" name="page" value="<?= (int) $listing['page'] ?>">
-        <input type="hidden" name="preview" value="<?= (int) $campaignPreview['id'] ?>">
+        <input type="hidden" name="page" value="1">
 
         <div class="campaign-coupon-filter-field">
             <label for="campaign-category-filter">Danh mục coupon</label>

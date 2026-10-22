@@ -21,6 +21,7 @@
   <script src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/campaign-clock.js') ?>" defer></script>
   <link rel="stylesheet" href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/product.css') ?>">
   <link rel="stylesheet" href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/release.css') ?>">
+  <link rel="stylesheet" href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/integration.css') ?>">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="assets/js/app.js?v=<?= filemtime(__DIR__ . '/../../../assets/js/app.js') ?>" defer></script>
 </head>

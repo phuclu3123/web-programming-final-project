@@ -35,9 +35,5 @@ $currentUser = $currentUser ?? null;
     </div>
 </details>
 <?php else: ?>
-    <?php if ($hasAuthModal ?? false): ?>
-    <button type="button" class="btn btn-outline-brand" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
-    <?php else: ?>
-    <a class="btn btn-outline-brand" href="<?= e(url('/login.php')) ?>">Đăng nhập</a>
-    <?php endif; ?>
+    <a class="btn btn-outline-brand" href="<?= e(url('/login.php')) ?>" data-auth-open="login" aria-haspopup="dialog" aria-controls="loginModal">Đăng nhập</a>
 <?php endif; ?>

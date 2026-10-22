@@ -1,6 +1,27 @@
 /* Shared public chrome. Native details/anchors remain usable without JavaScript. */
 (() => {
   'use strict';
+  document.querySelectorAll('[data-notifications-read]').forEach(form => form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const button = form.querySelector('button');
+    const panel = form.closest('.header-notification-wrapper');
+    const feedback = panel.querySelector('.notification-feedback');
+    button.disabled = true;
+    try {
+      const response = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error('read failed');
+      panel.querySelectorAll('.unread').forEach(item => item.classList.remove('unread'));
+      panel.querySelector('.notification-dot')?.remove();
+      panel.querySelector('summary').setAttribute('aria-label', 'Thông báo');
+      button.textContent = 'Đã đọc';
+      feedback.hidden = true;
+    } catch {
+      feedback.textContent = 'Chưa thể cập nhật. Bạn thử lại nhé.';
+      feedback.hidden = false;
+      button.disabled = false;
+    }
+  }));
   const menus = [...document.querySelectorAll('[data-account-dropdown]')];
   menus.forEach(menu => menu.addEventListener('toggle', () => {
     if (menu.open) menus.forEach(other => { if (other !== menu) other.open = false; });

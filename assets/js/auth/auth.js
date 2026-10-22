@@ -149,7 +149,7 @@
                 button.disabled = true;
                 button.textContent = "Đang tạo tài khoản...";
             }
-            const response = await fetch("api/register.php", {
+            const response = await fetch(form.action || "api/register.php", {
                 method: "POST",
                 body: new FormData(form),
             });
@@ -256,7 +256,7 @@
                     submitButton.textContent = "Đang đăng nhập...";
                 }
 
-                const response = await fetch("api/login.php", {
+                const response = await fetch(form.action || "api/login.php", {
                     method: "POST",
                     // Lấy giá trị theo name="account"/"password", không theo id.
                     body: new FormData(form),
@@ -384,4 +384,38 @@
     });
     // Trang Auth hiển thị trực tiếp biểu mẫu, không có màn hình chào/popup phía sau.
     if (modal.dataset?.authPage) showView(modal.dataset.authPage, false);
+    if (typeof modal.showModal === 'function') {
+        let trigger;
+        const openAuth = (name = 'login', returnUrl) => {
+            trigger = document.activeElement;
+            const returnField = modal.querySelector('[name="return_url"]');
+            if (returnField && returnUrl !== undefined) returnField.value = returnUrl;
+            showView(name, false);
+            if (!modal.open) modal.showModal();
+            document.documentElement.classList.add('auth-dialog-open');
+            modal.querySelector(`[data-auth-view="${name}"] input:not([type="hidden"])`)?.focus();
+        };
+        document.addEventListener('click', event => {
+            const link = event.target.closest('[data-auth-open], a[href]');
+            if (!link || event.defaultPrevented || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) return;
+            let target;
+            try { target = new URL(link.href || '', document.baseURI); } catch { return; }
+            const authUrl = /\/(login(?:\.php)?|register)\/?$/.test(target.pathname);
+            if (!link.dataset.authOpen && (!authUrl || target.origin !== window.location.origin)) return;
+            event.preventDefault();
+            openAuth(link.dataset.authOpen || (target.pathname.endsWith('/register') ? 'register' : 'login'), target.searchParams.get('return') || '');
+        });
+        modal.querySelector('[data-auth-close]')?.addEventListener('click', () => modal.close());
+        modal.addEventListener('click', event => {
+            const rect = modal.getBoundingClientRect();
+            if (event.target === modal && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) modal.close();
+        });
+        modal.addEventListener('close', () => {
+            document.documentElement.classList.remove('auth-dialog-open');
+            forms.forEach(form => { form.reset(); clearFeedback(form); });
+            showView('login', false);
+            trigger?.focus();
+        });
+        if (modal.dataset.authAuto) openAuth(modal.dataset.authAuto);
+    }
 })();

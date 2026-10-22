@@ -44,6 +44,8 @@ $router->post('/shop.php', [ShopController::class, 'index']);
 $router->get('/', [CatalogController::class, 'index']);
 $router->get('/portal', [PortalController::class, 'index']);
 $router->get('/dashboard', [PortalController::class, 'dashboard']);
+$router->get('/notifications', [\App\Controllers\NotificationController::class, 'index']);
+$router->post('/notifications/read', [\App\Controllers\NotificationController::class, 'read']);
 $router->get('/about', [InfoController::class, 'about']);
 $router->get('/terms', [InfoController::class, 'terms']);
 $router->get('/privacy', [InfoController::class, 'privacy']);

@@ -89,6 +89,19 @@ for base, port in [('', 8088), ('/' + ROOT.name, 8089)]:
             else:
                 raise AssertionError('PHP server did not become ready')
             guest = Client(origin, base)
+            for path in ['/', '/categories', '/coupons', '/campaigns', '/campaigns/1', '/articles', '/campaign-calendar']:
+                status, _, html = guest.request(base + path)
+                assert status == 200, ('Public module', path, status)
+                assert html.count('id="loginModal"') == 1, ('One shared auth popup', path)
+                assert '<dialog class="auth-dialog"' in html, ('Native auth dialog', path)
+                assert 'header-register' not in html, ('No separate header registration', path)
+                assert 'header-notification-wrapper' in html, ('Notification bell', path)
+            assert guest.request(base + '/notifications')[0] == 303, 'Guest notification page guard'
+            assert guest.request(base + '/notifications/read', {'csrf':'invalid'}, 'application/json')[0] == 401, 'Guest cannot mark notifications read'
+            for path in ['/campaigns?phase=invalid', '/campaigns?category_id=abc', '/campaign-calendar?month=13', '/campaign-calendar?year=2010']:
+                assert guest.request(base + path)[0] == 422, ('Invalid campaign/calendar query', path)
+            status, _, filtered = guest.request(base + '/campaigns/2?usage_channel=OFFLINE')
+            assert status == 200 and 'id="campaign-coupon-filter"' in filtered and 'class="campaign-deal"' not in filtered, 'Detail filter serves the matching HTML without JavaScript'
             for path in ['/admin', '/merchant']:
                 assert guest.request(base + path)[0] == 303, 'Guest guard'
             for username, password, home in accounts:
@@ -102,6 +115,14 @@ for base, port in [('', 8088), ('/' + ROOT.name, 8089)]:
                 if home != '/index.php':
                     assert 'Xem trang người dùng' in html, 'Public navigation for center users'
                     assert client.request(base + '/')[0] == 200, 'Public browsing does not change role'
+                status, _, notifications = client.request(base + '/notifications')
+                assert status == 200, 'Notification page is implemented'
+                token = re.search(r'name="csrf-token" content="([a-f0-9]+)"', notifications).group(1)
+                assert client.request(base + '/notifications/read', {'csrf':'invalid'}, 'application/json')[0] == 403, 'Read receipts require CSRF'
+                status, _, body = client.request(base + '/notifications/read', {'csrf':token}, 'application/json')
+                assert status == 200 and json.loads(body)['success'], 'Read notification acknowledged by backend'
+                status, _, notifications = client.request(base + '/notifications')
+                assert status == 200 and 'class="notif-item unread"' not in notifications, 'Read state survives navigation'
                 blocked = '/merchant' if home == '/admin' else '/admin'
                 assert client.request(base + blocked)[0] == 403, 'Cross-role center blocked'
                 status, headers, _ = client.request(base + '/login.php')

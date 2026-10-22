@@ -100,6 +100,14 @@ test('external redirect is not followed', async () => {
     assert.equal(app.destinations.length, 0);
     assert.equal(app.forms[0].message.dataset.state, 'error');
 });
+test('auth popup on nested pages posts to its server-generated action', async () => {
+    const app = setup(() => response({ success: true, redirect: '/CouponHub_UI/admin' }), 'login',
+        'http://localhost:8000/CouponHub_UI/campaigns/2');
+    app.forms[0].action = 'http://localhost:8000/CouponHub_UI/api/login.php';
+    await app.submit(0);
+    assert.equal(app.requests[0].url, app.forms[0].action);
+    assert.deepEqual(app.destinations, ['http://localhost:8000/CouponHub_UI/admin']);
+});
 test('duplicate submit only sends once', async () => {
     let finish;
     const pending = new Promise(resolve => finish = resolve);

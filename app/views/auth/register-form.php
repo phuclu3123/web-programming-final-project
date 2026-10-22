@@ -10,7 +10,7 @@ use App\Core\Session;
     </div>
 </div>
 <div class="modal-body ms-3 me-3">
-    <form class="mb-4" id="registerForm" novalidate>
+    <form method="post" action="<?= e(url('/api/register.php')) ?>" class="mb-4" id="registerForm" novalidate>
         <!-- ---- CSRF: token phiên dùng chung với endpoint đăng ký ---- -->
         <input type="hidden" name="csrf" value="<?= e(Session::token()) ?>">
         <div id="registerMessage" class="auth-message mb-3" role="status" aria-live="polite" hidden></div>

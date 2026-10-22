@@ -7,7 +7,7 @@
     <div class="editorial-section-head calendar-page-heading">
         <div class="heading-content">
             <span class="eyebrow">DÀNH CHỖ CHO KẾ HOẠCH TIẾP THEO</span>
-            <h1>Lịch ưu đãi 2026</h1>
+            <h1>Lịch ưu đãi <?= (int)$selectedYear ?></h1>
             <p class="section-desc">Theo dõi tiến độ các chiến dịch đang diễn ra và chuẩn bị cho các đợt phát hành mã ưu đãi tiếp theo.</p>
         </div>
         <div class="heading-actions">
@@ -17,10 +17,6 @@
         </div>
     </div>
 
-    <?php
-    $selectedMonth = $_GET['month'] ?? '';
-    $selectedYear  = (int)($_GET['year'] ?? date('Y'));
-    ?>
 
     <!-- BỘ LỌC THEO THÁNG & NĂM -->
     <form class="calendar-filter-bar" method="GET" action="<?= e(url('/campaign-calendar')) ?>">
@@ -31,7 +27,7 @@
                 <option value="">Tất cả các tháng</option>
                 <?php for ($m = 1; $m <= 12; $m++): ?>
                     <?php $mVal = sprintf('%02d', $m); ?>
-                    <option value="<?= $mVal ?>" <?= $selectedMonth === $mVal ? 'selected' : '' ?>>
+                    <option value="<?= $m ?>" <?= $selectedMonth === $m ? 'selected' : '' ?>>
                         Tháng <?= $m ?>
                     </option>
                 <?php endfor; ?>
@@ -44,7 +40,7 @@
             <select id="filter-year" name="year" class="form-select">
                 <?php 
                 $currentYear = (int)date('Y');
-                for ($y = $currentYear - 1; $y <= $currentYear + 2; $y++): 
+                for ($y = 2020; $y <= 2035; $y++):
                 ?>
                     <option value="<?= $y ?>" <?= $selectedYear === $y ? 'selected' : '' ?>>
                         Năm <?= $y ?>
@@ -74,15 +70,16 @@
                 <article class="timeline-row-card">
                     <!-- Khối ngày tháng vuông vức, tối giản -->
                     <div class="timeline-date-badge">
-                        <span class="day"><?= date('d', strtotime($item['start_at'])) ?></span>
-                        <span class="month">THÁNG <?= date('m', strtotime($item['start_at'])) ?></span>
+                        <span class="day"><?= e(format_db_datetime($item['starts_at'],'d')) ?></span>
+                        <span class="month">THÁNG <?= e(format_db_datetime($item['starts_at'],'m')) ?></span>
                     </div>
 
                     <!-- Nội dung chi tiết -->
                     <div class="timeline-info">
                         <div class="timeline-meta">
-                            <span class="status-pill status-<?= strtolower($item['status'] ?? 'running') ?>">
-                                <?= ($item['status'] ?? '') === 'RUNNING' ? 'Đang diễn ra' : 'Sắp diễn ra' ?>
+                            <?php $calendarUpcoming = campaignTiming($item)['upcoming']; ?>
+                            <span class="status-pill status-<?= $calendarUpcoming ? 'upcoming' : 'running' ?>">
+                                <?= $calendarUpcoming ? 'Sắp diễn ra' : 'Đang diễn ra' ?>
                             </span>
                             <span class="merchant-tag"><?= e($item['merchant_name'] ?? 'CouponHub') ?></span>
                         </div>
@@ -95,7 +92,7 @@
 
                         <div class="timeline-timeframe">
                             <?= icon('clock') ?>
-                            <span><?= date('d/m/Y H:i', strtotime($item['start_at'])) ?> — <?= date('d/m/Y H:i', strtotime($item['end_at'])) ?></span>
+                            <span><?= e(format_db_datetime($item['starts_at'])) ?> — <?= e(format_db_datetime($item['ends_at'])) ?></span>
                         </div>
                     </div>
 
@@ -107,6 +104,10 @@
                     </div>
                 </article>
             <?php endforeach; ?>
+            <?php if (!$campaigns): ?><div class="member-empty"><strong>Chưa có chiến dịch trong thời gian này.</strong><p>Chọn tháng hoặc năm khác để xem lịch ưu đãi.</p></div><?php endif; ?>
         </div>
     </section>
+    <?php if ($holidays): ?><section class="calendar-holidays"><h2>Những ngày đáng lưu ý</h2><p>Ngày lễ tham khảo, không phải cam kết có chương trình giảm giá.</p>
+        <?php foreach ($holidays as $holiday): ?><p><time><?= e(date('d/m',strtotime($holiday['date']))) ?></time> · <?= e($holiday['name']) ?></p><?php endforeach; ?>
+    </section><?php endif; ?>
 </div>

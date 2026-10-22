@@ -1,0 +1,39 @@
+/* Shared native auth dialog and notification behavior after Truc integration. */
+.auth-dialog-open { overflow: hidden; }
+dialog.auth-dialog { border: 0; padding: 0; border-radius: 24px; width: min(540px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); margin: auto; overflow: auto; color: var(--ink, #18191c); background: #fff; box-shadow: 0 30px 100px #11182738; }
+dialog.auth-dialog::backdrop { background: #12192470; backdrop-filter: blur(8px); }
+#loginModal.auth-dialog .modal-dialog { margin: 0; width: 100%; max-width: none; pointer-events: auto; }
+#loginModal.auth-dialog .modal-content { position: relative; border: 0; border-radius: 24px; padding: 24px 28px; max-height: none; overflow: visible; }
+#loginModal.auth-dialog [hidden] { display: none !important; }
+#loginModal.auth-dialog .modal-header, #loginModal.auth-dialog .modal-body { margin: 0 !important; padding: 12px 0; }
+#loginModal.auth-dialog .modal-header { padding-right: 24px; }
+#loginModal.auth-dialog .auth-close { top: 14px; right: 14px; border: 0; border-radius: 50%; background: #f1f2f4; width: 34px; height: 34px; font-size: 24px; line-height: 1; color: #555; display: grid; place-items: center; cursor: pointer; }
+#loginModal.auth-dialog .login-btn { background: var(--blue, #354fdb); color: white; width: 100%; }
+#loginModal.auth-dialog .login-input { display: flex; align-items: center; gap: 10px; border: 1px solid #e5e7ec; padding: 2px 8px; }
+#loginModal.auth-dialog .login-input .form-control { box-shadow: none; width: 100%; }
+#loginModal.auth-dialog .social-btn { border: 1px solid #e5e7eb; }
+#loginModal.auth-dialog .gap-1 { gap: 5px; }
+#loginModal.auth-dialog .gap-3 { gap: 12px; }
+.header-notification-wrapper[data-account-dropdown] { position: relative; }
+.header-notification-wrapper summary { list-style: none; position: relative; cursor: pointer; }
+.header-notification-wrapper summary::-webkit-details-marker { display: none; }
+.notification-dropdown { width: min(370px, calc(100vw - 32px)) !important; max-height: min(560px, calc(100dvh - 100px)); overflow: auto !important; }
+.notif-header form { margin: 0; }
+.notif-header .mark-as-read { border: 0; background: none; color: var(--blue, #354fdb); font: inherit; font-size: 11px; padding: 4px; cursor: pointer; }
+.notification-empty { padding: 24px; margin: 0; font-size: 14px; line-height: 1.6; color: #707784; }
+.notification-feedback { padding: 10px 16px; font-size: 12px; color: #9a3540; }
+.notification-page { max-width: 960px; margin: 30px auto 70px; }
+.notification-list { display: grid; margin-top: 24px; border: 1px solid var(--line, #e4e6ec); border-radius: 20px; overflow: hidden; }
+.notification-list .notif-item { display: grid !important; grid-template-columns: 1fr auto 20px; align-items: center; gap: 20px; padding: 24px !important; }
+.notification-list time { font-size: 12px; color: #707784; }
+.campaign-filter-feedback { margin: 12px 0; color: #9a3540; }
+.campaign-pagination { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 32px 0; }
+.campaign-pagination a { padding: 10px 16px; border: 1px solid #dfe3ea; border-radius: 24px; }
+.campaign-pagination [aria-current] { color: #fff; background: var(--blue, #354fdb); }
+@media(max-width: 600px) {
+  #loginModal.auth-dialog .modal-content { padding: 22px 20px; }
+  .header-notification-wrapper .notification-dropdown { position: fixed !important; top: 84px !important; left: 16px; right: 16px !important; width: auto !important; }
+  .notification-list .notif-item { grid-template-columns: 1fr 20px; gap: 10px; padding: 20px; }
+  .notification-list time { grid-row: 2; }
+  .notification-list svg { grid-column: 2; grid-row: 1; }
+}

@@ -31,6 +31,7 @@ $currentPath = (new \App\Core\Request())->path();
     <script src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/campaign-clock.js') ?>" defer></script>
     <link rel="stylesheet" href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/product.css') ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/release.css') ?>">
+    <link rel="stylesheet" href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/integration.css') ?>">
 </head>
 
 <body class="unified-page">
@@ -56,6 +57,7 @@ $currentPath = (new \App\Core\Request())->path();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= e(asset('/js/app.js')) ?>"></script><?php foreach (($pageScripts ?? []) as $pageScript): ?><script
             src="<?= e(asset((string)$pageScript)) ?>"></script><?php endforeach; ?>
+    <?php if (!$currentUser) require __DIR__ . '/../auth/auth-modal.php'; ?>
 </body>
 
 </html>

@@ -10,6 +10,8 @@ interface CampaignRepositoryInterface
     public function publicCurrent(int $limit = 3): array;
     public function publicUpcoming(int $limit = 4): array;
     public function publicListing(string $phase, int $page, int $pageSize = 9): array;
+    public function publicFilteredListing(string $phase, int $categoryId, string $usageChannel, int $page, int $pageSize = 9): array;
+    public function publicCalendar(int $year, int $month = 0): array;
     public function findPublic(int $id): ?array;
     public function publicCoupons(int $campaignId, int $categoryId = 0, string $usageChannel = 'ALL'): array;
 

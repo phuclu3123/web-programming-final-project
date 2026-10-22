@@ -18,17 +18,18 @@ use App\Services\SmtpMailService;
 /** ---- HTTP AUTH: đọc Request, gọi AuthService rồi trả JSON/View/redirect ---- */
 final class AuthController extends Controller
 {
-    public function showLogin(Request $request): void { $this->authPage($request, 'login'); }
+    public function showLogin(Request $request): void { $this->authPage($request); }
     public function showRegister(Request $request): void
     {
-        $this->authPage($request, 'register');
+        $this->authPage($request);
     }
-    private function authPage(Request $request, string $authInitialView): void
+    private function authPage(Request $request): void
     {
         $currentUser = Auth::user();
         if ($currentUser) Response::redirect(url(Auth::safeReturn($this->field($request, 'return'), $currentUser['role'])), 303);
         header('Cache-Control: no-store');
-        $this->view('auth/page', compact('currentUser', 'authInitialView'), null);
+        // Direct login/guard URLs open the same popup over the public homepage.
+        (new CatalogController())->index($request);
     }
     private function authService(): AuthService { return new AuthService(new UserRepository(Database::connection())); }
     private function field(Request $request, string $key): string
