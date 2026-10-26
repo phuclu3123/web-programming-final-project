@@ -65,7 +65,7 @@ $db->prepare("UPDATE users SET role='ADMIN' WHERE id=?")->execute([$ids['admin']
 $db->prepare("INSERT INTO categories(name,slug) VALUES('Test category','test-category')")->execute();
 $categoryId = (int) $db->lastInsertId();
 $db->prepare("INSERT INTO levels(name,min_points) VALUES('Newbie',0)")->execute();
-$db->prepare("INSERT INTO point_rules(code,description,points,threshold_count) VALUES('COUPON_APPROVED','Test rule',10,1)")->execute();
+$db->prepare("INSERT INTO point_rules(code,description,points,threshold_count) VALUES('COUPON_APPROVED','Test rule',5,1)")->execute();
 
 // Cấp quyền shop qua repository transaction của Quang; không giả role ở client.
 $merchants = new App\Repositories\MerchantRepository($db);

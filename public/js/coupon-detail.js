@@ -147,6 +147,32 @@
             });
     });
 
+    $('#share-coupon-link').on('click', async function () {
+        var button = this;
+        var shareUrl = new URL(button.dataset.shareUrl, window.location.href).href;
+        button.disabled = true;
+        try {
+            if (navigator.share) {
+                await navigator.share({title: document.title, url: shareUrl});
+                window.CouponHub.showMessage($message, 'success', 'Đã chia sẻ liên kết coupon.', 8000);
+            } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+                window.CouponHub.showMessage($message, 'success', 'Đã sao chép liên kết coupon để chia sẻ.', 8000);
+            } else {
+                window.CouponHub.showMessage($message, 'warning', 'Trình duyệt chưa hỗ trợ chia sẻ liên kết tự động.', 12000);
+                return;
+            }
+            // Event is sent only after the share/copy operation succeeds.
+            void window.CouponHubEvents?.share(button.dataset.couponId);
+        } catch (error) {
+            if (error && error.name !== 'AbortError') {
+                window.CouponHub.showMessage($message, 'warning', 'Không thể chia sẻ liên kết. Vui lòng thử lại.', 12000);
+            }
+        } finally {
+            button.disabled = false;
+        }
+    });
+
     $('#copy-coupon-code').on('click', function () {
         var code = String($(this).data('code') || '');
         if (!code) return;

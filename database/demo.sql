@@ -63,16 +63,16 @@ BEGIN
 
   -- levels: 4
   INSERT INTO `levels` (`id`,`name`,`min_points`) VALUES
-    (1, 'Thành viên mới', 0),
-    (2, 'Tích cực', 100),
-    (3, 'Cộng tác viên', 300),
-    (4, 'Chuyên gia', 1000);
+    (1, 'Newbie', 0),
+    (2, 'Deal Hunter', 100),
+    (3, 'Deal Expert', 500),
+    (4, 'Coupon Master', 1500);
 
   -- point_rules: 3
   INSERT INTO `point_rules` (`code`,`description`,`points`,`threshold_count`,`is_active`) VALUES
-    ('COUPON_APPROVED', 'Coupon cộng đồng được duyệt', 10, 1, 1),
+    ('COUPON_APPROVED', 'Coupon cộng đồng được duyệt', 5, 1, 1),
     ('FAVORITES_100', 'Coupon đạt một trăm lượt lưu hợp lệ', 20, 100, 1),
-    ('WORKING_10', 'Coupon đạt mười xác nhận dùng được', 5, 10, 1);
+    ('WORKING_10', 'Coupon đạt mười xác nhận dùng được', 10, 10, 1);
 
   -- users: 6
   INSERT INTO `users` (`id`,`email`,`username`,`phone`,`password_hash`,`full_name`,`avatar_path`,`role`,`status`,`created_at`,`updated_at`,`deleted_at`,`auth_version`) VALUES
@@ -228,8 +228,8 @@ BEGIN
 
   -- point_transactions: 2
   INSERT INTO `point_transactions` (`id`,`user_id`,`coupon_id`,`rule_code`,`points`,`note`,`created_at`) VALUES
-    (1, 5, 25, 'COUPON_APPROVED', 10, 'Coupon cộng đồng được duyệt', DATE_ADD(demo_anchor, INTERVAL -437 SECOND)),
-    (2, 6, 26, 'COUPON_APPROVED', 10, 'Coupon cộng đồng được duyệt', DATE_ADD(demo_anchor, INTERVAL -437 SECOND));
+    (1, 5, 25, 'COUPON_APPROVED', 5, 'Coupon cộng đồng được duyệt', DATE_ADD(demo_anchor, INTERVAL -437 SECOND)),
+    (2, 6, 26, 'COUPON_APPROVED', 5, 'Coupon cộng đồng được duyệt', DATE_ADD(demo_anchor, INTERVAL -437 SECOND));
 
   -- reports: 2
   INSERT INTO `reports` (`id`,`coupon_id`,`reported_by`,`reason`,`details`,`status`,`resolved_by`,`resolved_at`,`resolution_note`,`created_at`) VALUES

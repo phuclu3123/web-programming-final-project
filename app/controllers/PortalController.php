@@ -41,11 +41,13 @@ final class PortalController extends Controller
         $actor = Auth::requireAuth();
         $users = new UserRepository(Database::connection());
         $userId = (int) Auth::id();
+        $rewardSummary = $users->rewardSummary($userId);
 
         $this->view('dashboard/index', [
             'pageTitle' => 'Tài khoản của tôi',
             'actor' => $actor,
-            'rewardSummary' => $users->rewardSummary($userId),
+            'rewardSummary' => $rewardSummary,
+            'contributorQuality' => \App\Services\ContributorQualityService::fromSummary($rewardSummary),
             'pointHistory' => $users->pointHistory($userId),
             'savedCount' => (new SavedCouponRepository(Database::connection()))->countForUser($userId),
             'savedPreview' => (new SavedCouponRepository(Database::connection()))->paginated($userId,

@@ -1,7 +1,8 @@
 <?php
 $points = (int) ($rewardSummary['earned_points'] ?? 0);
 $nextPoints = $rewardSummary['next_level_points'] ?? null;
-$progress = $nextPoints !== null && (int)$nextPoints > 0 ? min(100, max(0, (int)floor($points / (int)$nextPoints * 100))) : 100;
+$levelStart = (int) ($rewardSummary['level_min_points'] ?? 0);
+$progress = \App\Services\LevelProgressService::percentage($points, $levelStart, $nextPoints !== null ? (int) $nextPoints : null);
 $memberRole = ['USER'=>'Thành viên cộng đồng', 'MERCHANT'=>'Đối tác cửa hàng', 'ADMIN'=>'Quản trị viên'][$actor['role']] ?? 'Thành viên';
 $canContribute = in_array($actor['role'], ['USER', 'MERCHANT'], true);
 $sectionLinks = [['account-overview','Tổng quan'],['account-saved','Coupon đã lưu'],['account-rewards','Điểm & hoạt động'],['account-next','Khám phá thêm']];
@@ -25,7 +26,7 @@ $sectionLinks = [['account-overview','Tổng quan'],['account-saved','Coupon đ�
                 <div class="member-points-top"><strong>COUPONPOINT</strong><span><?= e($rewardSummary['level_name'] ?? 'Thành viên mới') ?></span></div>
                 <div class="member-points-value"><strong><?= number_format($points,0,',','.') ?></strong><span>điểm tích lũy</span></div>
                 <?php if ($nextPoints !== null): ?><p>Còn <b><?= max(0,(int)$nextPoints-$points) ?> điểm</b> để lên <?= e($rewardSummary['next_level_name'] ?? 'cấp tiếp theo') ?>.</p><?php else: ?><p>Bạn đang ở cấp cao nhất hiện tại.</p><?php endif; ?>
-                <div class="member-progress" role="progressbar" aria-label="Tiến độ cấp tiếp theo" aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"><span style="width:<?= $progress ?>%"></span></div>
+                <div class="member-progress" role="progressbar" aria-label="Tiến độ trong cấp hiện tại" aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"><span style="width:<?= $progress ?>%"></span></div>
                 <a href="#account-rewards">Xem lịch sử tích điểm <?= icon('arrow') ?></a>
             </article>
         </div>
@@ -54,6 +55,13 @@ $sectionLinks = [['account-overview','Tổng quan'],['account-saved','Coupon đ�
     </section>
     <section id="account-rewards" class="member-section" aria-labelledby="member-rewards-title">
         <div class="member-section-head"><div><span class="eyebrow">GIÁ TRỊ TỪ ĐÓNG GÓP</span><h2 id="member-rewards-title">Mỗi chia sẻ đều có giá trị.</h2><p>Lịch sử CouponPoint từ các đóng góp của bạn.</p></div><?php if ($canContribute): ?><a href="<?= e(url('/my-coupons')) ?>">Đóng góp của tôi ↗</a><?php endif; ?></div>
+        <?php if ($canContribute): ?>
+        <p class="text-muted small">
+            Chất lượng đóng góp: <?php if ($contributorQuality['approvalRate'] === null): ?>chưa có coupon được xét duyệt<?php else: ?><strong><?= (int)$contributorQuality['approvalRate'] ?>%</strong> được duyệt trong <?= (int)$contributorQuality['reviewed'] ?> coupon đã có quyết định<?php endif; ?>.
+            <?php if ($contributorQuality['pending'] > 0): ?> <?= (int)$contributorQuality['pending'] ?> coupon đang chờ xét duyệt.<?php endif; ?>
+            Tỷ lệ này không tính các coupon đang chờ duyệt và chưa phải cấp uy tín.
+        </p>
+        <?php endif; ?>
         <?php if ($pointHistory): ?>
         <div class="member-history">
             <?php foreach ($pointHistory as $item): ?>

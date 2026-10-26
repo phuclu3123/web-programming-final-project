@@ -12,11 +12,13 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Core\ValidationException;
 use App\Repositories\CategoryRepository;
+use App\Repositories\CouponEventRepository;
 use App\Repositories\CouponRepository;
 use App\Repositories\InteractionRepository;
 use App\Repositories\MerchantRepository;
 use App\Repositories\SavedCouponRepository;
 use App\Services\CouponService;
+use App\Services\CouponEventService;
 use App\Services\InteractionService;
 use RuntimeException;
 use Throwable;
@@ -69,6 +71,16 @@ final class CouponController extends Controller
         if ($coupon === null) {
             $this->renderError(404, 'Coupon không tồn tại hoặc hiện không được công khai.');
             return;
+        }
+
+        // Count genuine public detail visits. A repeat visit within 15 minutes in
+        // the same browser session is not counted again. Analytics must never
+        // prevent a valid coupon page from loading if the event store is down.
+        try {
+            (new CouponEventService(new CouponEventRepository(Database::connection())))
+                ->recordView(Auth::id(), (int) $couponId);
+        } catch (Throwable $e) {
+            error_log('Coupon VIEW analytics unavailable: ' . get_class($e));
         }
 
         $state = $this->interactions->initialState(Auth::id(), (int) $couponId);

@@ -60,6 +60,9 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                     <p><?= nl2br(e((string) $coupon['terms'])) ?></p>
 
                     <div class="interaction-toolbar mt-4">
+                        <button type="button" id="share-coupon-link" class="btn btn-outline-primary"
+                            data-coupon-id="<?= (int) $coupon['id'] ?>"
+                            data-share-url="<?= e(url('/coupons/' . (int) $coupon['id'])) ?>">Chia sẻ liên kết</button>
                         <?php if ($promotionUrl !== null): ?>
                             <a class="btn btn-primary" href="<?= e($promotionUrl) ?>" target="_blank"
                                 rel="noopener noreferrer">Mở trang khuyến mãi</a>

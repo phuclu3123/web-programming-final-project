@@ -101,8 +101,10 @@ final class UserRepository implements \App\Contracts\UserProfileRepositoryInterf
     public function rewardSummary(int $userId): array
     {
         $stmt = $this->db->prepare(
-            'SELECT ul.earned_points, ul.level_name, cs.submitted_count, cs.approved_count, cs.rejected_count ' .
-            'FROM v_user_level ul JOIN v_contributor_stats cs ON cs.user_id = ul.user_id WHERE ul.user_id = ? LIMIT 1'
+            'SELECT ul.earned_points, ul.level_name, l.min_points AS level_min_points, ' .
+            'cs.submitted_count, cs.approved_count, cs.rejected_count ' .
+            'FROM v_user_level ul JOIN levels l ON l.id = ul.level_id ' .
+            'JOIN v_contributor_stats cs ON cs.user_id = ul.user_id WHERE ul.user_id = ? LIMIT 1'
         );
         $stmt->execute([$userId]);
         $row = $stmt->fetch();
@@ -111,6 +113,7 @@ final class UserRepository implements \App\Contracts\UserProfileRepositoryInterf
             return [
                 'earned_points' => 0,
                 'level_name' => 'Newbie',
+                'level_min_points' => 0,
                 'submitted_count' => 0,
                 'approved_count' => 0,
                 'rejected_count' => 0,
