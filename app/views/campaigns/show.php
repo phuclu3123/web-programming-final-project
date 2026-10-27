@@ -1,4 +1,3 @@
-
 <?php
 [$campaignPhoto, $campaignTone] = campaignArtwork($campaign);
 
@@ -25,14 +24,7 @@ $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
     </div>
 
     <header class="campaign-detail-cover campaign-detail-<?= e($campaignTone) ?>">
-        <img
-            src="<?= e($campaignImage) ?>"
-            alt=""
-            width="2560"
-            height="1707"
-            fetchpriority="high"
-            decoding="async"
-        >
+        <img src="<?= e($campaignImage) ?>" alt="" width="2560" height="1707" fetchpriority="high" decoding="async">
 
         <div class="campaign-detail-copy">
             <span class="campaign-detail-brand">
@@ -49,11 +41,11 @@ $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
             <h1><?= e(editorialTitle($campaign['name'])) ?></h1>
 
             <?php if (str_contains($campaign['name'], '[DEMO]')): ?>
-                <span class="campaign-demo-note">
-                    Chiến dịch minh họa · Ưu đãi dùng trong bản trải nghiệm CouponHub
-                </span>
+            <span class="campaign-demo-note">
+                Chiến dịch minh họa · Ưu đãi dùng trong bản trải nghiệm CouponHub
+            </span>
             <?php elseif ($campaign['description']): ?>
-                <p><?= e($campaign['description']) ?></p>
+            <p><?= e($campaign['description']) ?></p>
             <?php endif; ?>
 
             <?php require __DIR__ . '/../partials/campaign-countdown.php'; ?>
@@ -84,34 +76,47 @@ $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
 
     <section id="campaign-offers" class="campaign-offers-section">
 
-    <div class="studio-section-title">
-        <div>
-            <span class="eyebrow">TRONG CHIẾN DỊCH NÀY</span>
-            <h2>Chọn mã cho kế hoạch của bạn.</h2>
+        <div class="studio-section-title">
+            <div>
+                <span class="eyebrow">TRONG CHIẾN DỊCH NÀY</span>
+                <h2>Chọn mã cho kế hoạch của bạn.</h2>
+            </div>
+
+            <span><?= count($coupons) ?> ưu đãi còn hiệu lực</span>
         </div>
 
-        <span><?= count($coupons) ?> ưu đãi còn hiệu lực</span>
-    </div>
 
-    
 
-    <form id="campaign-coupon-filter" class="campaign-coupon-filters" method="get" action="<?= e(url('/campaigns/'.(int)$campaign['id'])) ?>#campaign-offers">
-        <div class="campaign-coupon-filter-field"><label for="campaign-category">Danh mục coupon</label><select name="category_id" id="campaign-category"><option value="0">Tất cả danh mục</option><?php foreach ($categories as $category): ?><option value="<?= (int)$category['id'] ?>" <?= $selectedCategory===(int)$category['id'] ? 'selected' : '' ?>><?= e($category['name']) ?></option><?php endforeach; ?></select></div>
-        <div class="campaign-coupon-filter-field"><label for="campaign-channel">Kênh sử dụng</label><select name="usage_channel" id="campaign-channel"><?php foreach (['ALL'=>'Tất cả kênh','ONLINE'=>'Online','OFFLINE'=>'Offline','BOTH'=>'Online và Offline'] as $key=>$label): ?><option value="<?= $key ?>" <?= $selectedChannel===$key ? 'selected' : '' ?>><?= $label ?></option><?php endforeach; ?></select></div>
-        <div class="campaign-coupon-filter-actions"><button type="submit" class="campaign-coupon-filter-submit">Lọc coupon</button><a href="<?= e(url('/campaigns/'.(int)$campaign['id'])) ?>#campaign-offers" id="reset-campaign-filter" class="campaign-coupon-filter-reset">Đặt lại</a></div>
-    </form>
-    <p class="campaign-filter-feedback" role="status" hidden></p>
-    <!-- Khu vực được cập nhật bằng AJAX -->
-    <div id="campaign-coupon-results" aria-live="polite">
+        <form id="campaign-coupon-filter" class="campaign-coupon-filters" method="get"
+            action="<?= e(url('/campaigns/'.(int)$campaign['id'])) ?>#campaign-offers">
+            <div class="campaign-coupon-filter-field"><label for="campaign-category">Danh mục coupon</label><select
+                    name="category_id" id="campaign-category">
+                    <option value="0">Tất cả danh mục</option><?php foreach ($categories as $category): ?><option
+                        value="<?= (int)$category['id'] ?>"
+                        <?= $selectedCategory===(int)$category['id'] ? 'selected' : '' ?>><?= e($category['name']) ?>
+                    </option><?php endforeach; ?>
+                </select></div>
+            <div class="campaign-coupon-filter-field"><label for="campaign-channel">Kênh sử dụng</label><select
+                    name="usage_channel"
+                    id="campaign-channel"><?php foreach (['ALL'=>'Tất cả kênh','ONLINE'=>'Online','OFFLINE'=>'Offline','BOTH'=>'Online và Offline'] as $key=>$label): ?>
+                    <option value="<?= $key ?>" <?= $selectedChannel===$key ? 'selected' : '' ?>><?= $label ?></option>
+                    <?php endforeach; ?></select></div>
+            <div class="campaign-coupon-filter-actions"><button type="submit" class="campaign-coupon-filter-submit">Lọc
+                    coupon</button><a href="<?= e(url('/campaigns/'.(int)$campaign['id'])) ?>#campaign-offers"
+                    id="reset-campaign-filter" class="campaign-coupon-filter-reset">Đặt lại</a></div>
+        </form>
+        <p class="campaign-filter-feedback" role="status" hidden></p>
+        <!-- Khu vực được cập nhật bằng AJAX -->
+        <div id="campaign-coupon-results" aria-live="polite">
 
-        <?php if (!$coupons): ?>
+            <?php if (!$coupons): ?>
 
             <div class="member-empty">
                 <strong>Không tìm thấy coupon phù hợp.</strong>
                 <p>Thử chọn danh mục hoặc kênh sử dụng khác nhé.</p>
             </div>
 
-        <?php else: ?>
+            <?php else: ?>
 
             <p class="text-muted">
                 <?= count($coupons) ?> ưu đãi phù hợp
@@ -125,10 +130,10 @@ $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
                 ?>
             </div>
 
-        <?php endif; ?>
+            <?php endif; ?>
 
-    </div>
-</section>
+        </div>
+    </section>
 
     <a class="campaign-back-link" href="<?= e(url('/campaigns')) ?>">
         Tất cả chiến dịch <?= icon('arrow') ?>
@@ -137,7 +142,7 @@ $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('campaign-coupon-filter');
 
     if (!form) {
@@ -232,10 +237,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Tự lọc khi người dùng thay đổi một trong hai lựa chọn.
     categorySelect.addEventListener('change', filterCoupons);
     channelSelect.addEventListener('change', filterCoupons);
-    form.addEventListener('submit', function (event) { event.preventDefault(); filterCoupons(); });
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        filterCoupons();
+    });
 
     // Đặt lại cả hai bộ lọc mà không reload trang.
-    resetButton.addEventListener('click', function (event) {
+    resetButton.addEventListener('click', function(event) {
         event.preventDefault();
         categorySelect.value = '0';
         channelSelect.value = 'ALL';
@@ -244,4 +252,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-

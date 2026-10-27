@@ -25,12 +25,19 @@ final class PortalController extends Controller
         $campaigns = new CampaignRepository($db);
         $coupons = new CouponRepository($db);
         $merchants = new MerchantRepository($db);
+        // Guests and non-USER accounts receive only the existing public sections.
+        $viewer = Auth::user($db);
+        $personalizedDeals = is_array($viewer) && ($viewer['role'] ?? '') === 'USER'
+            ? $coupons->personalizedForUser((int) $viewer['id'], 6)
+            : [];
 
         $this->view('home/index', [
             'pageTitle' => 'CouponHub',
             'currentCampaigns' => $campaigns->publicCurrent(2),
             'upcomingCampaigns' => $campaigns->publicUpcoming(4),
             'hotDeals' => $coupons->hotDeals(6),
+            'trendingDeals' => $coupons->trendingPublic(6),
+            'personalizedDeals' => $personalizedDeals,
             'popularMerchants' => $merchants->popular(6),
             'recentArticles' => (new ArticleRepository($db))->published(3),
         ]);

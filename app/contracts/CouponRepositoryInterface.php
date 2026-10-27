@@ -1,14 +1,18 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Contracts;
 
+/* Repository contract: services do not depend on a specific SQL driver. */
 
-/** Repository contract: services do not depend on a specific SQL driver. */
 interface CouponRepositoryInterface
 {
     public function search(array $filters): array;
     public function countPublicSearch(array $filters): int;
     public function findPublic(int $id): ?array;
+    public function publicDiscountsForMerchant(int $merchantId, string $channel): array;
+    public function publicMatchingCandidates(?int $merchantId, ?int $categoryId, string $channel): array;
     public function isActive(int $couponId): bool;
     public function findBySubmitter(int $userId): array;
     public function submitCommunity(int $actorId, array $data): int;
@@ -20,5 +24,8 @@ interface CouponRepositoryInterface
     public function disableOwnedOfficial(int $actorId, int $couponId): void;
     public function eligibleForMerchantCampaign(int $merchantId, int $userId): array;
     public function hotDeals(int $limit = 6): array;
+    public function personalizedForUser(int $userId, int $limit = 6): array;
+    public function trendingPublic(int $limit = 6): array;
+    public function relatedPublic(int $couponId, int $merchantId, int $categoryId, string $discountType, int $limit = 4): array;
     public function moderate(int $actorId, int $couponId, string $moderation, string $publication, ?string $note): void;
 }

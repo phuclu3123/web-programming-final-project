@@ -5,26 +5,30 @@ $objectPoster = empty($isMainPoster) && $posterPhoto === 'technology';
 $posterImage = $objectPoster ? url('/assets/images/editorial/headphones-cutout.webp') : editorialPhoto($posterPhoto, false);
 ?>
 
-<article class="campaign-poster campaign-art-poster poster-<?= e($posterTone) ?> <?= !empty($isMainPoster) ? 'poster-main' : 'poster-small' ?> <?= $objectPoster ? 'poster-object' : '' ?>">
+<article
+    class="campaign-poster campaign-art-poster poster-<?= e($posterTone) ?> <?= !empty($isMainPoster) ? 'poster-main' : 'poster-small' ?> <?= $objectPoster ? 'poster-object' : '' ?>">
     <!-- Ảnh chụp chiến dịch -->
-    <img class="campaign-poster-photo" src="<?= e($posterImage) ?>" alt="" width="<?= $objectPoster ? '479' : '1200' ?>" height="<?= $objectPoster ? '499' : '800' ?>" loading="<?= !empty($posterPriority) ? 'eager' : 'lazy' ?>" decoding="async">
-    
+    <img class="campaign-poster-photo" src="<?= e($posterImage) ?>" alt="" width="<?= $objectPoster ? '479' : '1200' ?>"
+        height="<?= $objectPoster ? '499' : '800' ?>" loading="<?= !empty($posterPriority) ? 'eager' : 'lazy' ?>"
+        decoding="async">
+
     <div class="poster-scenery" aria-hidden="true"><span></span><span></span></div>
 
     <div class="campaign-poster-content">
         <!-- Badges thương hiệu & trạng thái -->
         <div class="poster-badges">
             <span class="poster-phase"><?= icon('clock') ?><?= $upcoming ? 'Sắp bắt đầu' : 'Đang diễn ra' ?></span>
-            <span class="poster-merchant"><?= brandLogo($campaign['merchant_name'] ?: 'CouponHub') ?><?= e($campaign['merchant_name'] ?: 'CouponHub') ?></span>
+            <span
+                class="poster-merchant"><?= brandLogo($campaign['merchant_name'] ?: 'CouponHub') ?><?= e($campaign['merchant_name'] ?: 'CouponHub') ?></span>
             <?php if (str_contains($campaign['name'], '[DEMO]')): ?>
-                <span class="poster-demo">Minh họa</span>
+            <span class="poster-demo">Minh họa</span>
             <?php endif; ?>
         </div>
 
         <h3><?= e(editorialTitle($campaign['name'])) ?></h3>
-        
+
         <?php if (!empty($isMainPoster) && !empty($campaign['description'])): ?>
-            <p><?= e($campaign['description']) ?></p>
+        <p><?= e($campaign['description']) ?></p>
         <?php endif; ?>
 
         <!-- Đồng hồ đếm ngược -->

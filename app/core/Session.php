@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Core;
 
 use RuntimeException;
-
 
 final class Session
 {
@@ -26,10 +26,15 @@ final class Session
         }
         session_name('COUPONHUBSESSID');
         if (!session_start([
-            'cookie_httponly' => true, 'cookie_samesite' => 'Lax',
+            'cookie_httponly' => true,
+            'cookie_samesite' => 'Lax',
             'cookie_secure' => parse_url((string)config('app.base_url', ''), PHP_URL_SCHEME) === 'https' || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-            'cookie_path' => '/', 'cookie_domain' => '',
-            'use_only_cookies' => true, 'use_strict_mode' => true, 'use_trans_sid' => false, 'cookie_lifetime' => 0,
+            'cookie_path' => '/',
+            'cookie_domain' => '',
+            'use_only_cookies' => true,
+            'use_strict_mode' => true,
+            'use_trans_sid' => false,
+            'cookie_lifetime' => 0,
         ])) throw new RuntimeException('Không thể mở session.');
     }
 
@@ -47,7 +52,7 @@ final class Session
         $_SESSION['expires_at'] = time() + $ttl;
         $params = session_get_cookie_params();
         unset($params['lifetime']);
-        setcookie(session_name(), session_id(), ['expires'=>$_SESSION['expires_at']] + $params);
+        setcookie(session_name(), session_id(), ['expires' => $_SESSION['expires_at']] + $params);
         unset($_SESSION['csrf'], $_SESSION['oauth_pending'], $_SESSION['oauth_login_pending'], $_SESSION['password_reset_flow']);
     }
 
@@ -56,11 +61,16 @@ final class Session
         self::start();
         $id = (int) ($_SESSION['user_id'] ?? 0);
         if ($id <= 0) return 0;
-        // ID trong database cũ có thể khác ID của dump Quang: bắt buộc đăng nhập lại.
-        if (($_SESSION['auth_schema'] ?? '') !== self::AUTH_SCHEMA) { self::clearAuthentication(); return 0; }
+        // ID trong db cũ có thể khác ID của dump Quang: bắt buộc đăng nhập lại.
+        if (($_SESSION['auth_schema'] ?? '') !== self::AUTH_SCHEMA) {
+            self::clearAuthentication();
+            return 0;
+        }
         $now = time();
-        if ($now - (int) ($_SESSION['last_activity'] ?? 0) > (int)config('auth.session_idle', self::IDLE_SECONDS)
-            || $now >= (int)($_SESSION['expires_at'] ?? ((int)($_SESSION['authenticated_at'] ?? 0) + self::MAX_SECONDS))) {
+        if (
+            $now - (int) ($_SESSION['last_activity'] ?? 0) > (int)config('auth.session_idle', self::IDLE_SECONDS)
+            || $now >= (int)($_SESSION['expires_at'] ?? ((int)($_SESSION['authenticated_at'] ?? 0) + self::MAX_SECONDS))
+        ) {
             self::clearAuthentication();
             return 0;
         }
@@ -75,7 +85,7 @@ final class Session
         }
     }
 
-    // ---- ĐĂNG XUẤT: xóa dữ liệu server và cookie ID phiên ----
+    // ĐĂNG XUẤT: xóa dữ liệu server và cookie ID phiên
     public static function logout(): void
     {
         self::start();
@@ -83,8 +93,12 @@ final class Session
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', [
-                'expires' => time() - 3600, 'path' => $params['path'], 'domain' => $params['domain'],
-                'secure' => $params['secure'], 'httponly' => true, 'samesite' => 'Lax',
+                'expires' => time() - 3600,
+                'path' => $params['path'],
+                'domain' => $params['domain'],
+                'secure' => $params['secure'],
+                'httponly' => true,
+                'samesite' => 'Lax',
             ]);
         }
         if (!session_destroy()) throw new RuntimeException('Không thể kết thúc session.');
@@ -114,11 +128,33 @@ final class Session
         return $value;
     }
 
-    // ---- DỮ LIỆU PHIÊN VÀ CSRF: dùng chung cho mọi module ----
-    public static function get(string $key, mixed $default = null): mixed { return $_SESSION[$key] ?? $default; }
-    public static function put(string $key, mixed $value): void { $_SESSION[$key] = $value; }
-    public static function forget(string $key): void { unset($_SESSION[$key]); }
-    public static function regenerate(): void { if (!session_regenerate_id(true)) throw new RuntimeException('Không thể đổi ID session.'); }
-    public static function csrfToken(): string { return self::token(); }
-    public static function verifyCsrf(?string $token): bool { return is_string($token) && $token !== '' && hash_equals(self::token(), $token); }
+    // DỮ LIỆU PHIÊN VÀ CSRF: dùng chung cho mọi module
+    public static function get(string $key, mixed $default = null): mixed
+    {
+        return $_SESSION[$key] ?? $default;
+    }
+
+    public static function put(string $key, mixed $value): void
+    {
+        $_SESSION[$key] = $value;
+    }
+    public static function forget(string $key): void
+    {
+        unset($_SESSION[$key]);
+    }
+
+    public static function regenerate(): void
+    {
+        if (!session_regenerate_id(true)) throw new RuntimeException('Không thể đổi ID session.');
+    }
+
+    public static function csrfToken(): string
+    {
+        return self::token();
+    }
+
+    public static function verifyCsrf(?string $token): bool
+    {
+        return is_string($token) && $token !== '' && hash_equals(self::token(), $token);
+    }
 }

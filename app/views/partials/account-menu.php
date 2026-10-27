@@ -6,11 +6,16 @@ $currentUser = $currentUser ?? null;
 <details class="account-dropdown" data-account-dropdown>
     <summary class="account-trigger" aria-label="Menu tài khoản: <?= e($currentUser['full_name']) ?>">
         <span class="account-avatar" aria-hidden="true"><?= e(accountInitials($currentUser['full_name'])) ?></span>
-        <span class="account-trigger-name" title="<?= e($currentUser['full_name']) ?>"><?= e($currentUser['full_name']) ?></span>
-        <svg class="account-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>
+        <span class="account-trigger-name"
+            title="<?= e($currentUser['full_name']) ?>"><?= e($currentUser['full_name']) ?></span>
+        <svg class="account-chevron" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="m5 7.5 5 5 5-5" />
+        </svg>
     </summary>
     <div class="account-popover">
-        <div class="account-popover-identity"><strong><?= e($currentUser['full_name']) ?></strong><small><?= e($currentUser['email'] ?? '') ?></small></div>
+        <div class="account-popover-identity">
+            <strong><?= e($currentUser['full_name']) ?></strong><small><?= e($currentUser['email'] ?? '') ?></small>
+        </div>
         <nav aria-label="Tài khoản cá nhân">
             <?php if (in_array($currentUser['role'], ['ADMIN', 'MERCHANT'], true)): ?>
             <a href="<?= e(url('/')) ?>"><?= icon('search') ?>Xem trang người dùng</a>
@@ -36,5 +41,6 @@ $currentUser = $currentUser ?? null;
     </div>
 </details>
 <?php else: ?>
-    <a class="btn btn-outline-brand" href="<?= e(url('/login.php')) ?>" data-auth-open="login" aria-haspopup="dialog" aria-controls="loginModal">Đăng nhập</a>
+<a class="btn btn-outline-brand" href="<?= e(url('/login.php')) ?>" data-auth-open="login" aria-haspopup="dialog"
+    aria-controls="loginModal">Đăng nhập</a>
 <?php endif; ?>

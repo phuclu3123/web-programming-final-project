@@ -84,7 +84,7 @@ require_once __DIR__ . '/layouts/header.php';
                 <span class="stat-number"><?= count($categories) ?></span>
                 <span class="stat-label">Danh mục</span>
             </div>
-            
+
             <div class="stat-divider"></div>
 
             <div class="stat-pill">
@@ -97,17 +97,13 @@ require_once __DIR__ . '/layouts/header.php';
     <!-- HÀNG NÚT LỌC NHANH (CHIPS) -->
     <section class="category-browser" style="margin-bottom: 24px;">
         <div class="category-chip-list">
-            <a
-                href="/app/views/user/categories.php"
-                class="category-chip <?= $selectedCategory === '' ? 'active' : '' ?>"
-            >
+            <a href="/app/views/user/categories.php"
+                class="category-chip <?= $selectedCategory === '' ? 'active' : '' ?>">
                 Tất cả
             </a>
             <?php foreach ($categories as $category): ?>
-                <a
-                    href="/app/views/user/categories.php?category=<?= urlencode($category) ?>"
-                    class="category-chip <?= $selectedCategory === $category ? 'active' : '' ?>"
-                >
+                <a href="/app/views/user/categories.php?category=<?= urlencode($category) ?>"
+                    class="category-chip <?= $selectedCategory === $category ? 'active' : '' ?>">
                     <?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>
                 </a>
             <?php endforeach; ?>
@@ -116,7 +112,7 @@ require_once __DIR__ . '/layouts/header.php';
 
     <!-- KẾT QUẢ CÙNG DÒNG THỐNG KÊ SỐ LƯỢNG ƯU ĐÃI TỐI GIẢN -->
     <section class="category-results">
-        
+
         <!-- HIỂN THỊ DUY NHẤT DÒNG SỐ LƯỢNG MÃ -->
         <div style="margin-bottom: 16px; font-size: 14px; font-weight: 600; color: var(--muted);">
             <?= count($filteredCoupons) ?> ưu đãi phù hợp
@@ -127,10 +123,7 @@ require_once __DIR__ . '/layouts/header.php';
             <aside class="category-filter">
                 <h3>Bộ lọc</h3>
 
-                <form
-                    method="GET"
-                    action="/app/views/user/categories.php"
-                >
+                <form method="GET" action="/app/views/user/categories.php">
                     <div class="category-filter-group">
                         <label for="category">Danh mục</label>
 
@@ -138,10 +131,8 @@ require_once __DIR__ . '/layouts/header.php';
                             <option value="">Tất cả danh mục</option>
 
                             <?php foreach ($categories as $category): ?>
-                                <option
-                                    value="<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>"
-                                    <?= $selectedCategory === $category ? 'selected' : '' ?>
-                                >
+                                <option value="<?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>"
+                                    <?= $selectedCategory === $category ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($category, ENT_QUOTES, 'UTF-8') ?>
                                 </option>
                             <?php endforeach; ?>
@@ -155,10 +146,8 @@ require_once __DIR__ . '/layouts/header.php';
                             <option value="">Tất cả cửa hàng</option>
 
                             <?php foreach ($stores as $store): ?>
-                                <option
-                                    value="<?= htmlspecialchars($store, ENT_QUOTES, 'UTF-8') ?>"
-                                    <?= $selectedStore === $store ? 'selected' : '' ?>
-                                >
+                                <option value="<?= htmlspecialchars($store, ENT_QUOTES, 'UTF-8') ?>"
+                                    <?= $selectedStore === $store ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($store, ENT_QUOTES, 'UTF-8') ?>
                                 </option>
                             <?php endforeach; ?>
@@ -172,10 +161,8 @@ require_once __DIR__ . '/layouts/header.php';
                             <option value="">Tất cả trạng thái</option>
 
                             <?php foreach (['Còn hạn', 'Sắp hết hạn', 'Hết hạn'] as $status): ?>
-                                <option
-                                    value="<?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?>"
-                                    <?= $selectedStatus === $status ? 'selected' : '' ?>
-                                >
+                                <option value="<?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?>"
+                                    <?= $selectedStatus === $status ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($status, ENT_QUOTES, 'UTF-8') ?>
                                 </option>
                             <?php endforeach; ?>
@@ -200,10 +187,7 @@ require_once __DIR__ . '/layouts/header.php';
                         Áp dụng bộ lọc
                     </button>
 
-                    <a
-                        href="/app/views/user/categories.php"
-                        class="category-clear-button"
-                    >
+                    <a href="/app/views/user/categories.php" class="category-clear-button">
                         Xóa bộ lọc
                     </a>
                 </form>
@@ -254,10 +238,8 @@ require_once __DIR__ . '/layouts/header.php';
                                     <?= date('d/m/Y', strtotime($coupon['expiry'])) ?>
                                 </span>
 
-                                <a
-                                    href="/app/views/user/coupon_detail.php?code=<?= urlencode($coupon['code']) ?>"
-                                    class="category-view-button"
-                                >
+                                <a href="/app/views/user/coupon_detail.php?code=<?= urlencode($coupon['code']) ?>"
+                                    class="category-view-button">
                                     Xem ưu đãi
                                 </a>
                             </div>

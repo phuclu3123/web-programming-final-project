@@ -68,6 +68,10 @@ final class Router
         elseif ($path === '/merchant/apply') $roles = ['USER','MERCHANT'];
         elseif ($path === '/shop.php' || $path === '/merchant' || str_starts_with($path, '/merchant/')) $roles = ['MERCHANT'];
         elseif ($path === '/coupons' && $method === 'POST') $roles = ['USER','MERCHANT'];
+        elseif ($path === '/rewards' || $path === '/rewards/redeem') $roles = ['USER','MERCHANT'];
+        elseif (($path === '/deal-requests' && $method === 'POST')
+            || $path === '/deal-requests/create'
+            || preg_match('~\A/deal-requests/[0-9]+/(?:reply|close)\z~', $path)) $roles = ['USER','MERCHANT'];
         elseif (in_array($path, ['/notifications','/notifications/read','/dashboard','/account','/account/password','/my-coupons','/saved-coupons','/coupons/create'], true)
             || preg_match('~\A/(?:saved-coupons/[0-9]+/(?:remove|save)|api/coupons/[0-9]+/(?:favorite|vote|comments|reports))\z~', $path)) $roles = ['USER','MERCHANT','ADMIN'];
         if ($roles !== null) Auth::requireRole($roles);

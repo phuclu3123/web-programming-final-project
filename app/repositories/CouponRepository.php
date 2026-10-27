@@ -41,16 +41,16 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
         }
 
         // Public attribution only. One batch for the visible result set, never private account data.
-        $ids=array_map('intval',array_column($rows,'id'));
-        $attribution=[];
-        $people=$this->db->prepare('SELECT c.id,c.created_at,u.full_name AS submitter_name FROM coupons c JOIN users u ON u.id=c.submitted_by WHERE c.id IN ('.implode(',',array_fill(0,count($ids),'?')).')');
+        $ids = array_map('intval', array_column($rows, 'id'));
+        $attribution = [];
+        $people = $this->db->prepare('SELECT c.id,c.created_at,u.full_name AS submitter_name FROM coupons c JOIN users u ON u.id=c.submitted_by WHERE c.id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')');
         $people->execute($ids);
-        foreach ($people->fetchAll() as $person) $attribution[(int)$person['id']]=$person;
+        foreach ($people->fetchAll() as $person) $attribution[(int)$person['id']] = $person;
 
         foreach ($rows as &$row) {
             $row['category_name'] = $categoryMap[(int) ($row['category_id'] ?? 0)] ?? 'Khác';
-            $row['submitter_name']=$attribution[(int)$row['id']]['submitter_name'] ?? '';
-            $row['created_at']=$attribution[(int)$row['id']]['created_at'] ?? null;
+            $row['submitter_name'] = $attribution[(int)$row['id']]['submitter_name'] ?? '';
+            $row['created_at'] = $attribution[(int)$row['id']]['created_at'] ?? null;
         }
         unset($row);
 
@@ -120,6 +120,54 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
         return is_array($row) ? $row : null;
     }
 
+    /* Public active, VND discounts for a single merchant and checkout channel.
+     * All comparisons are performed on an identical order, not across shops.
+     * Never include pending, scheduled, disabled, expired, or deleted coupons.
+     * @return array<int,array<string,mixed>>*/
+    public function publicDiscountsForMerchant(int $merchantId, string $channel): array
+    {
+        $stmt = $this->db->prepare(
+            "SELECT c.id,c.title,c.code,c.merchant_id,c.discount_type,c.discount_value, " .
+                "c.min_order_amount,c.max_discount_amount,c.usage_channel,c.currency,c.ends_at " .
+                "FROM v_coupon_status c WHERE c.merchant_id=? " .
+                "AND c.effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci " .
+                "AND c.currency='VND' AND c.discount_type IN ('PERCENTAGE','FIXED_AMOUNT','FREE_SHIPPING') " .
+                "AND (c.usage_channel=? OR c.usage_channel='BOTH') " .
+                "ORDER BY c.id ASC"
+        );
+        $stmt->execute([$merchantId, $channel]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Discovery candidate pool: public ACTIVE only, before deterministic PHP ranking.
+     * Cap protects the server against unbounded read scans; this is not a full-text index.
+     * @return array<int,array<string,mixed>>
+     */
+    public function publicMatchingCandidates(?int $merchantId, ?int $categoryId, string $channel): array
+    {
+        $sql = "SELECT c.id,c.title,c.description,c.merchant_id,m.name AS merchant_name, " .
+            "c.category_id,cat.name AS category_name,c.discount_type,c.discount_value, " .
+            "c.min_order_amount,c.max_discount_amount,c.usage_channel,c.currency,c.ends_at,c.effective_status " .
+            "FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id " .
+            "JOIN categories cat ON cat.id=c.category_id " .
+            "WHERE c.effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci " .
+            "AND c.currency='VND' AND (c.usage_channel=? OR c.usage_channel='BOTH')";
+        $params = [$channel];
+        if ($merchantId !== null) {
+            $sql .= ' AND c.merchant_id=?';
+            $params[] = $merchantId;
+        }
+        if ($categoryId !== null) {
+            $sql .= ' AND c.category_id=?';
+            $params[] = $categoryId;
+        }
+        $sql .= ' ORDER BY c.ends_at ASC,c.id ASC LIMIT 500';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
     public function isActive(int $couponId): bool
     {
         $stmt = $this->db->prepare("SELECT 1 FROM v_coupon_status WHERE id = ? AND effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci LIMIT 1");
@@ -134,7 +182,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             "SELECT c.id, c.title, c.code, c.discount_type, c.discount_value, c.cashback_unit, " .
                 "c.starts_at, c.ends_at, c.effective_status, c.moderation_status, " .
                 "c.publication_status, c.review_note, c.reviewed_at, c.usage_channel, " .
-"                m.name AS merchant_name, cat.name AS category_name, c.created_at " .
+                "                m.name AS merchant_name, cat.name AS category_name, c.created_at " .
                 "FROM v_coupon_status c " .
                 "JOIN merchants m ON m.id = c.merchant_id " .
                 "JOIN categories cat ON cat.id = c.category_id " .
@@ -366,6 +414,94 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             "WHERE c.effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci " .
             "ORDER BY (SELECT qualified_favorites FROM v_coupon_favorite_stats fs WHERE fs.coupon_id=c.id) DESC,s.total_votes DESC,c.created_at DESC LIMIT " . $limit;
         return $this->db->query($sql)->fetchAll();
+    }
+
+    /**
+     * Section 15: rule-based personalized feed using this user's saved coupons.
+     * Signals: merchant (stronger) and category; no cross-user profiling.
+     * Returns no rows for guests/users without favorites, never repeats a saved
+     * coupon, and excludes non-public/expired content via v_coupon_status.
+     * @return array<int,array<string,mixed>>
+     */
+    public function personalizedForUser(int $userId, int $limit = 6): array
+    {
+        if ($userId <= 0) return [];
+        $limit = max(1, min(12, $limit));
+        // Derived preferences are scoped to user_id. Count is capped at 3 for
+        // ranking so one heavily-favorited merchant does not dominate the feed.
+        $sql = "SELECT c.id,c.title,c.discount_type,c.discount_value,c.cashback_unit,c.usage_channel,c.ends_at, " .
+            "m.name AS merchant_name,cat.name AS category_name, " .
+            "(LEAST(COALESCE(mp.saved_count,0),3)*4 + LEAST(COALESCE(cp.saved_count,0),3)*2) AS match_score, " .
+            "CASE WHEN mp.merchant_id IS NOT NULL AND cp.category_id IS NOT NULL THEN 'MERCHANT_CATEGORY' " .
+            "WHEN mp.merchant_id IS NOT NULL THEN 'MERCHANT' ELSE 'CATEGORY' END AS match_reason " .
+            "FROM v_coupon_status c " .
+            "JOIN merchants m ON m.id=c.merchant_id JOIN categories cat ON cat.id=c.category_id " .
+            "LEFT JOIN (SELECT fc.merchant_id,COUNT(*) AS saved_count FROM favorites f " .
+            "JOIN coupons fc ON fc.id=f.coupon_id WHERE f.user_id=? AND fc.deleted_at IS NULL " .
+            "GROUP BY fc.merchant_id) mp ON mp.merchant_id=c.merchant_id " .
+            "LEFT JOIN (SELECT fc.category_id,COUNT(*) AS saved_count FROM favorites f " .
+            "JOIN coupons fc ON fc.id=f.coupon_id WHERE f.user_id=? AND fc.deleted_at IS NULL " .
+            "GROUP BY fc.category_id) cp ON cp.category_id=c.category_id " .
+            "WHERE (mp.merchant_id IS NOT NULL OR cp.category_id IS NOT NULL) " .
+            "AND c.effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci " .
+            "AND NOT EXISTS (SELECT 1 FROM favorites own WHERE own.user_id=? AND own.coupon_id=c.id) " .
+            "ORDER BY match_score DESC, c.ends_at ASC, c.id DESC LIMIT " . $limit;
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId, $userId, $userId]);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Lấy danh sách coupon thịnh hành dựa trên lượt xem (VIEW), sao chép (COPY) và chia sẻ (SHARE) trong 7 ngày gần nhất.
+     * Điểm xu hướng phản ánh mức độ tương tác, không đánh giá độ uy tín của coupon.
+     * Sử dụng truy vấn tổng hợp để tối ưu hiệu suất, tránh truy vấn N+1 và có thể tận dụng chỉ mục idx_events_time.
+     * Loại trừ các coupon nháp, bị từ chối hoặc đã hết hạn.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public function trendingPublic(int $limit = 6): array
+    {
+        $limit = max(1, min(12, $limit));
+        $sql = "SELECT c.id,c.title,c.code,c.discount_type,c.discount_value,c.cashback_unit,c.usage_channel,c.ends_at, " .
+            "m.name AS merchant_name,cat.name AS category_name,ev.views_7d,ev.copies_7d,ev.shares_7d, " .
+            "(ev.views_7d + 3 * ev.copies_7d + 2 * ev.shares_7d) AS trend_score " .
+            "FROM (SELECT coupon_id, " .
+            "SUM(CASE WHEN event_type='VIEW' THEN 1 ELSE 0 END) AS views_7d, " .
+            "SUM(CASE WHEN event_type='COPY' THEN 1 ELSE 0 END) AS copies_7d, " .
+            "SUM(CASE WHEN event_type='SHARE' THEN 1 ELSE 0 END) AS shares_7d " .
+            "FROM coupon_events WHERE occurred_at >= DATE_SUB(UTC_TIMESTAMP(), INTERVAL 7 DAY) " .
+            "AND event_type IN ('VIEW','COPY','SHARE') GROUP BY coupon_id) ev " .
+            "JOIN v_coupon_status c ON c.id=ev.coupon_id " .
+            "JOIN merchants m ON m.id=c.merchant_id " .
+            "JOIN categories cat ON cat.id=c.category_id " .
+            "WHERE c.effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci " .
+            "ORDER BY trend_score DESC,ev.copies_7d DESC,ev.views_7d DESC,c.id DESC LIMIT " . $limit;
+        return $this->db->query($sql)->fetchAll();
+    }
+
+    /**
+     * Gợi ý các coupon liên quan dựa trên cùng merchant, danh mục hoặc loại giảm giá.
+     * Ưu tiên coupon cùng merchant, không sử dụng dữ liệu hành vi người dùng.
+     * Chỉ lấy các coupon đang công khai, có trạng thái ACTIVE và loại trừ coupon hiện tại.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public function relatedPublic(int $couponId, int $merchantId, int $categoryId, string $discountType, int $limit = 4): array
+    {
+        $limit = max(1, min(8, $limit));
+        $sql = "SELECT c.id,c.title,c.discount_type,c.discount_value,c.cashback_unit,c.usage_channel,c.ends_at, " .
+            "m.name AS merchant_name,cat.name AS category_name, " .
+            "(CASE WHEN c.merchant_id=? THEN 4 ELSE 0 END + " .
+            "CASE WHEN c.category_id=? THEN 2 ELSE 0 END + " .
+            "CASE WHEN c.discount_type=? THEN 1 ELSE 0 END) AS relevance_score " .
+            "FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id " .
+            "JOIN categories cat ON cat.id=c.category_id " .
+            "WHERE c.id<>? AND c.effective_status COLLATE utf8mb4_vietnamese_ci = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci " .
+            "AND (c.merchant_id=? OR c.category_id=? OR c.discount_type=?) " .
+            "ORDER BY relevance_score DESC,c.ends_at ASC,c.id DESC LIMIT " . $limit;
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$merchantId, $categoryId, $discountType, $couponId, $merchantId, $categoryId, $discountType]);
+        return $stmt->fetchAll();
     }
 
     public function moderate(int $actorId, int $couponId, string $moderation, string $publication, ?string $note): void

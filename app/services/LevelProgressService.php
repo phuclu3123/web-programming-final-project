@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * Level progress is relative to the current level, not zero points.
- * Thresholds come from the database's levels table, not hard-coded levels.
+ * Tính tiến độ lên cấp dựa trên số điểm yêu cầu của cấp hiện tại, không tính từ mốc 0 điểm.
+ * Các mốc điểm được lấy từ bảng levels trong db, không sử dụng giá trị cấp độ cố định trong mã nguồn.
  */
 final class LevelProgressService
 {
     public static function percentage(int $earnedPoints, int $currentLevelMin, ?int $nextLevelMin): int
     {
-        // No next level means the user has reached the highest configured level.
+        // Nếu không có cấp tiếp theo, người dùng đã đạt cấp cao nhất.
         if ($nextLevelMin === null) {
             return 100;
         }
@@ -20,7 +20,7 @@ final class LevelProgressService
         $currentLevelMin = max(0, $currentLevelMin);
         $earnedPoints = max(0, $earnedPoints);
 
-        // Defensive fallback if the database level thresholds are invalid.
+        // Xử lý an toàn khi mốc điểm cấp độ trong ab không hợp lệ.
         if ($nextLevelMin <= $currentLevelMin) {
             return 100;
         }

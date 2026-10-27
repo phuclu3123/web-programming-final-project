@@ -145,5 +145,30 @@ foreach ([App\Controllers\Admin\DashboardController::class, App\Controllers\Admi
     ob_start(); (new $class())->index(new Request([], [], ['REQUEST_METHOD'=>'GET', 'REQUEST_URI'=>'/admin'])); $html = ob_get_clean();
     verify(str_contains($html, 'test_admin') || str_contains($html, 'Test User'), 'Admin HTML ' . $class);
 }
+// Discovery Phase 5: verify SQL against real schema (only isolated DB, never demo/production).
+$secondInput = $input;
+$secondInput['code'] = 'TESTOTHER25';
+$secondInput['title'] = 'Another test offer';
+$secondInput['discount_value'] = '25';
+$secondId = $coupon->create($ids['manager'], $secondInput);
+$coupon->approve($ids['admin'], $secondId);
+$pendingInput = $input;
+$pendingInput['code'] = 'TESTPENDING';
+$pendingInput['title'] = 'Unpublished test offer';
+$pendingId = $coupon->create($ids['manager'], $pendingInput);
+$recommendations = $nativeCoupons->relatedPublic($couponId, $merchantId, $categoryId, 'PERCENTAGE');
+verify(in_array($secondId, array_map('intval', array_column($recommendations, 'id')), true), 'related active coupon included');
+verify(!in_array($couponId, array_map('intval', array_column($recommendations, 'id')), true), 'related excludes current coupon');
+verify(!in_array($pendingId, array_map('intval', array_column($recommendations, 'id')), true), 'related excludes pending coupon');
+foreach (['VIEW', 'COPY', 'SHARE'] as $event) {
+    $statement = $db->prepare('CALL sp_record_coupon_event(?, ?, ?, ?)');
+    $statement->execute([$ids['user'], $couponId, $event, bin2hex(random_bytes(32))]);
+    $statement->closeCursor();
+}
+$trends = $nativeCoupons->trendingPublic();
+verify(count($trends) > 0 && (int) $trends[0]['id'] === $couponId, 'trending returns recent active coupon');
+verify((int) $trends[0]['views_7d'] === 1 && (int) $trends[0]['copies_7d'] === 1
+    && (int) $trends[0]['shares_7d'] === 1 && (int) $trends[0]['trend_score'] === 6,
+    'trending weights VIEW 1 COPY 3 SHARE 2');
 Session::logout();
 echo "PASS: real mysqli binding/CALL/transactions, shared registration/login, membership, coupon moderation/search, reset/session and Admin render.\n";

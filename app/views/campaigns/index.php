@@ -12,7 +12,7 @@
         <a href="<?= e(url('/campaign-calendar')) ?>">Lịch ưu đãi <?= icon('arrow') ?></a>
     </div>
 
-    <?php 
+    <?php
     // Tự động mở bộ lọc nếu người dùng đang chọn lọc
     $hasCampaignFilters = !empty($selectedCategory) || ($selectedChannel !== 'ALL') || $phase !== 'ALL';
     ?>
@@ -32,10 +32,8 @@
                 <select id="campaign-category" name="category_id" class="form-select">
                     <option value="0">Tất cả danh mục</option>
                     <?php foreach ($categories as $category): ?>
-                        <option
-                            value="<?= (int) $category['id'] ?>"
-                            <?= (int) $selectedCategory === (int) $category['id'] ? 'selected' : '' ?>
-                        >
+                        <option value="<?= (int) $category['id'] ?>"
+                            <?= (int) $selectedCategory === (int) $category['id'] ? 'selected' : '' ?>>
                             <?= e($category['name']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -73,16 +71,17 @@
 
     <?php if (!empty($listing['items'])): ?>
         <?php $mainCampaign = $listing['items'][0]; ?>
-        
+
         <!-- CHIẾN DỊCH ĐANG DIỄN RA (BANNER LỚN NỔI BẬT) -->
         <section class="campaign-section-block">
-            <span class="section-label"><?= !empty($mainCampaign['upcoming']) ? 'CHIẾN DỊCH SẮP BẮT ĐẦU' : 'CHIẾN DỊCH ĐANG DIỄN RA' ?></span>
-            
-            <?php 
-                $campaign = $mainCampaign; 
-                $isMainPoster = true; 
-                $posterPriority = true; 
-                require __DIR__ . '/../partials/campaign-poster.php'; 
+            <span
+                class="section-label"><?= !empty($mainCampaign['upcoming']) ? 'CHIẾN DỊCH SẮP BẮT ĐẦU' : 'CHIẾN DỊCH ĐANG DIỄN RA' ?></span>
+
+            <?php
+            $campaign = $mainCampaign;
+            $isMainPoster = true;
+            $posterPriority = true;
+            require __DIR__ . '/../partials/campaign-poster.php';
             ?>
         </section>
 
@@ -93,16 +92,16 @@
 
             <div class="other-campaigns-grid">
                 <?php foreach ($otherCampaigns as $campaign): ?>
-                    <?php 
-                        $isMainPoster = false; 
-                        require __DIR__ . '/../partials/campaign-poster.php'; 
+                    <?php
+                    $isMainPoster = false;
+                    require __DIR__ . '/../partials/campaign-poster.php';
                     ?>
                 <?php endforeach; ?>
 
                 <?php if (count($otherCampaigns) < 2): ?>
                     <aside class="campaign-planner">
                         <span class="eyebrow">LÊN LỊCH CHO LẦN SĂN MÃ TIẾP THEO</span>
-                        
+
                         <div class="planner-date">
                             <strong data-planner-day><?= date('d') ?></strong>
                             <div>
@@ -133,8 +132,9 @@
     <!-- DEALS TRONG CHIẾN DỊCH -->
     <?php require __DIR__ . '/../partials/campaign-deals.php'; ?>
     <?php if ($listing['pages'] > 1): ?><nav class="campaign-pagination" aria-label="Phân trang chiến dịch">
-        <?php for ($target=max(1,$listing['page']-2); $target<=min($listing['pages'],$listing['page']+2); ++$target): ?>
-        <a href="<?= e(url('/campaigns').'?'.http_build_query(['phase'=>$phase,'category_id'=>$selectedCategory,'usage_channel'=>$selectedChannel,'page'=>$target])) ?>" <?= $target===$listing['page'] ? 'aria-current="page"' : '' ?>><?= $target ?></a>
-        <?php endfor; ?>
-    </nav><?php endif; ?>
+            <?php for ($target = max(1, $listing['page'] - 2); $target <= min($listing['pages'], $listing['page'] + 2); ++$target): ?>
+                <a href="<?= e(url('/campaigns') . '?' . http_build_query(['phase' => $phase, 'category_id' => $selectedCategory, 'usage_channel' => $selectedChannel, 'page' => $target])) ?>"
+                    <?= $target === $listing['page'] ? 'aria-current="page"' : '' ?>><?= $target ?></a>
+            <?php endfor; ?>
+        </nav><?php endif; ?>
 </div>

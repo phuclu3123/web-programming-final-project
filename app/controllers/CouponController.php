@@ -88,6 +88,13 @@ final class CouponController extends Controller
         $this->view('coupons/show', [
             'pageTitle' => (string) $coupon['title'],
             'coupon' => $coupon,
+            'relatedCoupons' => $this->coupons->relatedPublic(
+                (int) $couponId,
+                (int) $coupon['merchant_id'],
+                (int) $coupon['category_id'],
+                (string) $coupon['discount_type'],
+                4
+            ),
             'interactionState' => $state,
         ]);
     }
@@ -169,9 +176,11 @@ final class CouponController extends Controller
             $savedCouponIds = $this->savedIdsFor($rows);
             ob_start();
             try {
-                require dirname(__DIR__).'/views/partials/community-coupon-results.php';
+                require dirname(__DIR__) . '/views/partials/community-coupon-results.php';
                 $cardsHtml = (string)ob_get_contents();
-            } finally { ob_end_clean(); }
+            } finally {
+                ob_end_clean();
+            }
             Response::json(['success' => true, 'data' => $data, 'cardsHtml' => $cardsHtml, 'filters' => $filters, 'pagination' => $pagination]);
         } catch (Throwable $e) {
             Response::json([
@@ -207,8 +216,8 @@ final class CouponController extends Controller
 
     private function savedIdsFor(array $coupons): array
     {
-        return in_array(Auth::role(), ['USER','MERCHANT'], true)
-            ? (new SavedCouponRepository(Database::connection()))->savedIds((int)Auth::id(), array_column($coupons,'id'))
+        return in_array(Auth::role(), ['USER', 'MERCHANT'], true)
+            ? (new SavedCouponRepository(Database::connection()))->savedIds((int)Auth::id(), array_column($coupons, 'id'))
             : [];
     }
 

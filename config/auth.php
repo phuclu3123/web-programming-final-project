@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 return [
     'otp_secret' => getenv('COUPONHUB_OTP_SECRET') ?: (getenv('OTP_SECRET') ?: ''),

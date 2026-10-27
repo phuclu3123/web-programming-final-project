@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 // ---- URL CHUNG: không hardcode đường dẫn máy Quang; có thể ghi đè bằng env ----

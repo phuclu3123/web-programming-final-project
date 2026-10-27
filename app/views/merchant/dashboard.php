@@ -11,11 +11,13 @@
     <div class="alert alert-warning">Tài khoản chưa sở hữu Merchant APPROVED. <a href="<?= e(url('/merchant/apply')) ?>">Gửi
             yêu cầu Merchant</a>.</div>
 <?php else: ?>
-    <form method="get" class="form-inline mb-4"><label class="me-2">Đang xem:</label><select aria-label="Cửa hàng" class="form-control me-2"
-            name="merchant_id" onchange="this.form.submit()"><?php foreach ($shops as $shop): ?><option
-                    value="<?= (int)$shop['id'] ?>" <?= $merchant && (int)$merchant['id'] === (int)$shop['id'] ? 'selected' : '' ?>>
-                    <?= e((string)$shop['name']) ?></option><?php endforeach; ?></select><?php if ($merchant): ?><a
-                class="btn btn-outline-secondary" href="<?= e(url('/merchant/profile/' . (int)$merchant['id'])) ?>">Hồ sơ
+    <form method="get" class="form-inline mb-4"><label class="me-2">Đang xem:</label><select aria-label="Cửa hàng"
+            class="form-control me-2" name="merchant_id" onchange="this.form.submit()"><?php foreach ($shops as $shop): ?>
+                <option value="<?= (int)$shop['id'] ?>"
+                    <?= $merchant && (int)$merchant['id'] === (int)$shop['id'] ? 'selected' : '' ?>>
+                    <?= e((string)$shop['name']) ?></option><?php endforeach; ?>
+        </select><?php if ($merchant): ?><a class="btn btn-outline-secondary"
+                href="<?= e(url('/merchant/profile/' . (int)$merchant['id'])) ?>">Hồ sơ
                 shop</a><?php endif; ?></form>
     <div class="row">
         <?php foreach ([['Coupon', 'total_coupons', 'fa-ticket'], ['Đang hoạt động', 'active_coupons', 'fa-circle-check'], ['Sắp hết hạn', 'expiring_soon', 'fa-clock'], ['Lượt xem', 'total_views', 'fa-eye'], ['Lượt lưu', 'current_favorites', 'fa-star'], ['Lượt lưu hợp lệ', 'qualified_favorites', 'fa-check-circle'], ['Lượt copy', 'total_copies', 'fa-copy']] as [$label, $key, $icon]): ?>

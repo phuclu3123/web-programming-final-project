@@ -10,15 +10,16 @@ use App\Core\Session; ?>
                     Merchant.</p>
                 <form method="post" action="<?= e(url('/admin/campaigns')) ?>"><input type="hidden" name="_token"
                         value="<?= e(Session::csrfToken()) ?>">
-                    <div class="mb-3"><label>Tên</label><input aria-label="Tên chiến dịch" class="form-control" name="name" maxlength="200"
-                            required></div>
-                    <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control" name="description"
-                            rows="3"></textarea></div>
-                    <div class="mb-3"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local" class="form-control"
-                            name="starts_at" required></div>
-                    <div class="mb-3"><label>Kết thúc</label><input aria-label="Kết thúc" type="datetime-local" class="form-control"
-                            name="ends_at" required></div>
-                    <div class="mb-3"><label>Trạng thái</label><select aria-label="Trạng thái" name="status" class="form-control">
+                    <div class="mb-3"><label>Tên</label><input aria-label="Tên chiến dịch" class="form-control"
+                            name="name" maxlength="200" required></div>
+                    <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control"
+                            name="description" rows="3"></textarea></div>
+                    <div class="mb-3"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local"
+                            class="form-control" name="starts_at" required></div>
+                    <div class="mb-3"><label>Kết thúc</label><input aria-label="Kết thúc" type="datetime-local"
+                            class="form-control" name="ends_at" required></div>
+                    <div class="mb-3"><label>Trạng thái</label><select aria-label="Trạng thái" name="status"
+                            class="form-control">
                             <option value="DRAFT">Bản nháp</option>
                             <option value="PUBLISHED">Xuất bản</option>
                         </select></div><button class="btn btn-primary">Tạo Campaign</button>
@@ -55,8 +56,8 @@ use App\Core\Session; ?>
                                         href="<?= e(url('/admin/campaigns/' . (int)$c['id'])) ?>">Quản lý coupon</a>
                                     <form method="post"
                                         action="<?= e(url('/admin/campaigns/' . (int)$c['id'] . '/status')) ?>">
-                                        <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><select aria-label="Trạng thái"
-                                            class="form-control form-control-sm mb-1" name="status">
+                                        <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><select
+                                            aria-label="Trạng thái" class="form-control form-control-sm mb-1" name="status">
                                             <option>DRAFT</option>
                                             <option>PUBLISHED</option>
                                             <option>DISABLED</option>
