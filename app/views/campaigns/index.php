@@ -14,70 +14,99 @@
 
     <?php 
     // Tự động mở bộ lọc nếu người dùng đang chọn lọc
-    $hasCampaignFilters = !empty($selectedCategory) || ($selectedChannel !== 'ALL') || (($selectedStatus ?? 'ALL') !== 'ALL'); 
+    $hasCampaignFilters =!empty($selectedCategory)|| ($selectedChannel !== 'ALL')|| ($selectedPlatform !== 'ALL')|| $phase !== 'ALL';
     ?>
 
     <!-- BỘ LỌC CHIẾN DỊCH (TẮT/MỞ DẠNG TEXT TRONG SUỐT) -->
-    <details class="campaign-advanced" <?= $hasCampaignFilters ? 'open' : '' ?>>
-        <summary class="btn-filter-toggle">
-            <?= icon('filter') ?>
-            <span>Bộ lọc</span>
-            <?= icon('chevron') ?>
-        </summary>
+    
+<details class="campaign-advanced" <?= $hasCampaignFilters ? 'open' : '' ?>>
+    <summary class="btn-filter-toggle">
+        <?= icon('filter') ?>
+        <span>Bộ lọc</span>
+        <?= icon('chevron') ?>
+    </summary>
 
-        <form class="campaign-filter-row" method="GET" action="<?= e(url('/campaigns')) ?>">
-            <!-- 1. Danh mục -->
-            <div class="filter-field">
-                <label for="campaign-category">Danh mục</label>
-                <select id="campaign-category" name="category_id" class="form-select">
-                    <option value="0">Tất cả danh mục</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option
-                            value="<?= (int) $category['id'] ?>"
-                            <?= (int) $selectedCategory === (int) $category['id'] ? 'selected' : '' ?>
-                        >
-                            <?= e($category['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+    <form class="campaign-filter-row" method="GET" action="<?= e(url('/campaigns')) ?>">
 
-            <!-- 2. Kênh sử dụng -->
-            <div class="filter-field">
-                <label for="campaign-channel">Kênh sử dụng</label>
-                <select id="campaign-channel" name="usage_channel" class="form-select">
-                    <option value="ALL" <?= $selectedChannel === 'ALL' ? 'selected' : '' ?>>Tất cả kênh</option>
-                    <option value="ONLINE" <?= $selectedChannel === 'ONLINE' ? 'selected' : '' ?>>Online</option>
-                    <option value="OFFLINE" <?= $selectedChannel === 'OFFLINE' ? 'selected' : '' ?>>Offline</option>
-                    <option value="BOTH" <?= $selectedChannel === 'BOTH' ? 'selected' : '' ?>>Online và Offline</option>
-                </select>
-            </div>
+        <!-- 1. Danh mục -->
+        <div class="filter-field">
+            <label for="campaign-category">Danh mục</label>
+            <select id="campaign-category" name="category_id" class="form-select">
+                <option value="0">Tất cả danh mục</option>
+                <?php foreach ($categories as $category): ?>
+                    <option
+                        value="<?= (int) $category['id'] ?>"
+                        <?= (int) $selectedCategory === (int) $category['id'] ? 'selected' : '' ?>
+                    >
+                        <?= e($category['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-            <!-- 3. Thời gian -->
-            <div class="filter-field">
-                <label for="campaign-status">Thời gian</label>
-                <select id="campaign-status" name="status" class="form-select">
-                    <option value="ALL" <?= ($selectedStatus ?? 'ALL') === 'ALL' ? 'selected' : '' ?>>Tất cả thời gian</option>
-                    <option value="RUNNING" <?= ($selectedStatus ?? '') === 'RUNNING' ? 'selected' : '' ?>>Đang diễn ra</option>
-                    <option value="UPCOMING" <?= ($selectedStatus ?? '') === 'UPCOMING' ? 'selected' : '' ?>>Sắp diễn ra</option>
-                    <option value="ENDED" <?= ($selectedStatus ?? '') === 'ENDED' ? 'selected' : '' ?>>Đã kết thúc</option>
-                </select>
-            </div>
+        <!-- 2. Kênh sử dụng -->
+        <div class="filter-field">
+            <label for="campaign-channel">Kênh sử dụng</label>
+            <select id="campaign-channel" name="usage_channel" class="form-select">
+                <option value="ALL" <?= $selectedChannel === 'ALL' ? 'selected' : '' ?>>Tất cả kênh</option>
+                <option value="ONLINE" <?= $selectedChannel === 'ONLINE' ? 'selected' : '' ?>>Online</option>
+                <option value="OFFLINE" <?= $selectedChannel === 'OFFLINE' ? 'selected' : '' ?>>Offline</option>
+                <option value="BOTH" <?= $selectedChannel === 'BOTH' ? 'selected' : '' ?>>Online và Offline</option>
+            </select>
+        </div>
 
-            <!-- 4. Nút bấm thao tác -->
-            <div class="filter-actions">
-                <button type="submit" class="btn btn-apply-filter">Áp dụng bộ lọc</button>
-                <a href="<?= e(url('/campaigns')) ?>" class="btn-reset-filter">Đặt lại</a>
-            </div>
-        </form>
-    </details>
+        <!-- 3. Nền tảng -->
+        <div class="filter-field">
+            <label for="campaign-platform">Nền tảng</label>
+            <select id="campaign-platform" name="platform" class="form-select">
+                <?php
+                $platformOptions = [
+                    'ALL' => 'Tất cả nền tảng',
+                    'SHOPEE' => 'Shopee',
+                    'TIKTOK_SHOP' => 'TikTok Shop',
+                    'LAZADA' => 'Lazada',
+                    'TIKI' => 'Tiki',
+                    'OTHER' => 'Nền tảng khác'
+                ];
+                ?>
+
+                <?php foreach ($platformOptions as $key => $label): ?>
+                    <option
+                        value="<?= e($key) ?>"
+                        <?= $selectedPlatform === $key ? 'selected' : '' ?>
+                    >
+                        <?= e($label) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <!-- 4. Thời gian -->
+        <div class="filter-field">
+            <label for="campaign-status">Thời gian</label>
+            <select id="campaign-status" name="phase" class="form-select">
+                <option value="ALL" <?= $phase === 'ALL' ? 'selected' : '' ?>>Tất cả thời gian</option>
+                <option value="ACTIVE" <?= $phase === 'ACTIVE' ? 'selected' : '' ?>>Đang diễn ra</option>
+                <option value="UPCOMING" <?= $phase === 'UPCOMING' ? 'selected' : '' ?>>Sắp diễn ra</option>
+            </select>
+        </div>
+
+        <!-- 5. Nút thao tác -->
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-apply-filter">Áp dụng bộ lọc</button>
+            <a href="<?= e(url('/campaigns')) ?>" class="btn-reset-filter">Đặt lại</a>
+        </div>
+
+    </form>
+</details>
+
 
     <?php if (!empty($listing['items'])): ?>
         <?php $mainCampaign = $listing['items'][0]; ?>
         
         <!-- CHIẾN DỊCH ĐANG DIỄN RA (BANNER LỚN NỔI BẬT) -->
         <section class="campaign-section-block">
-            <span class="section-label">CHIẾN DỊCH ĐANG DIỄN RA</span>
+            <span class="section-label"><?= !empty($mainCampaign['upcoming']) ? 'CHIẾN DỊCH SẮP BẮT ĐẦU' : 'CHIẾN DỊCH ĐANG DIỄN RA' ?></span>
             
             <?php 
                 $campaign = $mainCampaign; 
@@ -133,4 +162,9 @@
 
     <!-- DEALS TRONG CHIẾN DỊCH -->
     <?php require __DIR__ . '/../partials/campaign-deals.php'; ?>
+    <?php if ($listing['pages'] > 1): ?><nav class="campaign-pagination" aria-label="Phân trang chiến dịch">
+        <?php for ($target=max(1,$listing['page']-2); $target<=min($listing['pages'],$listing['page']+2); ++$target): ?>
+        <a href="<?= e(url('/campaigns').'?'.http_build_query(['phase' => $phase,'category_id' => $selectedCategory,'usage_channel' => $selectedChannel,'platform' => $selectedPlatform,'page' => $target])) ?>" <?= $target===$listing['page'] ? 'aria-current="page"' : '' ?>><?= $target ?></a>
+        <?php endfor; ?>
+    </nav><?php endif; ?>
 </div>

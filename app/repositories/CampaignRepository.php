@@ -20,116 +20,37 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
     /** Một điều kiện công khai dùng chung cho danh sách, đếm và chi tiết. */
     public function publicListing(string $phase, int $page, int $pageSize = 9): array
     {
+        return $this->publicFilteredListing($phase, 0, 'ALL', $page, $pageSize);
+    }
+
+    public function publicFilteredListing(string $phase, int $categoryId, string $usageChannel,string $platform, int $page, int $pageSize = 9): array
+    {
         $where = $this->publicEligibility();
         if ($phase === 'ACTIVE') $where .= ' AND c.starts_at<=UTC_TIMESTAMP()';
         elseif ($phase === 'UPCOMING') $where .= ' AND c.starts_at>UTC_TIMESTAMP()';
-        $from = ' FROM campaigns c LEFT JOIN merchants m ON m.id=c.owner_merchant_id WHERE ';
-        $total = (int)$this->db->query('SELECT COUNT(*)' . $from . $where)->fetchColumn();
+        $conditions = ["vc.effective_status COLLATE utf8mb4_vietnamese_ci=_utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci"];
+        $params = [];
+        if ($categoryId > 0) { $conditions[] = 'vc.category_id=?'; $params[] = $categoryId; }
+        // Lọc theo nền tảng thương mại điện tử.
+        if ($platform !== 'ALL') {$conditions[] = 'vc.platform = ?';$params[] = $platform;}
+        if (in_array($usageChannel, ['ONLINE','OFFLINE'], true)) {
+            $conditions[] = "vc.usage_channel IN (?, 'BOTH')";
+            $params[] = $usageChannel;
+        } elseif ($usageChannel === 'BOTH') $conditions[] = "vc.usage_channel='BOTH'";
+        $coupons = ' FROM campaign_coupons cc JOIN v_coupon_status vc ON vc.id=cc.coupon_id WHERE cc.campaign_id=c.id AND '.implode(' AND ', $conditions);
+        if ($categoryId > 0|| in_array($usageChannel, ['ONLINE', 'OFFLINE', 'BOTH'], true)|| $platform !== 'ALL') {$where .= ' AND EXISTS (SELECT 1'.$coupons.')';}
+        $from = ' FROM campaigns c LEFT JOIN merchants m ON m.id=c.owner_merchant_id WHERE '.$where;
+        $stmt = $this->db->prepare('SELECT COUNT(*)'.$from);
+        $stmt->execute($params);
+        $total = (int)$stmt->fetchColumn();
         $pageSize = max(1,min(24,$pageSize));
         $pages = max(1,(int)ceil($total/$pageSize));
         $page = max(1,min($page,$pages));
-        $stmt = $this->db->prepare("SELECT c.*,m.name AS merchant_name,(c.starts_at>UTC_TIMESTAMP()) AS upcoming,
-            (SELECT COUNT(*) FROM campaign_coupons cc JOIN v_coupon_status vc ON vc.id=cc.coupon_id
-                WHERE cc.campaign_id=c.id AND vc.effective_status COLLATE utf8mb4_vietnamese_ci=_utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci) AS coupon_count"
-            . $from . $where . ' ORDER BY (c.starts_at>UTC_TIMESTAMP()),c.starts_at DESC,c.id DESC LIMIT ? OFFSET ?');
-        $stmt->execute([$pageSize,($page-1)*$pageSize]);
+        $stmt = $this->db->prepare('SELECT c.*,m.name AS merchant_name,(c.starts_at>UTC_TIMESTAMP()) AS upcoming,
+            (SELECT COUNT(*)'.$coupons.') AS coupon_count'.$from.' ORDER BY (c.starts_at>UTC_TIMESTAMP()),c.starts_at DESC,c.id DESC LIMIT ? OFFSET ?');
+        $stmt->execute(array_merge($params, $params, [$pageSize, ($page-1)*$pageSize]));
         return ['items'=>$stmt->fetchAll(),'total'=>$total,'page'=>$page,'pages'=>$pages];
     }
-
-    
-public function publicFilteredListing(
-    string $phase,
-    int $categoryId,
-    string $usageChannel,
-    int $page,
-    int $pageSize = 9
-): array {
-    $where = $this->publicEligibility();
-
-    if ($phase === 'ACTIVE') {
-        $where .= ' AND c.starts_at <= UTC_TIMESTAMP()';
-    } elseif ($phase === 'UPCOMING') {
-        $where .= ' AND c.starts_at > UTC_TIMESTAMP()';
-    }
-
-    $params = [];
-
-    if ($categoryId > 0 || $usageChannel !== 'ALL') {
-        $couponConditions = [
-            'cc.campaign_id = c.id',
-            "vc.effective_status COLLATE utf8mb4_vietnamese_ci
-                = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci",
-        ];
-
-        if ($categoryId > 0) {
-            $couponConditions[] = 'vc.category_id = ?';
-            $params[] = $categoryId;
-        }
-
-        if ($usageChannel === 'ONLINE' || $usageChannel === 'OFFLINE') {
-            $couponConditions[] =
-                "(vc.usage_channel = ? OR vc.usage_channel = 'BOTH')";
-            $params[] = $usageChannel;
-        } elseif ($usageChannel === 'BOTH') {
-            $couponConditions[] = "vc.usage_channel = 'BOTH'";
-        }
-
-        $where .= ' AND EXISTS (
-            SELECT 1
-            FROM campaign_coupons cc
-            INNER JOIN v_coupon_status vc ON vc.id = cc.coupon_id
-            WHERE ' . implode(' AND ', $couponConditions) . '
-        )';
-    }
-
-    $from = ' FROM campaigns c
-        LEFT JOIN merchants m ON m.id = c.owner_merchant_id
-        WHERE ' . $where;
-
-    $countStatement = $this->db->prepare(
-        'SELECT COUNT(*)' . $from
-    );
-    $countStatement->execute($params);
-
-    $total = (int) $countStatement->fetchColumn();
-
-    $pageSize = max(1, min(24, $pageSize));
-    $pages = max(1, (int) ceil($total / $pageSize));
-    $page = max(1, min($page, $pages));
-    $offset = ($page - 1) * $pageSize;
-
-    $sql = "
-        SELECT
-            c.*,
-            m.name AS merchant_name,
-            (c.starts_at > UTC_TIMESTAMP()) AS upcoming,
-            (
-                SELECT COUNT(*)
-                FROM campaign_coupons cc
-                INNER JOIN v_coupon_status vc ON vc.id = cc.coupon_id
-                WHERE cc.campaign_id = c.id
-                  AND vc.effective_status COLLATE utf8mb4_vietnamese_ci
-                      = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci
-            ) AS coupon_count
-        " . $from . "
-        ORDER BY
-            (c.starts_at > UTC_TIMESTAMP()),
-            c.starts_at DESC,
-            c.id DESC
-        LIMIT ? OFFSET ?
-    ";
-
-    $statement = $this->db->prepare($sql);
-    $statement->execute(array_merge($params, [$pageSize, $offset]));
-
-    return [
-        'items' => $statement->fetchAll(),
-        'total' => $total,
-        'page' => $page,
-        'pages' => $pages,
-    ];
-}
-
 
     /* @return array<int,array<string,mixed>> */
     public function publicCurrent(int $limit = 3): array
@@ -182,6 +103,9 @@ public function publicFilteredListing(
         JOIN categories cat ON cat.id = c.category_id
         JOIN v_coupon_vote_stats s ON s.coupon_id = c.id
         WHERE cc.campaign_id = ?
+          AND EXISTS (SELECT 1 FROM campaigns campaign LEFT JOIN merchants owner ON owner.id=campaign.owner_merchant_id
+              WHERE campaign.id=cc.campaign_id AND campaign.status='PUBLISHED' AND campaign.ends_at>UTC_TIMESTAMP()
+              AND (campaign.owner_merchant_id IS NULL OR (owner.status='APPROVED' AND owner.deleted_at IS NULL)))
           AND c.effective_status COLLATE utf8mb4_vietnamese_ci
               = _utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci
     ";
@@ -223,6 +147,18 @@ public function publicFilteredListing(
     ";
 
     return $this->db->query($sql)->fetchAll();
+    }
+
+    public function publicCalendar(int $year, int $month = 0): array
+    {
+        $zone = new \DateTimeZone((string)config('app.timezone', 'Asia/Ho_Chi_Minh'));
+        $start = new \DateTimeImmutable(sprintf('%04d-%02d-01 00:00:00', $year, $month ?: 1), $zone);
+        $end = $start->modify($month ? '+1 month' : '+1 year');
+        $stmt = $this->db->prepare('SELECT c.*,m.name AS merchant_name FROM campaigns c LEFT JOIN merchants m ON m.id=c.owner_merchant_id
+            WHERE '.$this->publicEligibility().' AND c.starts_at<? AND c.ends_at>? ORDER BY c.starts_at,c.id');
+        $utc = new \DateTimeZone('UTC');
+        $stmt->execute([$end->setTimezone($utc)->format('Y-m-d H:i:s'), $start->setTimezone($utc)->format('Y-m-d H:i:s')]);
+        return $stmt->fetchAll();
     }
 
     /* @return array<string,mixed>|null */
@@ -275,21 +211,65 @@ public function publicFilteredListing(
         return is_array($row) ? $row : null;
     }
 
-    public function create(int $actorId, ?int $merchantId, string $name, string $slug, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status): int
-    {
-        if ($merchantId !== null) {
-            $check = $this->db->prepare("SELECT 1 FROM merchant_memberships mm JOIN merchants m ON m.id=mm.merchant_id WHERE mm.merchant_id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL");
-            $check->execute([$merchantId, $actorId]);
-            if (!$check->fetchColumn()) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
-        }
-        $stmt = $this->db->prepare(
-            'INSERT INTO campaigns(owner_merchant_id,created_by,name,slug,description,starts_at,ends_at,status) VALUES(?,?,?,?,?,?,?,?)'
-        );
-        $stmt->execute([$merchantId, $actorId, $name, $slug, $description, $startsAtUtc, $endsAtUtc, $status]);
-        return (int) $this->db->lastInsertId();
-    }
+    public function create(
+        int $actorId,
+        ?int $merchantId,
+        string $name,
+        string $slug,
+        ?string $description,
+        ?string $bannerPath,
+        string $startsAtUtc,
+        string $endsAtUtc,
+        string $status
+        ): int {
+            if ($merchantId !== null) {
+                $check = $this->db->prepare(
+                "SELECT 1
+                FROM merchant_memberships mm
+                JOIN merchants m ON m.id = mm.merchant_id
+                WHERE mm.merchant_id = ?
+                AND mm.user_id = ?
+                AND mm.status = 'ACTIVE'
+                AND m.status = 'APPROVED'
+                AND m.deleted_at IS NULL"
+            );
 
-    public function updateOwned(int $campaignId, int $userId, string $name, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status): void
+            $check->execute([$merchantId, $actorId]);
+
+            if (!$check->fetchColumn()) {
+                throw new RuntimeException(
+                    'Bạn không có quyền quản lý Shop này.'
+                );
+            }
+        }
+
+    $stmt = $this->db->prepare(
+    'UPDATE campaigns
+     SET name = ?,
+         description = ?,
+         banner_path = ?,
+         starts_at = ?,
+         ends_at = ?,
+         status = ?
+     WHERE id = ?'
+);
+
+$stmt->execute([
+    $merchantId,
+    $actorId,
+    $name,
+    $slug,
+    $description,
+    $bannerPath,
+    $startsAtUtc,
+    $endsAtUtc,
+    $status
+]);
+
+    return (int) $this->db->lastInsertId();
+}
+
+    public function updateOwned(int $campaignId,int $userId,string $name,?string $description,?string $bannerPath,string $startsAtUtc,string $endsAtUtc,string $status): void 
     {
         $campaign = $this->findOwned($campaignId, $userId);
         if ($campaign === null) throw new RuntimeException('Không tìm thấy Campaign thuộc Merchant của bạn.');

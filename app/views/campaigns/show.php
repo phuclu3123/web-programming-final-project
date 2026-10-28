@@ -2,14 +2,15 @@
 <?php
 [$campaignPhoto, $campaignTone] = campaignArtwork($campaign);
 
-$campaignImage = url(
-    '/assets/images/hero/category-' .
-    ($campaignPhoto === 'fashion'
-        ? 'fashion'
-        : ($campaignPhoto === 'travel' ? 'travel' : 'technology')) .
-    '.webp'
-);
+$bannerPath = trim((string) ($campaign['banner_path'] ?? ''));
 
+if ($bannerPath !== '') {
+    if (preg_match('/^https:\/\//i', $bannerPath)) {
+        $campaignImage = $bannerPath;
+    } else {
+        $campaignImage = url('/' . ltrim($bannerPath, '/'));
+    }
+}
 $timing = campaignTiming($campaign);
 $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
 ?>
@@ -95,6 +96,36 @@ $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
 
     
 
+    <form id="campaign-coupon-filter" class="campaign-coupon-filters" method="get" action="<?= e(url('/campaigns/'.(int)$campaign['id'])) ?>#campaign-offers">
+        <div class="campaign-coupon-filter-field"><label for="campaign-category">Danh mục coupon</label><select name="category_id" id="campaign-category"><option value="0">Tất cả danh mục</option><?php foreach ($categories as $category): ?><option value="<?= (int)$category['id'] ?>" <?= $selectedCategory===(int)$category['id'] ? 'selected' : '' ?>><?= e($category['name']) ?></option><?php endforeach; ?></select></div>
+        <div class="campaign-coupon-filter-field"><label for="campaign-channel">Kênh sử dụng</label><select name="usage_channel" id="campaign-channel"><?php foreach (['ALL'=>'Tất cả kênh','ONLINE'=>'Online','OFFLINE'=>'Offline','BOTH'=>'Online và Offline'] as $key=>$label): ?><option value="<?= $key ?>" <?= $selectedChannel===$key ? 'selected' : '' ?>><?= $label ?></option><?php endforeach; ?></select></div>
+        
+        <div class="campaign-coupon-filter-field">
+            <label for="campaign-platform">Nền tảng</label>
+                <select name="platform" id="campaign-platform">
+                    <?php
+                        $platformOptions = [
+                        'ALL' => 'Tất cả nền tảng',
+                        'SHOPEE' => 'Shopee',
+                        'TIKTOK_SHOP' => 'TikTok Shop',
+                        'LAZADA' => 'Lazada',
+                        'TIKI' => 'Tiki',
+                        'OTHER' => 'Nền tảng khác'];
+                    ?>
+
+                    <?php foreach ($platformOptions as $key => $label): ?>
+                        <option
+                            value="<?= e($key) ?>"
+                            <?= $selectedPlatform === $key ? 'selected' : '' ?>>
+                            <?= e($label) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+        </div>
+
+        <div class="campaign-coupon-filter-actions"><button type="submit" class="campaign-coupon-filter-submit">Lọc coupon</button><a href="<?= e(url('/campaigns/'.(int)$campaign['id'])) ?>#campaign-offers" id="reset-campaign-filter" class="campaign-coupon-filter-reset">Đặt lại</a></div>
+    </form>
+    <p class="campaign-filter-feedback" role="status" hidden></p>
     <!-- Khu vực được cập nhật bằng AJAX -->
     <div id="campaign-coupon-results" aria-live="polite">
 
@@ -140,8 +171,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const categorySelect = document.getElementById('campaign-category');
     const channelSelect = document.getElementById('campaign-channel');
+    const platformSelect = document.getElementById('campaign-platform');
     const results = document.getElementById('campaign-coupon-results');
     const resetButton = document.getElementById('reset-campaign-filter');
+    const feedback = document.querySelector('.campaign-filter-feedback');
 
     let requestNumber = 0;
 
@@ -152,8 +185,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         url.searchParams.set('category_id', categorySelect.value);
         url.searchParams.set('usage_channel', channelSelect.value);
+        url.searchParams.set('platform', platformSelect.value);
 
         results.style.opacity = '0.5';
+        results.setAttribute('aria-busy', 'true');
+        feedback.hidden = true;
 
         try {
             const response = await fetch(url.toString(), {
@@ -190,6 +226,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Chỉ cập nhật danh sách coupon, không tải lại toàn bộ trang.
             results.innerHTML = newResults.innerHTML;
+            const newAction = newDocument.querySelector('.campaign-detail-action');
+            const currentAction = document.querySelector('.campaign-detail-action');
+            if (newAction && currentAction) currentAction.innerHTML = newAction.innerHTML;
 
             if (newTitleCount) {
                 const titleCount = document.querySelector(
@@ -206,11 +245,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         } catch (error) {
             if (currentRequest === requestNumber) {
-                alert('Không thể lọc coupon. Vui lòng thử lại.');
+                feedback.textContent = 'Không thể lọc coupon. Vui lòng thử lại.';
+                feedback.hidden = false;
             }
         } finally {
             if (currentRequest === requestNumber) {
                 results.style.opacity = '1';
+                results.removeAttribute('aria-busy');
             }
         }
     }
@@ -218,9 +259,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Tự lọc khi người dùng thay đổi một trong hai lựa chọn.
     categorySelect.addEventListener('change', filterCoupons);
     channelSelect.addEventListener('change', filterCoupons);
+    platformSelect.addEventListener('change', filterCoupons);
+    form.addEventListener('submit', function (event) { event.preventDefault(); filterCoupons(); });
 
     // Đặt lại cả hai bộ lọc mà không reload trang.
-    resetButton.addEventListener('click', function () {
+    resetButton.addEventListener('click', function (event) {
+        event.preventDefault();
         categorySelect.value = '0';
         channelSelect.value = 'ALL';
 

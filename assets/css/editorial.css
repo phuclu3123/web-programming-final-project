@@ -2386,3 +2386,81 @@ body:has(#campaign-modal) {
   color: #0f172a !important;
   text-decoration: underline !important;
 }
+
+
+/* Bộ lọc chiến dịch: bố cục gọn trên desktop */
+.campaign-filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 16px;
+    align-items: end;
+}
+
+/* Các trường lọc */
+.campaign-filter-row .filter-field {
+    min-width: 0;
+    margin: 0;
+}
+
+.campaign-filter-row .filter-field label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Nút thao tác nằm dưới các dropdown */
+.campaign-filter-row .filter-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: -2px;
+}
+
+/* Máy tính bảng */
+@media (max-width: 900px) {
+    .campaign-filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Điện thoại */
+@media (max-width: 560px) {
+    .campaign-filter-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .campaign-filter-row .filter-actions {
+        grid-column: auto;
+        flex-wrap: wrap;
+    }
+}
+/* Chỉ định dạng các trường khi mở nút Bộ lọc */
+.editorial-campaign-page .campaign-advanced[open] .campaign-filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.editorial-campaign-page .campaign-advanced[open] .filter-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .editorial-campaign-page .campaign-advanced[open] .campaign-filter-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .editorial-campaign-page .campaign-advanced[open] .campaign-filter-row {
+        grid-template-columns: 1fr;
+    }
+
+    .editorial-campaign-page .campaign-advanced[open] .filter-actions {
+        grid-column: auto;
+    }
+}

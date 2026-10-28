@@ -19,14 +19,14 @@ final class CampaignService
         $data = $this->normalize($input);
         $slugBase = slugify($data['name']);
         $slug = $slugBase . '-' . strtolower(substr(bin2hex(random_bytes(3)), 0, 6));
-        return $this->campaigns->create($actorId, $merchantId, $data['name'], $slug, $data['description'], $data['starts_at_utc'], $data['ends_at_utc'], $data['status']);
+        return $this->campaigns->create($actorId,$merchantId,$data['name'],$slug,$data['description'],$data['banner_path'],$data['starts_at_utc'],$data['ends_at_utc'],$data['status']);
     }
 
     /** @param array<string,mixed> $input */
     public function updateOwned(int $campaignId, int $userId, array $input): void
     {
         $data = $this->normalize($input);
-        $this->campaigns->updateOwned($campaignId, $userId, $data['name'], $data['description'], $data['starts_at_utc'], $data['ends_at_utc'], $data['status']);
+        $this->campaigns->updateOwned($campaignId,$userId,$data['name'],$data['description'],$data['banner_path'],$data['starts_at_utc'],$data['ends_at_utc'],$data['status']);
     }
 
     /** @param array<string,mixed> $input @return array{name:string,description:?string,starts_at_utc:string,ends_at_utc:string,status:string} */
@@ -45,7 +45,15 @@ final class CampaignService
             throw new RuntimeException('Campaign phải có thời gian kết thúc sau thời gian bắt đầu.');
         }
         if ((new DateTimeImmutable($end, $utc))->getTimestamp() <= time()) throw new RuntimeException('Campaign phải kết thúc trong tương lai.');
-        return ['name' => $name, 'description' => $description !== '' ? $description : null, 'starts_at_utc' => $start, 'ends_at_utc' => $end, 'status' => $status];
+        
+        $bannerPath = trim((string) ($input['banner_path'] ?? ''));
+
+        if (mb_strlen($bannerPath) > 500) {throw new RuntimeException('Đường dẫn banner quá dài.');}
+
+        if ($bannerPath !== '' && preg_match('/^https?:\/\//i', $bannerPath) && !preg_match('/^https:\/\//i', $bannerPath)) {
+        throw new RuntimeException('Banner bên ngoài phải sử dụng HTTPS.');}
+
+        return ['name' => $name,'description' => $description !== '' ? $description : null,'banner_path' => $bannerPath !== '' ? $bannerPath : null,'starts_at_utc' => $start,'ends_at_utc' => $end,'status' => $status];
     }
 
     private function localToUtc(string $value): ?string

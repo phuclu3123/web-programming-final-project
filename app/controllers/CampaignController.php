@@ -65,113 +65,57 @@ final class CampaignController extends Controller
             $usageChannel = 'ALL';
         }
 
+        $platform = $request->query('platform', 'ALL');
+
+        $allowedPlatforms = ['ALL','SHOPEE','TIKTOK_SHOP','LAZADA','TIKI','OTHER'];
+
+        if (!in_array($platform, $allowedPlatforms, true)) {$platform = 'ALL';}
+
         $this->view('campaigns/show', [
             'pageTitle' => (string) $campaign['name'],
             'campaign' => $campaign,
             'coupons' => $this->campaigns->publicCoupons(
                 (int) $campaign['id'],
                 $categoryId,
-                $usageChannel
+                $usageChannel,
+                $platform
             ),
             'categories' => $this->campaigns->publicCategories(),
             'selectedCategory' => $categoryId,
             'selectedChannel' => $usageChannel,
+            'selectedPlatform' => $platform,
         ]);
     }
 
-    
-public function index(Request $request): void
-{
-    // 1. Lấy bộ lọc thời gian chiến dịch
-    $phase = $request->query('phase', 'ALL');
-
-    if (!in_array($phase, ['ALL', 'ACTIVE', 'UPCOMING'], true)) {
-        throw new \App\Core\HttpError(
-            422,
-            'Bộ lọc chiến dịch không hợp lệ.'
-        );
-    }
-
-    // 2. Lấy bộ lọc danh mục coupon
-    $categoryId = positiveId(
-        $request->query('category_id', '0'),
-        true
-    );
-
-    // 3. Lấy bộ lọc kênh sử dụng coupon
-    $usageChannel = $request->query('usage_channel', 'ALL');
-
-    if (!in_array(
-        $usageChannel,
-        ['ALL', 'ONLINE', 'OFFLINE', 'BOTH'],
-        true
-    )) {
-        $usageChannel = 'ALL';
-    }
-
-    // 4. Lấy số trang
-    $page = positiveId($request->query('page', '1'));
-
-    // 5. Lấy danh sách chiến dịch theo cả 3 bộ lọc
-    $listing = $this->campaigns->publicFilteredListing(
-        $phase,
-        $categoryId,
-        $usageChannel,
-        $page
-    );
-
-    // 6. Xác định chiến dịch được chọn để hiển thị phần preview
-    $previewId = positiveId(
-        $request->query('preview', '0'),
-        true
-    );
-
-    $campaignPreview = $listing['items'][0] ?? null;
-
-    if ($previewId > 0) {
-        $campaignPreview = null;
-
-        foreach ($listing['items'] as $candidate) {
-            if ((int) $candidate['id'] === $previewId) {
-                $campaignPreview = $candidate;
-                break;
+    public function index(Request $request): void
+    {
+        $phase = $request->query('phase', 'ALL');
+        if (!in_array($phase, ['ALL','ACTIVE','UPCOMING'], true)) {
+            throw new \App\Core\HttpError(422, 'Bộ lọc chiến dịch không hợp lệ.');
+        }
+        $categoryId = positiveId($request->query('category_id', '0'), true);
+        $usageChannel = $request->query('usage_channel', 'ALL');
+        if (!in_array($usageChannel, ['ALL','ONLINE','OFFLINE','BOTH'], true)) $usageChannel = 'ALL';
+        $platform = $request->query('platform', 'ALL');$allowedPlatforms = ['ALL','SHOPEE','TIKTOK_SHOP','LAZADA','TIKI','OTHER'];
+        if (!in_array($platform, $allowedPlatforms, true)) {$platform = 'ALL';}
+        $listing = $this->campaigns->publicFilteredListing($phase,$categoryId,$usageChannel,$platform,positiveId($request->query('page', '1')));
+        $previewId = positiveId($request->query('preview', '0'), true);
+        $campaignPreview = $listing['items'][0] ?? null;
+        if ($previewId > 0) {
+            $campaignPreview = null;
+            foreach ($listing['items'] as $candidate) {
+                if ((int)$candidate['id'] === $previewId) { $campaignPreview = $candidate; break; }
             }
+            if ($campaignPreview === null) throw new \App\Core\HttpError(404, 'Chiến dịch không có trong lựa chọn hiện tại.');
         }
-
-        if ($campaignPreview === null) {
-            throw new \App\Core\HttpError(
-                404,
-                'Chiến dịch không có trong lựa chọn hiện tại.'
-            );
-        }
+        $this->view('campaigns/index', [
+            'pageTitle'=>'Chiến dịch ưu đãi', 'phase'=>$phase, 'listing'=>$listing,
+            'campaignPreview'=>$campaignPreview,
+            'campaignCoupons' => $campaignPreview? array_slice($this->campaigns->publicCoupons((int) $campaignPreview['id'],$categoryId,$usageChannel,$platform),0,3): [],
+            'categories'=>$this->campaigns->publicCategories(), 'selectedCategory'=>$categoryId, 'selectedChannel'=>$usageChannel,
+            'selectedPlatform' => $platform,
+        ]);
     }
-
-    // 7. Lấy tối đa 3 coupon cho phần preview hiện có
-    $campaignCoupons = [];
-
-    if ($campaignPreview !== null) {
-        $campaignCoupons = array_slice(
-            $this->campaigns->publicCoupons(
-                (int) $campaignPreview['id']
-            ),
-            0,
-            3
-        );
-    }
-
-    // 8. Truyền dữ liệu sang giao diện
-    $this->view('campaigns/index', [
-        'pageTitle' => 'Chiến dịch ưu đãi',
-        'phase' => $phase,
-        'listing' => $listing,
-        'campaignPreview' => $campaignPreview,
-        'campaignCoupons' => $campaignCoupons,
-        'categories' => $this->campaigns->publicCategories(),
-        'selectedCategory' => $categoryId,
-        'selectedChannel' => $usageChannel,
-    ]);
-}
-
 
     public function merchantIndex(Request $request): void
     {
