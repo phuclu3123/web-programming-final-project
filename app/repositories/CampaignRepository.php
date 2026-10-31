@@ -23,7 +23,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return $this->publicFilteredListing($phase, 0, 'ALL', $page, $pageSize);
     }
 
-    public function publicFilteredListing(string $phase, int $categoryId, string $usageChannel, int $page, int $pageSize = 9): array
+    public function publicFilteredListing(string $phase, int $categoryId, string $usageChannel, int $page, int $pageSize = 9, int $merchantId = 0): array
     {
         $where = $this->publicEligibility();
         if ($phase === 'ACTIVE') $where .= ' AND c.starts_at<=UTC_TIMESTAMP()';
@@ -31,12 +31,13 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         $conditions = ["vc.effective_status COLLATE utf8mb4_vietnamese_ci=_utf8mb4'ACTIVE' COLLATE utf8mb4_vietnamese_ci"];
         $params = [];
         if ($categoryId > 0) { $conditions[] = 'vc.category_id=?'; $params[] = $categoryId; }
+        if ($merchantId > 0) { $conditions[] = 'vc.merchant_id=?'; $params[] = $merchantId; }
         if (in_array($usageChannel, ['ONLINE','OFFLINE'], true)) {
             $conditions[] = "vc.usage_channel IN (?, 'BOTH')";
             $params[] = $usageChannel;
         } elseif ($usageChannel === 'BOTH') $conditions[] = "vc.usage_channel='BOTH'";
         $coupons = ' FROM campaign_coupons cc JOIN v_coupon_status vc ON vc.id=cc.coupon_id WHERE cc.campaign_id=c.id AND '.implode(' AND ', $conditions);
-        if ($categoryId > 0 || in_array($usageChannel, ['ONLINE','OFFLINE','BOTH'], true)) $where .= ' AND EXISTS (SELECT 1'.$coupons.')';
+        if ($categoryId > 0 || $merchantId > 0 || in_array($usageChannel, ['ONLINE','OFFLINE','BOTH'], true)) $where .= ' AND EXISTS (SELECT 1'.$coupons.')';
         $from = ' FROM campaigns c LEFT JOIN merchants m ON m.id=c.owner_merchant_id WHERE '.$where;
         $stmt = $this->db->prepare('SELECT COUNT(*)'.$from);
         $stmt->execute($params);
@@ -85,7 +86,7 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
     /*@return array<int,array<string,mixed>> */
     /*Lấy coupon công khai thuộc chiến dịch.
  * @return array<int,array<string,mixed>>*/
-    public function publicCoupons(int $campaignId, int $categoryId = 0, string $usageChannel = 'ALL'): array {
+    public function publicCoupons(int $campaignId, int $categoryId = 0, string $usageChannel = 'ALL', int $merchantId = 0): array {
         $sql = " SELECT c.id, c.title, c.code, c.discount_type, c.discount_value, c.cashback_unit, c.min_order_amount, c.max_discount_amount, c.usage_channel, c.ends_at, m.name 
             AS merchant_name, cat.name 
             AS category_name, s.trust_score,
@@ -109,6 +110,10 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
     ";
 
     $params = [$campaignId];
+    if ($merchantId > 0) {
+        $sql .= ' AND c.merchant_id = ?';
+        $params[] = $merchantId;
+    }
 
     if ($categoryId > 0) {
         $sql .= " AND c.category_id = ?";
@@ -209,24 +214,51 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         return is_array($row) ? $row : null;
     }
 
-    public function create(int $actorId, ?int $merchantId, string $name, string $slug, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status): int
+    private function requireWriter(int $actorId, string $role): void
     {
-        if ($merchantId !== null) {
-            $check = $this->db->prepare("SELECT 1 FROM merchant_memberships mm JOIN merchants m ON m.id=mm.merchant_id WHERE mm.merchant_id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL");
-            $check->execute([$merchantId, $actorId]);
-            if (!$check->fetchColumn()) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
-        }
-        $stmt = $this->db->prepare(
-            'INSERT INTO campaigns(owner_merchant_id,created_by,name,slug,description,starts_at,ends_at,status) VALUES(?,?,?,?,?,?,?,?)'
-        );
-        $stmt->execute([$merchantId, $actorId, $name, $slug, $description, $startsAtUtc, $endsAtUtc, $status]);
-        return (int) $this->db->lastInsertId();
+        $actor=$this->db->prepare("SELECT id FROM users WHERE id=? AND role=? AND status='ACTIVE' AND deleted_at IS NULL FOR UPDATE");
+        $actor->execute([$actorId,$role]);
+        if (!$actor->fetchColumn()) throw new RuntimeException('Tài khoản không có quyền ghi chiến dịch.');
     }
 
-    public function updateOwned(int $campaignId, int $userId, string $name, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status): void
+    public function create(int $actorId, ?int $merchantId, string $name, string $slug, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status, ?string $bannerPath = null): int
     {
-        $campaign = $this->findOwned($campaignId, $userId);
-        if ($campaign === null) throw new RuntimeException('Không tìm thấy Campaign thuộc Merchant của bạn.');
+        $this->db->beginTransaction();
+        try {
+            $this->requireWriter($actorId,$merchantId === null ? 'ADMIN' : 'MERCHANT');
+            if ($merchantId !== null) {
+                $check = $this->db->prepare("SELECT mm.user_id FROM merchant_memberships mm JOIN merchants m ON m.id=mm.merchant_id WHERE mm.merchant_id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL FOR UPDATE");
+                $check->execute([$merchantId, $actorId]);
+                if (!$check->fetchColumn()) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
+            }
+            $stmt = $this->db->prepare(
+                'INSERT INTO campaigns(owner_merchant_id,created_by,name,slug,description,banner_path,starts_at,ends_at,status) VALUES(?,?,?,?,?,?,?,?,?)'
+            );
+            $stmt->execute([$merchantId, $actorId, $name, $slug, $description, $bannerPath, $startsAtUtc, $endsAtUtc, $status]);
+            $id=(int)$this->db->lastInsertId();
+            $this->db->commit();
+            return $id;
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
+    }
+
+    public function updateOwned(int $campaignId, int $userId, string $name, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status, ?string $bannerPath = null): void
+    {
+        $this->db->beginTransaction();
+        try {
+            // Same campaign lock as sp_attach_campaign_coupon: attaching cannot
+            // race between checking the time window and saving the new window.
+            $lock=$this->db->prepare('SELECT id FROM campaigns WHERE id=? FOR UPDATE');
+            $lock->execute([$campaignId]);
+            if (!$lock->fetchColumn()) throw new RuntimeException('Không tìm thấy chiến dịch.');
+            $this->requireWriter($userId,'MERCHANT');
+            $ownership=$this->db->prepare("SELECT c.status FROM campaigns c JOIN merchant_memberships mm ON mm.merchant_id=c.owner_merchant_id JOIN merchants m ON m.id=mm.merchant_id WHERE c.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL FOR UPDATE");
+            $ownership->execute([$campaignId,$userId]);
+            $current=$ownership->fetchColumn();
+            if ($current === false) throw new RuntimeException('Không tìm thấy Campaign thuộc Merchant của bạn.');
+            if (in_array($current,['DISABLED','ARCHIVED'],true)) throw new RuntimeException('Chiến dịch đã bị tắt hoặc lưu trữ. Vui lòng liên hệ quản trị viên.');
 
         // Every attached coupon must still overlap the edited Campaign window.
         $invalid = $this->db->prepare(
@@ -238,8 +270,13 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
             throw new RuntimeException('Khoảng thời gian mới không còn giao với một hoặc nhiều coupon đã gắn. Hãy gỡ coupon đó trước khi sửa thời gian Campaign.');
         }
 
-        $stmt = $this->db->prepare('UPDATE campaigns SET name=?,description=?,starts_at=?,ends_at=?,status=? WHERE id=?');
-        $stmt->execute([$name, $description, $startsAtUtc, $endsAtUtc, $status, $campaignId]);
+            $stmt = $this->db->prepare('UPDATE campaigns SET name=?,description=?,banner_path=?,starts_at=?,ends_at=?,status=? WHERE id=?');
+            $stmt->execute([$name, $description, $bannerPath, $startsAtUtc, $endsAtUtc, $status, $campaignId]);
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
     public function attach(int $actorId, int $campaignId, int $couponId): void

@@ -1,13 +1,15 @@
 <?php
 [$posterPhoto, $posterTone] = campaignArtwork($campaign);
 $upcoming = strtotime($campaign['starts_at'] . ' UTC') > time();
-$objectPoster = empty($isMainPoster) && $posterPhoto === 'technology';
-$posterImage = $objectPoster ? url('/assets/images/editorial/headphones-cutout.webp') : editorialPhoto($posterPhoto, false);
+$customBanner=campaignBannerUrl($campaign);
+$objectPoster = $customBanner===null && empty($isMainPoster) && $posterPhoto === 'technology';
+$defaultPosterImage=$objectPoster ? url('/assets/images/editorial/headphones-cutout.webp') : editorialPhoto($posterPhoto, false);
+$posterImage = $customBanner ?? $defaultPosterImage;
 ?>
 
 <article class="campaign-poster campaign-art-poster poster-<?= e($posterTone) ?> <?= !empty($isMainPoster) ? 'poster-main' : 'poster-small' ?> <?= $objectPoster ? 'poster-object' : '' ?>">
     <!-- Ảnh chụp chiến dịch -->
-    <img class="campaign-poster-photo" src="<?= e($posterImage) ?>" alt="" width="<?= $objectPoster ? '479' : '1200' ?>" height="<?= $objectPoster ? '499' : '800' ?>" loading="<?= !empty($posterPriority) ? 'eager' : 'lazy' ?>" decoding="async">
+    <img class="campaign-poster-photo" src="<?= e($posterImage) ?>" data-campaign-fallback="<?= e($defaultPosterImage) ?>" referrerpolicy="no-referrer" alt="" width="<?= $objectPoster ? '479' : '1200' ?>" height="<?= $objectPoster ? '499' : '800' ?>" loading="<?= !empty($posterPriority) ? 'eager' : 'lazy' ?>" decoding="async">
     
     <div class="poster-scenery" aria-hidden="true"><span></span><span></span></div>
 

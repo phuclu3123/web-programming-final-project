@@ -12,7 +12,7 @@
             <p>Chọn chiến dịch, lọc danh mục và tìm coupon phù hợp với bạn.</p>
         </div>
 
-        <a href="<?= e(url('/campaigns/' . (int) $campaignPreview['id'])) ?>">
+        <a href="<?= e(url('/campaigns/' . (int) $campaignPreview['id']).'?'.http_build_query(['category_id'=>$selectedCategory,'usage_channel'=>$selectedChannel,'platform'=>$selectedPlatform])) ?>">
             Xem toàn bộ chiến dịch <?= icon('arrow') ?>
         </a>
     </div>
@@ -26,6 +26,7 @@
                     'preview' => (int) $previewOption['id'],
                     'category_id' => $selectedCategory ?? 0,
                     'usage_channel' => $selectedChannel ?? 'ALL',
+                    'platform' => $selectedPlatform ?? 0,
                 ])) ?>#campaign-deals"
                 <?= (int) $previewOption['id'] === (int) $campaignPreview['id']
                     ? 'aria-current="page"'
@@ -89,6 +90,9 @@
             </select>
         </div>
 
+        <div class="campaign-coupon-filter-field">
+            <?php $platformSelectId='campaign-platform-filter'; require __DIR__.'/campaign-platform-filter.php'; ?>
+        </div>
         <div class="campaign-coupon-filter-actions">
             <button type="submit" class="campaign-coupon-filter-submit">
                 Lọc coupon

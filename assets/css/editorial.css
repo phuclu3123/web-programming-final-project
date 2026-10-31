@@ -1882,10 +1882,10 @@ body:has(#campaign-modal) {
   color: #2563eb !important;
 }
 
-/* Khi bấm mở ra: Dàn 3 ô select + nút bấm trên 1 hàng ngang */
-.campaign-advanced[open] .campaign-filter-row {
-  display: flex !important;
-  flex-direction: row !important;
+/* Four filters stay aligned, with actions on their own row. */
+.editorial-campaign-page .campaign-advanced[open] .campaign-filter-row {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: flex-end !important;
   gap: 12px !important;
   width: 100% !important;
@@ -1895,9 +1895,9 @@ body:has(#campaign-modal) {
   padding: 0 !important;
 }
 
-.campaign-advanced[open] .filter-field {
+.editorial-campaign-page .campaign-advanced[open] .filter-field {
   flex: 1 1 0% !important;
-  min-width: 150px !important;
+  min-width: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   margin: 0 !important;
@@ -1922,7 +1922,8 @@ body:has(#campaign-modal) {
   box-sizing: border-box !important;
 }
 
-.campaign-advanced[open] .filter-actions {
+.editorial-campaign-page .campaign-advanced[open] .filter-actions {
+  grid-column: 1 / -1;
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
@@ -2385,4 +2386,18 @@ body:has(#campaign-modal) {
 .calendar-filter-bar .btn-calendar-reset:hover {
   color: #0f172a !important;
   text-decoration: underline !important;
+}
+
+@media (max-width: 900px) {
+  .editorial-campaign-page .campaign-advanced[open] .campaign-filter-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .editorial-campaign-page .campaign-advanced[open] .campaign-filter-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .editorial-campaign-page .campaign-advanced[open] .filter-actions {
+    flex-wrap: wrap;
+  }
 }

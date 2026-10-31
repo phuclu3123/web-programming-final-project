@@ -45,7 +45,7 @@ final class CampaignController extends Controller
             $this->service->create((int)Auth::id(), null, $input);
             Session::flash('success', 'Đã tạo Campaign nền tảng.');
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            $this->flashFailure($e);
         }
         Response::redirect(url('/admin/campaigns'));
     }
@@ -60,7 +60,7 @@ final class CampaignController extends Controller
             $this->admin->setCampaignStatus((int)$id, strtoupper((string)$request->input('status', '')));
             Session::flash('success', 'Đã cập nhật Campaign.');
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            $this->flashFailure($e);
         }
         Response::redirect(url('/admin/campaigns'));
     }
@@ -91,7 +91,7 @@ final class CampaignController extends Controller
             $this->campaigns->attach((int)Auth::id(), (int)$id, (int)$request->input('coupon_id', 0));
             Session::flash('success', 'Đã gắn coupon vào Campaign.');
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            $this->flashFailure($e);
         }
         Response::redirect(url('/admin/campaigns/' . (int)$id));
     }
@@ -106,8 +106,14 @@ final class CampaignController extends Controller
             $this->campaigns->detachAdmin((int)$id, (int)$couponId);
             Session::flash('success', 'Đã gỡ coupon khỏi Campaign.');
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            $this->flashFailure($e);
         }
         Response::redirect(url('/admin/campaigns/' . (int)$id));
+    }
+
+    private function flashFailure(Throwable $error): void
+    {
+        if ($error instanceof \mysqli_sql_exception) error_log('Admin campaign write failed: '.get_class($error));
+        Session::flash('error',$error instanceof \mysqli_sql_exception ? 'Không thể lưu thay đổi chiến dịch lúc này.' : $error->getMessage());
     }
 }

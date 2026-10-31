@@ -14,7 +14,7 @@
 
     <?php 
     // Tự động mở bộ lọc nếu người dùng đang chọn lọc
-    $hasCampaignFilters = !empty($selectedCategory) || ($selectedChannel !== 'ALL') || $phase !== 'ALL';
+    $hasCampaignFilters = !empty($selectedCategory) || !empty($selectedPlatform) || ($selectedChannel !== 'ALL') || $phase !== 'ALL';
     ?>
 
     <!-- BỘ LỌC CHIẾN DỊCH (TẮT/MỞ DẠNG TEXT TRONG SUỐT) -->
@@ -53,7 +53,11 @@
                 </select>
             </div>
 
-            <!-- 3. Thời gian -->
+            <div class="filter-field">
+                <?php $platformSelectId='campaign-platform'; require __DIR__.'/../partials/campaign-platform-filter.php'; ?>
+            </div>
+
+            <!-- Thời gian -->
             <div class="filter-field">
                 <label for="campaign-status">Thời gian</label>
                 <select id="campaign-status" name="phase" class="form-select">
@@ -134,7 +138,7 @@
     <?php require __DIR__ . '/../partials/campaign-deals.php'; ?>
     <?php if ($listing['pages'] > 1): ?><nav class="campaign-pagination" aria-label="Phân trang chiến dịch">
         <?php for ($target=max(1,$listing['page']-2); $target<=min($listing['pages'],$listing['page']+2); ++$target): ?>
-        <a href="<?= e(url('/campaigns').'?'.http_build_query(['phase'=>$phase,'category_id'=>$selectedCategory,'usage_channel'=>$selectedChannel,'page'=>$target])) ?>" <?= $target===$listing['page'] ? 'aria-current="page"' : '' ?>><?= $target ?></a>
+        <a href="<?= e(url('/campaigns').'?'.http_build_query(['phase'=>$phase,'category_id'=>$selectedCategory,'usage_channel'=>$selectedChannel,'platform'=>$selectedPlatform,'page'=>$target])) ?>" <?= $target===$listing['page'] ? 'aria-current="page"' : '' ?>><?= $target ?></a>
         <?php endfor; ?>
     </nav><?php endif; ?>
 </div>

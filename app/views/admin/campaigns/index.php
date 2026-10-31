@@ -14,6 +14,7 @@ use App\Core\Session; ?>
                             required></div>
                     <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control" name="description"
                             rows="3"></textarea></div>
+                    <?php $bannerValue=''; require __DIR__.'/../../partials/campaign-banner-field.php'; ?>
                     <div class="mb-3"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local" class="form-control"
                             name="starts_at" required></div>
                     <div class="mb-3"><label>Kết thúc</label><input aria-label="Kết thúc" type="datetime-local" class="form-control"

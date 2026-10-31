@@ -9,7 +9,7 @@
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                     <?php if(!$isEdit):?><div class="mb-3"><label>Merchant</label><select aria-label="Cửa hàng" name="merchant_id"
                             class="form-control" required><?php foreach($shops as $shop):?><option
-                                value="<?= (int)$shop['id'] ?>"><?= e((string)$shop['name']) ?></option>
+                                value="<?= (int)$shop['id'] ?>" <?= (int)($old['merchant_id'] ?? 0)===(int)$shop['id'] ? 'selected' : '' ?>><?= e((string)$shop['name']) ?></option>
                             <?php endforeach;?></select></div><?php else:?><div class="mb-3">
                         <label>Cửa hàng</label><input aria-label="Cửa hàng của chiến dịch" class="form-control" disabled
                             value="<?= e((string)$campaign['merchant_name']) ?>"></div><?php endif;?>
@@ -17,6 +17,7 @@
                             maxlength="200" required value="<?= e((string)($old['name']??'')) ?>"></div>
                     <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả chiến dịch" class="form-control" name="description"
                             rows="4"><?= e((string)($old['description']??'')) ?></textarea></div>
+                    <?php $bannerValue=(string)($old['banner_path'] ?? ''); require __DIR__.'/../../partials/campaign-banner-field.php'; ?>
                     <div class="row g-3">
                         <div class="mb-3 col-md-6"><label>Bắt đầu</label><input aria-label="Bắt đầu" type="datetime-local"
                                 class="form-control" name="starts_at" required

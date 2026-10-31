@@ -125,6 +125,31 @@ function campaignArtwork(array $campaign): array
     return ['technology','indigo'];
 }
 
+/** Banner is a browser image URL, never a server-side download or upload. */
+function normalizeCampaignBanner(?string $value): ?string
+{
+    $value=trim($value ?? '');
+    if ($value==='') return null;
+    if (!mb_check_encoding($value,'UTF-8') || mb_strlen($value)>500 || preg_match('~[\x00-\x20\x7f\\\\]~',$value)) {
+        throw new RuntimeException('Đường dẫn banner không hợp lệ hoặc dài quá 500 ký tự.');
+    }
+    if (str_starts_with(strtolower($value),'https://') && safeHttpUrl($value)!==null) return $value;
+    $path=ltrim($value,'/');
+    if (str_starts_with($value,'//') || !preg_match('~\A(?:assets/images|public/(?:images|uploads))/[A-Za-z0-9_./-]+\.(?:png|jpe?g|webp|avif|gif)\z~i',$path)
+        || preg_match('~(?:^|/)\.{1,2}(?:/|$)~',$path)) throw new RuntimeException('Banner cần là URL HTTPS hoặc ảnh có sẵn trong assets/images, public/images, public/uploads.');
+    $root=str_replace('\\','/',realpath(dirname(__DIR__)) ?: dirname(__DIR__));
+    $resolved=realpath($root.'/'.$path);
+    if (!$resolved || !is_file($resolved) || !str_starts_with(str_replace('\\','/',$resolved),$root.'/')) throw new RuntimeException('Không tìm thấy ảnh banner trong ứng dụng.');
+    return $path;
+}
+
+function campaignBannerUrl(array $campaign): ?string
+{
+    try { $path=normalizeCampaignBanner($campaign['banner_path'] ?? null); }
+    catch (RuntimeException $error) { return null; } // Legacy invalid values use artwork.
+    return $path===null ? null : (str_starts_with(strtolower($path),'https://') ? $path : url('/'.$path));
+}
+
 function editorialTitle(string $title): string
 {
     return trim(str_replace('[DEMO]','',$title));

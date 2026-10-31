@@ -19,23 +19,29 @@ final class CampaignService
         $data = $this->normalize($input);
         $slugBase = slugify($data['name']);
         $slug = $slugBase . '-' . strtolower(substr(bin2hex(random_bytes(3)), 0, 6));
-        return $this->campaigns->create($actorId, $merchantId, $data['name'], $slug, $data['description'], $data['starts_at_utc'], $data['ends_at_utc'], $data['status']);
+        return $this->campaigns->create($actorId, $merchantId, $data['name'], $slug, $data['description'], $data['starts_at_utc'], $data['ends_at_utc'], $data['status'], $data['banner_path']);
     }
 
     /** @param array<string,mixed> $input */
     public function updateOwned(int $campaignId, int $userId, array $input): void
     {
         $data = $this->normalize($input);
-        $this->campaigns->updateOwned($campaignId, $userId, $data['name'], $data['description'], $data['starts_at_utc'], $data['ends_at_utc'], $data['status']);
+        $this->campaigns->updateOwned($campaignId, $userId, $data['name'], $data['description'], $data['starts_at_utc'], $data['ends_at_utc'], $data['status'], $data['banner_path']);
     }
 
-    /** @param array<string,mixed> $input @return array{name:string,description:?string,starts_at_utc:string,ends_at_utc:string,status:string} */
+    /** @param array<string,mixed> $input @return array{name:string,description:?string,banner_path:?string,starts_at_utc:string,ends_at_utc:string,status:string} */
     private function normalize(array $input): array
     {
+        foreach (['name','description','status','starts_at','ends_at','banner_path'] as $field) {
+            if (isset($input[$field]) && (!is_string($input[$field]) || !mb_check_encoding($input[$field],'UTF-8'))) {
+                throw new RuntimeException('Thông tin chiến dịch không hợp lệ.');
+            }
+        }
         $name = trim((string) ($input['name'] ?? ''));
         $description = trim((string) ($input['description'] ?? ''));
         $status = strtoupper(trim((string) ($input['status'] ?? 'DRAFT')));
         if ($name === '' || mb_strlen($name) > 200) throw new RuntimeException('Tên Campaign là bắt buộc và tối đa 200 ký tự.');
+        if (mb_strlen($description)>10000) throw new RuntimeException('Mô tả chiến dịch tối đa 10.000 ký tự.');
         if (!in_array($status, ['DRAFT', 'PUBLISHED'], true)) throw new RuntimeException('Merchant chỉ có thể lưu nháp hoặc xuất bản Campaign.');
         $start = $this->localToUtc((string) ($input['starts_at'] ?? ''));
         $end = $this->localToUtc((string) ($input['ends_at'] ?? ''));
@@ -45,7 +51,7 @@ final class CampaignService
             throw new RuntimeException('Campaign phải có thời gian kết thúc sau thời gian bắt đầu.');
         }
         if ((new DateTimeImmutable($end, $utc))->getTimestamp() <= time()) throw new RuntimeException('Campaign phải kết thúc trong tương lai.');
-        return ['name' => $name, 'description' => $description !== '' ? $description : null, 'starts_at_utc' => $start, 'ends_at_utc' => $end, 'status' => $status];
+        return ['name' => $name, 'description' => $description !== '' ? $description : null, 'banner_path'=>normalizeCampaignBanner($input['banner_path'] ?? ''), 'starts_at_utc' => $start, 'ends_at_utc' => $end, 'status' => $status];
     }
 
     private function localToUtc(string $value): ?string
