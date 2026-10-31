@@ -139,6 +139,7 @@ $router->post('/admin/coupons/{id}/moderate', [AdminCouponController::class, 'mo
 $router->get('/admin/coupons/{id}/edit', [AdminCouponController::class, 'edit']);
 $router->post('/admin/coupons/{id}/edit', [AdminCouponController::class, 'update']);
 $router->post('/admin/coupons/{id}/expire', [AdminCouponController::class, 'expire']);
+$router->post('/admin/coupons/{id}/revoke', [AdminCouponController::class, 'revoke']);
 $router->post('/admin/coupons/{id}/delete', [AdminCouponController::class, 'delete']);
 $router->get('/admin/reports', [AdminReportController::class, 'index']);
 $router->post('/admin/reports/{id}/resolve', [AdminReportController::class, 'resolve']);

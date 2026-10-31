@@ -35,7 +35,9 @@ Tên đăng nhập, mật khẩu và phân quyền shop nằm tại [docs/DEMO_D
 
 ## Database đã có dữ liệu
 
-**Không import lại schema.sql**: đây là bản cài mới, không phải migration. Máy đang chạy `dbcouponshubweb_v2` đã có cấu trúc/dữ liệu, không cần nạp hai file này.
+**Không import lại schema.sql**: đây là bản cài mới, không phải migration. Máy đang chạy `dbcouponshubweb_v2` đã có dữ liệu không nạp lại schema/demo.
+
+Khi cập nhật đợt 3 ngày 31/10/2026, backup rồi import riêng [migrations/20261031_phase3_risk_controls.sql](migrations/20261031_phase3_risk_controls.sql) vào database đang sử dụng. Script cập nhật view hiệu lực và procedure kiểm duyệt để chặn bật lại coupon đã thu hồi; không thay bảng, seed hay sửa bản ghi hiện có. Máy cài mới bằng schema hiện tại đã có thay đổi này. Xem [nghiệm thu đợt 3](../docs/PHASE3_ACCEPTANCE.md).
 
 `demo.sql` kiểm tra cả 21 bảng và từ chối nạp nếu bất kỳ bảng nào đã có dữ liệu. Mọi INSERT nằm trong một transaction; lỗi giữa chừng sẽ rollback toàn bộ dữ liệu demo, không ghi đè tài khoản hay mật khẩu có sẵn. Không nạp thêm bằng CLI sau khi đã import demo.sql.
 

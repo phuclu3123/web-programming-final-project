@@ -35,13 +35,14 @@ use App\Core\Session; ?>
             <div class="card-body">
                 <h2 class="h5">Gắn coupon ACTIVE</h2>
                 <form method="post" action="<?= e(url('/admin/campaigns/' . (int)$campaign['id'] . '/attach')) ?>">
-                    <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><select name="coupon_id" aria-label="Coupon để gắn vào chiến dịch"
-                        class="form-control mb-3" required>
+                    <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><select name="coupon_id"
+                        aria-label="Coupon để gắn vào chiến dịch" class="form-control mb-3" required>
                         <option value="">-- Chọn coupon --</option><?php foreach ($eligible as $c): ?><option
                                 value="<?= (int)$c['id'] ?>"><?= e((string)$c['merchant_name']) ?> ·
                                 <?= e((string)$c['title']) ?></option><?php endforeach; ?>
                     </select><button class="btn btn-primary w-100">Gắn vào Campaign</button>
-                </form><small class="text-muted d-block mt-2">Chiến dịch nền tảng có thể có mã từ nhiều cửa hàng. Coupon cần còn hiệu lực trong thời gian diễn ra chiến dịch.</small>
+                </form><small class="text-muted d-block mt-2">Chiến dịch nền tảng có thể có mã từ nhiều cửa hàng. Coupon
+                    cần còn hiệu lực trong thời gian diễn ra chiến dịch.</small>
             </div>
         </div>
     </div>

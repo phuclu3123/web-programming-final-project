@@ -110,8 +110,9 @@ $campaignEnded = time() >= strtotime($campaign['ends_at'] . ' UTC');
         <?php if (!$coupons): ?>
 
             <div class="member-empty">
-                <strong>Không tìm thấy coupon phù hợp.</strong>
-                <p>Thử chọn danh mục hoặc kênh sử dụng khác nhé.</p>
+                <strong><?= $campaignEnded ? 'Chiến dịch đã kết thúc.' : 'Không tìm thấy coupon phù hợp.' ?></strong>
+                <p><?= $campaignEnded ? 'Ưu đãi còn hạn vẫn có thể được tìm thấy ngoài chiến dịch.' : 'Thử chọn danh mục, nền tảng hoặc kênh sử dụng khác nhé.' ?></p>
+                <?php if ($campaignEnded): ?><a href="<?= e(url('/coupons')) ?>">Khám phá coupon còn hiệu lực <?= icon('arrow') ?></a><?php endif; ?>
             </div>
 
         <?php else: ?>

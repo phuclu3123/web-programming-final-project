@@ -38,6 +38,13 @@ final class AdminCouponService
         $this->change($actorId, $couponId, $reason, true);
     }
 
+    public function revoke(int $actorId, int $couponId, string $reason): void
+    {
+        $reason=trim($reason);
+        if ($actorId<=0 || $couponId<=0 || !mb_check_encoding($reason,'UTF-8') || mb_strlen($reason)<10 || mb_strlen($reason)>500) throw new RuntimeException('Lý do thu hồi phải từ 10 đến 500 ký tự.');
+        $this->repo->revoke($actorId,$couponId,$reason);
+    }
+
     private function change(int $actorId, int $couponId, string $reason, bool $delete): void
     {
         $reason = trim($reason);

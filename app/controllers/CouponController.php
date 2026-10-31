@@ -12,11 +12,13 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Core\ValidationException;
 use App\Repositories\CategoryRepository;
+use App\Repositories\CouponEventRepository;
 use App\Repositories\CouponRepository;
 use App\Repositories\InteractionRepository;
 use App\Repositories\MerchantRepository;
 use App\Repositories\SavedCouponRepository;
 use App\Services\CouponService;
+use App\Services\CouponEventService;
 use App\Services\InteractionService;
 use RuntimeException;
 use Throwable;
@@ -71,11 +73,28 @@ final class CouponController extends Controller
             return;
         }
 
+        // Count genuine public detail visits. A repeat visit within 15 minutes in
+        // the same browser session is not counted again. Analytics must never
+        // prevent a valid coupon page from loading if the event store is down.
+        try {
+            (new CouponEventService(new CouponEventRepository(Database::connection())))
+                ->recordView(Auth::id(), (int) $couponId);
+        } catch (Throwable $e) {
+            error_log('Coupon VIEW analytics unavailable: ' . get_class($e));
+        }
+
         $state = $this->interactions->initialState(Auth::id(), (int) $couponId);
 
         $this->view('coupons/show', [
             'pageTitle' => (string) $coupon['title'],
             'coupon' => $coupon,
+            'relatedCoupons' => $this->coupons->relatedPublic(
+                (int) $couponId,
+                (int) $coupon['merchant_id'],
+                (int) $coupon['category_id'],
+                (string) $coupon['discount_type'],
+                4
+            ),
             'interactionState' => $state,
         ]);
     }
@@ -157,9 +176,11 @@ final class CouponController extends Controller
             $savedCouponIds = $this->savedIdsFor($rows);
             ob_start();
             try {
-                require dirname(__DIR__).'/views/partials/community-coupon-results.php';
+                require dirname(__DIR__) . '/views/partials/community-coupon-results.php';
                 $cardsHtml = (string)ob_get_contents();
-            } finally { ob_end_clean(); }
+            } finally {
+                ob_end_clean();
+            }
             Response::json(['success' => true, 'data' => $data, 'cardsHtml' => $cardsHtml, 'filters' => $filters, 'pagination' => $pagination]);
         } catch (Throwable $e) {
             Response::json([
@@ -195,8 +216,8 @@ final class CouponController extends Controller
 
     private function savedIdsFor(array $coupons): array
     {
-        return in_array(Auth::role(), ['USER','MERCHANT'], true)
-            ? (new SavedCouponRepository(Database::connection()))->savedIds((int)Auth::id(), array_column($coupons,'id'))
+        return in_array(Auth::role(), ['USER', 'MERCHANT'], true)
+            ? (new SavedCouponRepository(Database::connection()))->savedIds((int)Auth::id(), array_column($coupons, 'id'))
             : [];
     }
 

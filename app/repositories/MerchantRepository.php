@@ -107,9 +107,18 @@ final class MerchantRepository implements \App\Contracts\MerchantRepositoryInter
 
     public function updateProfile(int $merchantId, int $userId, string $name, ?string $description, ?string $websiteUrl): void
     {
-        if ($this->findOwnedApproved($merchantId, $userId) === null) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
-        $stmt = $this->db->prepare('UPDATE merchants SET name=?,description=?,website_url=? WHERE id=?');
-        $stmt->execute([$name, $description, $websiteUrl, $merchantId]);
+        $this->db->beginTransaction();
+        try {
+            $lock=$this->db->prepare("SELECT m.id FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id JOIN users u ON u.id=mm.user_id WHERE m.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL AND u.role='MERCHANT' AND u.status='ACTIVE' AND u.deleted_at IS NULL FOR UPDATE");
+            $lock->execute([$merchantId,$userId]);
+            if (!$lock->fetchColumn()) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
+            $stmt = $this->db->prepare('UPDATE merchants SET name=?,description=?,website_url=? WHERE id=?');
+            $stmt->execute([$name, $description, $websiteUrl, $merchantId]);
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
     /** @return array<string,int> */

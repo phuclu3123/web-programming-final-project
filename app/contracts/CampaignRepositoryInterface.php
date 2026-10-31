@@ -12,7 +12,7 @@ interface CampaignRepositoryInterface
     public function publicListing(string $phase, int $page, int $pageSize = 9): array;
     public function publicFilteredListing(string $phase, int $categoryId, string $usageChannel, int $page, int $pageSize = 9, int $merchantId = 0): array;
     public function publicCalendar(int $year, int $month = 0): array;
-    public function findPublic(int $id): ?array;
+    public function findPublic(int $id, bool $includeEnded = false): ?array;
     public function publicCoupons(int $campaignId, int $categoryId = 0, string $usageChannel = 'ALL', int $merchantId = 0): array;
 
     public function publicCategories(): array;

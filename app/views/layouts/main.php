@@ -23,32 +23,47 @@ $currentPath = (new \App\Core\Request())->path();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="<?= e(asset('/css/style.css')) ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/design-system.css')) ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/discovery.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/discovery.css') ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/member.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/member.css') ?>">
-    <script src="<?= e(url('/assets/js/member.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/member.js') ?>" defer></script>
-    <script src="<?= e(url('/assets/js/discovery.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/discovery.js') ?>" defer></script>
-    <link rel="stylesheet" href="<?= e(url('/assets/css/editorial.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/editorial.css') ?>">
-    <script src="<?= e(url('/assets/js/editorial.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/editorial.js') ?>" defer></script>
-    <script src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/campaign-clock.js') ?>" defer></script>
-    <link rel="stylesheet" href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/product.css') ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/release.css') ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/integration.css') ?>">
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/discovery.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/discovery.css') ?>">
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/member.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/member.css') ?>">
+    <script src="<?= e(url('/assets/js/member.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/member.js') ?>"
+        defer></script>
+    <script
+        src="<?= e(url('/assets/js/discovery.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/discovery.js') ?>"
+        defer></script>
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/editorial.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/editorial.css') ?>">
+    <script
+        src="<?= e(url('/assets/js/editorial.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/editorial.js') ?>"
+        defer></script>
+    <script
+        src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/campaign-clock.js') ?>"
+        defer></script>
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/product.css') ?>">
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/release.css') ?>">
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/integration.css') ?>">
 </head>
 
 <body class="unified-page">
-<a class="skip-link" href="#main">Đến nội dung chính</a>
+    <a class="skip-link" href="#main">Đến nội dung chính</a>
     <?php require __DIR__ . '/../partials/public-header.php'; ?>
     <main id="main" class="member-main py-4">
         <div class="container-wide">
-            <?php if ($currentUser && in_array($currentUser['role'], ['USER','MERCHANT'], true)
-                && in_array($currentPath, ['/account','/saved-coupons','/my-coupons','/coupons/create','/merchant/apply'], true)) {
+            <?php if (
+                $currentUser && in_array($currentUser['role'], ['USER', 'MERCHANT'], true)
+                && in_array($currentPath, ['/account', '/saved-coupons', '/my-coupons', '/coupons/create', '/merchant/apply'], true)
+            ) {
                 require __DIR__ . '/../partials/personal-nav.php';
             } ?>
             <?php foreach ([['success', $success, 12000], ['info', $info, 12000], ['warning', $warning, 15000], ['danger', $error, 20000]] as [$type, $message, $timeout]): if ($message): ?>
                     <div class="alert alert-<?= e($type) ?> alert-dismissible fade show auto-dismiss-alert"
-                        data-timeout="<?= (int)$timeout ?>" role="alert"><?= e($message) ?><button type="button" class="btn-close"
-                            data-bs-dismiss="alert" aria-label="Đóng"></button></div><?php endif;
-                                                                            endforeach; ?><?= $content ?>
+                        data-timeout="<?= (int)$timeout ?>" role="alert"><?= e($message) ?><button type="button"
+                            class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button></div><?php endif;
+                                                                                                endforeach; ?><?= $content ?>
         </div>
     </main>
     <?php require __DIR__ . '/../partials/public-footer.php'; ?>

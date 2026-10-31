@@ -12,7 +12,8 @@ use App\Core\Session; ?>
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                     <div class="mb-3">
                         <label>Hình thức</label>
-                        <select aria-label="Hình thức yêu cầu" name="mode" id="merchant-apply-mode" class="form-control">
+                        <select aria-label="Hình thức yêu cầu" name="mode" id="merchant-apply-mode"
+                            class="form-control">
                             <option value="claim">Xin quản lý Merchant/Shop đã có trên hệ thống</option>
                             <option value="new">Tạo hồ sơ Merchant mới</option>
                         </select>
@@ -33,10 +34,10 @@ use App\Core\Session; ?>
                     <div id="merchant-new-block" class="d-none">
                         <div class="mb-3"><label>Tên Merchant</label><input aria-label="Tên" name="name" maxlength="160"
                                 class="form-control"></div>
-                        <div class="mb-3"><label>Website</label><input aria-label="Website cửa hàng" name="website_url" type="url"
-                                class="form-control" placeholder="https://..."></div>
-                        <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả" name="description" class="form-control"
-                                rows="4"></textarea></div>
+                        <div class="mb-3"><label>Website</label><input aria-label="Website cửa hàng" name="website_url"
+                                type="url" class="form-control" placeholder="https://..."></div>
+                        <div class="mb-3"><label>Mô tả</label><textarea aria-label="Mô tả" name="description"
+                                class="form-control" rows="4"></textarea></div>
                     </div>
                     <div class="mb-3"><label for="evidence_reference">Bằng chứng quyền đại diện (link hoặc mã tài
                             liệu)</label><input id="evidence_reference" name="evidence_reference" class="form-control"
@@ -57,7 +58,14 @@ use App\Core\Session; ?>
                     <div class="border rounded p-3 mb-2">
                         <strong><?= e((string)$item['name']) ?></strong> <span class="small text-muted">— Mã đơn
                             #<?= (int)$item['id'] ?></span><br>
-                        <span class="badge bg-<?= e(match ((string)$item['status']) { 'APPROVED' => 'success', 'PENDING' => 'warning', 'REJECTED' => 'danger', 'LOCKED' => 'dark', default => 'secondary' }) ?>"><?= e((string)$item['status']) ?></span>
+                        <span
+                            class="badge bg-<?= e(match ((string)$item['status']) {
+                                                'APPROVED' => 'success',
+                                                'PENDING' => 'warning',
+                                                'REJECTED' => 'danger',
+                                                'LOCKED' => 'dark',
+                                                default => 'secondary'
+                                            }) ?>"><?= e((string)$item['status']) ?></span>
                         <?php if (!empty($item['review_note'])): ?><div class="small text-muted mt-2">Ghi chú:
                                 <?= e((string)$item['review_note']) ?></div><?php endif; ?>
                     </div>

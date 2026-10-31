@@ -19,12 +19,14 @@ final class CouponEventController extends Controller
     {
         $couponId = filter_var($id, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
         $event = $request->input('event', '');
-        if ($couponId === false || !is_string($event) || $event !== 'COPY') {
+        if ($couponId === false || !is_string($event) || !in_array($event, ['COPY', 'SHARE'], true)) {
             Response::json(['success'=>false,'message'=>'Sự kiện coupon không hợp lệ.'],422);
         }
         $actorId = Auth::id(); // null for anonymous visitors; never trust a client-supplied ID.
         $service = new CouponEventService(new CouponEventRepository(Database::connection()));
-        $recorded = $service->recordCopy($actorId, (int)$couponId);
+        $recorded = $event === 'SHARE'
+            ? $service->recordShare($actorId, (int)$couponId)
+            : $service->recordCopy($actorId, (int)$couponId);
         Response::json(['success'=>true,'recorded'=>$recorded]);
     }
 }

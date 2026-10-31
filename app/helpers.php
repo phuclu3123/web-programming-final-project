@@ -250,7 +250,7 @@ if (!function_exists('coupon_status_label')) {
             'REJECTED' => 'Bị từ chối',
             'EXPIRED' => 'Đã hết hạn',
             'DISABLED' => 'Đã tắt',
-            'ARCHIVED' => 'Đã lưu trữ',
+            'ARCHIVED' => 'Đã thu hồi / lưu trữ',
             default => $status,
         };
     }

@@ -179,7 +179,8 @@ $makePageLink = static function (int $next) use ($filters): string {
             </div>
             <div class="modal-body">Bạn muốn bỏ lưu <strong id="savedRemoveName"></strong>? Hành động này không xóa
                 coupon khỏi hệ thống.</div>
-            <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Quay
+            <div class="modal-footer"><button type="button" class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal">Quay
                     lại</button><button type="button" class="btn btn-danger" id="savedConfirmRemove">Xác nhận bỏ
                     lưu</button></div>
         </div>

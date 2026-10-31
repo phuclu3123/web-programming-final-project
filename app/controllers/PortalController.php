@@ -25,12 +25,19 @@ final class PortalController extends Controller
         $campaigns = new CampaignRepository($db);
         $coupons = new CouponRepository($db);
         $merchants = new MerchantRepository($db);
+        // Guests and non-USER accounts receive only the existing public sections.
+        $viewer = Auth::user($db);
+        $personalizedDeals = is_array($viewer) && ($viewer['role'] ?? '') === 'USER'
+            ? $coupons->personalizedForUser((int) $viewer['id'], 6)
+            : [];
 
         $this->view('home/index', [
             'pageTitle' => 'CouponHub',
             'currentCampaigns' => $campaigns->publicCurrent(2),
             'upcomingCampaigns' => $campaigns->publicUpcoming(4),
             'hotDeals' => $coupons->hotDeals(6),
+            'trendingDeals' => $coupons->trendingPublic(6),
+            'personalizedDeals' => $personalizedDeals,
             'popularMerchants' => $merchants->popular(6),
             'recentArticles' => (new ArticleRepository($db))->published(3),
         ]);
@@ -41,11 +48,13 @@ final class PortalController extends Controller
         $actor = Auth::requireAuth();
         $users = new UserRepository(Database::connection());
         $userId = (int) Auth::id();
+        $rewardSummary = $users->rewardSummary($userId);
 
         $this->view('dashboard/index', [
             'pageTitle' => 'Tài khoản của tôi',
             'actor' => $actor,
-            'rewardSummary' => $users->rewardSummary($userId),
+            'rewardSummary' => $rewardSummary,
+            'contributorQuality' => \App\Services\ContributorQualityService::fromSummary($rewardSummary),
             'pointHistory' => $users->pointHistory($userId),
             'savedCount' => (new SavedCouponRepository(Database::connection()))->countForUser($userId),
             'savedPreview' => (new SavedCouponRepository(Database::connection()))->paginated($userId,

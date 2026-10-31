@@ -6,6 +6,8 @@ Cấu hình đăng nhập email/Google/GitHub và OTP qua Resend: [docs/AUTH_SET
 
 Rà soát giai đoạn 2 của Phúc: [kết quả kiểm thử, lỗi đã sửa và phần còn chờ nghiệm thu thật](docs/PHUC_PHASE2_REVIEW.md).
 
+Tích hợp Trúc + Quang đợt 3: [nghiệm thu 21 mục P0, phạm vi chọn lọc và bước nâng cấp database](docs/PHASE3_ACCEPTANCE.md). Máy đã có dữ liệu cần import migration đợt 3 theo hướng dẫn; không nạp lại schema/demo.
+
 ## Bản tích hợp Phúc + Quang
 
 Đã tích hợp thủ công `origin/Quang` tại `cc8a2d8`, giữ UI/Auth hiện tại và dùng **mysqli** cho toàn dự án. MVC, abstract controller, repository/interface và session được dùng chung.

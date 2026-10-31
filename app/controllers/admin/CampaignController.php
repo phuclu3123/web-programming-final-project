@@ -57,7 +57,7 @@ final class CampaignController extends Controller
             return;
         }
         try {
-            $this->admin->setCampaignStatus((int)$id, strtoupper((string)$request->input('status', '')));
+            $this->admin->setCampaignStatus((int)$id, strtoupper($request->post('status')), (int)Auth::id());
             Session::flash('success', 'Đã cập nhật Campaign.');
         } catch (Throwable $e) {
             $this->flashFailure($e);

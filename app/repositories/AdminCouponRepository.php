@@ -134,6 +134,12 @@ final class AdminCouponRepository
         $this->changePublication($actorId, $couponId, 'EXPIRED', $reason, 'COUPON_EXPIRE');
     }
 
+    public function revoke(int $actorId, int $couponId, string $reason): void
+    {
+        // Terminal publication state, without soft-deleting the record or changing dates.
+        $this->changePublication($actorId,$couponId,'ARCHIVED',$reason,'COUPON_REVOKE');
+    }
+
     public function delete(int $actorId, int $couponId, string $reason): void
     {
         $this->changePublication($actorId, $couponId, 'ARCHIVED', $reason, 'COUPON_DELETE');
@@ -170,16 +176,17 @@ final class AdminCouponRepository
             $lock->execute([$couponId]);
             $old = $lock->fetch();
             if (!is_array($old)) throw new RuntimeException('Không tìm thấy coupon hoặc đã xóa.');
-            if ((string)$old['publication_status'] === 'ARCHIVED') throw new RuntimeException('Coupon đã bị xóa.');
+            if ((string)$old['publication_status'] === 'ARCHIVED') throw new RuntimeException('Coupon đã bị thu hồi hoặc lưu trữ.');
+            if ($action==='COUPON_REVOKE' && (string)$old['moderation_status']!=='APPROVED') throw new RuntimeException('Chỉ thu hồi coupon đã được duyệt.');
             if ($state === 'EXPIRED' && ((string)$old['moderation_status'] !== 'APPROVED' || (string)$old['publication_status'] !== 'ENABLED')) {
                 throw new RuntimeException('Chỉ có thể buộc hết hạn coupon đã được duyệt và đang bật.');
             }
-            if ($state === 'ARCHIVED') {
+            if ($action === 'COUPON_DELETE') {
                 $this->db->prepare("UPDATE coupons SET publication_status='ARCHIVED',deleted_at=UTC_TIMESTAMP(),reviewed_by=?,reviewed_at=UTC_TIMESTAMP(),review_note=? WHERE id=?")
                     ->execute([$actorId, $reason, $couponId]);
             } else {
-                $this->db->prepare("UPDATE coupons SET publication_status='EXPIRED',reviewed_by=?,reviewed_at=UTC_TIMESTAMP(),review_note=? WHERE id=?")
-                    ->execute([$actorId, $reason, $couponId]);
+                $this->db->prepare('UPDATE coupons SET publication_status=?,reviewed_by=?,reviewed_at=UTC_TIMESTAMP(),review_note=? WHERE id=?')
+                    ->execute([$state,$actorId, $reason, $couponId]);
             }
             $this->recordHistory($couponId, $actorId, $old, (string)$old['moderation_status'], $state, $reason);
             $this->recordActivity($actorId, $couponId, $action, $reason);

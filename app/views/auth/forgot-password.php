@@ -1,4 +1,6 @@
-<?php use App\Core\Session; ?>
+<?php
+
+use App\Core\Session; ?>
 <div class="row justify-content-center">
     <div class="col-md-7 col-lg-5">
         <div class="card shadow-sm auth-card">
@@ -12,15 +14,15 @@
                     <div class="mb-3">
                         <label for="reset-email">Email</label>
                         <div class="input-group">
-                            <span class="input-group-text auth-input-icon"><i
-                                        class="fa-solid fa-envelope" aria-hidden="true"></i></span>
+                            <span class="input-group-text auth-input-icon"><i class="fa-solid fa-envelope"
+                                    aria-hidden="true"></i></span>
                             <input type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
                                 id="reset-email" name="email" maxlength="191" autocomplete="email"
                                 placeholder="Nhập email của bạn" value="<?= e((string) ($old['email'] ?? '')) ?>"
                                 required>
                         </div>
                         <?php if (isset($errors['email'])): ?><div class="invalid-feedback d-block">
-                            <?= e($errors['email']) ?></div><?php endif; ?>
+                                <?= e($errors['email']) ?></div><?php endif; ?>
                     </div>
                     <button class="btn btn-primary w-100" type="submit"><i class="fa-solid fa-paper-plane me-1"
                             aria-hidden="true"></i>Gửi liên kết đặt lại</button>

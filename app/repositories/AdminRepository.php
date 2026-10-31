@@ -63,14 +63,27 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
         throw new RuntimeException('Đã chuyển sang xét duyệt đơn riêng cho từng User–Shop tại /admin/merchant-requests.');
     }
 
-    public function setMerchantStatus(int $merchantId, string $action, int $actorId): void
+    public function setMerchantStatus(int $merchantId, string $action, int $actorId, string $note = ''): void
     {
         if (!in_array($action, ['LOCK', 'UNLOCK'], true)) throw new RuntimeException('Hành động không hợp lệ.');
         $current = $action === 'LOCK' ? 'APPROVED' : 'LOCKED';
         $next = $action === 'LOCK' ? 'LOCKED' : 'APPROVED';
-        $stmt = $this->db->prepare('UPDATE merchants SET status=?,reviewed_by=?,reviewed_at=UTC_TIMESTAMP() WHERE id=? AND status=? AND deleted_at IS NULL');
-        $stmt->execute([$next, $actorId, $merchantId, $current]);
-        if ($stmt->rowCount() !== 1) throw new RuntimeException('Trạng thái Shop không phù hợp hoặc không tìm thấy Shop.');
+        $note=trim($note);
+        if (!mb_check_encoding($note,'UTF-8') || mb_strlen($note)<10 || mb_strlen($note)>1000) throw new RuntimeException('Lý do khóa/mở khóa Shop phải từ 10 đến 1.000 ký tự.');
+        $this->db->beginTransaction();
+        try {
+            $this->requireActiveAdmin($actorId);
+            $lock=$this->db->prepare('SELECT status FROM merchants WHERE id=? AND deleted_at IS NULL FOR UPDATE');
+            $lock->execute([$merchantId]);
+            if ($lock->fetchColumn()!==$current) throw new RuntimeException('Trạng thái Shop không phù hợp hoặc không tìm thấy Shop.');
+            $stmt = $this->db->prepare('UPDATE merchants SET status=?,reviewed_by=?,reviewed_at=UTC_TIMESTAMP(),review_note=? WHERE id=?');
+            $stmt->execute([$next, $actorId, $note,$merchantId]);
+            $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')->execute([$actorId,'MERCHANT_'.$action,json_encode(['merchant_id'=>$merchantId,'from'=>$current,'to'=>$next,'note'=>$note],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)]);
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
     /** @return array<int,array<string,mixed>> */
@@ -151,10 +164,24 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
         )->fetchAll();
     }
 
-    public function setCampaignStatus(int $campaignId, string $status): void
+    public function setCampaignStatus(int $campaignId, string $status, int $actorId = 0): void
     {
         if (!in_array($status, ['DRAFT', 'PUBLISHED', 'DISABLED', 'ARCHIVED'], true)) throw new RuntimeException('Trạng thái Campaign không hợp lệ.');
-        $stmt = $this->db->prepare('UPDATE campaigns SET status=? WHERE id=?');
-        $stmt->execute([$status, $campaignId]);
+        $this->db->beginTransaction();
+        try {
+            $this->requireActiveAdmin($actorId);
+            $lock=$this->db->prepare('SELECT status FROM campaigns WHERE id=? FOR UPDATE');
+            $lock->execute([$campaignId]);
+            $old=$lock->fetchColumn();
+            if ($old===false) throw new RuntimeException('Không tìm thấy chiến dịch.');
+            if ($old!==$status) {
+                $this->db->prepare('UPDATE campaigns SET status=? WHERE id=?')->execute([$status,$campaignId]);
+                $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')->execute([$actorId,'CAMPAIGN_STATUS',json_encode(['campaign_id'=>$campaignId,'from'=>$old,'to'=>$status],JSON_THROW_ON_ERROR)]);
+            }
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 }

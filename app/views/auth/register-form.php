@@ -1,4 +1,5 @@
 <?php
+
 use App\Core\Session;
 ?>
 <!-- PHẦN ĐĂNG KÝ: giữ giao diện, bổ sung giới hạn thuộc tính theo database. -->
@@ -34,7 +35,8 @@ use App\Core\Session;
                 placeholder="Nhập tên tài khoản" name="username" autocomplete="username" maxlength="50"
                 aria-describedby="registerUsernameHelp" required>
         </div>
-        <p id="registerUsernameHelp" class="small text-secondary">Tên tài khoản gồm chữ không dấu, số, dấu chấm, gạch dưới hoặc gạch ngang.</p>
+        <p id="registerUsernameHelp" class="small text-secondary">Tên tài khoản gồm chữ không dấu, số, dấu chấm, gạch
+            dưới hoặc gạch ngang.</p>
 
         <!-- Email -->
         <label for="registerEmail" class="form-label">Địa chỉ email</label>
@@ -92,7 +94,8 @@ use App\Core\Session;
             </div>
         </div>
         <p id="registerPasswordHelp" class="small text-secondary">
-            Mật khẩu có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt; tối đa 72 byte (ký tự có dấu có thể chiếm nhiều byte).
+            Mật khẩu có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt; tối đa 72 byte (ký tự có dấu có
+            thể chiếm nhiều byte).
         </p>
 
     </form>

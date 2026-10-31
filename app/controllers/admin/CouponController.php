@@ -125,6 +125,21 @@ final class CouponController extends Controller
         $this->changeState($request, $id, true);
     }
 
+    public function revoke(Request $request, string $id): void
+    {
+        $actor=Auth::requireRole(['ADMIN']);
+        if (!$this->verifyCsrf($request)) return;
+        $couponId=$this->positiveId($id);
+        if ($couponId===null) return;
+        try {
+            $reason=$request->input('reason','');
+            if (!is_string($reason)) throw new RuntimeException('Lý do thu hồi không hợp lệ.');
+            $this->adminService->revoke((int)$actor['id'],$couponId,$reason);
+            Session::flash('success','Đã thu hồi coupon và lưu người xử lý, thời điểm, lý do.');
+        } catch (Throwable $error) { $this->flashFailure($error,'Không thể thu hồi coupon.'); }
+        Response::redirect(url('/admin/coupons'),303);
+    }
+
     private function changeState(Request $request, string $id, bool $delete): void
     {
         Auth::requireRole(['ADMIN']);

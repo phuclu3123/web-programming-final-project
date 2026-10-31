@@ -49,9 +49,11 @@ final class PasswordResetService
         if (!$this->validFormat($token)) {
             return false;
         }
-        if (preg_match('//u', $password) !== 1 || preg_match_all('/./us', $password) < 8 || strlen($password) > 72
+        if (
+            preg_match('//u', $password) !== 1 || preg_match_all('/./us', $password) < 8 || strlen($password) > 72
             || str_contains($password, "\0") || !preg_match('/\p{Lu}/u', $password) || !preg_match('/\p{Ll}/u', $password)
-            || !preg_match('/[0-9]/', $password) || !preg_match('/[^\p{L}\p{N}\s]/u', $password)) {
+            || !preg_match('/[0-9]/', $password) || !preg_match('/[^\p{L}\p{N}\s]/u', $password)
+        ) {
             throw new RuntimeException('Mật khẩu cần ít nhất 8 ký tự, có chữ hoa, chữ thường, số, ký tự đặc biệt và tối đa 72 byte.');
         }
         $hash = password_hash($password, PASSWORD_DEFAULT);

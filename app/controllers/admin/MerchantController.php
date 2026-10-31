@@ -53,10 +53,11 @@ final class MerchantController extends Controller
             return;
         }
         try {
-            $this->repo->setMerchantStatus((int)$id, strtoupper((string)$request->input('action', '')), (int)Auth::id());
+            $this->repo->setMerchantStatus(positiveId($id), strtoupper($request->post('action')), (int)Auth::id(),$request->post('note'));
             Session::flash('success', 'Đã cập nhật trạng thái Shop.');
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            if ($e instanceof \mysqli_sql_exception) error_log('Merchant status failed: '.get_class($e));
+            Session::flash('error',$e instanceof \mysqli_sql_exception ? 'Không thể thay đổi trạng thái Shop lúc này.' : $e->getMessage());
         }
         Response::redirect(url('/admin/merchants'));
     }

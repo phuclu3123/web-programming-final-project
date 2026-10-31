@@ -11,9 +11,9 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
 {
     public function __construct(private Database $db) {}
 
-    private function publicEligibility(): string
+    private function publicEligibility(bool $includeEnded = false): string
     {
-        return "c.status='PUBLISHED' AND c.ends_at>UTC_TIMESTAMP()
+        return "c.status='PUBLISHED'".($includeEnded ? '' : ' AND c.ends_at>UTC_TIMESTAMP()')."
             AND (c.owner_merchant_id IS NULL OR (m.status='APPROVED' AND m.deleted_at IS NULL))";
     }
 
@@ -72,11 +72,11 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
     }
 
     /* @return array<string,mixed>|null */
-    public function findPublic(int $id): ?array
+    public function findPublic(int $id, bool $includeEnded = false): ?array
     {
         $stmt = $this->db->prepare(
             "SELECT c.*,m.name AS merchant_name FROM campaigns c LEFT JOIN merchants m ON m.id=c.owner_merchant_id " .
-                "WHERE c.id=? AND " . $this->publicEligibility() . " LIMIT 1"
+                "WHERE c.id=? AND " . $this->publicEligibility($includeEnded) . " LIMIT 1"
         );
         $stmt->execute([$id]);
         $row = $stmt->fetch();

@@ -21,7 +21,7 @@
 
     function buildQuery(page) {
         var data = $form.serializeArray().filter(function (field) { return field.name !== 'page'; });
-        data.push({name: 'page', value: String(page)});
+        data.push({ name: 'page', value: String(page) });
         return $.param(data);
     }
 
@@ -84,20 +84,20 @@
                 return;
             }
             render(response);
-            var p = response.pagination || {page: 1, totalPages: 1, total: (response.data || []).length};
+            var p = response.pagination || { page: 1, totalPages: 1, total: (response.data || []).length };
             $page.val(p.page);
             renderPagination(p);
             $status.text(p.total + ' ưu đãi phù hợp · Trang ' + p.page + '/' + p.totalPages);
             $('[data-community-total]').text(p.total);
             var filters = response.filters || {};
-            var count = ['merchant_id','discount_type','usage_channel','ending_soon'].filter(function (key) { return Boolean(filters[key]); }).length;
-            $form.find('.community-filter-count').text(count).prop('hidden',count === 0);
+            var count = ['merchant_id', 'discount_type', 'usage_channel', 'ending_soon'].filter(function (key) { return Boolean(filters[key]); }).length;
+            $form.find('.community-filter-count').text(count).prop('hidden', count === 0);
             var browserUrl = $form.attr('action') + '?' + buildQuery(p.page);
             if (window.location.href !== new URL(browserUrl, window.location.href).href) {
                 window.history.pushState({}, '', browserUrl);
             }
             if (Number(p.page) > 1) {
-                document.getElementById('coupon-search-status').scrollIntoView({behavior: 'smooth', block: 'start'});
+                document.getElementById('coupon-search-status').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }).fail(function (xhr) {
             if (xhr.statusText === 'abort') return;

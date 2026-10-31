@@ -11,22 +11,26 @@ $headerLinks = [
 ?>
 <header class="site-header public-header">
     <div class="container-wide header-inner">
-        <a class="brand" href="<?= e(url('/')) ?>" aria-label="CouponHub - Trang chủ"><span class="brand-mark"><span>C</span></span><span class="brand-word">Coupon<em>Hub</em><span class="brand-period">.</span></span></a>
+        <a class="brand" href="<?= e(url('/')) ?>" aria-label="CouponHub - Trang chủ"><span
+                class="brand-mark"><span>C</span></span><span class="brand-word">Coupon<em>Hub</em><span
+                    class="brand-period">.</span></span></a>
         <nav class="site-nav" aria-label="Điều hướng chính">
             <?php foreach ($headerLinks as [$href, $label, $active]): ?>
-            <a href="<?= e(url($href)) ?>" <?= $active ? 'class="active" aria-current="page"' : '' ?>><?= e($label) ?></a>
+                <a href="<?= e(url($href)) ?>"
+                    <?= $active ? 'class="active" aria-current="page"' : '' ?>><?= e($label) ?></a>
             <?php endforeach; ?>
         </nav>
         <div class="header-account">
             <?php require __DIR__ . '/notifications.php'; ?>
-            <a class="header-search" href="<?= e(url('/coupons')) ?>#keyword" aria-label="Tìm kiếm ưu đãi"><?= icon('search') ?></a>
+            <a class="header-search" href="<?= e(url('/coupons')) ?>#keyword"
+                aria-label="Tìm kiếm ưu đãi"><?= icon('search') ?></a>
             <?php require __DIR__ . '/account-menu.php'; ?>
         </div>
         <details class="mobile-site-menu" data-account-dropdown>
             <summary aria-label="Mở điều hướng chính"><span></span><span></span><span></span></summary>
             <nav aria-label="Điều hướng trên điện thoại">
                 <?php foreach ($headerLinks as [$href, $label, $active]): ?>
-                <a href="<?= e(url($href)) ?>" <?= $active ? 'aria-current="page"' : '' ?>><?= e($label) ?></a>
+                    <a href="<?= e(url($href)) ?>" <?= $active ? 'aria-current="page"' : '' ?>><?= e($label) ?></a>
                 <?php endforeach; ?>
             </nav>
         </details>

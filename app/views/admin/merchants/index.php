@@ -1,2 +1,30 @@
-<h1 class="h3 mb-3">Quản lý Merchant/Shop</h1><p class="text-muted">Trạng thái Shop độc lập với yêu cầu cấp quyền của từng User. Để duyệt quyền, vào <a href="<?= e(url('/admin/merchant-requests')) ?>">Đơn đăng ký quản lý</a>.</p>
-<div class="table-responsive"><table class="table table-striped table-bordered bg-white"><thead><tr><th>Shop</th><th>Trạng thái</th><th>Website</th><th>Thao tác Shop</th></tr></thead><tbody><?php foreach($merchants as $m):?><tr><td><?=e((string)$m['name'])?></td><td><span class="badge bg-info text-dark"><?=e((string)$m['status'])?></span></td><td><?=e((string)($m['website_url']??''))?></td><td><?php if(in_array($m['status'],['APPROVED','LOCKED'],true)):?><form method="post" action="<?=e(url('/admin/merchants/'.(int)$m['id'].'/status'))?>"><input type="hidden" name="_token" value="<?=e(\App\Core\Session::csrfToken())?>"><button class="btn btn-sm btn-outline-<?= $m['status']==='APPROVED'?'danger':'success' ?>" name="action" value="<?= $m['status']==='APPROVED'?'LOCK':'UNLOCK' ?>"><?= $m['status']==='APPROVED'?'Khóa':'Mở khóa' ?></button></form><?php endif;?></td></tr><?php endforeach;?></tbody></table></div>
+<h1 class="h3 mb-3">Quản lý Merchant/Shop</h1>
+<p class="text-muted">Trạng thái Shop độc lập với yêu cầu cấp quyền của từng User. Để duyệt quyền, vào <a
+        href="<?= e(url('/admin/merchant-requests')) ?>">Đơn đăng ký quản lý</a>.</p>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered bg-white">
+        <thead>
+            <tr>
+                <th>Shop</th>
+                <th>Trạng thái</th>
+                <th>Website</th>
+                <th>Thao tác Shop</th>
+            </tr>
+        </thead>
+        <tbody><?php foreach ($merchants as $m): ?><tr>
+                    <td><?= e((string)$m['name']) ?></td>
+                    <td><span class="badge bg-info text-dark"><?= e((string)$m['status']) ?></span></td>
+                    <td><?= e((string)($m['website_url'] ?? '')) ?></td>
+                    <td><?php if (in_array($m['status'], ['APPROVED', 'LOCKED'], true)): ?><form method="post"
+                                action="<?= e(url('/admin/merchants/' . (int)$m['id'] . '/status')) ?>"><input type="hidden"
+                                    name="_token" value="<?= e(\App\Core\Session::csrfToken()) ?>">
+                                <label class="form-label" for="shop-status-note-<?= (int)$m['id'] ?>">Lý do <?= $m['status']==='APPROVED' ? 'khóa' : 'mở khóa' ?></label>
+                                <textarea class="form-control mb-2" id="shop-status-note-<?= (int)$m['id'] ?>" name="note" minlength="10" maxlength="1000" required rows="2"></textarea>
+                                <button
+                                    class="btn btn-sm btn-outline-<?= $m['status'] === 'APPROVED' ? 'danger' : 'success' ?>"
+                                    name="action"
+                                    value="<?= $m['status'] === 'APPROVED' ? 'LOCK' : 'UNLOCK' ?>"><?= $m['status'] === 'APPROVED' ? 'Khóa' : 'Mở khóa' ?></button>
+                            </form><?php endif; ?></td>
+                </tr><?php endforeach; ?></tbody>
+    </table>
+</div>

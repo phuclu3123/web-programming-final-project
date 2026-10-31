@@ -34,9 +34,9 @@ final class InteractionService
     /** @return array<string,mixed> */
     public function setFavorite(int $actorId, int $couponId, bool $saved): array
     {
-        // A coupon may expire or be archived after being saved. Users must
-        // still be able to remove it from their library. Only adding a new
-        // favorite requires the coupon to be publicly active.
+        // Coupon có thể hết hạn hoặc bị lưu trữ sau khi user đã lưu.
+        // User vẫn được phép xóa coupon đó khỏi danh sách yêu thích.
+        // Chỉ yêu cầu coupon đang công khai và ACTIVE khi thêm vào danh sách yêu thích.
         if ($saved) {
             $this->assertCouponId($couponId);
         } elseif ($couponId <= 0 || !$this->interactions->isFavorite($actorId, $couponId)) {

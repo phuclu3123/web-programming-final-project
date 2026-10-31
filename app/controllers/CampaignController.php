@@ -40,7 +40,7 @@ final class CampaignController extends Controller
             return;
         }
 
-        $campaign = $this->campaigns->findPublic((int) $id);
+        $campaign = $this->campaigns->findPublic((int) $id,true);
 
         if ($campaign === null) {
             $this->renderError(
