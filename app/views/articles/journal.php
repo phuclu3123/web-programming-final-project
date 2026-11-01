@@ -1,4 +1,5 @@
-<?php $guides=productGuides(); $guideGroups=['doc-dieu-kien-ma'=>'dung-ma','so-sanh-muc-tiet-kiem'=>'tinh-toan','kiem-chung-cung-cong-dong'=>'cong-dong']; ?>
+<?php $guides = productGuides();
+$guideGroups = ['doc-dieu-kien-ma' => 'dung-ma', 'so-sanh-muc-tiet-kiem' => 'tinh-toan', 'kiem-chung-cung-cong-dong' => 'cong-dong']; ?>
 <div class="editorial-article-page studio-journal">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Góc đọc</span></div>
     <header class="journal-heading journal-masthead">
@@ -39,22 +40,26 @@
             </div>
         </div>
         <nav class="journal-topics" aria-label="Lọc chủ đề hướng dẫn">
-            <?php foreach (['all'=>'Tất cả','dung-ma'=>'Dùng mã','tinh-toan'=>'Tính tiết kiệm','cong-dong'=>'Cộng đồng'] as $topic=>$label): ?><a
-                href="<?= e(url('/articles').'?topic='.$topic) ?>#guide-library-title"
-                <?= $guideTopic===$topic ? 'aria-current="page"' : '' ?>><?= e($label) ?></a><?php endforeach; ?></nav>
+            <?php foreach (['all' => 'Tất cả', 'dung-ma' => 'Dùng mã', 'tinh-toan' => 'Tính tiết kiệm', 'cong-dong' => 'Cộng đồng'] as $topic => $label): ?><a
+                    href="<?= e(url('/articles') . '?topic=' . $topic) ?>#guide-library-title"
+                    <?= $guideTopic === $topic ? 'aria-current="page"' : '' ?>><?= e($label) ?></a><?php endforeach; ?>
+        </nav>
         <div class="guide-card-grid">
-            <?php foreach ($guides as $slug=>$item): if ($guideTopic!=='all' && $guideGroups[$slug]!==$guideTopic) continue; require __DIR__.'/../partials/guide-card.php'; endforeach; ?>
+            <?php foreach ($guides as $slug => $item): if ($guideTopic !== 'all' && $guideGroups[$slug] !== $guideTopic) continue;
+                require __DIR__ . '/../partials/guide-card.php';
+            endforeach; ?>
         </div>
     </section>
     <?php if ($articles): ?><section class="studio-section">
-        <div class="studio-section-title">
-            <div><span class="eyebrow">TỪ BAN BIÊN TẬP</span>
-                <h2>Bài viết mới.</h2>
-            </div><span><?= count($articles) ?> bài đã xuất bản</span>
-        </div>
-        <div class="editorial-articles">
-            <?php foreach ($articles as $a): require __DIR__.'/../partials/editorial-article.php'; endforeach; ?></div>
-    </section><?php endif; ?>
+            <div class="studio-section-title">
+                <div><span class="eyebrow">TỪ BAN BIÊN TẬP</span>
+                    <h2>Bài viết mới.</h2>
+                </div><span><?= count($articles) ?> bài đã xuất bản</span>
+            </div>
+            <div class="editorial-articles">
+                <?php foreach ($articles as $a): require __DIR__ . '/../partials/editorial-article.php';
+                endforeach; ?></div>
+        </section><?php endif; ?>
     <section class="studio-manifesto"><span class="eyebrow">ĐỌC XONG, THỬ NGAY</span>
         <h2>Khoản giảm nên hợp<br>với đơn hàng của bạn.</h2><a href="<?= e(url('/index.php')) ?>#estimate">Mở công cụ
             ước tính <?= icon('arrow') ?></a>

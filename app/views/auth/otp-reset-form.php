@@ -1,4 +1,6 @@
-<?php use App\Core\Session; ?>
+<?php
+
+use App\Core\Session; ?>
 <div class="modal-header mx-3 mt-3 pe-5">
     <div>
         <p class="text-success mb-1">Khôi phục tài khoản</p>

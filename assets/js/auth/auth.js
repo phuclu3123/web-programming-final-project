@@ -135,7 +135,7 @@
         const original = button?.textContent;
         try {
             if (button) { button.disabled = true; button.textContent = 'Đang xử lý...'; }
-            const response = await fetch(form.action, {method:'POST', credentials:'same-origin', headers:{Accept:'application/json'}, body:new FormData(form)});
+            const response = await fetch(form.action, { method: 'POST', credentials: 'same-origin', headers: { Accept: 'application/json' }, body: new FormData(form) });
             const result = await response.json();
             if (!response.ok || result.success !== true) { showMessage(form, result.message || 'Không thể xử lý. Hãy thử lại.', 'error'); return; }
             if (result.redirect) {
@@ -213,7 +213,7 @@
                 showMessage(
                     loginForm,
                     result.message ||
-                        "Tạo tài khoản thành công. Hãy đăng nhập.",
+                    "Tạo tài khoản thành công. Hãy đăng nhập.",
                     "success",
                 );
                 loginPassword?.focus({ preventScroll: true });
@@ -335,9 +335,6 @@
             (show ? "Ẩn mật khẩu" : "Hiện mật khẩu") + suffix,
         );
 
-        const icon = button.querySelector("i");
-        icon?.classList.toggle("bi-eye", !show);
-        icon?.classList.toggle("bi-eye-slash", show);
     }
 
     /** Che lại tất cả mật khẩu khi chuyển form hoặc đóng popup. */

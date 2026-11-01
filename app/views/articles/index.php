@@ -1,13 +1,15 @@
 <div class="editorial-article-page">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Bài viết</span></div>
-    <?php if ($articles): $featuredArticle=$articles[0]; [$featuredPhoto,$featuredTopic]=articleTopic($featuredArticle['title']); ?>
-    <article class="editorial-article-feature"><img src="<?= e(editorialPhoto($featuredPhoto,false)) ?>" alt=""
+    <?php if ($articles): $featuredArticle = $articles[0];
+        [$featuredPhoto, $featuredTopic] = articleTopic($featuredArticle['title']); ?>
+    <article class="editorial-article-feature"><img src="<?= e(editorialPhoto($featuredPhoto, false)) ?>" alt=""
             width="1200" height="800" fetchpriority="high">
         <div><span class="eyebrow">GÓC ĐỌC · <?= e($featuredTopic) ?></span>
             <h1><?= e($featuredArticle['title']) ?></h1><?php if ($featuredArticle['summary']): ?><p>
                 <?= e($featuredArticle['summary']) ?></p><?php endif; ?><small><?= e($featuredArticle['author_name']) ?>
-                · <?= e(format_db_datetime($featuredArticle['published_at'],'d/m/Y')) ?></small><a class="btn btn-brand"
-                href="<?= e(url('/articles/'.$featuredArticle['slug'])) ?>">Đọc bài viết <?= icon('arrow') ?></a>
+                · <?= e(format_db_datetime($featuredArticle['published_at'], 'd/m/Y')) ?></small><a
+                class="btn btn-brand" href="<?= e(url('/articles/' . $featuredArticle['slug'])) ?>">Đọc bài viết
+                <?= icon('arrow') ?></a>
         </div>
     </article>
     <div class="editorial-section-head">
@@ -16,11 +18,12 @@
             <p>Hướng dẫn sử dụng coupon và những góc nhìn mua sắm từ CouponHub.</p>
         </div>
     </div>
-    <?php if (count($articles)>1): ?><div class="editorial-articles">
-        <?php foreach (array_slice($articles,1) as $a): require __DIR__.'/../partials/editorial-article.php'; endforeach; ?>
+    <?php if (count($articles) > 1): ?><div class="editorial-articles">
+        <?php foreach (array_slice($articles, 1) as $a): require __DIR__ . '/../partials/editorial-article.php';
+                endforeach; ?>
     </div><?php else: ?><p class="muted">Những bài viết tiếp theo đang được chuẩn bị.</p><?php endif; ?>
     <?php else: ?>
-    <section class="photo-page-hero"><img src="<?= e(editorialPhoto('technology',false)) ?>" alt="" width="1200"
+    <section class="photo-page-hero"><img src="<?= e(editorialPhoto('technology', false)) ?>" alt="" width="1200"
             height="800">
         <div><span class="eyebrow">GÓC ĐỌC COUPONHUB</span>
             <h1>Mua sắm thông minh,<br>bắt đầu từ hiểu rõ.</h1>

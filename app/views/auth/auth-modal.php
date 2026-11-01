@@ -8,10 +8,13 @@ if ($authPath === '/forgot-password') $autoAuthView = ($_GET['step'] ?? '') === 
 <link rel="stylesheet"
     href="<?= e(url('/assets/css/auth/auth.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/auth/auth.css') ?>">
 
+<?php require __DIR__ . '/icon-sprite.php'; ?>
 <dialog class="auth-dialog" id="loginModal" aria-labelledby="loginTitle" data-auth-auto="<?= e($autoAuthView) ?>">
     <div class="modal-dialog modal-dialog-centered login-dialog">
         <div class="modal-content">
-            <button type="button" class="auth-close" data-auth-close aria-label="Đóng">×</button>
+            <button type="button" class="auth-close" data-auth-close aria-label="Đóng cửa sổ xác thực" title="Đóng">
+                <svg class="auth-close-icon" aria-hidden="true" focusable="false"><use href="#auth-fa-xmark"></use></svg>
+            </button>
             <?php foreach (['error', 'success', 'info'] as $kind): $authFlash = \App\Core\Session::flash($kind);
                 if ($authFlash): ?>
                     <p class="mx-4 mt-4 mb-0 auth-message" role="status"

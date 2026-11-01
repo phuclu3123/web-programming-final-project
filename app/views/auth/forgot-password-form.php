@@ -13,7 +13,7 @@
         <label for="forgotPasswordEmail" class="form-label">Email đã đăng ký</label>
 
         <div class="login-input d-flex align-items-center gap-3 mb-3">
-            <i class="bi bi-envelope fs-4 text-secondary ms-3"></i>
+            <svg class="auth-field-icon text-secondary ms-3" aria-hidden="true" focusable="false"><use href="#auth-fa-envelope"></use></svg>
 
             <input id="forgotPasswordEmail" type="email" class="form-control border-0 shadow-none bg-transparent"
                 placeholder="Nhập email đã đăng ký" name="email" autocomplete="email" required>

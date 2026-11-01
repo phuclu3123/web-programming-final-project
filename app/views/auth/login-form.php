@@ -23,7 +23,7 @@ use App\Core\Session;
             <label for="loginAccount" class="form-label">Email hoặc tài khoản</label>
 
             <div class="login-input d-flex align-items-center gap-3 mb-3">
-                <i class="bi bi-envelope fs-4 text-secondary ms-3"></i>
+                <svg class="auth-field-icon text-secondary ms-3" aria-hidden="true" focusable="false"><use href="#auth-fa-envelope"></use></svg>
 
                 <input id="loginAccount" type="text" class="form-control border-0 shadow-none bg-transparent"
                     placeholder="Nhập email hoặc tài khoản" name="account" autocomplete="username" required>
@@ -42,14 +42,14 @@ use App\Core\Session;
             </div>
 
             <div class="login-input d-flex align-items-center gap-3 mb-3">
-                <i class="bi bi-lock fs-4 text-secondary ms-3"></i>
+                <svg class="auth-field-icon text-secondary ms-3" aria-hidden="true" focusable="false"><use href="#auth-fa-lock"></use></svg>
 
                 <input id="loginPassword" type="password" class="form-control border-0 shadow-none bg-transparent"
                     placeholder="Nhập mật khẩu" name="password" autocomplete="current-password" required>
                 <button type="button" class="btn border-0 p-0 me-3 flex-shrink-0 text-secondary"
                     data-password-toggle="loginPassword" aria-controls="loginPassword" aria-label="Hiện mật khẩu"
                     aria-pressed="false">
-                    <i class="bi bi-eye fs-5" aria-hidden="true"></i>
+                    <svg class="auth-password-eye auth-password-eye--show" aria-hidden="true" focusable="false"><use href="#auth-fa-eye"></use></svg><svg class="auth-password-eye auth-password-eye--hide" aria-hidden="true" focusable="false"><use href="#auth-fa-eye-slash"></use></svg>
                 </button>
             </div>
 
@@ -85,7 +85,7 @@ use App\Core\Session;
                         <button type="submit" <?= $ready ? '' : 'disabled title="Chưa cấu hình nhà cung cấp này"' ?>
                             class="btn social-btn w-100 rounded-4 fw-bold d-flex align-items-center justify-content-center gap-3">
                             <?php if ($provider === 'google'): ?><img src="https://www.google.com/favicon.ico" alt=""
-                                    width="20" height="20"><?php else: ?><i class="bi bi-github fs-5"
+                                    width="20" height="20"><?php else: ?><i class="fa-brands fa-github fs-5"
                                     aria-hidden="true"></i><?php endif; ?>
                             <?= e($label) ?>
                         </button>
