@@ -13,7 +13,7 @@ $authInitialView = ($authInitialView ?? '') === 'register' ? 'register' : 'login
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $authInitialView === 'register' ? 'Đăng ký' : 'Đăng nhập' ?> · CouponHub</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="<?= e(url('/assets/vendor/fontawesome/css/all.min.css')) ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/design-system.css')) ?>">
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/member.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/member.css') ?>">
@@ -30,7 +30,6 @@ $authInitialView = ($authInitialView ?? '') === 'register' ? 'register' : 'login
 </head>
 
 <body class="auth-page">
-    <?php require __DIR__ . '/icon-sprite.php'; ?>
     <a class="skip-link" href="<?= e(url((new \App\Core\Request())->path())) ?>#main">Đến nội dung chính</a>
     <?php require __DIR__ . '/../partials/public-header.php'; ?>
     <main id="main" class="auth-stage container-wide">

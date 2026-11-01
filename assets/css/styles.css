@@ -1,5 +1,4 @@
 /* Shared design tokens. Load this file AFTER Bootstrap. */
-
 :root {
   --ink: #183b35;
   --muted: #687872;
@@ -16,7 +15,6 @@
 }
 
 /* PHP views: real links/forms work without JavaScript. */
-
 .category-chip.selected {
   background: var(--forest);
   color: #fff;
@@ -118,18 +116,11 @@ button:disabled {
   cursor: not-allowed;
 }
 
-h1,
-h2,
-h3,
-h4,
-p {
+h1, h2, h3, h4, p {
   margin-top: 0;
 }
 
-h1,
-h2,
-h3,
-h4 {
+h1, h2, h3, h4 {
   font-weight: 650;
   line-height: 1.25;
   letter-spacing: -0.035em;
@@ -256,8 +247,7 @@ p {
   color: var(--ink);
 }
 
-.form-control:focus,
-.form-select:focus {
+.form-control:focus, .form-select:focus {
   border-color: #71977c;
   box-shadow: 0 0 0 3px #71977c22;
 }
@@ -2804,8 +2794,7 @@ body {
   display: none;
 }
 
-.table-date,
-.merchant-table td small {
+.table-date, .merchant-table td small {
   display: block;
 }
 
@@ -2816,7 +2805,6 @@ body {
 }
 
 /* Admin ------------------------------------------------------------------ */
-
 .moderation-grid {
   grid-template-columns: minmax(360px, .92fr) minmax(420px, 1.08fr);
 }
@@ -3035,7 +3023,6 @@ body {
 }
 
 /* Toast ------------------------------------------------------------------ */
-
 .copy-toast {
   right: 26px;
   bottom: 26px;
@@ -3058,7 +3045,6 @@ body {
 }
 
 /* Responsive v2 ---------------------------------------------------------- */
-
 @media (max-width: 1100px) {
   .hero-compact .hero-box {
     grid-template-columns: 1fr minmax(250px, .58fr);
@@ -3279,8 +3265,7 @@ body {
     transform 0.2s ease;
 }
 
-.btn-brand:hover,
-.btn-brand:focus {
+.btn-brand:hover, .btn-brand:focus {
   background: #2443a8;
   border-color: #2443a8;
   color: #fff;

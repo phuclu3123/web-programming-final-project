@@ -23,7 +23,7 @@ use App\Core\Session;
             <label for="loginAccount" class="form-label">Email hoặc tài khoản</label>
 
             <div class="login-input d-flex align-items-center gap-3 mb-3">
-                <svg class="auth-field-icon text-secondary ms-3" aria-hidden="true" focusable="false"><use href="#auth-fa-envelope"></use></svg>
+                <i class="fa-solid fa-envelope auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
                 <input id="loginAccount" type="text" class="form-control border-0 shadow-none bg-transparent"
                     placeholder="Nhập email hoặc tài khoản" name="account" autocomplete="username" required>
@@ -42,14 +42,14 @@ use App\Core\Session;
             </div>
 
             <div class="login-input d-flex align-items-center gap-3 mb-3">
-                <svg class="auth-field-icon text-secondary ms-3" aria-hidden="true" focusable="false"><use href="#auth-fa-lock"></use></svg>
+                <i class="fa-solid fa-lock auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
                 <input id="loginPassword" type="password" class="form-control border-0 shadow-none bg-transparent"
                     placeholder="Nhập mật khẩu" name="password" autocomplete="current-password" required>
                 <button type="button" class="btn border-0 p-0 me-3 flex-shrink-0 text-secondary"
                     data-password-toggle="loginPassword" aria-controls="loginPassword" aria-label="Hiện mật khẩu"
                     aria-pressed="false">
-                    <svg class="auth-password-eye auth-password-eye--show" aria-hidden="true" focusable="false"><use href="#auth-fa-eye"></use></svg><svg class="auth-password-eye auth-password-eye--hide" aria-hidden="true" focusable="false"><use href="#auth-fa-eye-slash"></use></svg>
+                    <i class="fa-solid fa-eye auth-password-eye auth-password-eye--show" aria-hidden="true"></i><i class="fa-solid fa-eye-slash auth-password-eye auth-password-eye--hide" aria-hidden="true"></i>
                 </button>
             </div>
 

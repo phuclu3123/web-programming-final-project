@@ -5,13 +5,11 @@ const path = require('node:path');
 const root = path.join(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
-test('auth close uses a local SVG xmark and remains an accessible button', () => {
+test('auth close uses a Font Awesome xmark and remains an accessible button', () => {
   const modal = read('app/views/auth/auth-modal.php');
-  const sprite = read('app/views/auth/icon-sprite.php');
   const css = read('assets/css/auth/auth.css');
   assert.match(modal, /data-auth-close[^>]*aria-label="Đóng cửa sổ xác thực"/);
-  assert.match(modal, /href="#auth-fa-xmark"/);
-  assert.match(sprite, /id="auth-fa-xmark"/);
+  assert.match(modal, /fa-solid fa-xmark auth-close-icon/);
   assert.match(css, /#loginModal\.auth-dialog \.auth-close:focus-visible/);
   assert.match(css, /#loginModal\.auth-dialog \.auth-close:active/);
   assert.match(css, /\.login-input > \.auth-field-icon\s*\{[^}]*margin-left:\s*8px !important;/s);
