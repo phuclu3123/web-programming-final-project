@@ -4,7 +4,6 @@ $autoAuthView = in_array($authPath, ['/register'], true) ? 'register' : (in_arra
 if ($authPath === '/forgot-password') $autoAuthView = ($_GET['step'] ?? '') === 'reset' ? 'reset' : 'forgot';
 ?>
 <!-- Native dialog works across both existing Bootstrap layout versions. -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet"
     href="<?= e(url('/assets/css/auth/auth.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/auth/auth.css') ?>">
 
