@@ -24,7 +24,7 @@ $types = ['PERCENTAGE'=>'Giảm phần trăm','FIXED_AMOUNT'=>'Giảm số tiề
     </header>
     <div class="community-board">
         <div class="community-board-main">
-            <form id="coupon-search-form" class="community-search" method="get" action="<?= e(url('/coupons')) ?>"
+            <form id="coupon-search-form" class="community-search couponhub-search-form" method="get" action="<?= e(url('/coupons')) ?>"
                 data-api-url="<?= e(url('/api/coupons/search')) ?>">
                 <input type="hidden" name="page" id="coupon-page" value="<?= (int)$pagination['page'] ?>">
                 <div class="community-search-row">

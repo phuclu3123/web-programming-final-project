@@ -1047,7 +1047,7 @@ span.eyebrow,
 .discovery-search-box,
 .discovery-search-form,
 .discovery-query-row,
-form:has(input[placeholder*="Tìm"]) > div:first-child {
+.couponhub-search-form > div:first-child {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -1056,9 +1056,9 @@ form:has(input[placeholder*="Tìm"]) > div:first-child {
 }
 
 /* 2. CHO Ô NHẬP LỆNH NẰM TRỰC TIẾP TRÊN NỀN KHUNG CARD NGOÀI */
-form:has(input[placeholder*="Tìm"]) input[type="text"],
-form:has(input[placeholder*="Tìm"]) input[type="search"],
-form:has(input[placeholder*="Tìm"]) input {
+.couponhub-search-form input[type="text"],
+.couponhub-search-form input[type="search"],
+.couponhub-search-form input {
   background: #f8fafc !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 999px !important;
@@ -1071,7 +1071,7 @@ form:has(input[placeholder*="Tìm"]) input {
 }
 
 /* Hiệu ứng khi bấm gõ vào ô tìm kiếm */
-form:has(input[placeholder*="Tìm"]) input:focus {
+.couponhub-search-form input:focus {
   background: #ffffff !important;
   border-color: #1d4ed8 !important;
   box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12) !important;
@@ -1079,8 +1079,8 @@ form:has(input[placeholder*="Tìm"]) input:focus {
 /* XÓA VIỀN DƯỚI THANH TÌM KIẾM & THAY ICON KÍNH LÚP VÀO NÚT TÌM KIẾM */
 
 /* 1. XÓA VIỀN / LẰN KẺ GẠCH MỜ DƯỚI THANH TÌM KIẾM */
-form:has(input[placeholder*="Tìm"]) > div:first-child,
-form:has(input[placeholder*="Tìm"]) hr,
+.couponhub-search-form > div:first-child,
+.couponhub-search-form hr,
 .discovery-search,
 .discovery-search-box {
   border-bottom: none !important;
@@ -1088,20 +1088,20 @@ form:has(input[placeholder*="Tìm"]) hr,
 }
 
 /* 2. ẨN ICON KÍNH LÚP NẰM TRƠ TRỌI BÊN NGOÀI BÊN TRÁI Ô NHẬP */
-form:has(input[placeholder*="Tìm"]) > svg,
-form:has(input[placeholder*="Tìm"]) > .icon,
-form:has(input[placeholder*="Tìm"]) div > svg:first-child {
+.couponhub-search-form > svg,
+.couponhub-search-form > .icon,
+.couponhub-search-form div > svg:first-child {
   display: none !important;
 }
 
 /* 3. ẨN MŨI TÊN (->) CŨ TRONG NÚT TÌM KIẾM */
-form:has(input[placeholder*="Tìm"]) button svg,
-form:has(input[placeholder*="Tìm"]) button .icon {
+.couponhub-search-form button svg,
+.couponhub-search-form button .icon {
   display: none !important;
 }
 
 /* 4. TẠO ICON KÍNH LÚP TRẮNG THAY THẾ TRONG NÚT TÌM KIẾM */
-form:has(input[placeholder*="Tìm"]) button::after {
+.couponhub-search-form button::after {
   content: "" !important;
   display: inline-block !important;
   width: 16px !important;
@@ -1118,7 +1118,7 @@ form:has(input[placeholder*="Tìm"]) button::after {
 .discovery-section div,
 .discovery-toolbar div,
 .discovery-filter-form div,
-form div,
+.couponhub-search-form div,
 .category-pick-tabs,
 .discovery-tabs {
   border-top: none !important;
@@ -1140,17 +1140,17 @@ form div,
 /* 3. Ẩn thẻ kẻ ngang <hr> nếu có */
 .discovery-section hr,
 .discovery-toolbar hr,
-form hr {
+.couponhub-search-form hr {
   display: none !important;
 }
 
-/* XÓA GIỚI HẠN MAX-WIDTH HẸP TẠI HEADER BÀI VIẾT (KÉO MÉP TRÁI BẰNG BANNER) */
-/* 1. Mở rộng khung chứa chữ (khối nằm trực tiếp phía trên ảnh banner) ra 100% */
-div:has(+ img),
-div:has(+ figure),
-div:has(+ [class*="banner"]),
-header:has(+ img),
-header:has(+ figure),
+/* Article and guide headers: only the known editorial page components. */
+/* Do not apply layout resets to arbitrary div/header elements followed by images. */
+.article-reading > div:has(+ img),
+.article-reading > div:has(+ figure),
+.article-reading > div:has(+ [class*="banner"]),
+.guide-page > .guide-masthead:has(+ img),
+.guide-page > .guide-masthead:has(+ figure),
 .editorial-header,
 .editorial-detail-header,
 .article-header,
@@ -1165,10 +1165,10 @@ header:has(+ figure),
   align-items: flex-start !important;
 }
 
-/* 2. Ép tất cả các phần tử con (Sub-category, H1, Mô tả, Author) gióng mép trái */
-div:has(+ img) *,
-div:has(+ figure) *,
-header:has(+ img) *,
+/* Align copy inside the same editorial components (not unrelated cards/forms). */
+.article-reading > div:has(+ img) *,
+.article-reading > div:has(+ figure) *,
+.guide-page > .guide-masthead:has(+ img) *,
 .editorial-header *,
 .editorial-detail-header *,
 .article-header *,
