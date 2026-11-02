@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Core\HttpError;
 use App\Core\Session;
 use App\Core\OAuthPreparation;
 
