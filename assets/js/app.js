@@ -11,6 +11,7 @@
   const get = id => document.getElementById(id);
 
   let toastTimer = null;
+  const copyButtonTimers = new WeakMap();
   let searchTimer = null;
   let searchRequest = null;
   let revealObserver = null;
@@ -57,19 +58,24 @@
       if (!code) return;
 
       const label = $('span:last-child', button);
-      const original = label?.textContent || 'Sao chép';
 
       try {
         await copyText(code);
+        // Read the current timer after the async clipboard operation, not before it.
+        const previous = copyButtonTimers.get(button);
+        const original = previous?.original ?? label?.textContent ?? 'Sao chép';
         void window.CouponHubEvents?.copy(button.dataset.couponId);
         if (label) label.textContent = 'Đã chép';
         button.classList.add('copied');
         showToast(`Đã sao chép mã ${code}`);
 
-        setTimeout(() => {
+        if (previous) clearTimeout(previous.timer);
+        const timer = setTimeout(() => {
           if (label) label.textContent = original;
           button.classList.remove('copied');
+          copyButtonTimers.delete(button);
         }, 1500);
+        copyButtonTimers.set(button, { original, timer });
       } catch (error) {
         console.error('Không thể sao chép mã:', error);
         showToast('Không thể sao chép mã. Vui lòng thử lại.');
@@ -136,6 +142,8 @@
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const html = await response.text();
+      // An aborted fetch may still resolve if its body was already being read.
+      if (searchRequest !== controller || controller.signal.aborted) return;
       if (keepFocus && (get('q')?.value.trim() || '') !== (target.searchParams.get('q') || '').trim()) return;
       const parsed = new DOMParser().parseFromString(html, 'text/html');
       const incomingResults = parsed.querySelector('#discovery-results');
@@ -180,7 +188,8 @@
       }
       window.dispatchEvent(new Event('couponhub:catalog-updated'));
     } catch (error) {
-      if (error.name === 'AbortError') return;
+      // Never let an obsolete request navigate away from a newer search.
+      if (searchRequest !== controller || error.name === 'AbortError') return;
       console.error('Không thể cập nhật danh sách coupon:', error);
       window.location.href = url;
     } finally {
@@ -202,6 +211,8 @@
       const activeForm=event.target.closest('#home-filter-form');
       if (!activeForm) return;
       event.preventDefault();
+      clearTimeout(searchTimer);
+      searchTimer = null;
       const params = cleanParams(activeForm);
       updateHome(`index.php${params.toString() ? '?' + params : ''}#coupons`, { keepFocus: true });
     });
@@ -210,6 +221,8 @@
       const filterForm = event.target.closest('[data-catalog-filter-form]');
       if (!filterForm || !get('home-filter-form')) return;
       event.preventDefault();
+      clearTimeout(searchTimer);
+      searchTimer = null;
       const params = cleanParams(filterForm);
       updateHome(`index.php${params.toString() ? '?' + params : ''}#coupons`, { scrollToResults: true });
     });
@@ -243,6 +256,8 @@
 
     document.addEventListener('change', event => {
       if (event.target.id !== 'sort-select' || !get('home-filter-form')) return;
+      clearTimeout(searchTimer);
+      searchTimer = null;
       const mainForm = get('home-filter-form');
       mainForm.elements.namedItem('sort').value = event.target.value;
       const params = cleanParams(mainForm);
@@ -250,6 +265,8 @@
     });
 
     window.addEventListener('popstate', () => {
+      clearTimeout(searchTimer);
+      searchTimer = null;
       if (get('home-filter-form')) updateHome(window.location.href, { historyMode: 'none' });
     });
   }
