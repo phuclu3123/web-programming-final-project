@@ -43,13 +43,8 @@ final class CouponInteractionController extends Controller
                 'message' => $data['saved'] ? 'Đã lưu coupon.' : 'Đã bỏ lưu coupon.',
                 'data' => $data,
             ]);
-        } catch (RuntimeException $e) {
-            Response::json(['success' => false, 'message' => $e->getMessage()], 422);
         } catch (Throwable $e) {
-            Response::json([
-                'success' => false,
-                'message' => (bool) config('app.debug', false) ? $e->getMessage() : 'Không thể cập nhật coupon đã lưu.',
-            ], 500);
+            $this->respondFailure($e, 'Không thể cập nhật coupon đã lưu.');
         }
     }
 
@@ -65,13 +60,8 @@ final class CouponInteractionController extends Controller
                 'message' => 'Đã cập nhật xác nhận coupon.',
                 'data' => $data,
             ]);
-        } catch (RuntimeException $e) {
-            Response::json(['success' => false, 'message' => $e->getMessage()], 422);
         } catch (Throwable $e) {
-            Response::json([
-                'success' => false,
-                'message' => (bool) config('app.debug', false) ? $e->getMessage() : 'Không thể cập nhật xác nhận coupon.',
-            ], 500);
+            $this->respondFailure($e, 'Không thể cập nhật xác nhận coupon.');
         }
     }
 
@@ -94,13 +84,8 @@ final class CouponInteractionController extends Controller
                     'createdAtDisplay' => format_db_datetime((string) $comment['created_at']),
                 ],
             ], 201);
-        } catch (RuntimeException $e) {
-            Response::json(['success' => false, 'message' => $e->getMessage()], 422);
         } catch (Throwable $e) {
-            Response::json([
-                'success' => false,
-                'message' => (bool) config('app.debug', false) ? $e->getMessage() : 'Không thể gửi bình luận.',
-            ], 500);
+            $this->respondFailure($e, 'Không thể gửi bình luận.');
         }
     }
 
@@ -121,14 +106,24 @@ final class CouponInteractionController extends Controller
                 'message' => 'Đã gửi báo cáo đến Admin.',
                 'data' => ['reportId' => $reportId],
             ], 201);
-        } catch (RuntimeException $e) {
-            Response::json(['success' => false, 'message' => $e->getMessage()], 422);
         } catch (Throwable $e) {
-            Response::json([
-                'success' => false,
-                'message' => (bool) config('app.debug', false) ? $e->getMessage() : 'Không thể gửi báo cáo.',
-            ], 500);
+            $this->respondFailure($e, 'Không thể gửi báo cáo.');
         }
+    }
+
+    /**
+     * Keep validation errors visible while hiding unexpected details outside debug mode.
+     * Response::json terminates the request; no controller action continues afterwards.
+     */
+    private function respondFailure(Throwable $error, string $fallback): never
+    {
+        $expected = $error instanceof RuntimeException;
+        Response::json([
+            'success' => false,
+            'message' => $expected || (bool) config('app.debug', false)
+                ? $error->getMessage()
+                : $fallback,
+        ], $expected ? 422 : 500);
     }
 
     private function requireAjaxUser(Request $request): int
