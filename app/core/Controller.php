@@ -16,6 +16,13 @@ abstract class Controller
             throw new \RuntimeException('View hoặc layout không tồn tại.');
         }
 
+        // Prepare shared public-header data before entering any PHP template.
+        // Admin/shop standalone pages do not render this header.
+        if ($layout === 'main' || in_array($view, ['home', 'auth/page'], true)) {
+            $data['currentUser'] ??= Auth::user();
+            $data['notificationItems'] ??= (new \App\Services\PublicHeaderComposer())->compose($data['currentUser']);
+        }
+
         extract($data, EXTR_SKIP);
         ob_start();
         try {

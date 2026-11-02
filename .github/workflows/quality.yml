@@ -1,0 +1,48 @@
+name: CouponHub quality checks
+
+on:
+  pull_request:
+  push:
+    branches: [main, Quang]
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mysqli, mbstring, openssl
+          coverage: none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check PHP syntax (all tracked PHP files)
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            php -l "$file" > /dev/null
+          done < <(git ls-files -z '*.php')
+          echo 'PHP lint passed.'
+
+      - name: JavaScript regression tests
+        run: node --test tests/*.test.cjs
+
+      - name: PHP regression tests without a database
+        shell: bash
+        run: |
+          set -euo pipefail
+          php tests/public-header-notifications-phase6.php
+          php tests/coupon-interaction-errors-phase4.php
+          php tests/oauth-setup-access-phase5.php

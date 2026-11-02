@@ -7,7 +7,7 @@ $success = Session::flash('success');
 $error = Session::flash('error');
 $warning = Session::flash('warning');
 $info = Session::flash('info');
-$currentUser = Auth::user();
+$currentUser = $currentUser ?? Auth::user();
 $currentPath = (new \App\Core\Request())->path();
 ?>
 <!doctype html>
