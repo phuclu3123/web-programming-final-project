@@ -222,7 +222,6 @@
 @media(max-width: 420px) { .auth-stage { padding-inline: 16px; } #loginModal.auth-inline { padding: 23px; border-radius: 19px; } #loginModal .login-input input { font-size: 16px; } }
 
 /* AUTH — SHARED TYPOGRAPHY AND FORM STYLE */
-
 #loginModal .modal-content {
   border: 1px solid var(--line);
   border-radius: 22px;
@@ -260,3 +259,245 @@
   border-color: #91a8ee;
   box-shadow: 0 0 0 4px rgba(49, 86, 201, 0.09);
 }
+/* Font Awesome webfont icons: one authoritative rule per control. */
+#loginModal .auth-field-icon {
+    display: block;
+    flex: 0 0 18px;
+    width: 18px;
+    min-width: 20px;
+    height: 18px;
+    font-size: 17px;
+    color: #64748b;
+    line-height: 18px;
+    text-align: center;
+    margin-left: 14px !important;
+    pointer-events: none;
+}
+
+#loginModal .login-input {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    border-radius: 12px;
+}
+
+#loginModal .login-input .form-control {
+    min-width: 0;
+    flex: 1 1 0;
+    width: 100%;
+    padding-inline: 0;
+}
+
+#loginModal .login-input:focus-within {
+    border-color: #7d9cf3;
+    box-shadow: 0 0 0 3px rgba(49, 86, 201, .13);
+}
+
+#loginModal [data-password-toggle] {
+    display: grid;
+    flex: 0 0 44px;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0 5px 0 0 !important;
+    padding: 0 !important;
+    color: #64748b !important;
+    border-radius: 10px;
+    background: transparent;
+    cursor: pointer;
+}
+#loginModal [data-password-toggle]:hover { background: #e9eef9; color: #2855d9 !important; }
+#loginModal [data-password-toggle]:focus-visible { outline: 2px solid #2855d9; outline-offset: -2px; border-radius: 8px; }
+
+/* The same auth partials render as a native modal and on dedicated /login pages. */
+dialog#loginModal.auth-dialog {
+    box-sizing: border-box;
+    width: min(610px, calc(100vw - 32px));
+    max-width: none;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    padding: 0;
+    border-radius: 24px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #c6ceda transparent;
+}
+#loginModal.auth-dialog .modal-content {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: clamp(18px, 3.4vw, 30px);
+    border-radius: inherit;
+    box-shadow: none;
+}
+#loginModal.auth-dialog .modal-header {
+    padding: 4px 40px 14px 0;
+    min-width: 0;
+}
+#loginModal.auth-dialog .modal-header > div { 
+    min-width: 0; 
+}
+
+#loginModal.auth-dialog .modal-body { 
+    padding: 8px 0 0; 
+    min-width: 0; 
+}
+#loginModal.auth-dialog .auth-close {
+    position: sticky;
+    float: right;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    width: 44px;
+    height: 44px;
+    margin: 0 0 -44px auto;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #eff2f8;
+    color: #34405a;
+}
+#loginModal.auth-dialog .modal-title {
+    max-width: 100%;
+    font-size: clamp(1.55rem, 3.5vw, 2rem) !important;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+}
+#loginModal.auth-dialog .form-label { margin-bottom: 8px; }
+#loginModal.auth-dialog .login-input { min-height: 52px; }
+#loginModal.auth-dialog .login-input input { min-height: 48px; font-size: 16px; }
+#loginModal.auth-dialog .auth-message { overflow-wrap: anywhere; }
+#loginModal.auth-dialog .social-btn { min-width: 0; }
+#loginModal.auth-dialog [data-auth-view="register"] .modal-body .row { margin: 0; }
+#loginModal.auth-dialog [data-auth-view="register"] .modal-body .row > [class*="col-"] { padding-inline: 0; }
+#loginModal.auth-dialog [data-auth-view="register"] .modal-body .login-input { margin-bottom: 12px !important; }
+#loginModal.auth-dialog [data-auth-view="register"] #registerUsernameHelp { font-size: 12px; line-height: 1.55; }
+
+@media (max-width: 767.98px) {
+    /* Forms become one-column and keep comfortably tappable controls on tablets. */
+    #loginModal.auth-dialog .modal-content { padding: 22px 24px; }
+    #loginModal.auth-dialog [data-auth-view="register"] .row > [class*="col-"] { flex: 0 0 100%; max-width: 100%; }
+    #loginModal.auth-dialog .modal-header { padding-right: 44px; }
+    #loginModal.auth-dialog .modal-header p:last-child { line-height: 1.55; }
+}
+@media (max-width: 575.98px) {
+    /* Phone UX: full-screen auth sheet, one natural scrollbar, no tiny 2-column fields. */
+    dialog#loginModal.auth-dialog {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        max-width: none;
+        margin: 0;
+        border-radius: 0;
+        scrollbar-width: none;
+    }
+    dialog#loginModal.auth-dialog::-webkit-scrollbar { display: none; }
+    #loginModal.auth-dialog .modal-content {
+        min-height: 100%;
+        padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+    }
+    #loginModal.auth-dialog .modal-title { font-size: clamp(1.55rem, 7vw, 1.85rem) !important; }
+    #loginModal.auth-dialog .auth-close { top: max(12px, env(safe-area-inset-top)); }
+    #loginModal.auth-dialog .modal-header { padding: 3px 44px 12px 0; }
+    #loginModal.auth-dialog .modal-body { padding: 4px 0 0; }
+    #loginModal.auth-dialog .login-input input { font-size: 16px !important; }
+    #loginModal.auth-dialog .login-btn { min-height: 48px; }
+    #loginModal.auth-dialog .social-btn { min-height: 46px; }
+    #loginModal.auth-dialog .modal-body .d-flex.flex-row.justify-content-center { flex-wrap: wrap; }
+    #loginModal.auth-dialog .modal-body .row.g-3 { --bs-gutter-x: 12px; }
+    #loginModal.auth-dialog .modal-header p:last-child { font-size: 13px; }
+}
+@media (max-width: 359.98px) {
+    #loginModal.auth-dialog .modal-content { padding-inline: 14px; }
+    #loginModal .auth-field-icon { margin-left: 10px !important; }
+    #loginModal.auth-dialog .social-btn { font-size: 12px; gap: 6px !important; }
+}
+
+/* Consistent auth input alignment and accessible close control. */
+#loginModal .login-input > .auth-field-icon {
+    margin-left: 8px !important;
+    flex-shrink: 0;
+}
+#loginModal.auth-dialog .auth-close {
+    box-sizing: border-box;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    min-height: 46px;
+    border: 1px solid #dbe3ef;
+    border-radius: 50%;
+    background: #f6f8fc;
+    color: #263b61;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
+}
+#loginModal.auth-dialog .auth-close .auth-close-icon {
+    display: block;
+    font-size: 18px;
+    line-height: 1;
+    pointer-events: none;
+}
+#loginModal.auth-dialog .auth-close:hover {
+    background: #e7edff;
+    border-color: #a9c0fa;
+    color: #1746b7;
+}
+#loginModal.auth-dialog .auth-close:focus-visible {
+    outline: 3px solid #3468e8;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 6px rgba(52,104,232,.16);
+}
+#loginModal.auth-dialog .auth-close:active {
+    background: #2755c7;
+    border-color: #2755c7;
+    color: #fff;
+    transform: scale(.94);
+}
+@media (prefers-reduced-motion: reduce) {
+    #loginModal.auth-dialog .auth-close { transition: none; }
+}
+@media (max-width: 359.98px) {
+    #loginModal .login-input > .auth-field-icon { margin-left: 7px !important; }
+}
+/* Auth scroll fix: dialog is the only vertical scroll container. */
+#loginModal.auth-dialog .modal-dialog,
+#loginModal.auth-dialog .modal-content {
+    max-height: none;
+    height: auto;
+    overflow: visible;
+    scrollbar-gutter: auto;
+}
+dialog#loginModal.auth-dialog {
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+dialog#loginModal.auth-dialog::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+/* Font Awesome webfont icons inside the password toggle. */
+#loginModal .auth-password-eye {
+    width: 20px;
+    height: 20px;
+    font-size: 19px;
+    line-height: 1;
+    align-items: center;
+    justify-content: center;
+}
+#loginModal [data-password-toggle] .auth-password-eye--show { display: inline-flex; }
+#loginModal [data-password-toggle] .auth-password-eye--hide { display: none; }
+#loginModal [data-password-toggle][aria-pressed="true"] .auth-password-eye--show { display: none; }
+#loginModal [data-password-toggle][aria-pressed="true"] .auth-password-eye--hide { display: inline-flex; }

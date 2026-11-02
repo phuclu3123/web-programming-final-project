@@ -139,7 +139,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
             </div>
 
                 <div class="discovery-search-shell catalog-search-shell">
-                <form id="home-filter-form" class="hero-search" role="search" method="get" action="index.php#coupons" autocomplete="off">
+                <form id="home-filter-form" class="hero-search couponhub-search-form" role="search" method="get" action="index.php#coupons" autocomplete="off">
                     <?= icon('search') ?>
                     <label class="visually-hidden" for="q">Tìm ưu đãi</label>
                     <input type="search" id="q" class="form-control" name="q" maxlength="100"

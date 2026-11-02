@@ -20,7 +20,7 @@ $currentPath = (new \App\Core\Request())->path();
     <meta name="csrf-token" content="<?= e(Session::csrfToken()) ?>">
     <title><?= e($pageTitle ?? 'CouponHub') ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="<?= e(url('/assets/vendor/fontawesome/css/all.min.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('/css/style.css')) ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/design-system.css')) ?>">
     <link rel="stylesheet"

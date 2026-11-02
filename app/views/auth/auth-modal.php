@@ -4,14 +4,15 @@ $autoAuthView = in_array($authPath, ['/register'], true) ? 'register' : (in_arra
 if ($authPath === '/forgot-password') $autoAuthView = ($_GET['step'] ?? '') === 'reset' ? 'reset' : 'forgot';
 ?>
 <!-- Native dialog works across both existing Bootstrap layout versions. -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet"
     href="<?= e(url('/assets/css/auth/auth.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/auth/auth.css') ?>">
 
 <dialog class="auth-dialog" id="loginModal" aria-labelledby="loginTitle" data-auth-auto="<?= e($autoAuthView) ?>">
     <div class="modal-dialog modal-dialog-centered login-dialog">
         <div class="modal-content">
-            <button type="button" class="auth-close" data-auth-close aria-label="Đóng">×</button>
+            <button type="button" class="auth-close" data-auth-close aria-label="Đóng cửa sổ xác thực" title="Đóng">
+                <i class="fa-solid fa-xmark auth-close-icon" aria-hidden="true"></i>
+            </button>
             <?php foreach (['error', 'success', 'info'] as $kind): $authFlash = \App\Core\Session::flash($kind);
                 if ($authFlash): ?>
                     <p class="mx-4 mt-4 mb-0 auth-message" role="status"

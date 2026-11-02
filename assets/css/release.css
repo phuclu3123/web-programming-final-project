@@ -533,7 +533,6 @@ small,
 }
 
 /* 8. NÚT LƯU YÊU THÍCH: GIỮ NGUYÊN CHỨC NĂNG */
-
 .editorial-home .discovery-save {
     transition: background 0.2s ease,
                 color 0.2s ease,
@@ -545,10 +544,7 @@ small,
 }
 
 /* 9. FORM TÌM KIẾM VÀ BỘ LỌC */
-
-input,
-select,
-textarea {
+input, select, textarea {
     color: var(--ch-text);
 }
 
@@ -561,7 +557,6 @@ textarea:focus {
 }
 
 /* 10. TỐI ƯU TRÊN ĐIỆN THOẠI */
-
 @media (max-width: 768px) {
     .public-header .header-inner {
         gap: 12px;
@@ -608,10 +603,7 @@ textarea:focus {
     }
 }
 
-/* ==================================================
-   COUPONHUB — FINAL UI CONSISTENCY
-================================================== */
-
+/* COUPONHUB — FINAL UI CONSISTENCY */
 :root {
   --ui-ink: #172b4d;
   --ui-muted: #66758a;
@@ -628,23 +620,9 @@ textarea:focus {
 }
 
 /* Một font xuyên suốt giao diện */
-body,
-button,
-input,
-select,
-textarea,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
+body, button, input, select, textarea,
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: var(--ui-font);
 }
 
@@ -655,49 +633,42 @@ body {
 }
 
 /* Tiêu đề chính */
-h1,
-.h1 {
+h1, .h1 {
   font-size: clamp(30px, 3.5vw, 44px);
   font-weight: 850;
   line-height: 1.2;
   letter-spacing: -0.045em;
 }
 
-h2,
-.h2 {
+h2, .h2 {
   font-size: clamp(24px, 2.6vw, 32px);
   font-weight: 800;
   line-height: 1.3;
   letter-spacing: -0.04em;
 }
 
-h3,
-.h3 {
+h3, .h3 {
   font-size: 19px;
   font-weight: 750;
   line-height: 1.4;
 }
 
 /* Màu nút chính thống nhất */
-.btn-primary,
-.btn-brand {
+.btn-primary, .btn-brand {
   border-color: var(--ui-blue);
   background: var(--ui-blue);
   color: #fff;
   font-weight: 700;
 }
 
-.btn-primary:hover,
-.btn-brand:hover {
+.btn-primary:hover, .btn-brand:hover {
   border-color: #2443a8;
   background: #2443a8;
   color: #fff;
 }
 
 /* Liên kết */
-.editorial-home a,
-.discovery-page a,
-.community-catalog a {
+.editorial-home a, .discovery-page a, .community-catalog a {
   transition: color 0.18s ease;
 }
 
@@ -719,9 +690,7 @@ h3,
   }
 }
 
-/* ==========================================================================
-   BIẾN CÁC ĐƯỜNG DẪN DƯỚI BANNER THÀNH NÚT CHIP HIỆN ĐẠI (COVER SHORTCUTS)
-   ========================================================================== */
+/* BIẾN CÁC ĐƯỜNG DẪN DƯỚI BANNER THÀNH NÚT CHIP HIỆN ĐẠI (COVER SHORTCUTS) */
 .editorial-home .cover-shortcuts,
 .cover-shortcuts {
   grid-column: 1 / -1 !important;
@@ -791,10 +760,7 @@ h3,
   border-color: #1d4ed8 !important;
 }
 
-/* ==========================================================================
-   TỐI ƯU GIAO DIỆN DANH MỤC (CATEGORY DIRECTORY) - BLUE CORPORATE
-   ========================================================================== */
-
+/* TỐI ƯU GIAO DIỆN DANH MỤC (CATEGORY DIRECTORY) - BLUE CORPORATE */
 /* 1. CẤU TRÚC 2 CỘT CÂN BẰNG */
 .category-directory {
   display: grid !important;
@@ -921,9 +887,7 @@ h3,
 .category-directory-visual figcaption * {
   color: #ffffff !important;
 }
-/* ==========================================================================
-   BỎ KHUNG & PHÓNG TO SỐ 01, 02, 03... BẰNG CHIỀU CAO 2 DÒNG NỘI DUNG
-   ========================================================================== */
+/* BỎ KHUNG & PHÓNG TO SỐ 01, 02, 03... BẰNG CHIỀU CAO 2 DÒNG NỘI DUNG */
 .category-directory-link small {
   font-size: 34px !important;         /* Phóng to số bằng chiều cao 2 dòng chữ */
   font-weight: 800 !important;        /* Chữ số đậm, sắc nét */
@@ -936,10 +900,7 @@ h3,
   display: inline-block !important;
 }
 
-/* ==========================================================================
-   ẨN BREADCRUMB XÁM & PHÓNG TO TIÊU ĐỀ PHỤ (EYEBROW)
-   ========================================================================== */
-
+/* ẨN BREADCRUMB XÁM & PHÓNG TO TIÊU ĐỀ PHỤ (EYEBROW) */
 /* 1. Ẩn hoàn toàn dòng text nhỏ màu xám (CouponHub / Danh mục, Góc đọc...) */
 .member-breadcrumb {
   display: none !important;
@@ -957,9 +918,7 @@ span.eyebrow,
   display: inline-block !important;
 }
 
-/* ==========================================================================
-   CHỈNH MÀU TIÊU ĐỀ PHỤ (EYEBROW) DỊU VÀ NHẠT HƠN
-   ========================================================================== */
+/* CHỈNH MÀU TIÊU ĐỀ PHỤ (EYEBROW) DỊU VÀ NHẠT HƠN */
 .eyebrow, 
 span.eyebrow, 
 .panel-kicker {
@@ -970,7 +929,6 @@ span.eyebrow,
   margin-bottom: 10px !important;
   display: inline-block !important;
 }
-
 
 .category-directory-title {
   display: flex !important;
@@ -1007,19 +965,14 @@ span.eyebrow,
   font-weight: 450 !important;
 }
 
-/* ==========================================================================
-   XÓA BỎ LẰN KẺ MỜ BỊ TRÙNG DƯỚI TIÊU ĐỀ
-   ========================================================================== */
+/* XÓA BỎ LẰN KẺ MỜ BỊ TRÙNG DƯỚI TIÊU ĐỀ */
 .category-directory-title {
   border-bottom: none !important;     /* Xóa lằn kẻ mờ trùng ở trên */
   padding-bottom: 8px !important;
   margin-bottom: 20px !important;
 }
 
-/* ==========================================================================
-   GỘP SIDEBAR & ĐỦ TRÙNG MÀU 100% VỚI NỀN WEB (NỀN TRONG SUỐT)
-   ========================================================================== */
-
+/* GỘP SIDEBAR & ĐỦ TRÙNG MÀU 100% VỚI NỀN WEB (NỀN TRONG SUỐT) */
 /* Khung chung bao ngoài cả 2 khối: Trùng màu nền web 100% */
 .community-sidebar {
   background: transparent !important;     /* Ăn theo 100% màu nền của trang web */
@@ -1088,16 +1041,13 @@ span.eyebrow,
   text-decoration: underline !important;
 }
 
-/* ==========================================================================
-   BỎ KHUNG TRẮNG BÊN TRONG - CHỈ GIỮ LẠI KHUNG CARD NGOÀI
-   ========================================================================== */
-
+/* BỎ KHUNG TRẮNG BÊN TRONG - CHỈ GIỮ LẠI KHUNG CARD NGOÀI */
 /* 1. XÓA BỎ NỀN, VIỀN VÀ BÓNG CỦA HỘP CHỨA BÊN TRONG */
 .discovery-search,
 .discovery-search-box,
 .discovery-search-form,
 .discovery-query-row,
-form:has(input[placeholder*="Tìm"]) > div:first-child {
+.couponhub-search-form > div:first-child {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -1106,9 +1056,9 @@ form:has(input[placeholder*="Tìm"]) > div:first-child {
 }
 
 /* 2. CHO Ô NHẬP LỆNH NẰM TRỰC TIẾP TRÊN NỀN KHUNG CARD NGOÀI */
-form:has(input[placeholder*="Tìm"]) input[type="text"],
-form:has(input[placeholder*="Tìm"]) input[type="search"],
-form:has(input[placeholder*="Tìm"]) input {
+.couponhub-search-form input[type="text"],
+.couponhub-search-form input[type="search"],
+.couponhub-search-form input {
   background: #f8fafc !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 999px !important;
@@ -1121,18 +1071,16 @@ form:has(input[placeholder*="Tìm"]) input {
 }
 
 /* Hiệu ứng khi bấm gõ vào ô tìm kiếm */
-form:has(input[placeholder*="Tìm"]) input:focus {
+.couponhub-search-form input:focus {
   background: #ffffff !important;
   border-color: #1d4ed8 !important;
   box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12) !important;
 }
-/* ==========================================================================
-   XÓA VIỀN DƯỚI THANH TÌM KIẾM & THAY ICON KÍNH LÚP VÀO NÚT TÌM KIẾM
-   ========================================================================== */
+/* XÓA VIỀN DƯỚI THANH TÌM KIẾM & THAY ICON KÍNH LÚP VÀO NÚT TÌM KIẾM */
 
 /* 1. XÓA VIỀN / LẰN KẺ GẠCH MỜ DƯỚI THANH TÌM KIẾM */
-form:has(input[placeholder*="Tìm"]) > div:first-child,
-form:has(input[placeholder*="Tìm"]) hr,
+.couponhub-search-form > div:first-child,
+.couponhub-search-form hr,
 .discovery-search,
 .discovery-search-box {
   border-bottom: none !important;
@@ -1140,20 +1088,20 @@ form:has(input[placeholder*="Tìm"]) hr,
 }
 
 /* 2. ẨN ICON KÍNH LÚP NẰM TRƠ TRỌI BÊN NGOÀI BÊN TRÁI Ô NHẬP */
-form:has(input[placeholder*="Tìm"]) > svg,
-form:has(input[placeholder*="Tìm"]) > .icon,
-form:has(input[placeholder*="Tìm"]) div > svg:first-child {
+.couponhub-search-form > svg,
+.couponhub-search-form > .icon,
+.couponhub-search-form div > svg:first-child {
   display: none !important;
 }
 
 /* 3. ẨN MŨI TÊN (->) CŨ TRONG NÚT TÌM KIẾM */
-form:has(input[placeholder*="Tìm"]) button svg,
-form:has(input[placeholder*="Tìm"]) button .icon {
+.couponhub-search-form button svg,
+.couponhub-search-form button .icon {
   display: none !important;
 }
 
 /* 4. TẠO ICON KÍNH LÚP TRẮNG THAY THẾ TRONG NÚT TÌM KIẾM */
-form:has(input[placeholder*="Tìm"]) button::after {
+.couponhub-search-form button::after {
   content: "" !important;
   display: inline-block !important;
   width: 16px !important;
@@ -1165,15 +1113,12 @@ form:has(input[placeholder*="Tìm"]) button::after {
   vertical-align: -2px !important;
 }
 
-/* ==========================================================================
-   TRIỆT PHÁ TẤT CẢ LẰN KẺ NGANG TRONG KHU VỰC TÌM KIẾM
-   ========================================================================== */
-
+/* TRIỆT PHÁ TẤT CẢ LẰN KẺ NGANG TRONG KHU VỰC TÌM KIẾM */
 /* 1. Triệt tiêu border-top và border-bottom của tất cả khối con bên trong */
 .discovery-section div,
 .discovery-toolbar div,
 .discovery-filter-form div,
-form div,
+.couponhub-search-form div,
 .category-pick-tabs,
 .discovery-tabs {
   border-top: none !important;
@@ -1185,9 +1130,7 @@ form div,
 .discovery-section *::after,
 .discovery-section *::before,
 .discovery-toolbar *::after,
-.discovery-toolbar *::before,
-form *::after,
-form *::before {
+.discovery-toolbar *::before {
   display: none !important;
   content: none !important;
   border: none !important;
@@ -1197,20 +1140,17 @@ form *::before {
 /* 3. Ẩn thẻ kẻ ngang <hr> nếu có */
 .discovery-section hr,
 .discovery-toolbar hr,
-form hr {
+.couponhub-search-form hr {
   display: none !important;
 }
 
-/* ==========================================================================
-   XÓA GIỚI HẠN MAX-WIDTH HẸP TẠI HEADER BÀI VIẾT (KÉO MÉP TRÁI BẰNG BANNER)
-   ========================================================================== */
-
-/* 1. Mở rộng khung chứa chữ (khối nằm trực tiếp phía trên ảnh banner) ra 100% */
-div:has(+ img),
-div:has(+ figure),
-div:has(+ [class*="banner"]),
-header:has(+ img),
-header:has(+ figure),
+/* Article and guide headers: only the known editorial page components. */
+/* Do not apply layout resets to arbitrary div/header elements followed by images. */
+.article-reading > div:has(+ img),
+.article-reading > div:has(+ figure),
+.article-reading > div:has(+ [class*="banner"]),
+.guide-page > .guide-masthead:has(+ img),
+.guide-page > .guide-masthead:has(+ figure),
 .editorial-header,
 .editorial-detail-header,
 .article-header,
@@ -1225,10 +1165,10 @@ header:has(+ figure),
   align-items: flex-start !important;
 }
 
-/* 2. Ép tất cả các phần tử con (Sub-category, H1, Mô tả, Author) gióng mép trái */
-div:has(+ img) *,
-div:has(+ figure) *,
-header:has(+ img) *,
+/* Align copy inside the same editorial components (not unrelated cards/forms). */
+.article-reading > div:has(+ img) *,
+.article-reading > div:has(+ figure) *,
+.guide-page > .guide-masthead:has(+ img) *,
 .editorial-header *,
 .editorial-detail-header *,
 .article-header *,
@@ -1239,10 +1179,7 @@ header:has(+ img) *,
   align-self: flex-start !important;
 }
 
-/* ==========================================================================
-   NÚT CHUÔNG THÔNG BÁO HEADER (ĐỒNG BỘ NÚT TÌM KIẾM)
-   ========================================================================== */
-
+/* NÚT CHUÔNG THÔNG BÁO HEADER (ĐỒNG BỘ NÚT TÌM KIẾM) */
 /* Căn chỉnh khoảng cách giữa các nút trong header-account */
 .header-account {
   display: flex !important;
@@ -1284,10 +1221,7 @@ header:has(+ img) *,
   border-radius: 50% !important;
   border: 1.5px solid #ffffff !important;
 }
-/* ==========================================================================
-   CẤU HÌNH NÚT CHUÔNG ĐỒNG BỘ 100% VỚI NÚT TÌM KIẾM
-   ========================================================================== */
-
+/* CẤU HÌNH NÚT CHUÔNG ĐỒNG BỘ 100% VỚI NÚT TÌM KIẾM */
 .header-notification {
   position: relative !important;
 }
@@ -1303,9 +1237,7 @@ header:has(+ img) *,
   border-radius: 50% !important;
   border: 1px solid #ffffff !important;
 }
-/* ==========================================================================
-   ÉP NÚT CHUÔNG VÀ NÚT TÌM KIẾM GIỐNG HỆT NHAU 100%
-   ========================================================================== */
+/* ÉP NÚT CHUÔNG VÀ NÚT TÌM KIẾM GIỐNG HỆT NHAU 100% */
 
 /* 1. Ép cả 2 nút chung khung kích thước, viền và màu nền */
 .header-account .header-search,
@@ -1357,10 +1289,7 @@ header:has(+ img) *,
   border-radius: 50% !important;
   border: 1px solid #ffffff !important;
 }
-/* ==========================================================================
-   POP-UP BẢNG THÔNG BÁO TẠI HEADER
-   ========================================================================== */
-
+/* POP-UP BẢNG THÔNG BÁO TẠI HEADER */
 /* Khung bao ngoài & Xóa mũi tên mặc định của thẻ details */
 .header-notification-wrapper {
   position: relative !important;
@@ -1470,10 +1399,7 @@ header:has(+ img) *,
 .notif-footer a:hover {
   text-decoration: underline !important;
 }
-/* ==========================================================================
-   TINH CHỈNH PHÂN BIỆT THÔNG BÁO CHƯA ĐỌC VS ĐÃ ĐỌC
-   ========================================================================== */
-
+/* TINH CHỈNH PHÂN BIỆT THÔNG BÁO CHƯA ĐỌC VS ĐÃ ĐỌC */
 /* 1. Trạng thái mặc định (Dành cho Thông báo ĐÃ ĐỌC) */
 .notif-item {
   display: block !important;
@@ -1517,4 +1443,3 @@ header:has(+ img) *,
   color: #2563eb !important;                      /* Thời gian màu xanh nổi bật */
   font-weight: 600 !important;
 }
-

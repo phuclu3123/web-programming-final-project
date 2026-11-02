@@ -24,15 +24,15 @@ $types = ['PERCENTAGE'=>'Giảm phần trăm','FIXED_AMOUNT'=>'Giảm số tiề
     </header>
     <div class="community-board">
         <div class="community-board-main">
-            <form id="coupon-search-form" class="community-search" method="get" action="<?= e(url('/coupons')) ?>"
+            <form id="coupon-search-form" class="community-search couponhub-search-form" method="get" action="<?= e(url('/coupons')) ?>"
                 data-api-url="<?= e(url('/api/coupons/search')) ?>">
                 <input type="hidden" name="page" id="coupon-page" value="<?= (int)$pagination['page'] ?>">
                 <div class="community-search-row">
-                    <div class="community-search-input"><?= icon('search') ?><label class="sr-only" for="keyword">Tìm ưu
+                    <div class="community-search-input"><label class="sr-only" for="keyword">Tìm ưu
                             đãi</label><input type="search" id="keyword" name="keyword" maxlength="200"
                             value="<?= e((string)($filters['keyword'] ?? '')) ?>"
-                            placeholder="Tìm cửa hàng, mã giảm giá, ưu đãi…"><button class="btn btn-brand"
-                            type="submit">Tìm kiếm <?= icon('arrow') ?></button></div>
+                            placeholder="Tìm cửa hàng, mã giảm giá, ưu đãi…"><button class="btn btn-brand community-search-submit"
+                            type="submit" aria-label="Tìm kiếm ưu đãi"><span class="community-search-submit-label">Tìm kiếm</span><?= icon('search') ?></button></div>
                 </div>
                 <fieldset class="community-categories">
                     <legend class="sr-only">Danh mục ưu đãi</legend>

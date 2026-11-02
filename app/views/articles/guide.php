@@ -10,15 +10,15 @@
     <img class="guide-cover" src="<?= e(editorialLargePhoto($guide['photo'])) ?>" alt="" width="1200" height="800">
     <div class="guide-layout">
         <nav class="guide-toc" aria-label="Trong hướng dẫn này"><strong>Trong hướng dẫn
-                này</strong><?php foreach ($guide['sections'] as $i=>$section): ?><a
-                href="#guide-part-<?= $i ?>"><?= e($section['title']) ?></a><?php endforeach; ?><a
+                này</strong><?php foreach ($guide['sections'] as $i => $section): ?><a
+                    href="#guide-part-<?= $i ?>"><?= e($section['title']) ?></a><?php endforeach; ?><a
                 class="guide-tool-link" href="<?= e(url($guide['href'])) ?>"><?= e($guide['action']) ?>
                 <?= icon('arrow') ?></a></nav>
-        <article class="guide-body"><?php foreach ($guide['sections'] as $i=>$section): ?><section
-                id="guide-part-<?= $i ?>">
-                <h2><?= e($section['title']) ?></h2>
-                <p><?= e($section['body']) ?></p>
-            </section><?php endforeach; ?><aside class="guide-next"><span>Thử ngay trên CouponHub</span>
+        <article class="guide-body"><?php foreach ($guide['sections'] as $i => $section): ?><section
+                    id="guide-part-<?= $i ?>">
+                    <h2><?= e($section['title']) ?></h2>
+                    <p><?= e($section['body']) ?></p>
+                </section><?php endforeach; ?><aside class="guide-next"><span>Thử ngay trên CouponHub</span>
                 <h2><?= e($guide['action']) ?></h2><a class="btn btn-brand" href="<?= e(url($guide['href'])) ?>">Tiếp
                     tục <?= icon('arrow') ?></a>
             </aside>
@@ -29,7 +29,9 @@
             <h2>Đọc tiếp, chọn tốt hơn.</h2><a href="<?= e(url('/articles')) ?>">Về góc đọc <?= icon('arrow') ?></a>
         </div>
         <div class="guide-card-grid">
-            <?php foreach ($guides as $slug=>$item): if ($slug===$guideSlug) continue; require __DIR__.'/../partials/guide-card.php'; endforeach; ?>
+            <?php foreach ($guides as $slug => $item): if ($slug === $guideSlug) continue;
+                require __DIR__ . '/../partials/guide-card.php';
+            endforeach; ?>
         </div>
     </section>
 </div>

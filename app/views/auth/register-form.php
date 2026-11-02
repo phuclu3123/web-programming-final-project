@@ -19,7 +19,7 @@ use App\Core\Session;
         <label for="registerFullName" class="form-label">Họ và tên</label>
 
         <div class="login-input d-flex align-items-center gap-3 mb-3">
-            <i class="bi bi-person fs-4 text-secondary ms-3"></i>
+            <i class="fa-solid fa-user auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
             <input id="registerFullName" type="text" class="form-control border-0 shadow-none bg-transparent"
                 placeholder="Nhập họ và tên" name="full_name" autocomplete="name" maxlength="120" required>
@@ -29,7 +29,7 @@ use App\Core\Session;
         <label for="registerUsername" class="form-label">Tên tài khoản</label>
 
         <div class="login-input d-flex align-items-center gap-3 mb-3">
-            <i class="bi bi-person fs-4 text-secondary ms-3"></i>
+            <i class="fa-solid fa-user auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
             <input id="registerUsername" type="text" class="form-control border-0 shadow-none bg-transparent"
                 placeholder="Nhập tên tài khoản" name="username" autocomplete="username" maxlength="50"
@@ -42,7 +42,7 @@ use App\Core\Session;
         <label for="registerEmail" class="form-label">Địa chỉ email</label>
 
         <div class="login-input d-flex align-items-center gap-3 mb-3">
-            <i class="bi bi-envelope fs-4 text-secondary ms-3"></i>
+            <i class="fa-solid fa-envelope auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
             <input id="registerEmail" type="email" class="form-control border-0 shadow-none bg-transparent"
                 placeholder="hoten.mssv@ueh.edu.vn" name="email" autocomplete="email" maxlength="191" required>
@@ -51,7 +51,7 @@ use App\Core\Session;
         <label for="registerPhone" class="form-label">Số điện thoại</label>
 
         <div class="login-input d-flex align-items-center gap-3 mb-3">
-            <i class="bi bi-telephone fs-4 text-secondary ms-3"></i>
+            <i class="fa-solid fa-phone auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
             <input id="registerPhone" type="tel" class="form-control border-0 shadow-none bg-transparent"
                 placeholder="Nhập số điện thoại" name="phone" autocomplete="tel" maxlength="20" required>
@@ -59,10 +59,10 @@ use App\Core\Session;
 
         <div class="row g-3">
             <!-- Mật khẩu -->
-            <div class="col-12 col-sm-6">
+            <div class="col-12">
                 <label for="registerPassword" class="form-label">Mật khẩu</label>
                 <div class="login-input d-flex align-items-center gap-3 mb-3">
-                    <i class="bi bi-lock fs-4 text-secondary ms-3"></i>
+                    <i class="fa-solid fa-lock auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
                     <input id="registerPassword" type="password"
                         class="form-control border-0 shadow-none bg-transparent" placeholder="Tối thiểu 8 ký tự"
@@ -71,16 +71,16 @@ use App\Core\Session;
                     <button type="button" class="btn border-0 p-0 me-3 flex-shrink-0 text-secondary"
                         data-password-toggle="registerPassword" aria-controls="registerPassword"
                         aria-label="Hiện mật khẩu" aria-pressed="false">
-                        <i class="bi bi-eye fs-5" aria-hidden="true"></i>
+                        <i class="fa-solid fa-eye auth-password-eye auth-password-eye--show" aria-hidden="true"></i><i class="fa-solid fa-eye-slash auth-password-eye auth-password-eye--hide" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
 
             <!-- Xác nhận mật khẩu -->
-            <div class="col-12 col-sm-6">
+            <div class="col-12">
                 <label for="registerPasswordConfirm" class="form-label">Nhập lại mật khẩu</label>
                 <div class="login-input d-flex align-items-center gap-3 mb-3">
-                    <i class="bi bi-lock fs-4 text-secondary ms-3"></i>
+                    <i class="fa-solid fa-lock auth-field-icon text-secondary ms-3" aria-hidden="true"></i>
 
                     <input id="registerPasswordConfirm" type="password"
                         class="form-control border-0 shadow-none bg-transparent" placeholder="Nhập lại mật khẩu"
@@ -88,7 +88,7 @@ use App\Core\Session;
                     <button type="button" class="btn border-0 p-0 me-3 flex-shrink-0 text-secondary"
                         data-password-toggle="registerPasswordConfirm" aria-controls="registerPasswordConfirm"
                         aria-label="Hiện mật khẩu nhập lại" aria-pressed="false">
-                        <i class="bi bi-eye fs-5" aria-hidden="true"></i>
+                        <i class="fa-solid fa-eye auth-password-eye auth-password-eye--show" aria-hidden="true"></i><i class="fa-solid fa-eye-slash auth-password-eye auth-password-eye--hide" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
