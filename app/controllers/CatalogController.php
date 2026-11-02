@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controllers;
@@ -61,7 +62,7 @@ final class CatalogController extends Controller
         $title = 'Khám phá ưu đãi';
         $demo = false;
         $campaignRepo = new CampaignRepository(Database::connection());
-        $homeCampaigns = array_merge($campaignRepo->publicCurrent(2),$campaignRepo->publicUpcoming(1));
+        $homeCampaigns = array_merge($campaignRepo->publicCurrent(2), $campaignRepo->publicUpcoming(1));
         $homeArticles = (new ArticleRepository(Database::connection()))->published(3);
 
         if ($request->isAjax()) {
@@ -69,9 +70,23 @@ final class CatalogController extends Controller
         }
 
         $this->view('home', compact(
-            'q', 'categoryId', 'merchantId', 'discountType', 'usageChannel', 'endingSoon', 'sort',
-            'categories', 'merchants', 'coupons',
-            'role', 'title', 'demo', 'currentUser', 'savedCouponIds', 'homeCampaigns', 'homeArticles'
+            'q',
+            'categoryId',
+            'merchantId',
+            'discountType',
+            'usageChannel',
+            'endingSoon',
+            'sort',
+            'categories',
+            'merchants',
+            'coupons',
+            'role',
+            'title',
+            'demo',
+            'currentUser',
+            'savedCouponIds',
+            'homeCampaigns',
+            'homeArticles'
         ), null);
     }
 }

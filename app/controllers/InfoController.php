@@ -9,11 +9,26 @@ use App\Core\Request;
 
 final class InfoController extends Controller
 {
-    public function about(Request $request): void { $this->show('Giới thiệu CouponHub', 'about'); }
-    public function terms(Request $request): void { $this->show('Điều khoản sử dụng', 'terms'); }
-    public function privacy(Request $request): void { $this->show('Chính sách bảo mật', 'privacy'); }
-    public function communityGuidelines(Request $request): void { $this->show('Quy tắc cộng đồng', 'community'); }
-    public function contact(Request $request): void { $this->show('Liên hệ', 'contact'); }
+    public function about(Request $request): void
+    {
+        $this->show('Giới thiệu CouponHub', 'about');
+    }
+    public function terms(Request $request): void
+    {
+        $this->show('Điều khoản sử dụng', 'terms');
+    }
+    public function privacy(Request $request): void
+    {
+        $this->show('Chính sách bảo mật', 'privacy');
+    }
+    public function communityGuidelines(Request $request): void
+    {
+        $this->show('Quy tắc cộng đồng', 'community');
+    }
+    public function contact(Request $request): void
+    {
+        $this->show('Liên hệ', 'contact');
+    }
 
     private function show(string $pageTitle, string $type): void
     {

@@ -17,16 +17,16 @@ final class CouponEventController extends Controller
 {
     public function record(Request $request, string $id): void
     {
-        $couponId = filter_var($id, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+        $couponId = filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
         $event = $request->input('event', '');
         if ($couponId === false || !is_string($event) || !in_array($event, ['COPY', 'SHARE'], true)) {
-            Response::json(['success'=>false,'message'=>'Sự kiện coupon không hợp lệ.'],422);
+            Response::json(['success' => false, 'message' => 'Sự kiện coupon không hợp lệ.'], 422);
         }
         $actorId = Auth::id(); // null for anonymous visitors; never trust a client-supplied ID.
         $service = new CouponEventService(new CouponEventRepository(Database::connection()));
         $recorded = $event === 'SHARE'
             ? $service->recordShare($actorId, (int)$couponId)
             : $service->recordCopy($actorId, (int)$couponId);
-        Response::json(['success'=>true,'recorded'=>$recorded]);
+        Response::json(['success' => true, 'recorded' => $recorded]);
     }
 }

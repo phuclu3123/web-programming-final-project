@@ -24,7 +24,8 @@ final class AccountController extends Controller
             throw new \App\Core\HttpError(401, 'Tài khoản không còn hoạt động.');
         }
         $this->view('account/profile', [
-            'pageTitle' => 'Hồ sơ cá nhân', 'actor' => array_replace($profile, $actor),
+            'pageTitle' => 'Hồ sơ cá nhân',
+            'actor' => array_replace($profile, $actor),
             'oauthLinks' => (new \App\Repositories\OAuthRepository(Database::connection()))->linkedProviders((int)$actor['id']),
         ]);
     }
@@ -35,7 +36,9 @@ final class AccountController extends Controller
         // Global router verifies CSRF before any POST controller is instantiated.
         try {
             (new AccountService(new UserRepository(Database::connection())))->updateProfile(
-                (int)$actor['id'], $request->input('full_name'), $request->input('phone')
+                (int)$actor['id'],
+                $request->input('full_name'),
+                $request->input('phone')
             );
             Session::flash('success', 'Đã cập nhật hồ sơ cá nhân.');
         } catch (RuntimeException $e) {
@@ -50,8 +53,10 @@ final class AccountController extends Controller
         $actor = Auth::requireAuth();
         try {
             (new AccountService(new UserRepository(Database::connection())))->changePassword(
-                (int)$actor['id'], $request->input('current_password'),
-                $request->input('new_password'), $request->input('new_password_confirmation')
+                (int)$actor['id'],
+                $request->input('current_password'),
+                $request->input('new_password'),
+                $request->input('new_password_confirmation')
             );
             // Changing the password increments auth_version: all old sessions are invalid.
             Auth::logout();
