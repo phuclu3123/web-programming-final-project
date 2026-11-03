@@ -1,0 +1,83 @@
+/* Phase 8: shared floating actions for head.php and main.php layouts.
+   Scoped selectors prevent collisions with the legacy #back-to-top styles. */
+.floating-support {
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 990;
+}
+.floating-support .floating-support-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.floating-support .glass-action {
+  min-width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(18, 38, 80, .19);
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease, opacity .18s ease;
+}
+.floating-support .contact-trigger {
+  background: #2857c8;
+  border-color: #2857c8;
+  color: #fff;
+  font-weight: 700;
+}
+.floating-support .contact-trigger:hover,
+.floating-support .contact-trigger[aria-expanded="true"] {
+  background: #1e44a8;
+  border-color: #1e44a8;
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(23, 54, 129, .28);
+}
+.floating-support .back-to-top {
+  position: static;
+  right: auto;
+  bottom: auto;
+  z-index: auto;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  color: #234eaf;
+  background: #fff;
+  border: 1px solid #bdcced;
+  border-radius: 50%;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(7px);
+}
+.floating-support .back-to-top.is-visible {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.floating-support .back-to-top.is-visible:hover {
+  background: #eaf0ff;
+  border-color: #7b9ee7;
+  color: #143d9d;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(23, 54, 129, .22);
+}
+.floating-support .glass-action:focus-visible {
+  outline: 3px solid #f1aa33;
+  outline-offset: 3px;
+}
+.floating-support .contact-popover { right: 0; max-width: calc(100vw - 24px); }
+@media (max-width: 575.98px) {
+  .floating-support {
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  .floating-support .floating-support-actions { gap: 8px; }
+  .floating-support .glass-action { height: 46px; min-width: 46px; }
+  .floating-support .back-to-top { width: 46px; height: 46px; flex-basis: 46px; }
+  .floating-support .contact-popover { width: min(292px, calc(100vw - 24px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .floating-support .glass-action { transition: none; }
+}
