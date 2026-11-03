@@ -44,5 +44,6 @@ jobs:
         run: |
           set -euo pipefail
           php tests/public-header-notifications-phase6.php
+          php tests/coupon-repository-phase7.php
           php tests/coupon-interaction-errors-phase4.php
           php tests/oauth-setup-access-phase5.php
