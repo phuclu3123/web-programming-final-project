@@ -45,12 +45,13 @@ final class OAuthService
             $query['nonce'] = $nonce;
             $query['prompt'] = 'select_account';
         } else $query['prompt'] = 'select_account';
+        if ($provider === 'facebook') unset($query['code_challenge'], $query['code_challenge_method'], $query['prompt']);
         return $p['authorize_url'] . '?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
     }
 
     public function complete(string $provider, array $query, ?array $currentActor = null): array
     {
-        if (!in_array($provider, ['google', 'github'], true)) throw new HttpError(404, 'Nhà cung cấp không hợp lệ.');
+        if (!in_array($provider, ['google', 'github', 'facebook'], true)) throw new HttpError(404, 'Nhà cung cấp không hợp lệ.');
         Session::start();
         $state = $query['state'] ?? null;
         if (!is_string($state) || !preg_match('/^[a-f0-9]{64}$/D', $state)) throw new HttpError(403, 'Phiên OAuth không hợp lệ.');
@@ -63,6 +64,12 @@ final class OAuthService
         $code = $query['code'] ?? null;
         if (!is_string($code) || $code === '' || strlen($code) > 4096 || preg_match('/[\x00-\x20]/', $code)) throw new HttpError(400, 'Mã OAuth không hợp lệ.');
         $p = $this->config['providers'][$provider];
+        if ($provider === 'facebook') {
+            [$identity, $ttl] = $this->facebookIdentity($p, $code);
+            $user = $this->users->resolve($identity, $actor);
+            $user['session_ttl'] = min((int)config('auth.session_lifetime', 2592000), $ttl);
+            return ['user' => $user, 'linked' => $actor !== null, 'return' => $pending['return']];
+        }
         $token = $this->http->json(
             'POST',
             $provider === 'github' ? 'https://github.com/login/oauth/access_token' : 'https://oauth2.googleapis.com/token',
@@ -128,6 +135,45 @@ final class OAuthService
             || !is_string($claims['sub'] ?? null) || $claims['sub'] === '' || strlen($claims['sub']) > 255 || !is_string($claims['email'] ?? null)
         ) throw new HttpError(403, 'Thông tin Google chưa được xác minh hoặc đã hết hạn.');
         return $claims;
+    }
+
+    /** Facebook proves the app-scoped identity, not ownership of an email address.
+     * First use requires explicit linking from an authenticated local account.
+     */
+    private function facebookIdentity(array $provider, string $code): array
+    {
+        $version = $provider['graph_version'] ?? '';
+        if (!preg_match('/\Av[0-9]{1,3}\.0\z/D', $version)) throw new HttpError(503, 'Chưa cấu hình phiên bản Facebook API.');
+        $base = 'https://graph.facebook.com/' . $version;
+        $token = $this->http->json('POST', $base . '/oauth/access_token', ['Content-Type: application/x-www-form-urlencoded'], http_build_query([
+            'client_id' => $provider['client_id'], 'client_secret' => $provider['client_secret'],
+            'redirect_uri' => $provider['callback'], 'code' => $code,
+        ], '', '&', PHP_QUERY_RFC3986));
+        $access = $token['access_token'] ?? null;
+        if (!is_string($access) || strlen($access) > 8192 || !preg_match('/\A[A-Za-z0-9_\.\-]+\z/D', $access)
+            || strcasecmp((string)($token['token_type'] ?? ''), 'bearer') !== 0) throw new HttpError(502, 'Facebook không trả token hợp lệ.');
+        // The app token stays in an HTTPS Authorization header. Never forward it to the browser.
+        $debug = $this->http->json('GET', $base . '/debug_token?' . http_build_query(['input_token' => $access], '', '&', PHP_QUERY_RFC3986),
+            ['Authorization: Bearer ' . $provider['client_id'] . '|' . $provider['client_secret']]);
+        $data = $debug['data'] ?? null;
+        $now = time();
+        if (!is_array($data) || ($data['is_valid'] ?? null) !== true || ($data['type'] ?? '') !== 'USER'
+            || !(is_string($data['app_id'] ?? null) || is_int($data['app_id'] ?? null)) || (string)$data['app_id'] !== $provider['client_id']
+            || !is_string($data['user_id'] ?? null) || !ctype_digit($data['user_id']) || (int)$data['user_id'] <= 0
+            || !is_int($data['expires_at'] ?? null) || $data['expires_at'] <= $now
+            || (isset($data['data_access_expires_at']) && (!is_int($data['data_access_expires_at']) || ($data['data_access_expires_at'] !== 0 && $data['data_access_expires_at'] <= $now)))) {
+            throw new HttpError(403, 'Danh tính Facebook không hợp lệ hoặc đã hết hạn.');
+        }
+        $profile = $this->http->json('GET', $base . '/me?' . http_build_query([
+            'fields' => 'id,name', 'appsecret_proof' => hash_hmac('sha256', $access, $provider['client_secret']),
+        ], '', '&', PHP_QUERY_RFC3986), ['Authorization: Bearer ' . $access]);
+        if (($profile['id'] ?? null) !== $data['user_id']) throw new HttpError(403, 'Danh tính Facebook không khớp token.');
+        $now = time(); // Profile lookup may have consumed part of the token lifetime.
+        $ttl = $data['expires_at'] - $now;
+        if (($data['data_access_expires_at'] ?? 0) > 0) $ttl = min($ttl, $data['data_access_expires_at'] - $now);
+        if ($ttl <= 0) throw new HttpError(403, 'Phiên Facebook đã hết hạn. Vui lòng đăng nhập lại.');
+        return [['provider' => 'facebook', 'subject' => $data['user_id'], 'email' => null, 'email_verified' => false,
+            'name' => is_string($profile['name'] ?? null) ? mb_substr($profile['name'], 0, 120) : 'Facebook'], $ttl];
     }
 
     private static function base64url(string $value): string

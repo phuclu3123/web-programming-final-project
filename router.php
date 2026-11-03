@@ -15,7 +15,7 @@ $file = realpath(__DIR__ . $path);
 $inside = $file !== false && str_starts_with(str_replace('\\', '/', $file), str_replace('\\', '/', __DIR__) . '/');
 if ($inside && is_file($file) && preg_match('~\A/(?:assets|public)/(?!.*\.php(?:/|$)).+\.(?:css|js|svg|png|jpe?g|gif|ico|webp|woff2?|ttf)\z~i', $path)) return false;
 if ($inside && is_file($file) && (in_array($path, ['/login.php', '/logout.php', '/oauth-setup.php'], true)
-    || preg_match('~\A/api/(?:login|register|oauth/(?:prepare|google-callback|github-callback))\.php\z~', $path))) {
+    || preg_match('~\A/api/(?:login|register|oauth/(?:prepare|google-callback|github-callback|facebook-callback))\.php\z~', $path))) {
     $_SERVER['SCRIPT_NAME'] = $path;
     require $file;
     return true;

@@ -17,6 +17,9 @@ foreach (['google','github'] as $provider) {
     $status=(new \App\Core\OAuthPreparation((array)config('oauth')))->status($provider);
     $check($status['ready'],$provider.' OAuth: '.($status['ready']?'configured':implode(', ',$status['missing'])));
 }
+$facebook=(new \App\Core\OAuthPreparation((array)config('oauth')))->status('facebook');
+if (in_array('--facebook',$argv,true)) $check($facebook['ready'],'facebook OAuth: '.($facebook['ready']?'configured':implode(', ',$facebook['missing'])));
+else echo 'INFO Facebook '.($facebook['ready']?'configured':'not enabled; use --facebook to require it').PHP_EOL;
 $check(strlen((string)config('auth.otp_secret',''))>=32,'COUPONHUB_OTP_SECRET >= 32 characters');
 $driver=config('mail.driver');
 $check(in_array($driver,['resend','smtp'],true),'mail driver is resend or smtp');
@@ -40,6 +43,10 @@ if (in_array('--db',$argv,true)) {
             $read->execute([$table]);
             $found=array_column($read->fetchAll(),'COLUMN_NAME');
             $check(array_diff($required,$found)===[],'database columns '.$table);
+        }
+        if (in_array('--facebook',$argv,true)) {
+            $read=$db->query("SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='oauth_accounts' AND COLUMN_NAME='provider'");
+            $check(str_contains((string)$read->fetchColumn(), "'facebook'"),'database Facebook provider migration');
         }
         $read=$db->query("SELECT COUNT(*) FROM information_schema.ROUTINES WHERE ROUTINE_SCHEMA=DATABASE() AND ROUTINE_NAME='ch_auth_user' AND ROUTINE_TYPE='PROCEDURE'");
         $check((int)$read->fetchColumn()===1,'database auth routine ch_auth_user');

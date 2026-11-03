@@ -53,7 +53,7 @@ final class CategoryController extends Controller
             return;
         }
         try {
-            $this->repo->toggleCategory((int)$id, (string)$request->input('active', '0') === '1');
+            $this->repo->toggleCategory((int)$id, (string)$request->input('active', '0') === '1', (int)Auth::id());
             Session::flash('success', 'Đã cập nhật danh mục.');
         } catch (Throwable $e) {
             Session::flash('error', $e->getMessage());

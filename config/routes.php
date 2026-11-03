@@ -39,6 +39,7 @@ $router->post('/api/oauth/prepare.php', [OAuthController::class, 'prepare']);
 $router->post('/auth/oauth/{provider}', [OAuthController::class, 'start']);
 $router->get('/api/oauth/google-callback.php', [OAuthController::class, 'google']);
 $router->get('/api/oauth/github-callback.php', [OAuthController::class, 'github']);
+$router->get('/api/oauth/facebook-callback.php', [OAuthController::class, 'facebook']);
 $router->get('/index.php', [CatalogController::class, 'index']);
 $router->get('/admin.php', [ReviewController::class, 'index']);
 $router->post('/admin.php', [ReviewController::class, 'index']);

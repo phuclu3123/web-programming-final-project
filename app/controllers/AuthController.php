@@ -136,6 +136,7 @@ final class AuthController extends Controller
     }
     public function resetPassword(Request $request): void
     {
+        AuthRateLimit::request('reset-link-attempt', '', 30);
         $this->resetHeaders();
         $token = $this->field($request, 'token');
         $password = $this->field($request, 'password');

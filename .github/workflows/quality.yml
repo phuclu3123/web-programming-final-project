@@ -3,7 +3,7 @@ name: CouponHub quality checks
 on:
   pull_request:
   push:
-    branches: [main, Quang]
+    branches: [main, Phuc, Quang]
 
 permissions:
   contents: read
@@ -46,3 +46,8 @@ jobs:
           php tests/public-header-notifications-phase6.php
           php tests/coupon-interaction-errors-phase4.php
           php tests/oauth-setup-access-phase5.php
+          php tests/session-guards.php
+          php tests/router-integration.php
+          php tests/oauth-auth.php
+          php tests/facebook-oauth.php
+          php tests/phase4-security.php

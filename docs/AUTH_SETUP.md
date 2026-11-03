@@ -1,5 +1,7 @@
 # Đăng nhập và khôi phục mật khẩu CouponHub
 
+Cập nhật đợt 4: [Facebook Login, giới hạn phiên Admin/Merchant, migration và checklist nghiệm thu thật](PHUC_PHASE4_REVIEW.md). Các mục Google/GitHub dưới đây vẫn áp dụng; Facebook cần liên kết lần đầu từ tài khoản đã đăng nhập và không dùng email chưa xác minh để tạo tài khoản.
+
 ## Đã triển khai
 
 - Email/username + mật khẩu tiếp tục dùng AuthService và users hiện tại.
@@ -53,7 +55,7 @@ Giữ cách PHP thông thường: `session_start()`, `$_SESSION`, cookie chứa 
 
 - Cookie HttpOnly, host-only, SameSite=Lax; Secure khi canonical APP_URL là HTTPS hoặc request HTTPS. Không tin X-Forwarded-Proto tùy ý từ client.
 - Session ID đổi khi đăng nhập; CSRF đổi theo phiên. State/PKCE/nonce chỉ ở server. Access/refresh token không đưa vào cookie, HTML, JSON hay lưu DB.
-- Mặc định tài khoản local/GitHub tồn tại tối đa 30 ngày như WEB_TCC; có thể giảm `COUPONHUB_SESSION_LIFETIME` và `COUPONHUB_SESSION_IDLE`. Phiên Google bị giới hạn thêm theo hạn ID token, tương tự giới hạn phiên Firebase trong WEB_TCC. Đến hạn cần đăng nhập lại; chưa có silent refresh.
+- Phiên USER local/GitHub mặc định tối đa 30 ngày theo cấu hình trước đây; có thể giảm `COUPONHUB_SESSION_LIFETIME` và `COUPONHUB_SESSION_IDLE`. ADMIN/MERCHANT tối đa 8 giờ và idle 30 phút. Phiên OAuth còn bị giới hạn theo hạn token được xác minh. Đến hạn cần đăng nhập lại; chưa có silent refresh.
 - `.env.example` chọn `storage/sessions` riêng để tránh GC của dự án PHP khác xóa phiên. Thư mục cần quyền ghi cho PHP. Cookie không chứa role đáng tin; quyền/trạng thái/auth_version được đọc lại từ DB.
 - Có giới hạn đăng nhập/đăng ký/khởi tạo OAuth và OTP bằng file + flock tại thư mục cache không công khai. Cách này dành cho một PHP server; khi chạy nhiều máy cần kho rate-limit/session dùng chung.
 

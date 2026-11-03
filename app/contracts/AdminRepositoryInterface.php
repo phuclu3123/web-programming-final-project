@@ -15,7 +15,7 @@ interface AdminRepositoryInterface
     public function setMerchantStatus(int $merchantId, string $action, int $actorId, string $note = ''): void;
     public function categories(): array;
     public function addCategory(int $actorId, string $name, string $slug, ?string $description): void;
-    public function toggleCategory(int $categoryId, bool $active): void;
+    public function toggleCategory(int $categoryId, bool $active, int $actorId = 0): void;
     public function updateCategory(int $actorId, int $categoryId, string $name, string $slug, ?string $description, int $sortOrder): void;
     public function deleteUnusedCategory(int $actorId, int $categoryId): void;
     public function campaigns(): array;

@@ -17,6 +17,10 @@ final class OAuthRepository implements \App\Contracts\OAuthRepositoryInterface
 
     public function resolve(array $identity, ?array $linkActor = null): array
     {
+        if (!in_array($identity['provider'] ?? '', ['google', 'github', 'facebook'], true)
+            || !is_string($identity['subject'] ?? null) || $identity['subject'] === '' || strlen($identity['subject']) > 255) {
+            throw new HttpError(422, 'Danh tính OAuth không hợp lệ.');
+        }
         $this->db->beginTransaction();
         try {
             if ($linkActor !== null) {
@@ -39,6 +43,8 @@ final class OAuthRepository implements \App\Contracts\OAuthRepositoryInterface
                 if ($existing->fetch()) throw new HttpError(409,'Tài khoản đã liên kết với nhà cung cấp này.');
                 $id=(int)$linkActor['id'];
             } else {
+                if ($identity['provider'] === 'facebook') throw new HttpError(422, 'Lần đầu dùng Facebook, hãy đăng nhập CouponHub rồi liên kết Facebook trong Tài khoản.');
+                if (!is_string($identity['email'] ?? null) || strlen($identity['email']) > 191 || !filter_var($identity['email'], FILTER_VALIDATE_EMAIL)) throw new HttpError(422, 'Cần email đã xác minh để tạo tài khoản.');
                 // Never join accounts merely because the provider reports the same email.
                 $email=$this->db->prepare('SELECT id FROM users WHERE email=? LIMIT 1');
                 $email->execute([$identity['email']]);
@@ -47,7 +53,7 @@ final class OAuthRepository implements \App\Contracts\OAuthRepositoryInterface
                 $create->execute([$identity['email'],password_hash(bin2hex(random_bytes(32)),PASSWORD_DEFAULT),mb_substr($identity['name'],0,120)]);
                 $id=(int)$this->db->lastInsertId();
             }
-            $this->db->prepare('INSERT INTO oauth_accounts(user_id,provider,provider_user_id,provider_email,email_verified) VALUES(?,?,?,?,1)')->execute([$id,$identity['provider'],$identity['subject'],$identity['email']]);
+            $this->db->prepare('INSERT INTO oauth_accounts(user_id,provider,provider_user_id,provider_email,email_verified) VALUES(?,?,?,?,?)')->execute([$id,$identity['provider'],$identity['subject'],$identity['email'],$identity['provider'] === 'facebook' ? 0 : 1]);
             $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')->execute([$id,$linkActor?'OAUTH_LINK':'OAUTH_SIGNUP',$identity['provider']]);
             $read=$this->db->prepare('SELECT id,email,full_name,role,status,deleted_at,auth_version FROM users WHERE id=?');
             $read->execute([$id]); $user=$read->fetch();

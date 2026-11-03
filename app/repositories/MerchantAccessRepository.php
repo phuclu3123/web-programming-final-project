@@ -11,6 +11,7 @@ use Throwable;
 /** Independent rights per (user_id, merchant_id), requests preserved for audit. */
 final class MerchantAccessRepository implements \App\Contracts\MerchantAccessRepositoryInterface
 {
+    use AdminWriteGuard;
     public function __construct(private Database $db) {}
 
     public function requests(): array
@@ -49,6 +50,7 @@ final class MerchantAccessRepository implements \App\Contracts\MerchantAccessRep
         if($action==='APPROVE' && trim((string)$note)==='')throw new RuntimeException('Vui lòng ghi kết quả xác minh quyền đại diện trước khi duyệt.');
         $this->db->beginTransaction();
         try {
+            $this->requireActiveAdmin($adminId);
             $q=$this->db->prepare("SELECT * FROM merchant_requests WHERE id=? FOR UPDATE");$q->execute([$requestId]);$r=$q->fetch();
             if(!is_array($r) || $r['status']!=='PENDING')throw new RuntimeException('Yêu cầu không còn ở trạng thái chờ duyệt.');
             $userCheck=$this->db->prepare("SELECT status FROM users WHERE id=? AND deleted_at IS NULL FOR UPDATE");
@@ -105,6 +107,7 @@ final class MerchantAccessRepository implements \App\Contracts\MerchantAccessRep
         if(trim($note)==='')throw new RuntimeException('Cần ghi lý do thu hồi.');
         $this->db->beginTransaction();
         try {
+            $this->requireActiveAdmin($adminId);
             $s=$this->db->prepare("SELECT status FROM merchant_memberships WHERE user_id=? AND merchant_id=? FOR UPDATE");$s->execute([$userId,$merchantId]);
             if($s->fetchColumn()!=='ACTIVE')throw new RuntimeException('Quyền này không còn hiệu lực.');
             $this->db->prepare("UPDATE merchant_memberships SET status='REVOKED',revoked_by=?,revoked_at=UTC_TIMESTAMP(),revoke_note=? WHERE user_id=? AND merchant_id=?")->execute([$adminId,$note,$userId,$merchantId]);

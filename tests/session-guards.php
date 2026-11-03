@@ -111,7 +111,7 @@ forbidden(fn () => $oauth->consume('github', $query), 403);
 $probe = $oauth->begin('github', true);
 parse_str(parse_url($probe['url'], PHP_URL_QUERY), $query);
 forbidden(fn () => $oauth->consume('google', $query), 403);
-forbidden(fn () => $oauth->provider('facebook'), 404);
+forbidden(fn () => $oauth->provider('unknown'), 404);
 $probe = $oauth->begin('google', true);
 check(str_starts_with($probe['url'], 'api/oauth/google-callback.php?'), 'Google probe callback');
 parse_str(parse_url($probe['url'], PHP_URL_QUERY), $query);

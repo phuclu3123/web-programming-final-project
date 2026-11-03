@@ -1,5 +1,7 @@
 # Database CouponHub
 
+Đợt 4: bản cài đã có dữ liệu cần backup rồi chạy [20261104_phase4_auth_guards.sql](migrations/20261104_phase4_auth_guards.sql), sau migration đợt 3 nếu máy chưa áp. Không import lại schema/demo. Xem [nghiệm thu Phúc đợt 4](../docs/PHUC_PHASE4_REVIEW.md).
+
 Hai file SQL có mục đích riêng:
 
 | File | Nội dung | Thứ tự import |

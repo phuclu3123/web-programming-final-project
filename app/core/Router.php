@@ -17,8 +17,9 @@ final class Router
     public function routes(): array { return $this->routes; }
     public function dispatch(Request $request): void
     {
-        Session::start();
+        RequestSecurity::headers();
         try {
+            Session::start();
             $allowed = [];
             foreach ($this->routes as $route) {
                 $params = $this->match($route['path'], $request->path());
@@ -28,13 +29,16 @@ final class Router
                 // Không mở kết nối DB trong controller trước khi biết khách có phiên.
                 $this->guard($request->path(), $request->method());
                 if ($request->method() !== 'GET') {
-                    $scheme = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
-                    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-                    if (($origin !== '' && $origin !== $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? ''))
-                        || ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '') === 'cross-site') throw new HttpError(403, 'Nguồn yêu cầu không hợp lệ.');
+                    RequestSecurity::checkWrite();
                     $input = $request->input('csrf', $request->input('_token', ''));
                     if (!is_string($input)) throw new HttpError(403, 'Token không hợp lệ.');
                     Session::checkCsrf($input);
+                    // Admin forms use scalar fields only. Reject foo[]=... before casts
+                    // such as (int)array can silently select an unintended record.
+                    if ($request->path() === '/admin.php' || str_starts_with($request->path(), '/admin/')) {
+                        foreach ($request->all() as $value) if (is_array($value) || is_object($value)) throw new HttpError(422, 'Dữ liệu biểu mẫu không hợp lệ.');
+                    }
+                    RequestSecurity::limitWrite();
                 }
                 [$class, $action] = $route['handler'];
                 (new $class())->{$action}($request, ...array_values($params));

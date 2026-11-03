@@ -9,6 +9,8 @@ from pathlib import Path
 import subprocess
 import time
 import urllib.request
+import sys
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 ROOT=Path(__file__).resolve().parents[1]
 if os.environ.get('COUPONHUB_RUN_DB_TEST')!='1': raise SystemExit('SKIP: isolated DB opt-in required')

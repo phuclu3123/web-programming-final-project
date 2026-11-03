@@ -65,7 +65,7 @@ use App\Core\Session; ?>
         <p class="text-muted">Liên kết để đăng nhập nhanh. Tài khoản có cùng email chỉ được liên kết khi bạn chủ
           động xác nhận tại đây.</p>
         <div class="d-flex flex-wrap gap-3">
-          <?php foreach (['google' => 'Google', 'github' => 'GitHub'] as $provider => $label):
+          <?php foreach (['google' => 'Google', 'github' => 'GitHub', 'facebook' => 'Facebook'] as $provider => $label):
             $ready = (new \App\Core\OAuthPreparation((array)config('oauth')))->status($provider)['ready']; ?>
             <?php if (in_array($provider, $oauthLinks ?? [], true)): ?><span
                 class="badge bg-success align-self-center p-3"><?= e($label) ?> · Đã liên kết</span>

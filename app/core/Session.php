@@ -49,6 +49,7 @@ final class Session
         $_SESSION['auth_schema'] = self::AUTH_SCHEMA;
         $_SESSION['authenticated_at'] = $_SESSION['last_activity'] = time();
         $ttl = min((int)config('auth.session_lifetime', self::MAX_SECONDS), max(1, (int)($user['session_ttl'] ?? config('auth.session_lifetime', self::MAX_SECONDS))));
+        if (in_array($user['role'], ['ADMIN', 'MERCHANT'], true)) $ttl = min($ttl, self::MAX_SECONDS);
         $_SESSION['expires_at'] = time() + $ttl;
         $params = session_get_cookie_params();
         unset($params['lifetime']);
@@ -68,7 +69,8 @@ final class Session
         }
         $now = time();
         if (
-            $now - (int) ($_SESSION['last_activity'] ?? 0) > (int)config('auth.session_idle', self::IDLE_SECONDS)
+            $now - (int) ($_SESSION['last_activity'] ?? 0) > (in_array($_SESSION['user_role'] ?? '', ['ADMIN', 'MERCHANT'], true)
+                ? min(self::IDLE_SECONDS, (int)config('auth.session_idle', self::IDLE_SECONDS)) : (int)config('auth.session_idle', self::IDLE_SECONDS))
             || $now >= (int)($_SESSION['expires_at'] ?? ((int)($_SESSION['authenticated_at'] ?? 0) + self::MAX_SECONDS))
         ) {
             self::clearAuthentication();

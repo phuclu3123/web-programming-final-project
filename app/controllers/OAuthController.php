@@ -89,4 +89,5 @@ final class OAuthController extends Controller
     {
         $this->callback('github', $request);
     }
+    public function facebook(Request $request): void { $this->callback('facebook', $request); }
 }

@@ -18,7 +18,7 @@ interface CampaignRepositoryInterface
     public function publicCategories(): array;
     public function findAdmin(int $campaignId): ?array;
     public function allActiveCoupons(): array;
-    public function detachAdmin(int $campaignId, int $couponId): void;
+    public function detachAdmin(int $campaignId, int $couponId, int $actorId = 0): void;
     public function merchantCampaigns(int $userId): array;
     public function findOwned(int $campaignId, int $userId): ?array;
     public function create(int $actorId, ?int $merchantId, string $name, string $slug, ?string $description, string $startsAtUtc, string $endsAtUtc, string $status, ?string $bannerPath = null): int;

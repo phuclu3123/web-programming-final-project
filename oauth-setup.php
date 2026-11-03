@@ -31,7 +31,7 @@ header('Cache-Control: no-store');
     <main class="container py-5">
         <h1>Chuẩn bị Google / GitHub OAuth</h1>
         <p>Đây là công cụ thử cấu hình và callback, chưa đăng nhập tài khoản OAuth.</p>
-        <?php foreach (['google' => 'Google', 'github' => 'GitHub'] as $key => $label): $status = $preparation->status($key); ?>
+        <?php foreach (['google' => 'Google', 'github' => 'GitHub', 'facebook' => 'Facebook'] as $key => $label): $status = $preparation->status($key); ?>
             <section class="card p-4 mb-3">
                 <h2 class="h4"><?= e($label) ?></h2>
                 <p><?= $status['ready'] ? 'Đã đủ trường cấu hình để thử nhà cung cấp.' : 'Còn thiếu: ' . e(implode(', ', $status['missing'])) ?>
@@ -69,7 +69,7 @@ header('Cache-Control: no-store');
                         'Không thể thử callback.');
                     const target = new URL(result.url, window.location.href);
                     if (target.origin !== window.location.origin && target.origin !==
-                        'https://github.com' && target.origin !== 'https://accounts.google.com') {
+                        'https://github.com' && target.origin !== 'https://accounts.google.com' && target.origin !== 'https://www.facebook.com') {
                         throw new Error('Địa chỉ nhà cung cấp không hợp lệ.');
                     }
                     window.location.assign(target.href);

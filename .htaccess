@@ -5,6 +5,10 @@ RewriteEngine On
 # Application source/config/SQL are never public web resources.
 RewriteRule ^(?:app|config|database|docs|tests|scripts|storage|\.git)(?:/|$) - [F,L,NC]
 RewriteRule (^|/)\. - [F,L]
+# Course archives, backups and logs placed beside the application stay private.
+<FilesMatch "\.(?i:sql|log|bak|zip|7z|tar|gz|ppt|pptx|xls|xlsx|xlsm)$">
+    Require all denied
+</FilesMatch>
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]

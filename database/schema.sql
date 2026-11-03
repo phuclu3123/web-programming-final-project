@@ -493,7 +493,7 @@ ALTER TABLE `votes`
 CREATE TABLE oauth_accounts (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
-    provider ENUM('github', 'google') NOT NULL,
+    provider ENUM('github', 'google', 'facebook') NOT NULL,
     -- Google dùng claim sub làm ID; lưu được tối đa 255 ký tự phân biệt hoa/thường.
     provider_user_id VARBINARY(255) NOT NULL,
     provider_email VARCHAR(191) NULL,
@@ -541,7 +541,7 @@ CREATE PROCEDURE `sp_attach_campaign_coupon` (IN `p_actor` BIGINT UNSIGNED, IN `
   DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
   SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
   START TRANSACTION;
-  SELECT role INTO v_role FROM users WHERE id=p_actor AND status='ACTIVE' AND deleted_at IS NULL;
+  SELECT role INTO v_role FROM users WHERE id=p_actor AND status='ACTIVE' AND deleted_at IS NULL LOCK IN SHARE MODE;
   IF v_role IS NULL THEN SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Active account required'; END IF;
   SELECT id,owner_merchant_id,starts_at,ends_at INTO v_campaign,v_owner_merchant,v_cs,v_ce FROM campaigns WHERE id=p_campaign FOR UPDATE;
   SELECT merchant_id,starts_at,ends_at INTO v_merchant,v_ps,v_pe FROM coupons WHERE id=p_coupon AND deleted_at IS NULL FOR UPDATE;
@@ -608,7 +608,8 @@ CREATE PROCEDURE `sp_moderate_coupon` (IN `p_actor` BIGINT UNSIGNED, IN `p_coupo
   DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
   SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
   START TRANSACTION;
-  IF NOT EXISTS(SELECT 1 FROM users WHERE id=p_actor AND role='ADMIN' AND status='ACTIVE' AND deleted_at IS NULL) THEN
+  SELECT id INTO v_lock FROM users WHERE id=p_actor AND role='ADMIN' AND status='ACTIVE' AND deleted_at IS NULL LOCK IN SHARE MODE;
+  IF v_lock IS NULL THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Admin required';
   END IF;
   IF p_moderation IS NULL OR p_moderation NOT IN ('PENDING','APPROVED','REJECTED') OR
@@ -659,11 +660,13 @@ END$$
 
 CREATE PROCEDURE `sp_resolve_report` (IN `p_actor` BIGINT UNSIGNED, IN `p_report` BIGINT UNSIGNED, IN `p_status` VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_vietnamese_ci, IN `p_note` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_vietnamese_ci)  SQL SECURITY INVOKER BEGIN
   DECLARE v_coupon BIGINT UNSIGNED DEFAULT NULL;
+  DECLARE v_actor BIGINT UNSIGNED DEFAULT NULL;
   DECLARE v_status VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_vietnamese_ci;
   DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; RESIGNAL; END;
   SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
   START TRANSACTION;
-  IF NOT EXISTS(SELECT 1 FROM users WHERE id=p_actor AND role='ADMIN' AND status='ACTIVE' AND deleted_at IS NULL) THEN
+  SELECT id INTO v_actor FROM users WHERE id=p_actor AND role='ADMIN' AND status='ACTIVE' AND deleted_at IS NULL LOCK IN SHARE MODE;
+  IF v_actor IS NULL THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Admin required';
   END IF;
   IF p_status IS NULL OR p_status NOT IN ('RESOLVED','DISMISSED') OR p_note IS NULL OR CHAR_LENGTH(TRIM(p_note))=0 THEN

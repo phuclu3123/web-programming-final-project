@@ -8,6 +8,8 @@ Rà soát giai đoạn 2 của Phúc: [kết quả kiểm thử, lỗi đã sử
 
 Tích hợp Trúc + Quang đợt 3: [nghiệm thu 21 mục P0, phạm vi chọn lọc và bước nâng cấp database](docs/PHASE3_ACCEPTANCE.md). Máy đã có dữ liệu cần import migration đợt 3 theo hướng dẫn; không nạp lại schema/demo.
 
+Phúc đợt 4: [OAuth Facebook, session/cookie, bảo vệ action và nghiệm thu](docs/PHUC_PHASE4_REVIEW.md). Cần migration đợt 4 trên database đã có dữ liệu; chưa xác nhận OAuth/email thật khi chưa cấu hình ứng dụng. [Các API đề xuất cho CouponHub](docs/API_RECOMMENDATIONS.md).
+
 ## Bản tích hợp Phúc + Quang
 
 Đã tích hợp thủ công `origin/Quang` tại `cc8a2d8`, giữ UI/Auth hiện tại và dùng **mysqli** cho toàn dự án. MVC, abstract controller, repository/interface và session được dùng chung.

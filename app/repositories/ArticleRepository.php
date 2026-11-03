@@ -9,6 +9,7 @@ use RuntimeException;
 
 final class ArticleRepository implements \App\Contracts\ArticleRepositoryInterface
 {
+    use AdminWriteGuard;
     public function __construct(private Database $db) {}
     public function published(int $limit = 20): array
     {
@@ -43,16 +44,28 @@ final class ArticleRepository implements \App\Contracts\ArticleRepositoryInterfa
         if ($body === '' || mb_strlen($body) > 30000) throw new RuntimeException('Nội dung bắt buộc, tối đa 30.000 ký tự.');
         if (mb_strlen($summary) > 1000) throw new RuntimeException('Tóm tắt tối đa 1.000 ký tự.');
         if (!in_array($status, ['DRAFT', 'PUBLISHED', 'ARCHIVED'], true)) throw new RuntimeException('Trạng thái bài viết không hợp lệ.');
-        if ($id === null) {
-            $slug = slugify($title) . '-' . bin2hex(random_bytes(3));
-            $q = $this->db->prepare('INSERT INTO articles(author_id,title,slug,summary,body,status,published_at) VALUES(?,?,?,?,?,?,IF(?=\'PUBLISHED\',UTC_TIMESTAMP(),NULL))');
-            $q->execute([$actorId, $title, $slug, $summary ?: null, $body, $status, $status]);
-            return (int)$this->db->lastInsertId();
+        $this->db->beginTransaction();
+        try {
+            $this->requireActiveAdmin($actorId);
+            if ($id === null) {
+                $slug = slugify($title) . '-' . bin2hex(random_bytes(3));
+                $q = $this->db->prepare('INSERT INTO articles(author_id,title,slug,summary,body,status,published_at) VALUES(?,?,?,?,?,?,IF(?,UTC_TIMESTAMP(),NULL))');
+                $q->execute([$actorId, $title, $slug, $summary ?: null, $body, $status, $status === 'PUBLISHED' ? 1 : 0]);
+                $id = (int)$this->db->lastInsertId();
+            } else {
+                $lock = $this->db->prepare('SELECT id FROM articles WHERE id=? FOR UPDATE');
+                $lock->execute([$id]);
+                if (!$lock->fetch()) throw new RuntimeException('Bài viết không tồn tại.');
+                $q = $this->db->prepare('UPDATE articles SET title=?,summary=?,body=?,status=?,published_at=IF(?,COALESCE(published_at,UTC_TIMESTAMP()),NULL) WHERE id=?');
+                $q->execute([$title, $summary ?: null, $body, $status, $status === 'PUBLISHED' ? 1 : 0, $id]);
+            }
+            $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')
+                ->execute([$actorId, 'ARTICLE_SAVE', json_encode(['article_id'=>$id,'status'=>$status], JSON_THROW_ON_ERROR)]);
+            $this->db->commit();
+            return $id;
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
         }
-        $current = $this->find($id);
-        if ($current === null) throw new RuntimeException('Bài viết không tồn tại.');
-        $q = $this->db->prepare("UPDATE articles SET title=?,summary=?,body=?,status=?,published_at=CASE WHEN ?='PUBLISHED' THEN COALESCE(published_at,UTC_TIMESTAMP()) ELSE NULL END WHERE id=?");
-        $q->execute([$title, $summary ?: null, $body, $status, $status, $id]);
-        return $id;
     }
 }

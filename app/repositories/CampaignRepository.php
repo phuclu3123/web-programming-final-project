@@ -184,10 +184,20 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         )->fetchAll();
     }
 
-    public function detachAdmin(int $campaignId, int $couponId): void
+    public function detachAdmin(int $campaignId, int $couponId, int $actorId = 0): void
     {
-        $stmt = $this->db->prepare('DELETE FROM campaign_coupons WHERE campaign_id=? AND coupon_id=?');
-        $stmt->execute([$campaignId, $couponId]);
+        $this->db->beginTransaction();
+        try {
+            $this->requireWriter($actorId, 'ADMIN');
+            $lock=$this->db->prepare('SELECT id FROM campaigns WHERE id=? FOR UPDATE');
+            $lock->execute([$campaignId]);
+            if (!$lock->fetchColumn()) throw new RuntimeException('Không tìm thấy chiến dịch.');
+            $this->detachAndAudit($campaignId, $couponId, $actorId);
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
     /*@return array<int,array<string,mixed>> */
@@ -288,9 +298,28 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
 
     public function detachOwned(int $campaignId, int $couponId, int $userId): void
     {
-        if ($this->findOwned($campaignId, $userId) === null) throw new RuntimeException('Bạn không có quyền sửa Campaign này.');
+        $this->db->beginTransaction();
+        try {
+            $this->requireWriter($userId, 'MERCHANT');
+            $lock=$this->db->prepare("SELECT c.id FROM campaigns c JOIN merchants m ON m.id=c.owner_merchant_id JOIN merchant_memberships mm ON mm.merchant_id=m.id
+                WHERE c.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL
+                AND c.status NOT IN ('ARCHIVED','DISABLED') FOR UPDATE");
+            $lock->execute([$campaignId,$userId]);
+            if (!$lock->fetchColumn()) throw new RuntimeException('Bạn không có quyền sửa Campaign này.');
+            $this->detachAndAudit($campaignId, $couponId, $userId);
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
+    }
+
+    private function detachAndAudit(int $campaignId, int $couponId, int $actorId): void
+    {
         $stmt = $this->db->prepare('DELETE FROM campaign_coupons WHERE campaign_id=? AND coupon_id=?');
         $stmt->execute([$campaignId, $couponId]);
+        if ($stmt->rowCount() > 0) $this->db->prepare('INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,?,?)')
+            ->execute([$actorId,$couponId,'CAMPAIGN_DETACH',json_encode(['campaign_id'=>$campaignId],JSON_THROW_ON_ERROR)]);
     }
 
     /* @return array<int,array<string,mixed>> */

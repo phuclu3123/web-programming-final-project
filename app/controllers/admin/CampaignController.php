@@ -103,7 +103,7 @@ final class CampaignController extends Controller
             return;
         }
         try {
-            $this->campaigns->detachAdmin((int)$id, (int)$couponId);
+            $this->campaigns->detachAdmin((int)$id, (int)$couponId, (int)Auth::id());
             Session::flash('success', 'Đã gỡ coupon khỏi Campaign.');
         } catch (Throwable $e) {
             $this->flashFailure($e);

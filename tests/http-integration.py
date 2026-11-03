@@ -49,9 +49,9 @@ assert manager.request('/admin')[0]==403
 print('PASS logged-in User/Admin/Merchant routes and role isolation')
 # Local diagnostic probes never authenticate; replay is rejected independently
 # of the real provider exchange tested in auth-complete-http.py/oauth-auth.php.
-s,h,b=c.request('/oauth-setup.php');assert s==200 and 'accounts.google.com' in b and 'Facebook' not in b
+s,h,b=c.request('/oauth-setup.php');assert s==200 and 'accounts.google.com' in b and 'Facebook' in b
 csrf=re.search(r'name="csrf" value="([a-f0-9]+)"',b).group(1)
-for provider in ['google','github']:
+for provider in ['google','github','facebook']:
  s,h,b=c.request('/api/oauth/prepare.php',{'csrf':csrf,'provider':provider,'mode':'probe'});assert s==200,(s,b)
  url=json.loads(b)['url'];s,h,b=c.request('/'+url);result=json.loads(b)
  assert s==200 and result['prepared'] and not result['authenticated'],(s,b)
