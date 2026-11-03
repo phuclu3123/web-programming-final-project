@@ -16,7 +16,7 @@
         ...modal.querySelectorAll("[data-password-toggle]"),
     ];
 
-    // ---- PHẦN DÙNG CHUNG (ĐÃ CÓ): thông báo và kiểm tra form ----
+    // PHẦN DÙNG CHUNG (ĐÃ CÓ): thông báo và kiểm tra form
     /**
      * Dọn thông báo và dấu lỗi cũ của một form, không xóa dữ liệu đã nhập.
      * .auth-message là vùng chứa chữ; aria-invalid đánh dấu input bị lỗi.
@@ -91,7 +91,7 @@
         });
 
         if (form.id === "registerForm") {
-            // ---- PHẦN ĐĂNG KÝ (BỔ SUNG): username phải khớp quy tắc ở PHP ----
+            // PHẦN ĐĂNG KÝ (BỔ SUNG): username phải khớp quy tắc ở PHP
             const username = form.querySelector("#registerUsername");
             if (
                 username.value &&
@@ -155,7 +155,7 @@
         finally { if (button) { button.disabled = false; button.textContent = original; } }
     }
 
-    // ---- PHẦN ĐĂNG KÝ (BỔ SUNG): gửi dữ liệu và chuyển về đăng nhập ----
+    // PHẦN ĐĂNG KÝ (BỔ SUNG): gửi dữ liệu và chuyển về đăng nhập
     async function submitRegistration(form) {
         const button = [...form.elements].find(
             (element) => element.type === "submit",
@@ -232,7 +232,7 @@
         }
     }
 
-    // ---- PHẦN SUBMIT: dùng chung kiểm tra, rồi tách từng chức năng ----
+    // PHẦN SUBMIT: dùng chung kiểm tra, rồi tách từng chức năng
     // Gắn handler cho từng form. Submit form nào thì chỉ xử lý form đó.
     forms.forEach((form) => {
         form.addEventListener("submit", async (event) => {
@@ -259,7 +259,7 @@
                 return;
             }
 
-            // ---- PHẦN ĐĂNG NHẬP (ĐÃ CÓ): giữ fetch và tải lại trang ----
+            // PHẦN ĐĂNG NHẬP (ĐÃ CÓ): giữ fetch và tải lại trang
             // Nút submit nằm ngoài form nên dùng form.elements.
             const submitButton = [...form.elements].find(
                 (element) => element.type === "submit",
@@ -293,7 +293,7 @@
                     return;
                 }
 
-                // ---- REDIRECT (BỔ SUNG): PHP chọn trang theo role/return_url ----
+                // REDIRECT (BỔ SUNG): PHP chọn trang theo role/return_url
                 const destination = new URL(
                     result.redirect || "index.php",
                     document.baseURI || window.location.href,

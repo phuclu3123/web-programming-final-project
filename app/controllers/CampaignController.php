@@ -40,7 +40,7 @@ final class CampaignController extends Controller
             return;
         }
 
-        $campaign = $this->campaigns->findPublic((int) $id,true);
+        $campaign = $this->campaigns->findPublic((int) $id, true);
 
         if ($campaign === null) {
             $this->renderError(
@@ -65,7 +65,7 @@ final class CampaignController extends Controller
             $usageChannel = 'ALL';
         }
 
-        $platform=positiveId($request->query('platform','0'),true);
+        $platform = positiveId($request->query('platform', '0'), true);
         $this->view('campaigns/show', [
             'pageTitle' => (string) $campaign['name'],
             'campaign' => $campaign,
@@ -78,37 +78,45 @@ final class CampaignController extends Controller
             'categories' => $this->campaigns->publicCategories(),
             'selectedCategory' => $categoryId,
             'selectedChannel' => $usageChannel,
-            'selectedPlatform'=>$platform,
-            'platforms'=>$this->merchants->publicFilterOptions(),
+            'selectedPlatform' => $platform,
+            'platforms' => $this->merchants->publicFilterOptions(),
         ]);
     }
 
     public function index(Request $request): void
     {
         $phase = $request->query('phase', 'ALL');
-        if (!in_array($phase, ['ALL','ACTIVE','UPCOMING'], true)) {
+        if (!in_array($phase, ['ALL', 'ACTIVE', 'UPCOMING'], true)) {
             throw new \App\Core\HttpError(422, 'Bộ lọc chiến dịch không hợp lệ.');
         }
         $categoryId = positiveId($request->query('category_id', '0'), true);
         $usageChannel = $request->query('usage_channel', 'ALL');
-        if (!in_array($usageChannel, ['ALL','ONLINE','OFFLINE','BOTH'], true)) $usageChannel = 'ALL';
-        $platform=positiveId($request->query('platform','0'),true);
-        $listing = $this->campaigns->publicFilteredListing($phase, $categoryId, $usageChannel, positiveId($request->query('page', '1')),9,$platform);
+        if (!in_array($usageChannel, ['ALL', 'ONLINE', 'OFFLINE', 'BOTH'], true)) $usageChannel = 'ALL';
+        $platform = positiveId($request->query('platform', '0'), true);
+        $listing = $this->campaigns->publicFilteredListing($phase, $categoryId, $usageChannel, positiveId($request->query('page', '1')), 9, $platform);
         $previewId = positiveId($request->query('preview', '0'), true);
         $campaignPreview = $listing['items'][0] ?? null;
         if ($previewId > 0) {
             $campaignPreview = null;
             foreach ($listing['items'] as $candidate) {
-                if ((int)$candidate['id'] === $previewId) { $campaignPreview = $candidate; break; }
+                if ((int)$candidate['id'] === $previewId) {
+                    $campaignPreview = $candidate;
+                    break;
+                }
             }
             if ($campaignPreview === null) throw new \App\Core\HttpError(404, 'Chiến dịch không có trong lựa chọn hiện tại.');
         }
         $this->view('campaigns/index', [
-            'pageTitle'=>'Chiến dịch ưu đãi', 'phase'=>$phase, 'listing'=>$listing,
-            'campaignPreview'=>$campaignPreview,
-            'campaignCoupons'=>$campaignPreview ? array_slice($this->campaigns->publicCoupons((int)$campaignPreview['id'], $categoryId, $usageChannel,$platform), 0, 3) : [],
-            'categories'=>$this->campaigns->publicCategories(), 'selectedCategory'=>$categoryId, 'selectedChannel'=>$usageChannel,
-            'selectedPlatform'=>$platform,'platforms'=>$this->merchants->publicFilterOptions(),
+            'pageTitle' => 'Chiến dịch ưu đãi',
+            'phase' => $phase,
+            'listing' => $listing,
+            'campaignPreview' => $campaignPreview,
+            'campaignCoupons' => $campaignPreview ? array_slice($this->campaigns->publicCoupons((int)$campaignPreview['id'], $categoryId, $usageChannel, $platform), 0, 3) : [],
+            'categories' => $this->campaigns->publicCategories(),
+            'selectedCategory' => $categoryId,
+            'selectedChannel' => $usageChannel,
+            'selectedPlatform' => $platform,
+            'platforms' => $this->merchants->publicFilterOptions(),
         ]);
     }
 
@@ -172,7 +180,7 @@ final class CampaignController extends Controller
             Response::redirect(url('/merchant/campaigns/' . $id));
         } catch (Throwable $e) {
             $this->flashFailure($e);
-            $this->rememberInput($request,'create');
+            $this->rememberInput($request, 'create');
 
             Response::redirect(url('/merchant/campaigns/create'));
         }
@@ -228,7 +236,7 @@ final class CampaignController extends Controller
         $old['ends_at'] = $this->utcToLocal(
             (string) $campaign['ends_at']
         );
-        $old=array_replace($old,$this->previousInput('edit-'.(int)$id));
+        $old = array_replace($old, $this->previousInput('edit-' . (int)$id));
 
         $this->view('merchant/campaigns/form', [
             'pageTitle' => 'Sửa Campaign',
@@ -260,7 +268,7 @@ final class CampaignController extends Controller
             );
         } catch (Throwable $e) {
             $this->flashFailure($e);
-            $this->rememberInput($request,'edit-'.(int)$id);
+            $this->rememberInput($request, 'edit-' . (int)$id);
 
             Response::redirect(
                 url('/merchant/campaigns/' . (int) $id . '/edit')
@@ -328,25 +336,25 @@ final class CampaignController extends Controller
 
     private function rememberInput(Request $request, string $key): void
     {
-        $old=[];
-        foreach (['merchant_id','name','description','banner_path','starts_at','ends_at','status'] as $field) {
-            $value=$request->input($field,'');
-            if (is_string($value) && mb_check_encoding($value,'UTF-8') && strlen($value)<=40000) $old[$field]=$value;
+        $old = [];
+        foreach (['merchant_id', 'name', 'description', 'banner_path', 'starts_at', 'ends_at', 'status'] as $field) {
+            $value = $request->input($field, '');
+            if (is_string($value) && mb_check_encoding($value, 'UTF-8') && strlen($value) <= 40000) $old[$field] = $value;
         }
-        Session::put('campaign_form_old',['key'=>$key,'input'=>$old]);
+        Session::put('campaign_form_old', ['key' => $key, 'input' => $old]);
     }
 
     private function previousInput(string $key): array
     {
-        $old=Session::get('campaign_form_old',[]);
+        $old = Session::get('campaign_form_old', []);
         Session::forget('campaign_form_old');
-        return ($old['key'] ?? '')===$key ? $old['input'] : [];
+        return ($old['key'] ?? '') === $key ? $old['input'] : [];
     }
 
     private function flashFailure(Throwable $error): void
     {
-        if ($error instanceof \mysqli_sql_exception) error_log('Campaign write failed: '.get_class($error));
-        Session::flash('error',$error instanceof \mysqli_sql_exception ? 'Không thể lưu thay đổi chiến dịch lúc này.' : $error->getMessage());
+        if ($error instanceof \mysqli_sql_exception) error_log('Campaign write failed: ' . get_class($error));
+        Session::flash('error', $error instanceof \mysqli_sql_exception ? 'Không thể lưu thay đổi chiến dịch lúc này.' : $error->getMessage());
     }
 
     private function csrf(Request $request): void

@@ -67,7 +67,10 @@ final class CategoryController extends Controller
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
-        if (!ctype_digit($id) || (int)$id <= 0) { $this->renderError(404, 'Danh mục không hợp lệ.'); return; }
+        if (!ctype_digit($id) || (int)$id <= 0) {
+            $this->renderError(404, 'Danh mục không hợp lệ.');
+            return;
+        }
         try {
             $this->service->updateCategory((int)Auth::id(), (int)$id, $request->all());
             Session::flash('success', 'Đã cập nhật tên, mô tả và thứ tự danh mục.');
@@ -85,7 +88,10 @@ final class CategoryController extends Controller
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
-        if (!ctype_digit($id) || (int)$id <= 0) { $this->renderError(404, 'Danh mục không hợp lệ.'); return; }
+        if (!ctype_digit($id) || (int)$id <= 0) {
+            $this->renderError(404, 'Danh mục không hợp lệ.');
+            return;
+        }
         try {
             $this->service->deleteCategory((int)Auth::id(), (int)$id);
             Session::flash('success', 'Đã xóa danh mục chưa sử dụng.');
@@ -95,5 +101,4 @@ final class CategoryController extends Controller
         }
         Response::redirect(url('/admin/categories'));
     }
-
 }

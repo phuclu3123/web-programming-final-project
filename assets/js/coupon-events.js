@@ -9,10 +9,10 @@
     const base = document.querySelector('meta[name="couponhub-base-url"]')?.content || '';
     const url = `${base.replace(/\/$/, '')}/api/coupons/${id}/events`;
     try {
-      const body = JSON.stringify({_token: token, event});
+      const body = JSON.stringify({ _token: token, event });
       const response = await fetch(url, {
         method: 'POST', body, credentials: 'same-origin',
-        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
       });
       if (!response.ok) return false;
       const result = await response.json();

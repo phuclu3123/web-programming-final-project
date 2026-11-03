@@ -1,7 +1,5 @@
 <?php
-$notificationItems = $currentUser
-    ? (new \App\Services\NotificationService(new \App\Repositories\NotificationRepository(\App\Core\Database::connection())))->feed($currentUser)
-    : [];
+// Prepared by the controller's public-header composer; no DB access in templates.
 $unreadCount = count(array_filter($notificationItems, static fn($item) => $item['unread']));
 ?>
 <details class="header-notification-wrapper" data-account-dropdown>

@@ -21,23 +21,23 @@ final class SavedCouponController extends Controller
 {
     public function save(Request $request, string $id): void
     {
-        $actor = Auth::requireRole(['USER','MERCHANT']);
-        $couponId = filter_var($id, FILTER_VALIDATE_INT, ['options'=>['min_range'=>1]]);
+        $actor = Auth::requireRole(['USER', 'MERCHANT']);
+        $couponId = filter_var($id, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
         $saved = $request->input('saved');
-        if ($couponId === false || !in_array($saved, ['0','1'], true)) throw new \App\Core\HttpError(422, 'Yêu cầu lưu coupon không hợp lệ.');
+        if ($couponId === false || !in_array($saved, ['0', '1'], true)) throw new \App\Core\HttpError(422, 'Yêu cầu lưu coupon không hợp lệ.');
         $db = Database::connection();
         try {
             $data = (new InteractionService(new InteractionRepository($db), new CouponRepository($db)))
                 ->setFavorite((int)$actor['id'], (int)$couponId, $saved === '1');
             $message = $data['saved'] ? 'Đã lưu vào bộ sưu tập của bạn.' : 'Đã bỏ lưu coupon.';
-            if ($request->expectsJson()) Response::json(['success'=>true,'message'=>$message,'data'=>$data]);
-            Session::flash('success',$message);
+            if ($request->expectsJson()) Response::json(['success' => true, 'message' => $message, 'data' => $data]);
+            Session::flash('success', $message);
         } catch (RuntimeException $error) {
-            if ($request->expectsJson()) Response::json(['success'=>false,'message'=>$error->getMessage()],422);
-            Session::flash('error',$error->getMessage());
+            if ($request->expectsJson()) Response::json(['success' => false, 'message' => $error->getMessage()], 422);
+            Session::flash('error', $error->getMessage());
         }
         // Đích cố định, không dùng URL tùy ý từ form.
-        Response::redirect(url('/index.php') . '#coupons',303);
+        Response::redirect(url('/index.php') . '#coupons', 303);
     }
 
     public function index(Request $request): void
@@ -52,7 +52,7 @@ final class SavedCouponController extends Controller
         $categoryId = is_scalar($rawCategory) && preg_match('/^[1-9][0-9]{0,10}$/', (string) $rawCategory)
             ? (int) $rawCategory : 0;
         $rawStatus = $request->input('status', 'ALL');
-        $status = is_string($rawStatus) && in_array($rawStatus, ['ALL','ACTIVE','SCHEDULED','UNAVAILABLE'], true)
+        $status = is_string($rawStatus) && in_array($rawStatus, ['ALL', 'ACTIVE', 'SCHEDULED', 'UNAVAILABLE'], true)
             ? $rawStatus : 'ALL';
         $rawSort = $request->input('sort', 'RECENT');
         $sort = $rawSort === 'EXPIRING' ? 'EXPIRING' : 'RECENT';

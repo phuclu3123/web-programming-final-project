@@ -91,23 +91,15 @@ a {
   text-decoration: none;
 }
 
-button,
-input,
-select,
-textarea {
+button, input, select, textarea {
   font: inherit;
 }
 
-button,
-a,
-input,
-select,
-textarea {
+button, a, input, select, textarea {
   touch-action: manipulation;
 }
 
-a:focus-visible,
-button:focus-visible {
+a:focus-visible, button:focus-visible {
   outline: 3px solid #658c22;
   outline-offset: 4px;
 }
@@ -186,8 +178,7 @@ p {
   border: 1px solid var(--forest);
 }
 
-.btn-brand:hover,
-.btn-brand:focus {
+.btn-brand:hover, .btn-brand:focus {
   background: #245b4b;
   color: #fff;
 }
@@ -238,8 +229,7 @@ p {
   opacity: 0.45;
 }
 
-.form-control,
-.form-select {
+.form-control, .form-select {
   border-radius: 10px;
   border-color: var(--line);
   font-size: 14px;
@@ -1648,8 +1638,7 @@ p {
     font-size: 12px;
     gap: 8px;
   }
-  .editor-grid,
-  .moderation-grid {
+  .editor-grid, .moderation-grid {
     grid-template-columns: 1fr;
   }
   .preview-column {
@@ -1990,10 +1979,7 @@ p {
   transform: translateY(0);
 }
 
-/* ========================================================================== 
-   CouponHub UI polish v2 — 2026 classroom + final-project foundation
-   ========================================================================== */
-
+/* CouponHub UI polish v2 — 2026 classroom + final-project foundation */
 :root {
   --ink: #173a32;
   --ink-strong: #102d27;
@@ -2060,8 +2046,7 @@ body {
   box-shadow: 0 11px 24px rgba(21, 62, 52, 0.2);
 }
 
-.form-control,
-.form-select {
+.form-control, .form-select {
   min-height: 44px;
   background-color: #fff;
   border-color: var(--line);
@@ -2082,8 +2067,7 @@ body {
   text-transform: uppercase;
 }
 
-/* Home ------------------------------------------------------------------- */
-
+/* Home */
 .hero.hero-compact {
   padding: 38px 0 34px;
 }
@@ -2507,8 +2491,7 @@ body {
   pointer-events: none;
 }
 
-/* Workspace shared ------------------------------------------------------- */
-
+/* Workspace shared */
 .app-layout {
   grid-template-columns: 248px minmax(0, 1fr);
 }
@@ -2635,8 +2618,7 @@ body {
   background: linear-gradient(90deg, #ced9d0, #e5ebe6);
 }
 
-/* Merchant --------------------------------------------------------------- */
-
+/* Merchant */
 .create-panel .panel-head {
   background: linear-gradient(180deg, #fff, #fdfefa);
 }
@@ -2723,8 +2705,7 @@ body {
   margin-bottom: 0;
 }
 
-.table-search-wrap,
-.queue-search {
+.table-search-wrap, .queue-search {
   position: relative;
 }
 
@@ -2732,8 +2713,7 @@ body {
   width: min(330px, 40vw);
 }
 
-.table-search-wrap .icon,
-.queue-search .icon {
+.table-search-wrap .icon, .queue-search .icon {
   position: absolute;
   top: 50%;
   left: 12px;
@@ -2744,8 +2724,7 @@ body {
   pointer-events: none;
 }
 
-.table-search-wrap input,
-.queue-search input {
+.table-search-wrap input, .queue-search input {
   padding-left: 38px;
 }
 
@@ -2804,7 +2783,7 @@ body {
   font-size: 9px;
 }
 
-/* Admin ------------------------------------------------------------------ */
+/* Admin */
 .moderation-grid {
   grid-template-columns: minmax(360px, .92fr) minmax(420px, 1.08fr);
 }
@@ -3022,7 +3001,7 @@ body {
   background: transparent;
 }
 
-/* Toast ------------------------------------------------------------------ */
+/* Toast */
 .copy-toast {
   right: 26px;
   bottom: 26px;
@@ -3044,7 +3023,7 @@ body {
   font-weight: 800;
 }
 
-/* Responsive v2 ---------------------------------------------------------- */
+/* Responsive v2 */
 @media (max-width: 1100px) {
   .hero-compact .hero-box {
     grid-template-columns: 1fr minmax(250px, .58fr);

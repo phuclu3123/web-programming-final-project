@@ -57,8 +57,12 @@ final class PortalController extends Controller
             'contributorQuality' => \App\Services\ContributorQualityService::fromSummary($rewardSummary),
             'pointHistory' => $users->pointHistory($userId),
             'savedCount' => (new SavedCouponRepository(Database::connection()))->countForUser($userId),
-            'savedPreview' => (new SavedCouponRepository(Database::connection()))->paginated($userId,
-                ['keyword'=>'', 'category_id'=>0, 'status'=>'ALL', 'sort'=>'RECENT'], 1, 3)['items'],
+            'savedPreview' => (new SavedCouponRepository(Database::connection()))->paginated(
+                $userId,
+                ['keyword' => '', 'category_id' => 0, 'status' => 'ALL', 'sort' => 'RECENT'],
+                1,
+                3
+            )['items'],
         ]);
     }
 

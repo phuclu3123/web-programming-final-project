@@ -63,7 +63,6 @@ dialog.auth-dialog::backdrop { background: #12192470; backdrop-filter: blur(8px)
   z-index: 1050;
 }
 
-
 /* V3: Responsive category directory. The former 2-column layout squeezed
    category text beside a fixed-size image at tablet widths. */
 @media (max-width: 1199.98px) {

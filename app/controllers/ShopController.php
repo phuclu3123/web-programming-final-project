@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controllers;
@@ -27,10 +28,17 @@ final class ShopController extends Controller
         $input = [
             'merchant_id' => (string) ($merchants[0]['id'] ?? ''),
             'category_id' => (string) ($categories[0]['id'] ?? ''),
-            'title' => '', 'code' => '', 'description' => '', 'terms' => '',
-            'discount_type' => 'PERCENTAGE', 'discount_value' => '20',
-            'min_order_amount' => '0', 'max_discount_amount' => '', 'usage_channel' => 'BOTH',
-            'starts_on' => date('Y-m-d'), 'expires_on' => date('Y-m-d', strtotime('+20 days')),
+            'title' => '',
+            'code' => '',
+            'description' => '',
+            'terms' => '',
+            'discount_type' => 'PERCENTAGE',
+            'discount_value' => '20',
+            'min_order_amount' => '0',
+            'max_discount_amount' => '',
+            'usage_channel' => 'BOTH',
+            'starts_on' => date('Y-m-d'),
+            'expires_on' => date('Y-m-d', strtotime('+20 days')),
         ];
         $errors = [];
         if ($method === 'POST') {
@@ -52,7 +60,9 @@ final class ShopController extends Controller
             http_response_code(422);
         }
         $success = Session::flash('shop');
-        $role = 'shop'; $title = 'Quản lý mã giảm giá'; $demo = false;
+        $role = 'shop';
+        $title = 'Quản lý mã giảm giá';
+        $demo = false;
         $this->view('shop', compact('actor', 'merchants', 'categories', 'coupons', 'stats', 'input', 'errors', 'success', 'role', 'title', 'demo'), null);
     }
     private function validate(array $input): array

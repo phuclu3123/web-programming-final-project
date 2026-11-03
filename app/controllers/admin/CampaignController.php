@@ -113,7 +113,7 @@ final class CampaignController extends Controller
 
     private function flashFailure(Throwable $error): void
     {
-        if ($error instanceof \mysqli_sql_exception) error_log('Admin campaign write failed: '.get_class($error));
-        Session::flash('error',$error instanceof \mysqli_sql_exception ? 'Không thể lưu thay đổi chiến dịch lúc này.' : $error->getMessage());
+        if ($error instanceof \mysqli_sql_exception) error_log('Admin campaign write failed: ' . get_class($error));
+        Session::flash('error', $error instanceof \mysqli_sql_exception ? 'Không thể lưu thay đổi chiến dịch lúc này.' : $error->getMessage());
     }
 }
