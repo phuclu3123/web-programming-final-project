@@ -212,10 +212,7 @@ a.member-stat:hover { color: var(--ink); border-color: #b7c6ee; transform: trans
   .rail-mark, .rail-label, .account-chevron { transition: none; }
 }
 
-/* ==================================================
-   PUBLIC HEADER — BRAND & NAVIGATION
-================================================== */
-
+/* PUBLIC HEADER — BRAND & NAVIGATION */
 .public-header {
   position: relative;
   z-index: 20;
