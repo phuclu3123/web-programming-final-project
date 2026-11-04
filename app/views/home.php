@@ -152,17 +152,18 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                     <input type="hidden" name="ending" value="<?= $endingSoon ? '1' : '0' ?>">
                     <input type="hidden" name="sort" value="<?= e($sort) ?>">
                     <a class="search-clear" href="<?= e($urlFor(['q' => ''])) ?>" data-home-filter aria-label="Xóa từ khóa" <?= $q === '' ? 'hidden' : '' ?>>×</a>
-                    <button type="submit" class="btn btn-lime search-submit">Khám phá <?= icon('arrow') ?></button>
+                    <button type="submit" class="btn btn-lime search-submit couponhub-search-action" aria-label="Khám phá ưu đãi"><span class="search-submit-label">Khám phá</span> <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
                 </form>
                 <nav id="home-suggestions" class="discovery-suggestions" aria-label="Gợi ý coupon từ kết quả tìm kiếm" hidden></nav>
                 </div>
                 <div id="search-help" class="hero-tip">Tìm theo cửa hàng, tên ưu đãi hoặc mã giảm giá.</div>
 
-            <nav class="category-strip" aria-label="Danh mục ưu đãi">
+            <div class="couponhub-category-tools" data-category-picker>
+              <nav class="category-strip" data-category-rail aria-label="Danh mục ưu đãi">
                 <a class="category-chip <?= $categoryId === 0 && $q === '' && $merchantId === 0 && $discountType === '' && $usageChannel === '' && !$endingSoon ? 'selected' : '' ?>"
                     href="index.php#coupons" data-home-filter
                     <?= $categoryId === 0 && $q === '' && $merchantId === 0 && $discountType === '' && $usageChannel === '' && !$endingSoon ? 'aria-current="true"' : '' ?>>
-                    <?= icon('grid') ?> Tất cả ưu đãi
+                    <i class="fa-solid fa-border-all" aria-hidden="true"></i> Tất cả ưu đãi
                 </a>
                 <?php foreach ($categories as $category): ?>
                 <a class="category-chip <?= (int) $category['id'] === $categoryId ? 'selected' : '' ?>"
@@ -171,7 +172,14 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                     <?= e($category['name']) ?>
                 </a>
                 <?php endforeach; ?>
-            </nav>
+              </nav>
+              <button type="button" class="couponhub-category-open" data-category-open
+                aria-haspopup="dialog" aria-controls="home-category-dialog">
+                <span>Xem thêm</span>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+              </button>
+              <?php $categoryPickerDialogId = 'home-category-dialog'; require __DIR__ . '/partials/category-picker-dialog.php'; ?>
+            </div>
 
             <details class="home-refine" <?= $discountType !== '' || $usageChannel !== '' || $endingSoon ? 'open' : '' ?>>
             <summary><?= icon('filter') ?> Tinh chỉnh ưu đãi <span><?= $discountType !== '' || $usageChannel !== '' || $endingSoon ? 'Đang áp dụng' : 'Loại ưu đãi, kênh dùng, thời hạn' ?></span><?= icon('chevron') ?></summary>

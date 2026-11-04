@@ -32,12 +32,17 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             return [];
         }
 
-        // sp_search_coupons intentionally returns category_id. Enrich the result in
-        // one extra query so both server-rendered cards and AJAX responses can show
-        // the category badge without changing the database routine contract.
+        // Enrich only the categories present on this page; keep the routine's
+        // result columns and the category badge fallback unchanged.
+        $categoryIds = array_values(array_unique(array_map('intval', array_column($rows, 'category_id'))));
         $categoryMap = [];
-        foreach ($this->db->query('SELECT id, name FROM categories')->fetchAll() as $category) {
-            $categoryMap[(int) $category['id']] = (string) $category['name'];
+        if ($categoryIds !== []) {
+            $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+            $categories = $this->db->prepare('SELECT id, name FROM categories WHERE id IN (' . $placeholders . ')');
+            $categories->execute($categoryIds);
+            foreach ($categories->fetchAll() as $category) {
+                $categoryMap[(int) $category['id']] = (string) $category['name'];
+            }
         }
 
         // Public attribution only. One batch for the visible result set, never private account data.
@@ -105,7 +110,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     public function findPublic(int $id): ?array
     {
         $sql = "SELECT c.*, m.name AS merchant_name, m.slug AS merchant_slug, cat.name AS category_name, " .
-            "u.full_name AS submitter_name, u.email AS submitter_email, s.working_count, s.not_working_count, s.condition_changed_count, " .
+            "u.full_name AS submitter_name, s.working_count, s.not_working_count, s.condition_changed_count, " .
             "s.total_votes, s.trust_score, s.last_verification_at, " .
             "(SELECT total_favorites FROM v_coupon_favorite_stats fs WHERE fs.coupon_id=c.id) AS favorite_count " .
             "FROM v_coupon_status c " .

@@ -42,9 +42,13 @@ $demo = $demo ?? false; ?>
     href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/release.css') ?>">
   <link rel="stylesheet"
     href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/integration.css') ?>">
+  <link rel="stylesheet" href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="<?= e(url('/assets/js/coupon-events.js')) ?>" defer></script>
   <script src="assets/js/app.js?v=<?= filemtime(__DIR__ . '/../../../assets/js/app.js') ?>" defer></script>
+  <script src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>" defer></script>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
+  <script src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>" defer></script>
 </head>
 
 <body data-page="<?= e($role) ?>" data-demo="<?= $demo ? 'true' : 'false' ?>">
@@ -59,44 +63,4 @@ $demo = $demo ?? false; ?>
       </nav>
     </div>
   <?php endif; ?>
-  <aside class="floating-support" data-floating-support aria-label="Liên hệ và điều hướng nhanh">
-    <section class="contact-popover" id="contact-popover" role="dialog" aria-modal="false"
-      aria-labelledby="contact-title" aria-hidden="true">
-      <div class="contact-popover-head">
-        <div>
-          <span class="contact-availability"><i aria-hidden="true"></i> Hỗ trợ trực tuyến</span>
-          <strong id="contact-title">Bạn cần hỗ trợ?</strong>
-        </div>
-        <button class="contact-close" type="button" data-contact-close aria-label="Đóng bảng liên hệ">×</button>
-      </div>
-      <div class="contact-options">
-        <a class="contact-option" href="https://zalo.me/" target="_blank" rel="noopener noreferrer">
-          <span class="contact-channel-icon contact-channel-zalo" aria-hidden="true">Z</span>
-          <span><strong>Zalo</strong><small>Trò chuyện nhanh</small></span>
-          <?= icon('arrow') ?>
-        </a>
-        <a class="contact-option" href="https://www.messenger.com/" target="_blank" rel="noopener noreferrer">
-          <span class="contact-channel-icon contact-channel-messenger" aria-hidden="true">M</span>
-          <span><strong>Messenger</strong><small>Nhắn tin qua Facebook</small></span>
-          <?= icon('arrow') ?>
-        </a>
-        <a class="contact-option" href="mailto:hello@couponhub.vn?subject=Hỗ trợ từ CouponHub">
-          <span class="contact-channel-icon contact-channel-mail"
-            aria-hidden="true"><?= icon('mail') ?></span>
-          <span><strong>Email</strong><small>hello@couponhub.vn</small></span>
-          <?= icon('arrow') ?>
-        </a>
-      </div>
-      <p class="contact-note">Phản hồi trong giờ làm việc · 08:00–18:00</p>
-    </section>
-    <div class="floating-support-actions">
-      <button class="glass-action contact-trigger" type="button" data-contact-trigger aria-expanded="false"
-        aria-controls="contact-popover">
-        <?= icon('message') ?><span>Liên hệ</span>
-      </button>
-      <button class="glass-action back-to-top" type="button" data-back-to-top aria-label="Trở về đầu trang"
-        title="Trở về đầu trang">
-        <?= icon('arrow-up') ?>
-      </button>
-    </div>
-  </aside>
+  <?php require __DIR__ . '/../partials/floating-support.php'; ?>

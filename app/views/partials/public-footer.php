@@ -21,7 +21,6 @@
                         href="<?= e(url('/merchant/apply')) ?>">Trở thành đối tác</a></div>
             </nav>
         </div>
-        <div class="footer-bottom"><span>© <?= date('Y') ?> CouponHub · Dự án học tập</span><a href="#main">Về đầu trang
-                ↑</a></div>
+        <div class="footer-bottom"><span>© <?= date('Y') ?> CouponHub · Dự án học tập</span></div>
     </div>
 </footer>

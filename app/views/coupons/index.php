@@ -31,18 +31,26 @@ $types = ['PERCENTAGE'=>'Giảm phần trăm','FIXED_AMOUNT'=>'Giảm số tiề
                     <div class="community-search-input"><label class="sr-only" for="keyword">Tìm ưu
                             đãi</label><input type="search" id="keyword" name="keyword" maxlength="200"
                             value="<?= e((string)($filters['keyword'] ?? '')) ?>"
-                            placeholder="Tìm cửa hàng, mã giảm giá, ưu đãi…"><button class="btn btn-brand community-search-submit"
-                            type="submit" aria-label="Tìm kiếm ưu đãi"><span class="community-search-submit-label">Tìm kiếm</span><?= icon('search') ?></button></div>
+                            placeholder="Tìm cửa hàng, mã giảm giá, ưu đãi…"><button class="btn btn-brand community-search-submit couponhub-search-action"
+                            type="submit" aria-label="Tìm kiếm ưu đãi"><span class="community-search-submit-label">Tìm kiếm</span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button></div>
                 </div>
-                <fieldset class="community-categories">
+                <div class="couponhub-category-tools" data-category-picker>
+                  <fieldset class="community-categories" data-category-rail>
                     <legend class="sr-only">Danh mục ưu đãi</legend>
                     <label><input type="radio" name="category_id" value=""
-                            <?= empty($filters['category_id']) ? 'checked' : '' ?>><span><?= icon('grid') ?> Tất
+                            <?= empty($filters['category_id']) ? 'checked' : '' ?>><span><i class="fa-solid fa-border-all" aria-hidden="true"></i> Tất
                             cả</span></label>
                     <?php foreach ($categories as $category): ?><label><input type="radio" name="category_id"
                             value="<?= $category->id ?>"
                             <?= (int)($filters['category_id'] ?? 0) === $category->id ? 'checked' : '' ?>><span><?= e($category->name) ?></span></label><?php endforeach; ?>
-                </fieldset>
+                  </fieldset>
+                  <button type="button" class="couponhub-category-open" data-category-open
+                    aria-haspopup="dialog" aria-controls="community-category-dialog">
+                    <span>Xem thêm</span>
+                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                  </button>
+                  <?php $categoryPickerDialogId = 'community-category-dialog'; require __DIR__ . '/../partials/category-picker-dialog.php'; ?>
+                </div>
                 <!-- BỘ LỌC NÚT BẤM CÓ THỂ ĐÓNG / MỞ (COLLAPSIBLE FILTER) -->
                 <div class="community-controls">
                     <details class="community-advanced" <?= $advancedCount ? 'open' : '' ?>>

@@ -47,13 +47,22 @@ foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategor
             </div><a href="<?= e(url('/coupons').($selectedCategory ? '?category_id='.$selectedCategory : '')) ?>">Xem
                 tất cả <?= icon('arrow') ?></a>
         </div>
-        <nav class="category-pick-tabs" aria-label="Xem trước ưu đãi theo danh mục"><a
-                href="<?= e(url('/categories')) ?>#category-picks"
-                <?= !$selectedCategory ? 'aria-current="true"' : '' ?>>Tất
-                cả</a><?php foreach ($categories as $category): ?><a
-                href="<?= e(url('/categories').'?category='.(int)$category['id']) ?>#category-picks"
-                <?= $selectedCategory===(int)$category['id'] ? 'aria-current="true"' : '' ?>><?= e($category['name']) ?></a><?php endforeach; ?>
-        </nav>
+        <div class="couponhub-category-tools" data-category-picker>
+            <nav class="category-pick-tabs" data-category-rail aria-label="Xem trước ưu đãi theo danh mục">
+                <a href="<?= e(url('/categories')) ?>#category-picks"
+                    <?= !$selectedCategory ? 'aria-current="true"' : '' ?>>Tất cả</a>
+                <?php foreach ($categories as $category): ?>
+                <a href="<?= e(url('/categories').'?category='.(int)$category['id']) ?>#category-picks"
+                    <?= $selectedCategory===(int)$category['id'] ? 'aria-current="true"' : '' ?>><?= e($category['name']) ?></a>
+                <?php endforeach; ?>
+            </nav>
+            <button type="button" class="couponhub-category-open" data-category-open
+                aria-haspopup="dialog" aria-controls="directory-category-dialog" aria-label="Xem tất cả danh mục">
+                <span>Xem thêm</span>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <?php $categoryPickerDialogId = 'directory-category-dialog'; require __DIR__ . '/../partials/category-picker-dialog.php'; ?>
+        </div>
         <?php if ($categoryCoupons): ?><div class="community-ticket-grid">
             <?php foreach ($categoryCoupons as $coupon): require __DIR__.'/../partials/community-coupon-card.php'; endforeach; ?>
         </div><?php else: ?><div class="member-empty"><strong>Các ưu đãi trong nhóm này đang được cập nhật.</strong>
