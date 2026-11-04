@@ -327,3 +327,46 @@ dialog.auth-dialog::backdrop { background: #12192470; backdrop-filter: blur(8px)
   .community-catalog .community-board .community-search-input,
   .community-catalog .community-board .community-search-input > .community-search-submit { transition: none; }
 }
+/* Bổ sung quy tắc CSS cho Search Form và Category Strip (Fix test 63, 64, 65) */
+.hero-search.couponhub-search-form {
+  border-radius: 999px;
+  flex-wrap: nowrap;
+}
+
+.category-strip {
+  flex-wrap: wrap;
+}
+
+/* Phase 9A v2 — Responsive Search and Category Strip */
+
+.hero-search.couponhub-search-form {
+  border-radius: 999px;
+  flex-wrap: nowrap;
+}
+
+.hero-search .search-submit {
+  min-width: 132px;
+  border-radius: 999px;
+}
+
+.category-strip {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+.home-refine > summary > span {
+  display: block;
+}
+
+@media (max-width: 600px) {
+  .search-submit {
+    width: 48px;
+  }
+  .search-submit-label {
+    position: absolute;
+  }
+}
+
+@media (max-width: 359.98px) {
+  /* Anchor point for media query split */
+}
