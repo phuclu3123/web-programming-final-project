@@ -8,6 +8,7 @@ use App\Contracts\CouponRepositoryInterface;
 use App\Contracts\InteractionRepositoryInterface;
 use mysqli_sql_exception;
 use RuntimeException;
+use Throwable;
 
 final class InteractionService
 {
@@ -22,12 +23,24 @@ final class InteractionService
     /** @return array<string,mixed> */
     public function initialState(?int $actorId, int $couponId): array
     {
+        $commentsAvailable = true;
+        try {
+            $comments = $this->interactions->comments($couponId);
+        } catch (Throwable $error) {
+            // A comment-list query failure should not make an otherwise public
+            // coupon detail page unavailable.
+            error_log('Coupon comment listing unavailable: ' . get_class($error));
+            $comments = [];
+            $commentsAvailable = false;
+        }
+
         return [
             'saved' => $actorId !== null ? $this->interactions->isFavorite($actorId, $couponId) : false,
             'vote' => $actorId !== null ? $this->interactions->currentVote($actorId, $couponId) : null,
             'voteRestriction' => $actorId !== null ? $this->interactions->voteRestriction($actorId, $couponId) : null,
             'stats' => $this->normalizeStats($this->interactions->stats($couponId)),
-            'comments' => $this->interactions->comments($couponId),
+            'comments' => $comments,
+            'commentsAvailable' => $commentsAvailable,
         ];
     }
 

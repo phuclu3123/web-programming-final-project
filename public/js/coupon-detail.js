@@ -76,12 +76,15 @@
         });
 
         var $commentBody = $('#comment-body');
+        var commentSubmitting = false;
         $commentBody.on('input', function () {
             $('#comment-char-count').text(String($commentBody.val() || '').length);
         });
 
         $('#comment-form').on('submit', function (event) {
             event.preventDefault();
+            if (commentSubmitting) return;
+
             var body = String($commentBody.val() || '').trim();
             if (!body) {
                 window.CouponHub.showMessage($message, 'warning', 'Vui lòng nhập nội dung bình luận.', 12000);
@@ -90,14 +93,26 @@
 
             var $form = $(this);
             var $submit = $form.find('button[type="submit"]');
+            var submitLabel = $submit.text();
+            commentSubmitting = true;
+            $form.attr('aria-busy', 'true');
             $submit.prop('disabled', true);
+            $submit.text('Đang gửi...');
 
             request($page.data('comment-url') || $form.attr('action'), { body: body })
                 .done(function (response) {
-                    var c = response.data;
-                    $('#comment-empty').remove();
+                    var c = response && response.success === true ? response.data : null;
+                    var commentId = c ? Number(c.id) : 0;
+                    if (!c || !Number.isSafeInteger(commentId) || commentId <= 0 || typeof c.fullName !== 'string'
+                        || typeof c.body !== 'string' || typeof c.createdAtDisplay !== 'string') {
+                        window.CouponHub.showMessage($message, 'danger', 'Phản hồi từ máy chủ không hợp lệ. Bình luận chưa được xác nhận.', 20000);
+                        return;
+                    }
 
-                    var $item = $('<div>', { 'class': 'comment-item', 'data-comment-id': c.id });
+                    $('#comment-empty').remove();
+                    $('#comment-load-error').remove();
+
+                    var $item = $('<div>', { 'class': 'comment-item', 'data-comment-id': commentId });
                     var $header = $('<div>', { 'class': 'd-flex justify-content-between' });
                     $header.append($('<strong>').text(c.fullName));
                     $header.append($('<span>', { 'class': 'small text-muted' }).text(c.createdAtDisplay));
@@ -114,7 +129,10 @@
                     window.CouponHub.showMessage($message, 'danger', errorMessage(xhr, 'Không thể gửi bình luận.'), 20000);
                 })
                 .always(function () {
+                    commentSubmitting = false;
+                    $form.removeAttr('aria-busy');
                     $submit.prop('disabled', false);
+                    $submit.text(submitLabel);
                 });
         });
 
