@@ -156,6 +156,39 @@ $pendingInput = $input;
 $pendingInput['code'] = 'TESTPENDING';
 $pendingInput['title'] = 'Unpublished test offer';
 $pendingId = $coupon->create($ids['manager'], $pendingInput);
+
+// Phase 7: search and count must return the same eligible set when the whole
+// fixture fits into one page. Uses only the opt-in isolated database (port 13379).
+$searchService = new App\Services\CouponService($nativeCoupons);
+$searchCases = [
+    'unfiltered' => [],
+    'title keyword' => ['keyword' => 'offer'],
+    'code keyword' => ['keyword' => 'TEST20'],
+    'missing keyword' => ['keyword' => 'no-such-test-coupon'],
+    'category' => ['category_id' => $categoryId],
+    'merchant' => ['merchant_id' => $merchantId],
+    'discount type' => ['discount_type' => 'PERCENTAGE'],
+    'online channel' => ['usage_channel' => 'ONLINE'],
+    'offline channel' => ['usage_channel' => 'OFFLINE'],
+    'ending soon' => ['ending_soon' => '1'],
+    'ending soon sort' => ['sort' => 'ENDING_SOON'],
+    'popular sort' => ['sort' => 'POPULAR'],
+];
+foreach ($searchCases as $case => $inputFilters) {
+    $caseFilters = $searchService->normalizeSearch($inputFilters);
+    $caseFilters['page_size'] = 24;
+    $expectedCount = $nativeCoupons->countPublicSearch($caseFilters);
+    $caseRows = $nativeCoupons->search($caseFilters);
+    verify($expectedCount === count($caseRows), 'Phase 7 count/list parity: ' . $case);
+    foreach ($caseRows as $caseRow) {
+        verify(array_key_exists('category_name', $caseRow), 'Phase 7 category enrichment: ' . $case);
+        verify(array_key_exists('submitter_name', $caseRow), 'Phase 7 contributor attribution: ' . $case);
+        verify((int)$caseRow['id'] !== $pendingId, 'Phase 7 pending coupon hidden: ' . $case);
+    }
+}
+$publicDetail = $nativeCoupons->findPublic($couponId);
+verify(is_array($publicDetail) && array_key_exists('submitter_name', $publicDetail), 'Phase 7 public attribution remains');
+verify(!array_key_exists('submitter_email', $publicDetail), 'Phase 7 public detail excludes contributor email');
 $recommendations = $nativeCoupons->relatedPublic($couponId, $merchantId, $categoryId, 'PERCENTAGE');
 verify(in_array($secondId, array_map('intval', array_column($recommendations, 'id')), true), 'related active coupon included');
 verify(!in_array($couponId, array_map('intval', array_column($recommendations, 'id')), true), 'related excludes current coupon');

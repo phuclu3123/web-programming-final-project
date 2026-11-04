@@ -46,6 +46,7 @@ $currentPath = (new \App\Core\Request())->path();
         href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/release.css') ?>">
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/integration.css') ?>">
+    <link rel="stylesheet" href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
 </head>
 
 <body class="unified-page">
@@ -67,12 +68,12 @@ $currentPath = (new \App\Core\Request())->path();
         </div>
     </main>
     <?php require __DIR__ . '/../partials/public-footer.php'; ?>
-    <button id="back-to-top" class="btn btn-primary back-to-top" type="button" aria-label="Về đầu trang"
-        title="Về đầu trang"><i class="fa-solid fa-arrow-up"></i></button>
+    <?php require __DIR__ . '/../partials/floating-support.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= e(url('/assets/js/coupon-events.js')) ?>"></script>
-    <script src="<?= e(asset('/js/app.js')) ?>"></script><?php foreach (($pageScripts ?? []) as $pageScript): ?><script
+    <script src="<?= e(asset('/js/app.js')) ?>"></script>
+    <script src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>"></script><?php foreach (($pageScripts ?? []) as $pageScript): ?><script
             src="<?= e(asset((string)$pageScript)) ?>"></script><?php endforeach; ?>
     <?php if (!$currentUser) require __DIR__ . '/../auth/auth-modal.php'; ?>
 </body>

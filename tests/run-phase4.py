@@ -28,7 +28,7 @@ def run(name,args):
     print(('PASS' if p.returncode==0 else 'FAIL')+' '+name,flush=True)
     if p.returncode: print(p.stdout.decode('utf-8',errors='replace')[-5000:]);raise SystemExit(p.returncode)
 run('phase3-regression',[sys.executable,'tests/run-phase3.py'])
-for name in ['facebook-oauth','phase4-security','public-header-notifications-phase6','coupon-interaction-errors-phase4','oauth-setup-access-phase5']:
+for name in ['facebook-oauth','phase4-security','public-header-notifications-phase6','coupon-repository-phase7','coupon-interaction-errors-phase4','oauth-setup-access-phase5']:
     run(name,[php,'tests/'+name+'.php'])
 # Upgrade an existing schema containing an existing OAuth row; migration must preserve it.
 subprocess.run(mysql+['-e',"ALTER TABLE oauth_accounts MODIFY provider ENUM('github','google') NOT NULL; INSERT INTO oauth_accounts(user_id,provider,provider_user_id,provider_email,email_verified) SELECT id,'github','phase4-migration-fixture',email,1 FROM users WHERE username='admin_demo'"],check=True)

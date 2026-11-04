@@ -586,62 +586,6 @@
     sync();
   }
 
-  function initFloatingSupport() {
-    const shell = $('[data-floating-support]');
-    const trigger = $('[data-contact-trigger]', shell || document);
-    const close = $('[data-contact-close]', shell || document);
-    const panel = get('contact-popover');
-    const topButton = $('[data-back-to-top]', shell || document);
-    if (!shell || !trigger || !panel || !topButton) return;
-
-    const setContactOpen = open => {
-      shell.classList.toggle('contact-open', open);
-      trigger.setAttribute('aria-expanded', String(open));
-      panel.setAttribute('aria-hidden', String(!open));
-      panel.inert = !open;
-      if (open) $('.contact-option', panel)?.focus({ preventScroll: true });
-    };
-
-    trigger.addEventListener('click', () => {
-      setContactOpen(trigger.getAttribute('aria-expanded') !== 'true');
-    });
-    close?.addEventListener('click', () => {
-      setContactOpen(false);
-      trigger.focus({ preventScroll: true });
-    });
-    panel.addEventListener('click', event => {
-      if (event.target.closest('.contact-option')) setContactOpen(false);
-    });
-    document.addEventListener('click', event => {
-      if (!shell.contains(event.target)) setContactOpen(false);
-    });
-    document.addEventListener('keydown', event => {
-      if (event.key !== 'Escape' || trigger.getAttribute('aria-expanded') !== 'true') return;
-      setContactOpen(false);
-      trigger.focus({ preventScroll: true });
-    });
-
-    let scrollFrame = 0;
-    const syncTopButton = () => {
-      const visible = window.scrollY > Math.min(560, window.innerHeight * 0.7);
-      topButton.classList.toggle('is-visible', visible);
-      topButton.tabIndex = visible ? 0 : -1;
-      topButton.setAttribute('aria-hidden', String(!visible));
-      scrollFrame = 0;
-    };
-    window.addEventListener('scroll', () => {
-      if (!scrollFrame) scrollFrame = window.requestAnimationFrame(syncTopButton);
-    }, { passive: true });
-    topButton.addEventListener('click', () => {
-      window.scrollTo({
-        top: 0,
-        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-      });
-    });
-
-    setContactOpen(false);
-    syncTopButton();
-  }
 
   initCopyButtons();
   initHome();
@@ -652,5 +596,4 @@
   initSavingsEstimate();
   initScrollReveal();
   initPublicScrollSpy();
-  initFloatingSupport();
 })();
