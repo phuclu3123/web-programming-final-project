@@ -21,3 +21,7 @@ CI này **không chứng minh** toàn bộ chức năng và database đã chạy
 5. Nếu thay đổi luồng notification, kiểm tra đồng thời badge chưa đọc, trang `/notifications`, POST `/notifications/read`, sự kiện cho Admin và User.
 
 **Chưa bật tự động MySQL integration trong workflow**, vì việc dựng schema/routines và dữ liệu fixture phải được chuẩn hóa trước; cần thêm job có database service trong đợt sau.
+
+## Nghiệm thu chung đợt 4
+
+Xem [PHASE4_ACCEPTANCE.md](PHASE4_ACCEPTANCE.md) để biết ma trận U4/A4/M4, bằng chứng đã chạy và các bước OAuth/email/host thật còn chờ. `tests/run-phase4.py --browser` bổ sung Chrome headless tại 320/390/768/1440 px và xử lý mất mạng; chỉ chạy khi đã opt-in database thử riêng cổng 13379. Bỏ `--browser` không bao gồm kiểm tra trình duyệt này.

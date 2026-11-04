@@ -64,6 +64,37 @@ for base,port in [('',8096),('/CouponHub_UI',8097)]:
             user=Client(origin,base);user.login('user_demo','UserDemo!2026')
             merchant=Client(origin,base);assert merchant.login('merchant_shops','MerchantDemo!2026')==origin+base+'/merchant'
             csrf=user.token('/account');admin_csrf=admin.token('/admin')
+            # U4.01 / M4.04: owner sees the reason, public surfaces stop offering the code.
+            candidates=sql("SELECT c.id FROM v_coupon_status c JOIN merchant_memberships mm ON mm.merchant_id=c.merchant_id JOIN users u ON u.id=mm.user_id WHERE u.username='merchant_shops' AND mm.status='ACTIVE' AND c.source='OFFICIAL' AND c.effective_status='ACTIVE' AND c.deleted_at IS NULL ORDER BY c.id LIMIT 2").splitlines()
+            assert len(candidates)==2,candidates
+            withdrawn,disabled=map(int,candidates)
+            code=sql(f'SELECT code FROM coupons WHERE id={withdrawn}')
+            assert user.request(f'/saved-coupons/{withdrawn}/save',{'csrf':csrf,'saved':'1'})[0] in (200,302,303)
+            reason='Phase 4 withdrawal <script>window.untrusted=1</script>'
+            assert admin.request(f'/admin/coupons/{withdrawn}/revoke',{'_token':admin_csrf,'reason':reason})[0] in (302,303)
+            owner_html=merchant.request('/merchant/coupons')[2]
+            owner_row=re.search(fr'<tr data-merchant-coupon="{withdrawn}">(.*?)</tr>',owner_html,re.S).group(1)
+            assert 'Bị thu hồi' in owner_row and 'Lý do thu hồi:' in owner_row
+            assert '&lt;script&gt;' in owner_row and '<script>window.untrusted' not in owner_row
+            assert f'/merchant/coupons/{withdrawn}/edit' not in owner_row and f'/merchant/coupons/{withdrawn}/disable' not in owner_row
+            assert merchant.request(f'/merchant/coupons/{withdrawn}/edit')[0]==404
+            legacy=merchant.request('/shop.php')[2]
+            assert 'Bị thu hồi' in legacy and 'Lý do thu hồi:' in legacy
+            assert user.request(f'/coupons/{withdrawn}')[0]==404
+            saved=user.request('/saved-coupons')[2]
+            saved_card=re.search(fr'<article[^>]*saved-coupon-card[^>]*>(?:(?!</article>).)*?#{withdrawn}</span>(.*?)</article>',saved,re.S)
+            assert saved_card and code not in saved_card.group(1) and 'Không khả dụng' in saved_card.group(1)
+            for path in ['/', '/coupons?keyword='+urllib.parse.quote(code), '/campaigns']:
+                public_html=guest.request(path)[2]
+                # Search intentionally echoes the submitted keyword in its input.
+                cards=re.findall(r'<article\b.*?</article>',public_html,re.S)
+                assert not any(code in card for card in cards),path
+                assert f'data-copy-code="{code}"' not in public_html,path
+                assert f'href="{base}/coupons/{withdrawn}"' not in public_html,path
+            assert merchant.request(f'/merchant/coupons/{disabled}/disable',{'_token':merchant.token('/merchant/coupons')})[0] in (302,303)
+            disabled_row=re.search(fr'<tr data-merchant-coupon="{disabled}">(.*?)</tr>',merchant.request('/merchant/coupons')[2],re.S).group(1)
+            assert 'Đã tắt' in disabled_row and 'Bị thu hồi' not in disabled_row
+            print(f'PASS {base or "/"}: revoked reason escaped, terminal actions absent, public and saved codes unavailable, disabled state distinct',flush=True)
             for method,path in routes:
                 path=re.sub(r'\{[^}]+\}','1',path)
                 payload={'_token':csrf} if method=='post' else None
@@ -82,8 +113,9 @@ for base,port in [('',8096),('/CouponHub_UI',8097)]:
                 assert status==403 and 'no-store' in headers['Cache-Control'],(provider,status)
             # No cookies from another client/session are accepted as bearer JWTs.
             assert Client(origin,base).request('/admin',headers={'Authorization':'Bearer forged.jwt.token','Accept':'application/json'})[0]==401
+            flood=Client(origin,base);flood.login('user_community','UserDemo!2026');flood_csrf=flood.token('/account')
             for index in range(61):
-                status,headers,body=user.request('/notifications/read',{'_token':csrf},{'Accept':'application/json','Origin':origin})
+                status,headers,body=flood.request('/notifications/read',{'_token':flood_csrf},{'Accept':'application/json','Origin':origin})
                 assert status==(200 if index<60 else 429),(index,status,body[:160])
             assert int(headers['Retry-After'])>0 and json.loads(body)['success'] is False
             # Account throttle persists even when every attempt uses a fresh cookie jar.

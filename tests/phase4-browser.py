@@ -1,0 +1,139 @@
+"""Optional real Chrome layout/interaction checks against the isolated local DB.
+Requires existing Chrome and websocket-client. No personal browser profile or providers.
+COUPONHUB_RUN_HTTP_TEST=1 python tests/phase4-browser.py
+"""
+import base64
+import http.cookiejar
+import json
+import os
+from pathlib import Path
+import re
+import socket
+import subprocess
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+import websocket
+
+ROOT=Path(__file__).resolve().parents[1]
+if os.environ.get('COUPONHUB_RUN_HTTP_TEST')!='1':raise SystemExit('SKIP: explicit isolated HTTP opt-in required')
+assert not (ROOT/'config/local.php').exists()
+mysql=['C:/xampp/mysql/bin/mysql.exe','--no-defaults','--host=127.0.0.1','--port=13379','--user=root','--batch','--skip-column-names','couponhub_merge_test','-e']
+assert subprocess.check_output(mysql+['SELECT @@port']).strip()==b'13379'
+coupon=int(subprocess.check_output(mysql+["SELECT id FROM v_coupon_status WHERE effective_status='ACTIVE' AND source='OFFICIAL' ORDER BY id LIMIT 1"]).strip())
+campaign=int(subprocess.check_output(mysql+["SELECT id FROM campaigns WHERE status='PUBLISHED' AND ends_at>UTC_TIMESTAMP() ORDER BY id LIMIT 1"]).strip())
+chrome=Path(os.environ.get('COUPONHUB_TEST_CHROME','C:/Program Files/Google/Chrome/Application/chrome.exe'))
+assert chrome.is_file(),'Chrome is required for the optional browser test'
+runtime=ROOT/'.runtime'/('phase4-browser-'+str(time.time_ns()));runtime.mkdir()
+(runtime/'sessions').mkdir()
+origin='http://127.0.0.1:8098'
+for port in (8098,9228):
+    with socket.socket() as probe:
+        probe.settimeout(1)
+        assert probe.connect_ex(('127.0.0.1',port))!=0,f'Refusing to reuse occupied test port {port}'
+env=os.environ|{'COUPONHUB_APP_URL':origin,'COUPONHUB_HOST':'127.0.0.1','COUPONHUB_PORT':'13379','COUPONHUB_DB':'couponhub_merge_test','COUPONHUB_USER':'root','COUPONHUB_PASSWORD':'','COUPONHUB_SESSION_PATH':str(runtime/'sessions'),'COUPONHUB_RATE_LIMIT_DIR':str(runtime/'limits')}
+flags=getattr(subprocess,'CREATE_NO_WINDOW',0)
+class CDP:
+    def __init__(self,url):self.socket=websocket.create_connection(url,timeout=15,suppress_origin=True);self.next=0
+    def call(self,method,params=None):
+        self.next+=1;key=self.next
+        self.socket.send(json.dumps({'id':key,'method':method,'params':params or {}}))
+        while True:
+            value=json.loads(self.socket.recv())
+            if value.get('id')==key:
+                if 'error' in value:raise AssertionError(value['error'])
+                return value.get('result',{})
+    def evaluate(self,expression):
+        value=self.call('Runtime.evaluate',{'expression':expression,'returnByValue':True,'awaitPromise':True})
+        assert 'exceptionDetails' not in value,value
+        return value.get('result',{}).get('value')
+    def navigate(self,path):
+        self.call('Page.navigate',{'url':origin+path})
+        for _ in range(100):
+            if self.evaluate("location.pathname===%s && document.readyState!=='loading'" % json.dumps(urllib.parse.urlparse(path).path)):
+                self.evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');return
+            time.sleep(.1)
+        raise AssertionError('Navigation not ready: '+path)
+def cookies_for(username,password):
+    jar=http.cookiejar.CookieJar();client=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))
+    html=client.open(origin+'/login').read().decode('utf-8')
+    csrf=re.search(r'name="csrf-token" content="([a-f0-9]+)"',html).group(1)
+    data=urllib.parse.urlencode({'csrf':csrf,'account':username,'password':password}).encode()
+    response=client.open(urllib.request.Request(origin+'/api/login.php',data=data,headers={'Accept':'application/json'}))
+    assert json.load(response)['success']
+    return list(jar)
+server=browser=None;cdp=None;results=[]
+with (runtime/'php.log').open('w') as php_log,(runtime/'chrome.log').open('w') as chrome_log:
+    try:
+        server=subprocess.Popen(['C:/xampp/php/php.exe','-S','127.0.0.1:8098','router.php'],cwd=ROOT,env=env,stdout=php_log,stderr=php_log,creationflags=flags)
+        for _ in range(50):
+            assert server.poll() is None,'Owned local server exited'
+            try:
+                if urllib.request.urlopen(origin+'/login',timeout=2).status==200:break
+            except OSError:time.sleep(.1)
+        else:raise AssertionError('Local server not available')
+        browser=subprocess.Popen([str(chrome),'--headless=new','--disable-gpu','--no-first-run','--no-default-browser-check','--disable-background-networking','--disable-component-update','--disable-sync','--remote-debugging-address=127.0.0.1','--remote-debugging-port=9228','--user-data-dir='+str(runtime/'chrome-profile'),'about:blank'],stdout=chrome_log,stderr=chrome_log,creationflags=flags)
+        for _ in range(100):
+            assert browser.poll() is None,'Owned Chrome process exited'
+            try:
+                targets=json.load(urllib.request.urlopen('http://127.0.0.1:9228/json/list',timeout=2))
+                pages=[t for t in targets if t.get('type')=='page']
+                if pages:break
+            except OSError:pass
+            time.sleep(.1)
+        else:raise AssertionError('Chrome debugging endpoint unavailable')
+        cdp=CDP(pages[0]['webSocketDebuggerUrl']);cdp.call('Page.enable');cdp.call('Network.enable')
+        suites=[('guest',None,None,['/','/categories','/coupons',f'/coupons/{coupon}','/campaigns',f'/campaigns/{campaign}','/login','/coupons?keyword=phase4_no_matches_97','/missing-phase4-page']),
+                ('user','user_demo','UserDemo!2026',['/coupons/create','/saved-coupons','/account']),
+                ('merchant','merchant_shops','MerchantDemo!2026',['/merchant','/merchant/coupons','/merchant/coupons/create','/merchant/campaigns','/merchant/campaigns/create'])]
+        for role,username,password,paths in suites:
+            cdp.call('Network.clearBrowserCookies')
+            if username:
+                for cookie in cookies_for(username,password):
+                    cdp.call('Network.setCookie',{'name':cookie.name,'value':cookie.value,'url':origin,'httpOnly':True,'sameSite':'Lax'})
+            for width in [320,390,768,1440]:
+                cdp.call('Emulation.setDeviceMetricsOverride',{'width':width,'height':900,'deviceScaleFactor':1,'mobile':width==390})
+                for path in paths:
+                    cdp.navigate(path)
+                    state=cdp.evaluate("({width:innerWidth,scroll:document.documentElement.scrollWidth,title:document.title,text:document.body.innerText.slice(0,120),overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+2&&getComputedStyle(e).position!=='fixed'}).slice(0,6).map(e=>e.tagName+'.'+e.className)})")
+                    results.append({'role':role,'viewport':width,'path':path,**state})
+                    (runtime/'results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2),encoding='utf-8')
+                    assert state['scroll']<=width+2,(role,width,path,state)
+                    assert state['width']==width,(role,path,'viewport scaled by overflow',state)
+                    assert not any(word in state['text'] for word in ['Fatal error','Warning:','Parse error']),state
+                    if width<=390 and cdp.evaluate("!!document.querySelector('.public-header')"):
+                        controls=cdp.evaluate("[...document.querySelectorAll('.public-header .brand,.public-header .header-account,.public-header .mobile-site-menu')].filter(e=>getComputedStyle(e).display!=='none').map(e=>{const r=e.getBoundingClientRect();return {name:e.className,left:r.left,right:r.right}})")
+                        assert all(c['left']>=0 and c['right']<=width+1 for c in controls),(role,width,path,'clipped header controls',controls)
+                        controls.sort(key=lambda c:c['left'])
+                        assert all(a['right']<=b['left']+1 for a,b in zip(controls,controls[1:])),(role,width,path,'overlapping header controls',controls)
+                    if width==390 and path in ['/','/coupons',f'/coupons/{coupon}','/merchant/coupons','/merchant/coupons/create']:
+                        image=cdp.call('Page.captureScreenshot',{'format':'png'})['data']
+                        name=role+'-'+re.sub('[^a-zA-Z0-9]+','-',path).strip('-')+'-390.png'
+                        (runtime/name).write_bytes(base64.b64decode(image))
+                    if width==390 and role=='guest' and path=='/':
+                        assert cdp.evaluate("(()=>{const m=document.querySelector('.mobile-site-menu');m.querySelector('summary').click();return m.open&&m.querySelectorAll('a').length>=5})()"),'mobile navigation cannot open'
+            if role=='user':
+                cdp.navigate(f'/coupons/{coupon}')
+                assert cdp.evaluate("!!window.jQuery&&!!window.CouponHub&&!!document.querySelector('#favorite-btn')"),'interaction scripts not ready'
+                cdp.call('Network.emulateNetworkConditions',{'offline':True,'latency':0,'downloadThroughput':-1,'uploadThroughput':-1})
+                try:
+                    cdp.evaluate("document.querySelector('#favorite-btn').click()")
+                    for _ in range(50):
+                        if cdp.evaluate("!document.querySelector('#favorite-btn').disabled&&!!document.querySelector('#interaction-message .alert-danger')"):break
+                        time.sleep(.1)
+                    else:raise AssertionError('offline favorite action must show feedback and unlock button')
+                    assert cdp.evaluate("!!document.querySelector('#coupon-detail-page .offer-value')"),'network error erased coupon content'
+                finally:cdp.call('Network.emulateNetworkConditions',{'offline':False,'latency':0,'downloadThroughput':-1,'uploadThroughput':-1})
+                print('PASS real browser offline favorite: error feedback, content retained, button restored',flush=True)
+            print('PASS browser layout: '+role+' at 320/390/768/1440',flush=True)
+        print('PASS real Chrome: '+str(len(results))+' page/viewport checks; '+str(runtime),flush=True)
+    finally:
+        if cdp:
+            try:cdp.call('Browser.close')
+            except Exception:pass
+            cdp.socket.close()
+        if browser:
+            try:browser.wait(timeout=10)
+            except subprocess.TimeoutExpired:browser.terminate();browser.wait(timeout=10)
+        if server:server.terminate();server.wait(timeout=10)

@@ -55,6 +55,12 @@ fourthCheck($row['provider_email']===null && (int)$row['email_verified']===0,'no
 fourthReject(fn()=>$oauth->resolve($facebook,$admin),'linked Facebook identity cannot be stolen by another account');
 $other=$facebook;$other['subject']='other-facebook-identity';
 fourthReject(fn()=>$oauth->resolve($other,$current),'second Facebook identity cannot replace existing provider link');
+$interactions=new \App\Repositories\InteractionRepository($db);
+$activeCoupon=(int)$db->query("SELECT id FROM v_coupon_status WHERE effective_status='ACTIVE' ORDER BY id LIMIT 1")->fetchColumn();
+$comment=$interactions->addComment($uid,$activeCoupon,'Phase 4 visible comment');
+fourthCheck(in_array((int)$comment['id'],array_map('intval',array_column($interactions->comments($activeCoupon),'id')),true),'visible comment is returned');
+$db->prepare("UPDATE comments SET status='HIDDEN' WHERE id=?")->execute([(int)$comment['id']]);
+fourthCheck(!in_array((int)$comment['id'],array_map('intval',array_column($interactions->comments($activeCoupon),'id')),true),'HIDDEN comment is never returned to public display');
 $repo->setUserStatus($aid,$uid,'LOCKED');
 fourthReject(fn()=>$oauth->resolve($facebook),'locked linked user cannot OAuth login');
 $repo->setUserStatus($aid,$uid,'ACTIVE');

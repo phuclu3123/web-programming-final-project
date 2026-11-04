@@ -234,7 +234,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     {
         $stmt = $this->db->prepare(
             "SELECT c.id,c.merchant_id,c.title,c.code,c.discount_type,c.discount_value,c.cashback_unit,c.usage_channel,c.starts_at,c.ends_at, " .
-                "c.effective_status,c.moderation_status,c.publication_status,c.review_note,m.name AS merchant_name,cat.name AS category_name,c.created_at " .
+                "c.effective_status,c.moderation_status,c.publication_status,c.review_note,c.reviewed_at,c.deleted_at,m.status AS merchant_status,m.name AS merchant_name,cat.name AS category_name,c.created_at " .
                 "FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id JOIN merchant_memberships mm ON mm.merchant_id=m.id JOIN categories cat ON cat.id=c.category_id " .
                 "WHERE c.source='OFFICIAL' AND mm.user_id=? AND mm.status='ACTIVE' AND m.deleted_at IS NULL ORDER BY c.created_at DESC,c.id DESC"
         );

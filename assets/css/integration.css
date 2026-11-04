@@ -294,3 +294,32 @@ dialog.auth-dialog::backdrop { background: #12192470; backdrop-filter: blur(8px)
   .community-catalog .community-board .community-search-input,
   .community-catalog .community-board .community-search-input > .community-search-submit { transition: none; }
 }
+/* Merchant coupon history: preserve readable status/reasons on small screens. */
+.merchant-coupon-page .merchant-review-note { max-width: 34rem; white-space: normal; overflow-wrap: anywhere; }
+.merchant-coupon-page td { white-space: normal; overflow-wrap: anywhere; }
+.merchant-coupon-page .merchant-coupon-actions { min-width: 9rem; }
+@media (max-width: 600px) {
+  .public-header .header-inner { width: 100%; gap: 8px; padding-inline: 14px; }
+  .public-header .brand { min-width: 0; gap: 8px; }
+  .public-header .brand-word { font-size: 18px; }
+  .public-header .brand-mark { flex: 0 0 28px; width: 28px; height: 28px; }
+  .public-header .header-account { flex: 0 0 auto; gap: 6px !important; }
+  /* Override the older shared notification/search rule without hiding the bell. */
+  .public-header .header-account > a.header-search { display: none !important; }
+  .public-header .mobile-site-menu { flex: 0 0 auto; }
+  .public-header .mobile-site-menu summary { width: 36px; height: 36px; }
+}
+@media (max-width: 359.98px) {
+  .public-header .header-inner { gap: 6px; padding-inline: 10px; }
+  .public-header .brand-word { font-size: 16px; }
+  .public-header .brand { gap: 6px; }
+}
+@media (max-width: 575.98px) {
+  .merchant-coupon-page .table-responsive { overflow: visible; }
+  .merchant-coupon-page table, .merchant-coupon-page tbody { display: block; width: 100%; }
+  .merchant-coupon-page thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .merchant-coupon-page tbody tr { display: block; padding: 1rem; border-bottom: 1px solid #e1e5eb; }
+  .merchant-coupon-page td { display: block; padding: .4rem 0; border: 0; }
+  .merchant-coupon-page td[data-label]::before { content: attr(data-label); display: block; margin-bottom: .2rem; font-size: .75rem; color: #697386; }
+  .merchant-coupon-page .merchant-coupon-actions { text-align: left !important; padding-top: .75rem; }
+}

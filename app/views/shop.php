@@ -274,8 +274,8 @@ $stats['rejected'] = $stats['rejected'] ?? $rejectedCount;
                     <td>
                         <strong><?= e($coupon['title']) ?></strong>
                         <p><?= e($coupon['merchant_name']) ?> · <?= e(saving($coupon)) ?> · <?= e($coupon['category_name']) ?></p>
-                        <?php if ($coupon['moderation_status'] === 'REJECTED'): ?>
-                        <p class="rejection-note"><strong>Phản hồi:</strong> <?= e($coupon['review_note'] ?: 'Admin chưa ghi lý do.') ?></p>
+                        <?php if ($coupon['moderation_status'] === 'REJECTED' || $coupon['publication_status'] === 'ARCHIVED'): ?>
+                        <p class="rejection-note"><strong><?= $coupon['publication_status'] === 'ARCHIVED' ? 'Lý do thu hồi:' : 'Phản hồi:' ?></strong> <?= e($coupon['review_note'] ?: 'Admin chưa ghi lý do.') ?></p>
                         <?php endif; ?>
                     </td>
                     <td><code><?= e($coupon['code']) ?></code></td>
@@ -285,7 +285,7 @@ $stats['rejected'] = $stats['rejected'] ?? $rejectedCount;
                     </td>
                     <td>
                         <span class="badge-soft <?= match ($coupon['moderation_status']) { 'PENDING'=>'badge-pending', 'REJECTED'=>'badge-rejected', default=>'' } ?>">
-                            <?= e(statusLabel($coupon['moderation_status'])) ?>
+                            <?= e($coupon['publication_status'] === 'ARCHIVED' ? 'Bị thu hồi' : (in_array($coupon['publication_status'], ['DISABLED','EXPIRED'], true) && $coupon['moderation_status'] === 'APPROVED' ? coupon_status_label($coupon['publication_status']) : statusLabel($coupon['moderation_status']))) ?>
                         </span>
                     </td>
                 </tr>

@@ -109,6 +109,10 @@ final class MerchantController extends Controller
     {
         Auth::requireRole(['MERCHANT']);
         $shops = $this->merchants->ownedApproved((int) Auth::id());
+        if ($shops === []) {
+            Session::flash('warning', 'Bạn chưa có cửa hàng đang được phép đăng mã. Vui lòng kiểm tra quyền quản lý cửa hàng.');
+            Response::redirect(url('/merchant/coupons'), 303);
+        }
         $this->renderCouponForm('create', [], [], $shops, null);
     }
 

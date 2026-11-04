@@ -47,4 +47,6 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
 assert exits.count(0)==7 and exits.count(42)==13,exits
 print('PASS concurrent rate limit: 7 accepted, 13 rejected',flush=True)
 run('fixture-final',[sys.executable,'tests/sql-install.py'])
+if '--browser' in sys.argv:
+    run('browser-responsive-offline',[sys.executable,'tests/phase4-browser.py'])
 print('PASS phase 4 local acceptance; logs: '+str(runtime),flush=True)

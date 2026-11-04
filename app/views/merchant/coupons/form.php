@@ -5,7 +5,7 @@ use App\Core\Session;
 $isEdit = $mode === 'edit'; ?>
 <div class="row justify-content-center">
     <div class="col-xl-9">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-3">
             <div>
                 <h1 class="h3 mb-1"><?= $isEdit ? 'Sửa Official Coupon' : 'Tạo Official Coupon' ?></h1>
                 <p class="text-muted mb-0">Official Deal của Merchant vẫn chuyển về PENDING để Admin kiểm duyệt.</p>
