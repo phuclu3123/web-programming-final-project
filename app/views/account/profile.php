@@ -1,6 +1,13 @@
 <?php
 
 use App\Core\Session; ?>
+<?php
+$profileValues = $profileValues ?? [];
+$profileErrors = $profileErrors ?? [];
+$passwordErrors = $passwordErrors ?? [];
+$profileFullName = is_string($profileValues['full_name'] ?? null) ? $profileValues['full_name'] : (string)$actor['full_name'];
+$profilePhone = is_string($profileValues['phone'] ?? null) ? $profileValues['phone'] : (string)($actor['phone'] ?? '');
+?>
 <div class="row justify-content-center">
   <div class="col-lg-9">
     <nav aria-label="Breadcrumb" class="mb-3"><a href="<?= e(url('/dashboard')) ?>">Tài khoản</a> / Hồ sơ cá nhân
@@ -11,22 +18,24 @@ use App\Core\Session; ?>
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <h2 class="h5" id="account-edit-title">Cập nhật hồ sơ</h2>
-            <form method="post" action="<?= e(url('/account')) ?>">
+            <form method="post" action="<?= e(url('/account')) ?>" data-account-submit-form>
               <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
               <div class="mb-3"><label class="form-label" for="account-full-name">Họ và tên</label>
-                <input class="form-control" id="account-full-name" name="full_name" maxlength="120"
-                  required value="<?= e((string)$actor['full_name']) ?>">
+                <input class="form-control <?= isset($profileErrors['full_name']) ? 'is-invalid' : '' ?>" id="account-full-name" name="full_name" maxlength="120"
+                  required value="<?= e($profileFullName) ?>" <?= isset($profileErrors['full_name']) ? 'aria-invalid="true" aria-describedby="account-full-name-error"' : '' ?>>
+                <?php if (isset($profileErrors['full_name'])): ?><div class="invalid-feedback d-block" id="account-full-name-error"><?= e($profileErrors['full_name']) ?></div><?php endif; ?>
               </div>
               <div class="mb-3"><label class="form-label" for="account-phone">Số điện thoại</label>
-                <input class="form-control" id="account-phone" name="phone" maxlength="20"
-                  autocomplete="tel" required value="<?= e((string)($actor['phone'] ?? '')) ?>">
+                <input class="form-control <?= isset($profileErrors['phone']) ? 'is-invalid' : '' ?>" id="account-phone" name="phone" maxlength="20"
+                  autocomplete="tel" required value="<?= e($profilePhone) ?>" <?= isset($profileErrors['phone']) ? 'aria-invalid="true" aria-describedby="account-phone-error"' : '' ?>>
+                <?php if (isset($profileErrors['phone'])): ?><div class="invalid-feedback d-block" id="account-phone-error"><?= e($profileErrors['phone']) ?></div><?php endif; ?>
               </div>
               <div class="mb-3"><label class="form-label" for="account-email">Email (không thể đổi tại
                   đây)</label>
                 <input class="form-control" id="account-email" type="email" readonly
                   value="<?= e((string)$actor['email']) ?>">
               </div>
-              <button class="btn btn-primary" type="submit">Lưu thông tin</button>
+              <button class="btn btn-primary" type="submit" data-account-submit-button data-pending-label="Đang lưu...">Lưu thông tin</button>
             </form>
           </div>
         </div>
@@ -36,24 +45,27 @@ use App\Core\Session; ?>
           <div class="card-body">
             <h2 class="h5" id="account-password-title">Đổi mật khẩu</h2>
             <p class="text-muted small">Sau khi đổi mật khẩu, các phiên đăng nhập cũ sẽ hết hiệu lực.</p>
-            <form method="post" action="<?= e(url('/account/password')) ?>">
+            <form method="post" action="<?= e(url('/account/password')) ?>" data-account-submit-form>
               <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
               <div class="mb-3"><label class="form-label" for="account-current-password">Mật khẩu hiện
                   tại</label>
-                <input class="form-control" id="account-current-password" name="current_password"
-                  type="password" autocomplete="current-password" required>
+                <input class="form-control <?= isset($passwordErrors['current_password']) ? 'is-invalid' : '' ?>" id="account-current-password" name="current_password"
+                  type="password" autocomplete="current-password" required <?= isset($passwordErrors['current_password']) ? 'aria-invalid="true" aria-describedby="account-current-password-error"' : '' ?>>
+                <?php if (isset($passwordErrors['current_password'])): ?><div class="invalid-feedback d-block" id="account-current-password-error"><?= e($passwordErrors['current_password']) ?></div><?php endif; ?>
               </div>
               <div class="mb-3"><label class="form-label" for="account-new-password">Mật khẩu mới</label>
-                <input class="form-control" id="account-new-password" name="new_password"
-                  type="password" minlength="8" maxlength="72" autocomplete="new-password" required>
+                <input class="form-control <?= isset($passwordErrors['new_password']) ? 'is-invalid' : '' ?>" id="account-new-password" name="new_password"
+                  type="password" minlength="8" maxlength="72" autocomplete="new-password" required <?= isset($passwordErrors['new_password']) ? 'aria-invalid="true" aria-describedby="account-new-password-error"' : '' ?>>
+                <?php if (isset($passwordErrors['new_password'])): ?><div class="invalid-feedback d-block" id="account-new-password-error"><?= e($passwordErrors['new_password']) ?></div><?php endif; ?>
               </div>
               <div class="mb-3"><label class="form-label" for="account-confirm-password">Xác nhận mật khẩu
                   mới</label>
-                <input class="form-control" id="account-confirm-password"
+                <input class="form-control <?= isset($passwordErrors['new_password_confirmation']) ? 'is-invalid' : '' ?>" id="account-confirm-password"
                   name="new_password_confirmation" type="password" minlength="8" maxlength="72"
-                  autocomplete="new-password" required>
+                  autocomplete="new-password" required <?= isset($passwordErrors['new_password_confirmation']) ? 'aria-invalid="true" aria-describedby="account-confirm-password-error"' : '' ?>>
+                <?php if (isset($passwordErrors['new_password_confirmation'])): ?><div class="invalid-feedback d-block" id="account-confirm-password-error"><?= e($passwordErrors['new_password_confirmation']) ?></div><?php endif; ?>
               </div>
-              <button class="btn btn-outline-primary" type="submit">Đổi mật khẩu</button>
+              <button class="btn btn-outline-primary" type="submit" data-account-submit-button data-pending-label="Đang cập nhật...">Đổi mật khẩu</button>
             </form>
           </div>
         </div>
