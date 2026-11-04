@@ -24,8 +24,8 @@ test('responsive category directory does not force two columns on tablets', () =
 test('community search has one semantic submit button and explicit search icon', () => {
   const html = read('app/views/coupons/index.php');
   const css = read('assets/css/integration.css');
-  assert.match(html, /class="btn btn-brand community-search-submit"\s*type="submit" aria-label="Tìm kiếm ưu đãi"/);
-  assert.match(html, /community-search-submit-label">Tìm kiếm<\/span>\s*<\?= icon\('search'\)/);
+  assert.match(html, /class="btn btn-brand community-search-submit couponhub-search-action"\s*type="submit" aria-label="Tìm kiếm ưu đãi"/);
+  assert.match(html, /community-search-submit-label">Tìm kiếm<\/span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"><\/i>/);
   assert.match(css, /\.community-search-input > \.community-search-submit\s*\{[^}]*min-height:\s*48px/);
   assert.match(css, /\.community-search-input > \.community-search-submit:focus-visible/);
 });

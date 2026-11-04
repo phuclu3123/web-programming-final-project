@@ -64,6 +64,17 @@ for base,port in [('',8096),('/CouponHub_UI',8097)]:
             user=Client(origin,base);user.login('user_demo','UserDemo!2026')
             merchant=Client(origin,base);assert merchant.login('merchant_shops','MerchantDemo!2026')==origin+base+'/merchant'
             csrf=user.token('/account');admin_csrf=admin.token('/admin')
+            # Profile errors survive one redirect, escaped; client role/status are ignored.
+            assert user.request('/account',{'_token':csrf,'full_name':'<script>profile-input</script>','phone':'bad','role':'ADMIN','status':'LOCKED'})[0]==303
+            profile=user.request('/account')[2]
+            assert 'aria-invalid="true"' in profile and '&lt;script&gt;profile-input&lt;/script&gt;' in profile
+            assert '<script>profile-input</script>' not in profile
+            assert sql("SELECT CONCAT(role,':',status) FROM users WHERE username='user_demo'")=='USER:ACTIVE'
+            assert 'account-phone-error' not in user.request('/account')[2]
+            assert user.request('/account/password',{'_token':csrf,'current_password':'WrongCurrent!2026','new_password':'ValidNew!2026','new_password_confirmation':'ValidNew!2026'})[0]==303
+            profile=user.request('/account')[2]
+            assert 'account-current-password-error' in profile and 'WrongCurrent!2026' not in profile and 'ValidNew!2026' not in profile
+            print(f'PASS {base or "/"}: profile/password inline errors, one-time form state, escaped values, role/status unchanged',flush=True)
             # U4.01 / M4.04: owner sees the reason, public surfaces stop offering the code.
             candidates=sql("SELECT c.id FROM v_coupon_status c JOIN merchant_memberships mm ON mm.merchant_id=c.merchant_id JOIN users u ON u.id=mm.user_id WHERE u.username='merchant_shops' AND mm.status='ACTIVE' AND c.source='OFFICIAL' AND c.effective_status='ACTIVE' AND c.deleted_at IS NULL ORDER BY c.id LIMIT 2").splitlines()
             assert len(candidates)==2,candidates

@@ -87,6 +87,14 @@ with (runtime/'php.log').open('w') as php_log,(runtime/'chrome.log').open('w') a
         suites=[('guest',None,None,['/','/categories','/coupons',f'/coupons/{coupon}','/campaigns',f'/campaigns/{campaign}','/login','/coupons?keyword=phase4_no_matches_97','/missing-phase4-page']),
                 ('user','user_demo','UserDemo!2026',['/coupons/create','/saved-coupons','/account']),
                 ('merchant','merchant_shops','MerchantDemo!2026',['/merchant','/merchant/coupons','/merchant/coupons/create','/merchant/campaigns','/merchant/campaigns/create'])]
+        full_audit=os.environ.get('COUPONHUB_FULL_UI_AUDIT')=='1'
+        banner_only=os.environ.get('COUPONHUB_BANNER_ONLY')=='1'
+        if full_audit:
+            suites[0][3].extend(['/campaign-calendar?calendarOpen=1','/articles','/guides/doc-dieu-kien-ma','/about','/contact','/terms','/privacy','/community-guidelines','/forgot-password'])
+            suites[1][3].extend(['/dashboard','/my-coupons','/notifications','/merchant/apply'])
+            suites.append(('admin','admin_demo','AdminDemo!2026',['/admin','/admin/users','/admin/merchants','/admin/merchant-requests','/admin/categories','/admin/coupons','/admin/reports','/admin/campaigns',f'/admin/campaigns/{campaign}','/admin/articles','/admin/articles/create']))
+        if banner_only:
+            suites=[('guest',None,None,['/campaigns'])]
         for role,username,password,paths in suites:
             cdp.call('Network.clearBrowserCookies')
             if username:
@@ -102,17 +110,31 @@ with (runtime/'php.log').open('w') as php_log,(runtime/'chrome.log').open('w') a
                     assert state['scroll']<=width+2,(role,width,path,state)
                     assert state['width']==width,(role,path,'viewport scaled by overflow',state)
                     assert not any(word in state['text'] for word in ['Fatal error','Warning:','Parse error']),state
+                    if role=='guest' and width<=390 and path=='/campaigns':
+                        assert cdp.evaluate("[...document.querySelectorAll('.campaign-poster')].every(p=>p.querySelector('.campaign-poster-content').getBoundingClientRect().width>=p.getBoundingClientRect().width*.85)"),'campaign text still constrained to desktop split on phone'
                     if width<=390 and cdp.evaluate("!!document.querySelector('.public-header')"):
                         controls=cdp.evaluate("[...document.querySelectorAll('.public-header .brand,.public-header .header-account,.public-header .mobile-site-menu')].filter(e=>getComputedStyle(e).display!=='none').map(e=>{const r=e.getBoundingClientRect();return {name:e.className,left:r.left,right:r.right}})")
                         assert all(c['left']>=0 and c['right']<=width+1 for c in controls),(role,width,path,'clipped header controls',controls)
                         controls.sort(key=lambda c:c['left'])
                         assert all(a['right']<=b['left']+1 for a,b in zip(controls,controls[1:])),(role,width,path,'overlapping header controls',controls)
-                    if width==390 and path in ['/','/coupons',f'/coupons/{coupon}','/merchant/coupons','/merchant/coupons/create']:
+                        assert cdp.evaluate("(()=>{const b=document.querySelector('.header-notification');return b&&getComputedStyle(b).display!=='none'&&b.getBoundingClientRect().width>0})()"),(role,width,path,'notification bell is hidden')
+                    if width==390 and path in ['/','/account','/admin','/merchant']:
+                        assert cdp.evaluate("(()=>{const d=document.querySelector('.header-notification-wrapper');if(!d)return false;d.querySelector('summary').click();const r=d.querySelector('.notification-dropdown').getBoundingClientRect();const ok=d.open&&r.left>=0&&r.right<=innerWidth;d.open=false;return ok})()"),(role,path,'notification panel unavailable or clipped')
+                    if banner_only or (full_audit and width in [390,1440]) or (width==390 and path in ['/','/coupons',f'/coupons/{coupon}','/merchant/coupons','/merchant/coupons/create']):
                         image=cdp.call('Page.captureScreenshot',{'format':'png'})['data']
-                        name=role+'-'+re.sub('[^a-zA-Z0-9]+','-',path).strip('-')+'-390.png'
+                        name=role+'-'+re.sub('[^a-zA-Z0-9]+','-',path).strip('-')+'-'+str(width)+'.png'
                         (runtime/name).write_bytes(base64.b64decode(image))
                     if width==390 and role=='guest' and path=='/':
                         assert cdp.evaluate("(()=>{const m=document.querySelector('.mobile-site-menu');m.querySelector('summary').click();return m.open&&m.querySelectorAll('a').length>=5})()"),'mobile navigation cannot open'
+                    if full_audit and width==390 and role=='guest' and path=='/categories':
+                        assert cdp.evaluate("[...document.querySelectorAll('.category-directory-link > div')].every(e=>e.getBoundingClientRect().width>=100)"),'category labels squeezed into obsolete index column'
+                        assert cdp.evaluate("(()=>{document.querySelector('[data-category-open]').click();return document.querySelector('dialog.couponhub-category-dialog').open})()"),'category picker cannot open'
+                        assert cdp.evaluate("(()=>{const d=document.querySelector('dialog.couponhub-category-dialog'),s=d.querySelector('input');s.value='phase4-no-match-z97';s.dispatchEvent(new Event('input',{bubbles:true}));return !d.querySelector('[data-category-dialog-empty]').hidden&&d.querySelectorAll('[data-category-dialog-options] > button:not([hidden])').length===0})()"),'category search empty state fails'
+                        cdp.evaluate("document.querySelector('dialog.couponhub-category-dialog [data-category-close]').click()")
+                        cdp.evaluate('new Promise(r=>requestAnimationFrame(r))')
+                        assert cdp.evaluate("!document.querySelector('dialog.couponhub-category-dialog').open&&document.activeElement.matches('[data-category-open]')"),'category close does not restore focus'
+                    if full_audit and width==390 and role in ['admin','merchant'] and path in ['/admin','/merchant']:
+                        assert cdp.evaluate("(()=>{const m=document.querySelector('[data-workspace-menu]');m.querySelector('summary').click();return m.open&&m.querySelectorAll('nav a').length>=3})()"),'workspace navigation cannot open'
             if role=='user':
                 cdp.navigate(f'/coupons/{coupon}')
                 assert cdp.evaluate("!!window.jQuery&&!!window.CouponHub&&!!document.querySelector('#favorite-btn')"),'interaction scripts not ready'
@@ -127,6 +149,15 @@ with (runtime/'php.log').open('w') as php_log,(runtime/'chrome.log').open('w') a
                 finally:cdp.call('Network.emulateNetworkConditions',{'offline':False,'latency':0,'downloadThroughput':-1,'uploadThroughput':-1})
                 print('PASS real browser offline favorite: error feedback, content retained, button restored',flush=True)
             print('PASS browser layout: '+role+' at 320/390/768/1440',flush=True)
+        if full_audit:
+            cdp.call('Emulation.setEmulatedMedia',{'features':[{'name':'prefers-reduced-motion','value':'reduce'}]})
+            cdp.navigate('/categories')
+            assert cdp.evaluate("(()=>{document.querySelector('[data-category-open]').click();return getComputedStyle(document.querySelector('dialog.couponhub-category-dialog')).animationName==='none'})()"),'reduced motion must disable dialog entrance'
+            cdp.call('Input.dispatchKeyEvent',{'type':'keyDown','key':'Escape','code':'Escape','windowsVirtualKeyCode':27})
+            cdp.call('Input.dispatchKeyEvent',{'type':'keyUp','key':'Escape','code':'Escape','windowsVirtualKeyCode':27})
+            cdp.evaluate('new Promise(r=>requestAnimationFrame(r))')
+            assert cdp.evaluate("!document.querySelector('dialog.couponhub-category-dialog').open&&document.activeElement.matches('[data-category-open]')"),'keyboard Escape must close dialog and restore focus'
+            print('PASS reduced motion and real keyboard Escape/focus restoration',flush=True)
         print('PASS real Chrome: '+str(len(results))+' page/viewport checks; '+str(runtime),flush=True)
     finally:
         if cdp:

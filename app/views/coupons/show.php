@@ -10,6 +10,7 @@ $saved = (bool) ($interactionState['saved'] ?? false);
 $currentVote = $interactionState['vote'] ?? null;
 $stats = $interactionState['stats'] ?? [];
 $comments = $interactionState['comments'] ?? [];
+$commentsAvailable = (bool) ($interactionState['commentsAvailable'] ?? true);
 $pageScripts = ['/js/coupon-detail.js'];
 $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
 ?>
@@ -194,8 +195,9 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                     <div class="small text-muted">Chia sẻ trải nghiệm hoặc lưu ý về điều kiện sử dụng coupon.
                     </div>
                 </div>
-                <span class="badge bg-light text-dark border" id="comment-count"><?= count($comments) ?> bình
-                    luận</span>
+                <span class="badge bg-light text-dark border" id="comment-count">
+                    <?= $commentsAvailable ? count($comments) . ' bình luận' : 'Không tải được' ?>
+                </span>
             </div>
 
             <?php if ($isLoggedIn): ?>
@@ -215,7 +217,11 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
             <?php endif; ?>
 
             <div id="comment-list">
-                <?php if ($comments === []): ?>
+                <?php if (!$commentsAvailable): ?>
+                    <div id="comment-load-error" class="alert alert-warning small mb-0" role="status">
+                        Chưa thể tải bình luận. Vui lòng tải lại trang để thử lại.
+                    </div>
+                <?php elseif ($comments === []): ?>
                     <div id="comment-empty" class="text-muted small py-3">Chưa có bình luận nào.</div>
                 <?php else: ?>
                     <?php foreach ($comments as $comment): ?>

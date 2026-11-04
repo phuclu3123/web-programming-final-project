@@ -1,39 +1,29 @@
-<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">Merchant Center</h1>
-        <p class="text-muted mb-0">Official Coupon, Campaign và thống kê cơ bản.</p>
-    </div>
-    <div class="mt-2 mt-md-0"><a class="btn btn-primary" href="<?= e(url('/merchant/coupons/create')) ?>"><i
-                class="fa-solid fa-plus me-1"></i>Official Coupon</a> <a class="btn btn-outline-primary"
-            href="<?= e(url('/merchant/campaigns/create')) ?>">Tạo Campaign</a></div>
-</div>
+<header class="workspace-heading">
+    <div><h1>Không gian đối tác</h1><p>Quản lý ưu đãi và theo dõi tương tác của cửa hàng.</p></div>
+    <?php if ($shops !== []): ?><a class="btn btn-primary" href="<?= e(url('/merchant/coupons/create')) ?>">Tạo coupon <?= icon('arrow') ?></a><?php endif; ?>
+</header>
 <?php if ($shops === []): ?>
-    <div class="alert alert-warning">Tài khoản chưa sở hữu Merchant APPROVED. <a href="<?= e(url('/merchant/apply')) ?>">Gửi
-            yêu cầu Merchant</a>.</div>
+    <div class="alert alert-info">Bạn chưa có cửa hàng được duyệt. <a href="<?= e(url('/merchant/apply')) ?>">Xem quyền quản lý cửa hàng</a> để bắt đầu.</div>
 <?php else: ?>
-    <form method="get" class="form-inline mb-4"><label class="me-2">Đang xem:</label><select aria-label="Cửa hàng"
-            class="form-control me-2" name="merchant_id" onchange="this.form.submit()"><?php foreach ($shops as $shop): ?>
-                <option value="<?= (int)$shop['id'] ?>"
-                    <?= $merchant && (int)$merchant['id'] === (int)$shop['id'] ? 'selected' : '' ?>>
-                    <?= e((string)$shop['name']) ?></option><?php endforeach; ?>
-        </select><?php if ($merchant): ?><a class="btn btn-outline-secondary"
-                href="<?= e(url('/merchant/profile/' . (int)$merchant['id'])) ?>">Hồ sơ
-                shop</a><?php endif; ?></form>
-    <div class="row">
-        <?php foreach ([['Coupon', 'total_coupons', 'fa-ticket'], ['Đang hoạt động', 'active_coupons', 'fa-circle-check'], ['Sắp hết hạn', 'expiring_soon', 'fa-clock'], ['Lượt xem', 'total_views', 'fa-eye'], ['Lượt lưu', 'current_favorites', 'fa-star'], ['Lượt lưu hợp lệ', 'qualified_favorites', 'fa-check-circle'], ['Lượt copy', 'total_copies', 'fa-copy']] as [$label, $key, $icon]): ?>
-            <div class="col-6 col-lg-4 mb-3">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="text-muted small"><i class="fa-solid <?= e($icon) ?> me-1"></i><?= e($label) ?></div>
-                        <div class="display-4 merchant-stat-number"><?= (int)($stats[$key] ?? 0) ?></div>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-    <div class="card shadow-sm">
-        <div class="card-body"><a class="btn btn-outline-primary me-2" href="<?= e(url('/merchant/coupons')) ?>">Quản lý
-                Official Coupon</a><a class="btn btn-outline-primary" href="<?= e(url('/merchant/campaigns')) ?>">Quản lý
-                Campaign</a></div>
-    </div>
+    <form method="get" class="workspace-shop-picker">
+        <label for="workspace-shop">Cửa hàng đang xem</label>
+        <select id="workspace-shop" class="form-select" name="merchant_id">
+            <?php foreach ($shops as $shop): ?><option value="<?= (int)$shop['id'] ?>" <?= $merchant && (int)$merchant['id'] === (int)$shop['id'] ? 'selected' : '' ?>><?= e((string)$shop['name']) ?></option><?php endforeach; ?>
+        </select>
+        <button type="submit" class="btn btn-outline-secondary">Xem</button>
+        <?php if ($merchant): ?><a href="<?= e(url('/merchant/profile/'.(int)$merchant['id'])) ?>">Hồ sơ cửa hàng <?= icon('arrow') ?></a><?php endif; ?>
+    </form>
+    <section class="workspace-panel" aria-labelledby="shop-coupon-overview">
+        <div class="workspace-panel-heading"><h2 id="shop-coupon-overview">Ưu đãi cửa hàng</h2><a href="<?= e(url('/merchant/coupons')) ?>">Quản lý coupon <?= icon('arrow') ?></a></div>
+        <dl class="workspace-metrics workspace-metrics-primary">
+            <?php foreach ([['Tổng coupon','total_coupons'],['Đang hoạt động','active_coupons'],['Sắp hết hạn','expiring_soon']] as [$label,$key]): ?><div><dt><?= e($label) ?></dt><dd><?= (int)($stats[$key] ?? 0) ?></dd></div><?php endforeach; ?>
+        </dl>
+    </section>
+    <section class="workspace-panel" aria-labelledby="shop-interaction-overview">
+        <div class="workspace-panel-heading"><div><h2 id="shop-interaction-overview">Tương tác với ưu đãi</h2><p>Lượt xem, lưu và sao chép được ghi nhận trên CouponHub.</p></div></div>
+        <dl class="workspace-metrics">
+            <?php foreach ([['Lượt xem','total_views'],['Lượt lưu hiện tại','current_favorites'],['Lượt lưu hợp lệ','qualified_favorites'],['Lượt sao chép','total_copies']] as [$label,$key]): ?><div><dt><?= e($label) ?></dt><dd><?= (int)($stats[$key] ?? 0) ?></dd></div><?php endforeach; ?>
+        </dl>
+    </section>
+    <a class="workspace-campaign-link" href="<?= e(url('/merchant/campaigns')) ?>"><span><strong>Chiến dịch của cửa hàng</strong><small>Kết nối các coupon trong cùng một chương trình.</small></span><?= icon('arrow') ?></a>
 <?php endif; ?>

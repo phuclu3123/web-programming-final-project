@@ -6,8 +6,8 @@ foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategor
 <div class="discovery-page">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Danh mục</span></div>
     <header class="category-directory-title">
-        <div><span class="eyebrow">DANH MỤC CUỘC SỐNG</span>
-            <h1>Có gì<br><em>trong ngày bạn?</em></h1>
+        <div>
+            <h1>Ưu đãi theo nhu cầu.</h1>
         </div>
         <p><?= count($categories) ?> nhu cầu, <?= (int)$total ?> ưu đãi đang hoạt động. Từ bữa trưa quen thuộc đến một
             chuyến đi bất chợt. Bắt đầu bằng điều bạn đang tìm.</p>
@@ -21,7 +21,6 @@ foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategor
             <a class="category-directory-link" href="<?= e(url('/coupons') . '?category_id=' . (int)$category['id']) ?>"
                 data-category-visual="<?= e(editorialLargePhoto($category['slug'])) ?>"
                 data-category-name="<?= e($category['name']) ?>" data-category-caption="<?= e($categoryHeadline) ?>">
-                <small><?= str_pad((string)($categoryIndex+1),2,'0',STR_PAD_LEFT) ?></small>
                 <div>
                     <h2><?= e($category['name']) ?></h2>
                     <p><?= e($categoryDescription) ?></p>
@@ -47,13 +46,22 @@ foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategor
             </div><a href="<?= e(url('/coupons').($selectedCategory ? '?category_id='.$selectedCategory : '')) ?>">Xem
                 tất cả <?= icon('arrow') ?></a>
         </div>
-        <nav class="category-pick-tabs" aria-label="Xem trước ưu đãi theo danh mục"><a
-                href="<?= e(url('/categories')) ?>#category-picks"
-                <?= !$selectedCategory ? 'aria-current="true"' : '' ?>>Tất
-                cả</a><?php foreach ($categories as $category): ?><a
-                href="<?= e(url('/categories').'?category='.(int)$category['id']) ?>#category-picks"
-                <?= $selectedCategory===(int)$category['id'] ? 'aria-current="true"' : '' ?>><?= e($category['name']) ?></a><?php endforeach; ?>
-        </nav>
+        <div class="couponhub-category-tools" data-category-picker>
+            <nav class="category-pick-tabs" data-category-rail aria-label="Xem trước ưu đãi theo danh mục">
+                <a href="<?= e(url('/categories')) ?>#category-picks"
+                    <?= !$selectedCategory ? 'aria-current="true"' : '' ?>>Tất cả</a>
+                <?php foreach ($categories as $category): ?>
+                <a href="<?= e(url('/categories').'?category='.(int)$category['id']) ?>#category-picks"
+                    <?= $selectedCategory===(int)$category['id'] ? 'aria-current="true"' : '' ?>><?= e($category['name']) ?></a>
+                <?php endforeach; ?>
+            </nav>
+            <button type="button" class="couponhub-category-open" data-category-open
+                aria-haspopup="dialog" aria-controls="directory-category-dialog" aria-label="Xem tất cả danh mục">
+                <span>Xem thêm</span>
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <?php $categoryPickerDialogId = 'directory-category-dialog'; require __DIR__ . '/../partials/category-picker-dialog.php'; ?>
+        </div>
         <?php if ($categoryCoupons): ?><div class="community-ticket-grid">
             <?php foreach ($categoryCoupons as $coupon): require __DIR__.'/../partials/community-coupon-card.php'; endforeach; ?>
         </div><?php else: ?><div class="member-empty"><strong>Các ưu đãi trong nhóm này đang được cập nhật.</strong>

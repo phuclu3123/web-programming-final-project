@@ -12,7 +12,7 @@
                 <th>Cập nhật</th>
             </tr>
         </thead>
-        <tbody><?php foreach ($articles as $a): ?><tr>
+        <tbody><?php if ($articles === []): ?><tr><td colspan="4" class="text-muted py-4">Chưa có bài viết. Chọn “Viết bài” để tạo bản nháp đầu tiên.</td></tr><?php endif; ?><?php foreach ($articles as $a): ?><tr>
                     <td><?= e((string)$a['title']) ?></td>
                     <td><?= e((string)$a['status']) ?></td>
                     <td><?= e((string)$a['author_name']) ?></td>

@@ -2,7 +2,7 @@
 
 ## Nguồn và phạm vi
 
-Đã fetch lại `Truc`, `main`, `Quang` và kiểm tra remote refs. `origin/Truc` vẫn ở `fa1501f35bc670a3c6061eb44e0b888a5639c260`, đã là tổ tiên của checkout `main` local `c5661ae`. Vì không có commit Trúc mới nên không tạo merge giả. `origin/main` ở `668e160`, `origin/Quang` ở `285c8f6`; cả hai đã nằm trong checkout local.
+Ở lượt 04/11 trước đó, đã fetch lại `Truc`, `main`, `Quang` và kiểm tra remote refs. Khi ấy `origin/Truc` ở `fa1501f35bc670a3c6061eb44e0b888a5639c260`, đã là tổ tiên của checkout `main` local `c5661ae`, nên không tạo merge giả. Các cập nhật Trúc đến `5583caa` của lượt tiếp theo được review/tích hợp tại [TRUC_APP_REVIEW_AND_DESIGN.md](TRUC_APP_REVIEW_AND_DESIGN.md).
 
 Workbook `CouponHub_PhanCong_ChiTiet_4Dot_TheoVaiTro.xlsm` chỉ dùng xác định đầu việc U4/A4/M4, không chạy macro, không lấy ô tiến độ làm bằng chứng và không lấy giải pháp kỹ thuật trong sheet làm yêu cầu. Giữ cách tổ chức PHP/mysqli, form POST, session server và class/repository của ứng dụng, theo Lesson 7, 11, 13, 15 trong tài liệu giảng viên. Không thêm framework hoặc JWT riêng.
 

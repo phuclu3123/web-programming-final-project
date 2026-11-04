@@ -47,6 +47,9 @@ $demo = $demo ?? false; ?>
   <script src="<?= e(url('/assets/js/coupon-events.js')) ?>" defer></script>
   <script src="assets/js/app.js?v=<?= filemtime(__DIR__ . '/../../../assets/js/app.js') ?>" defer></script>
   <script src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>" defer></script>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
+  <script src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>" defer></script>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/refinement.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/refinement.css') ?>">
 </head>
 
 <body data-page="<?= e($role) ?>" data-demo="<?= $demo ? 'true' : 'false' ?>">

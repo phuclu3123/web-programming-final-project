@@ -25,3 +25,5 @@ CI này **không chứng minh** toàn bộ chức năng và database đã chạy
 ## Nghiệm thu chung đợt 4
 
 Xem [PHASE4_ACCEPTANCE.md](PHASE4_ACCEPTANCE.md) để biết ma trận U4/A4/M4, bằng chứng đã chạy và các bước OAuth/email/host thật còn chờ. `tests/run-phase4.py --browser` bổ sung Chrome headless tại 320/390/768/1440 px và xử lý mất mạng; chỉ chạy khi đã opt-in database thử riêng cổng 13379. Bỏ `--browser` không bao gồm kiểm tra trình duyệt này.
+
+`COUPONHUB_FULL_UI_AUDIT=1` mở rộng kiểm tra trình duyệt sang các trang công khai, User, Merchant và Admin; kiểm tra thêm category dialog, chuông thông báo mobile, menu workspace, reduced-motion và Escape/focus. Bản review Trúc mới và cách dùng các skill thiết kế được ghi ở [TRUC_APP_REVIEW_AND_DESIGN.md](TRUC_APP_REVIEW_AND_DESIGN.md).

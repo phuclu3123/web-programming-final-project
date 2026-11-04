@@ -1,0 +1,719 @@
+/* Phase 9B — shared search actions and scalable category chooser.
+   All mobile transformations require JS enhancement; without JS category filters wrap. */
+.community-catalog .community-board .community-search-input,
+.editorial-home .discovery-section .hero-search.couponhub-search-form {
+  gap: 6px;
+  min-height: 60px;
+  padding: 5px 6px 5px 13px;
+  border: 1px solid #d2ddec;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.community-catalog .community-board .community-search-input > .couponhub-search-action,
+.editorial-home .discovery-section .hero-search .couponhub-search-action {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 132px;
+  width: auto;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: #2856cc;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.community-catalog .community-board .community-search-input > .couponhub-search-action > .fa-solid,
+.editorial-home .discovery-section .hero-search .couponhub-search-action > .fa-solid {
+  display: inline-block;
+  flex: 0 0 auto;
+  font-size: 16px;
+  line-height: 1;
+  color: inherit;
+}
+
+/* Counter the older icon pseudo-elements without affecting Font Awesome's glyph. */
+.community-catalog .community-board .community-search-input > .couponhub-search-action > .fa-solid::before,
+.editorial-home .discovery-section .hero-search .couponhub-search-action > .fa-solid::before {
+  display: inline-block !important;
+  content: var(--fa) !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.community-catalog .community-board .community-search-input > .couponhub-search-action:hover,
+.editorial-home .discovery-section .hero-search .couponhub-search-action:hover { background: #173fae; }
+
+.community-catalog .community-board .community-search-input > .couponhub-search-action:focus-visible,
+.editorial-home .discovery-section .hero-search .couponhub-search-action:focus-visible {
+  outline: 3px solid #174fc8;
+  outline-offset: 3px;
+}
+
+.couponhub-category-tools { min-width: 0; }
+.couponhub-category-open { display: none; }
+
+.couponhub-category-dialog {
+  box-sizing: border-box;
+  width: min(540px, calc(100vw - 32px));
+  max-width: calc(100vw - 16px);
+  max-height: min(78dvh, 640px);
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #dbe4f3;
+  border-radius: 22px;
+  background: #fff;
+  color: #15284b;
+  box-shadow: 0 24px 80px rgba(14, 32, 64, .28);
+  overflow-y: auto;
+}
+.couponhub-category-dialog::backdrop { background: rgba(12, 29, 57, .55); }
+.couponhub-category-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.couponhub-category-dialog-header h2 {
+  margin: 0;
+  font-size: clamp(19px, 3vw, 23px);
+  font-weight: 750;
+  color: #17294b;
+}
+.couponhub-category-close {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #dbe4f3;
+  border-radius: 50%;
+  background: #f6f8fc;
+  color: #243c69;
+  cursor: pointer;
+}
+.couponhub-category-close:hover { background: #e8efff; }
+.couponhub-category-close:focus-visible,
+.couponhub-category-option:focus-visible { outline: 3px solid #3565db; outline-offset: 2px; }
+.couponhub-category-dialog-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.couponhub-category-option {
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 13px;
+  border: 1px solid #d8e0ee;
+  border-radius: 13px;
+  background: #f8faff;
+  color: #344866;
+  font-weight: 650;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.couponhub-category-option:hover { background: #eaf0ff; border-color: #aac0ec; }
+.couponhub-category-option[aria-pressed="true"] {
+  border-color: #2856cc;
+  background: #2856cc;
+  color: #fff;
+}
+
+/* Phase 9C: progressively disclose category chips on mobile/tablet.
+   Keep the source anchors/radios for forms and browser fallback. */
+@media (max-width: 991.98px) {
+  .couponhub-category-tools[data-category-picker-ready="true"] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .couponhub-category-tools[data-category-picker-ready="true"] [data-category-rail] {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
+    flex-wrap: nowrap;
+    min-width: 0;
+    max-width: 100%;
+    width: 0;
+    margin: 0;
+    padding: 3px 0;
+    gap: 8px;
+    overflow: visible;
+    border: 0;
+    scrollbar-width: none;
+  }
+
+  .couponhub-category-tools[data-category-picker-ready="true"] [data-category-rail] > [data-category-collapsed="true"] {
+    display: none !important;
+  }
+
+  .couponhub-category-tools[data-category-picker-ready="true"] [data-category-rail] > a,
+  .couponhub-category-tools[data-category-picker-ready="true"] [data-category-rail] > label {
+    flex: 0 1 auto;
+    max-width: min(186px, 100%);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"] .community-categories label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+    max-width: min(186px, 100%);
+  }
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"] .community-categories input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+  }
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"] .community-categories input:focus-visible + span {
+    outline: 3px solid #3767dc;
+    outline-offset: 2px;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"] [data-category-rail] > label > span {
+    display: inline-flex;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Consistent, accessible enabled/selected distinction across all three pages. */
+  .couponhub-category-tools[data-category-picker-ready="true"] .category-chip,
+  .couponhub-category-tools[data-category-picker-ready="true"] .category-pick-tabs > a,
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"] .community-categories label > span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 13px;
+    border: 1px solid #cdd7e5;
+    border-radius: 999px;
+    background: #fff;
+    color: #273b56;
+    font-size: 12px;
+    font-weight: 650;
+  }
+
+  .couponhub-category-tools[data-category-picker-ready="true"] .category-chip.selected,
+  .couponhub-category-tools[data-category-picker-ready="true"] .category-pick-tabs > a[aria-current],
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"] .community-categories input:checked + span {
+    border-color: #2856cc;
+    background: #2856cc;
+    color: #fff;
+  }
+
+  .couponhub-category-tools[data-category-picker-ready="true"] .couponhub-category-open {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0 13px;
+    border: 1px solid #cbd8ea;
+    border-radius: 999px;
+    background: #fff;
+    color: #2850a5;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="false"] .couponhub-category-open {
+    display: none;
+  }
+  .couponhub-category-open:hover { background: #eff4ff; }
+  .couponhub-category-open:focus-visible { outline: 3px solid #3767dc; outline-offset: 2px; }
+
+  /* release.css hides pseudo-elements in discovery sections. Restore only FA glyphs. */
+  .editorial-home .discovery-section .couponhub-category-open .fa-solid::before,
+  .editorial-home .discovery-section .couponhub-category-tools .category-chip .fa-solid::before {
+    display: inline-block !important;
+    content: var(--fa) !important;
+    height: auto !important;
+  }
+
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"] { margin-top: 17px; }
+  .discovery-page .category-picks .couponhub-category-tools[data-category-picker-ready="true"] { margin-bottom: 20px; }
+}
+
+@media (max-width: 600px) {
+  .community-catalog .community-board .community-search-input > .couponhub-search-action,
+  .editorial-home .discovery-section .hero-search .couponhub-search-action {
+    flex: 0 0 48px;
+    width: 48px;
+    min-width: 48px;
+    max-width: 48px;
+    height: 48px;
+    min-height: 48px;
+    gap: 0;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 14px;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"] .couponhub-category-open {
+    flex-direction: row;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    height: 44px;
+    border-radius: 999px;
+    padding: 0 11px;
+    gap: 6px;
+  }
+  .couponhub-category-dialog {
+    position: fixed;
+    inset: auto 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: min(78dvh, 660px);
+    margin: auto 0 0;
+    padding: 18px 16px max(18px, env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+@media (max-width: 359.98px) {
+  .community-catalog .community-board .community-search-input > .couponhub-search-action,
+  .editorial-home .discovery-section .hero-search .couponhub-search-action {
+    flex-basis: 46px;
+    min-width: 46px;
+    max-width: 46px;
+    width: 46px;
+    height: 46px;
+  }
+  .couponhub-category-dialog-options { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .couponhub-category-option,
+  .couponhub-category-open,
+  .couponhub-category-dialog { scroll-behavior: auto; transition: none; }
+}
+
+/* Keep the category picker clickable when it passes under the fixed contact CTA.
+   JS applies this only when their visible rectangles overlap on mobile/tablet. */
+@media (max-width: 991.98px) {
+  .floating-support.is-category-overlap {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* Phase 9D: shared modal and desktop refinement across Explore, Community, Categories. */
+.couponhub-category-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: 0;
+  width: min(640px, calc(100vw - 32px));
+  max-height: min(82dvh, 720px);
+  padding: 0;
+  border: 1px solid #dce5f1;
+  border-radius: 22px;
+  box-shadow: 0 28px 85px rgba(16, 37, 73, .24);
+}
+.couponhub-category-dialog .couponhub-category-dialog-header {
+  flex: 0 0 auto;
+  align-items: flex-start;
+  margin: 0;
+  padding: 26px 28px 16px;
+}
+.couponhub-category-dialog-heading { min-width: 0; }
+.couponhub-category-dialog .couponhub-category-dialog-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #2856cc;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .095em;
+}
+/* Specificity deliberately beats .editorial-home .discovery-section h2. */
+.couponhub-category-dialog .couponhub-category-dialog-header h2 {
+  margin: 0 0 8px;
+  color: #15284b;
+  font-size: 23px;
+  font-weight: 760;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+.couponhub-category-dialog .couponhub-category-dialog-heading p {
+  margin: 0;
+  color: #5b6c85;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.couponhub-category-dialog .couponhub-category-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  font-size: 17px;
+}
+/* Release.css hides ALL pseudo-glyphs inside Explore; recover self-hosted FA only inside this dialog. */
+.couponhub-category-dialog .fa-solid::before {
+  content: var(--fa) !important;
+  display: inline-block !important;
+  width: auto !important;
+  height: auto !important;
+  border: 0 !important;
+}
+.couponhub-category-dialog-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  margin: 0 28px 13px;
+}
+/* Accessible label fallback if the Bootstrap CDN cannot load. */
+.couponhub-category-dialog-search > .visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.couponhub-category-dialog-search > .fa-solid {
+  position: absolute;
+  left: 15px;
+  color: #637795;
+  pointer-events: none;
+  font-size: 15px;
+}
+.couponhub-category-dialog-search > input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 15px 0 43px;
+  border: 1px solid #d3deed;
+  border-radius: 13px;
+  background: #f7f9fd;
+  color: #15284b;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+}
+.couponhub-category-dialog-search > input:focus-visible {
+  border-color: #315ecb;
+  box-shadow: 0 0 0 3px rgba(49, 94, 203, .16);
+}
+.couponhub-category-dialog-count {
+  flex: 0 0 auto;
+  margin: 0 28px 12px;
+  color: #5d6d85;
+  font-size: 12px;
+  font-weight: 600;
+}
+.couponhub-category-dialog .couponhub-category-dialog-options {
+  display: grid;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  align-content: start;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 28px 18px;
+  scrollbar-gutter: stable;
+}
+.couponhub-category-dialog .couponhub-category-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  min-height: 50px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #dbe4ef;
+  color: #263c5e;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
+  transition: border-color .14s, background .14s;
+}
+.couponhub-category-dialog .couponhub-category-option:hover {
+  background: #f3f7ff;
+  border-color: #8da9e4;
+}
+.couponhub-category-dialog .couponhub-category-option[aria-pressed="true"] {
+  background: #e9f0ff;
+  border: 1px solid #315ecb;
+  color: #1847af;
+}
+.couponhub-category-dialog .couponhub-category-option > .fa-check {
+  display: none;
+  flex: 0 0 auto;
+  font-size: 14px;
+  color: #2356c8;
+}
+.couponhub-category-dialog .couponhub-category-option[aria-pressed="true"] > .fa-check { display: inline-block; }
+.couponhub-category-dialog .couponhub-category-option[hidden] { display: none !important; }
+.couponhub-category-dialog .couponhub-category-dialog-empty {
+  flex: 1;
+  margin: 0 28px;
+  padding: 28px 10px;
+  text-align: center;
+  color: #697994;
+  font-size: 14px;
+}
+.couponhub-category-dialog .couponhub-category-dialog-empty[hidden] { display: none !important; }
+.couponhub-category-dialog .couponhub-category-dialog-footer {
+  flex: 0 0 auto;
+  padding: 13px 28px 17px;
+  border-top: 1px solid #e6edf5;
+  color: #697c97;
+  background: #fff;
+  font-size: 12px;
+}
+/* Large category sets: keep the desktop navigation to a single row and a clear overflow control. */
+@media (min-width: 992px) {
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] [data-category-rail] {
+    display: flex;
+    align-items: center;
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+    max-width: 100%;
+    gap: 9px;
+    padding: 6px 0;
+    margin: 0;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    border: 0;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"] [data-category-rail] > [data-category-collapsed="true"] { display: none !important; }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .couponhub-category-open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid #c7d5ea;
+    border-radius: 999px;
+    background: #fff;
+    color: #234fbb;
+    font-size: 13px;
+    font-weight: 750;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .couponhub-category-tools .couponhub-category-open:hover { background: #eff4ff; }
+  .couponhub-category-tools .couponhub-category-open:focus-visible { outline: 3px solid #3767dc; outline-offset: 2px; }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] [data-category-rail] > a,
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] [data-category-rail] > label {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 174px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .community-categories label { position: relative; display: inline-flex; }
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .community-categories input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .community-categories label > span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 13px;
+    border: 1px solid #d0dbe9;
+    border-radius: 999px;
+    background: #fff;
+    color: #2c4266;
+    font-size: 13px;
+    font-weight: 650;
+  }
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .community-categories input:checked + span {
+    border-color: #2856cc;
+    background: #2856cc;
+    color: #fff;
+  }
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .community-categories input:focus-visible + span { outline: 3px solid #3767dc; outline-offset: 2px; }
+}
+@media (max-width: 600px) {
+  .couponhub-category-dialog[open] {
+    inset: auto 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: min(85dvh, 700px);
+    margin: auto 0 0;
+    border-radius: 22px 22px 0 0;
+  }
+  .couponhub-category-dialog .couponhub-category-dialog-header { padding: 20px 18px 14px; }
+  .couponhub-category-dialog .couponhub-category-dialog-header h2 { font-size: 21px; }
+  .couponhub-category-dialog-search { margin: 0 18px 12px; }
+  .couponhub-category-dialog-count { margin: 0 18px 10px; }
+  .couponhub-category-dialog .couponhub-category-dialog-options {
+    grid-template-columns: 1fr;
+    padding: 0 18px 12px;
+    gap: 8px;
+  }
+  .couponhub-category-dialog .couponhub-category-dialog-footer { padding: 12px 18px max(14px, env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .couponhub-category-dialog .couponhub-category-option { transition: none; }
+}
+
+/* Phase 9D follow-up — keep the shared category dialog visually identical when
+   it is nested inside the Community GET search form. Older release.css rules
+   target every .couponhub-search-form input and descendant div with !important;
+   limit our corrections to the dialog instead of changing other search forms. */
+.couponhub-category-dialog .couponhub-category-dialog-search > input[type="search"] {
+  flex: 0 1 auto !important;
+  min-width: 0;
+  width: 100%;
+  height: 48px;
+  padding: 0 15px 0 43px !important;
+  border: 1px solid #d3deed !important;
+  border-radius: 13px !important;
+  background: #f7f9fd !important;
+  color: #15284b !important;
+  font-size: 14px !important;
+  line-height: normal;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: border-color .16s ease, box-shadow .16s ease !important;
+}
+.couponhub-category-dialog .couponhub-category-dialog-search > input[type="search"]:focus {
+  border-color: #315ecb !important;
+  background: #f7f9fd !important;
+  box-shadow: 0 0 0 3px rgba(49, 94, 203, .16) !important;
+}
+.couponhub-category-dialog .couponhub-category-dialog-footer {
+  border-top: 1px solid #e6edf5 !important;
+}
+
+/* Phase 9E — one consistent desktop category toolbar on all three public pages.
+   The rail is content-sized rather than flex-grow:1; "Xem thêm" follows the
+   last visible chip instead of floating to the outer right edge of the page.
+   Do not modify compact layouts (<=991.98px). */
+@media (min-width: 992px) {
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] [data-category-rail] {
+    box-sizing: border-box;
+    flex: 0 1 auto;
+    width: max-content;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    border: 0;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] [data-category-rail] > a,
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] [data-category-rail] > label {
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 174px;
+    margin: 0;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .category-chip,
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .category-pick-tabs > a,
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .community-categories label > span {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    height: 46px;
+    padding: 0 15px;
+    border: 1px solid #d3deec;
+    border-radius: 999px;
+    background: #fff;
+    color: #314563;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .category-chip.selected,
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .category-pick-tabs > a[aria-current],
+  .community-catalog .community-board .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .community-categories input:checked + span {
+    border-color: #2856cc;
+    background: #2856cc;
+    color: #fff;
+  }
+  /* release.css hides every ::before under discovery-section; restore only
+     the Font Awesome chevron in the shared desktop category control. */
+  .editorial-home .discovery-section .couponhub-category-tools .couponhub-category-open > .fa-solid::before {
+    display: inline-block !important;
+    content: var(--fa) !important;
+    height: auto !important;
+    border: 0 !important;
+  }
+  .couponhub-category-tools[data-category-picker-ready="true"][data-category-overflow="true"] .couponhub-category-open {
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    min-height: 46px;
+    height: 46px;
+    padding: 0 16px;
+    border-color: #cbd8ea;
+    background: #fff;
+    color: #2856cc;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* Phase 9F — vertical rhythm for desktop category controls.
+     Keep these rules inside Phase 9E's single desktop media query; mobile and
+     tablet margins remain unchanged. */
+  /* Coupon cộng đồng: spacing between search field and category controls. */
+  .community-catalog .community-board .community-search > .couponhub-category-tools[data-category-picker-ready="true"] {
+    padding-top: 18px;
+  }
+
+  /* Danh mục: spacing between category controls and the coupon card grid. */
+  .discovery-page .category-picks > .couponhub-category-tools[data-category-picker-ready="true"] {
+    margin-bottom: 24px;
+  }
+}

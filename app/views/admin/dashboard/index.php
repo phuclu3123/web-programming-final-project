@@ -1,31 +1,20 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1">Admin Dashboard</h1>
-        <p class="text-muted mb-0">Tổng quan User, Merchant, Coupon, Report và Campaign.</p>
+<header class="workspace-heading">
+    <div><h1>Tổng quan quản trị</h1><p>Những việc cần xử lý và tình hình phát hành ưu đãi.</p></div>
+    <a class="btn btn-primary" href="<?= e(url('/admin/articles/create')) ?>">Viết bài mới <?= icon('arrow') ?></a>
+</header>
+<section class="workspace-panel" aria-labelledby="review-queue-title">
+    <div class="workspace-panel-heading"><h2 id="review-queue-title">Cần bạn xem xét</h2><span>Hàng đợi kiểm duyệt</span></div>
+    <div class="review-queue">
+        <?php foreach ([['Coupon chờ duyệt', 'pending_coupons', '/admin/coupons?status=PENDING', 'Xem nội dung và điều kiện'], ['Báo cáo đang mở', 'open_reports', '/admin/reports', 'Kiểm chứng phản hồi thành viên'], ['Yêu cầu quyền shop', 'pending_manager_requests', '/admin/merchant-requests', 'Xem xét quyền quản lý cửa hàng']] as [$label,$key,$href,$description]): ?>
+        <a href="<?= e(url($href)) ?>" class="review-queue-item">
+            <span><?= e($label) ?> <?= icon('arrow') ?></span><strong><?= (int)($stats[$key] ?? 0) ?></strong><small><?= e($description) ?></small>
+        </a><?php endforeach; ?>
     </div>
-</div>
-<div class="row">
-    <?php foreach ([['Users', 'users', 'fa-users', '/admin/users'], ['User bị khóa', 'locked_users', 'fa-user-lock', '/admin/users'], ['Đơn xin quyền Shop', 'pending_manager_requests', 'fa-store', '/admin/merchant-requests'], ['Merchant đã duyệt', 'approved_merchants', 'fa-shop', '/admin/merchants'], ['Coupon chờ duyệt', 'pending_coupons', 'fa-ticket', '/admin/coupons'], ['Coupon ACTIVE', 'active_coupons', 'fa-circle-check', '/coupons'], ['Report đang mở', 'open_reports', 'fa-flag', '/admin/reports'], ['Campaign public', 'published_campaigns', 'fa-bullhorn', '/admin/campaigns']] as [$label, $key, $icon, $href]): ?>
-        <div class="col-6 col-lg-3 mb-3"><a class="text-decoration-none text-reset" href="<?= e(url($href)) ?>">
-                <div class="card shadow-sm h-100 admin-stat-card">
-                    <div class="card-body">
-                        <div class="text-muted small"><i class="fa-solid <?= e($icon) ?> me-1"></i><?= e($label) ?></div>
-                        <div class="display-4 admin-stat-number"><?= (int)($stats[$key] ?? 0) ?></div>
-                    </div>
-                </div>
-            </a></div>
-    <?php endforeach; ?>
-</div>
-<div class="card shadow-sm">
-    <div class="card-body">
-        <h2 class="h5">Quản trị nhanh</h2><a class="btn btn-outline-primary me-2 mb-2"
-            href="<?= e(url('/admin/users')) ?>">Users</a><a class="btn btn-outline-primary me-2 mb-2"
-            href="<?= e(url('/admin/merchants')) ?>">Merchants</a><a class="btn btn-outline-primary me-2 mb-2"
-            href="<?= e(url('/admin/merchant-requests')) ?>">Duyệt quyền Shop</a><a
-            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/articles')) ?>">Bài viết</a><a
-            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/categories')) ?>">Categories</a><a
-            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/coupons')) ?>">Coupon Moderation</a><a
-            class="btn btn-outline-primary me-2 mb-2" href="<?= e(url('/admin/campaigns')) ?>">Campaigns</a><a
-            class="btn btn-outline-danger mb-2" href="<?= e(url('/admin/reports')) ?>">Reports</a>
-    </div>
-</div>
+</section>
+<section class="workspace-panel" aria-labelledby="system-overview-title">
+    <div class="workspace-panel-heading"><h2 id="system-overview-title">Trên CouponHub</h2><a href="<?= e(url('/coupons')) ?>">Xem trang người dùng <?= icon('arrow') ?></a></div>
+    <dl class="workspace-metrics">
+        <?php foreach ([['Người dùng','users'],['Tài khoản bị khóa','locked_users'],['Cửa hàng đã duyệt','approved_merchants'],['Coupon hoạt động','active_coupons'],['Chiến dịch đã xuất bản','published_campaigns']] as [$label,$key]): ?>
+        <div><dt><?= e($label) ?></dt><dd><?= (int)($stats[$key] ?? 0) ?></dd></div><?php endforeach; ?>
+    </dl>
+</section>

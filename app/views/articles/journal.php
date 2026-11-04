@@ -3,10 +3,10 @@ $guideGroups = ['doc-dieu-kien-ma' => 'dung-ma', 'so-sanh-muc-tiet-kiem' => 'tin
 <div class="editorial-article-page studio-journal">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Góc đọc</span></div>
     <header class="journal-heading journal-masthead">
-        <div><span class="eyebrow">THE COUPONHUB EDIT</span>
-            <h1>Góc <em>đọc.</em></h1>
+        <div><span class="eyebrow">Cẩm nang CouponHub</span>
+            <h1>Góc đọc.</h1>
         </div>
-        <p>Hiểu thêm một chút.<br>Chọn tốt hơn nhiều.<small>CẨM NANG MUA SẮM / <?= count($guides) ?> HƯỚNG DẪN</small>
+        <p>Đọc đúng điều kiện.<br>Chọn mã hợp với bạn.<small><?= count($guides) ?> hướng dẫn sử dụng ưu đãi</small>
         </p>
     </header>
     <section class="journal-cover">

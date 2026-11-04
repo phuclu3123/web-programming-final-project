@@ -1516,8 +1516,8 @@ body:has(#campaign-modal) {
 }
 
 .community-filter-row .checkbox-label small {
-  color: #94a3b8 !important;
-  font-size: 10px !important;
+  color: #596577 !important;
+  font-size: 12px !important;
 }
 
 /* Nút bấm Áp dụng & Xóa lọc */
@@ -1611,7 +1611,7 @@ body:has(#campaign-modal) {
 .community-filter-row label {
   font-size: 12px !important;
   font-weight: 600 !important;
-  color: #64748b !important;
+  color: #596577 !important;
   margin-bottom: 6px !important;
   white-space: nowrap !important;
   display: block !important;
