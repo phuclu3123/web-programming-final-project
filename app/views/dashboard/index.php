@@ -51,9 +51,8 @@ $sectionLinks = [['account-overview', 'Tổng quan'], ['account-saved', 'Coupon 
                 <?php if ($nextPoints !== null): ?><p>Còn <b><?= max(0, (int)$nextPoints - $points) ?> điểm</b> để lên
                         <?= e($rewardSummary['next_level_name'] ?? 'cấp tiếp theo') ?>.</p><?php else: ?><p>Bạn đang ở cấp
                         cao nhất hiện tại.</p><?php endif; ?>
-                <div class="member-progress" role="progressbar" aria-label="Tiến độ trong cấp hiện tại"
-                    aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"><span
-                        style="width:<?= $progress ?>%"></span></div>
+                <progress class="member-progress" aria-label="Tiến độ trong cấp hiện tại"
+                    value="<?= (int) max(0, min(100, $progress)) ?>" max="100"><?= (int) $progress ?>%</progress>
                 <a href="#account-rewards">Xem lịch sử tích điểm <?= icon('arrow') ?></a>
             </article>
         </div>

@@ -643,7 +643,6 @@ dialog.auth-dialog::backdrop { background: #12192470; backdrop-filter: blur(8px)
 .editorial-calendar-page .calendar-legend-dot.is-upcoming { background: #a8afb9; }
 
 /* Phase 9A v2 — Responsive Search and Category Strip */
-
 .hero-search.couponhub-search-form {
   border-radius: 999px;
   flex-wrap: nowrap;
@@ -886,4 +885,78 @@ dialog.auth-dialog::backdrop { background: #12192470; backdrop-filter: blur(8px)
   .editorial-home .discovery-section .hero-search .search-submit {
     transition: none;
   }
+}
+
+/* Replace inline view styles; loaded by both MVC layouts. */
+.csp-wrap-anywhere { overflow-wrap: anywhere; }
+.csp-max-w-240 { max-width: 240px; }
+.csp-max-w-640 { max-width: 640px; }
+.csp-gap-035 { gap: .35rem; }
+
+/* Predictable widths for merchant-access tables.
+   Keep horizontal scrolling on narrow screens rather than squeezing the review column. */
+.merchant-access-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.merchant-access-scroll:focus-visible {
+  outline: 2px solid #3159d0;
+  outline-offset: 2px;
+}
+.merchant-access-request-table {
+  width: 100%;
+  min-width: 1160px;
+  table-layout: fixed;
+}
+.merchant-access-request-table thead th:nth-child(1) { width: 80px; }
+.merchant-access-request-table thead th:nth-child(2) { width: 205px; }
+.merchant-access-request-table thead th:nth-child(3) { width: 155px; }
+.merchant-access-request-table thead th:nth-child(4) { width: 90px; }
+.merchant-access-request-table thead th:nth-child(5) { width: 110px; }
+.merchant-access-request-table thead th:nth-child(6) { width: 255px; }
+.merchant-access-request-table thead th:nth-child(7) { width: 265px; }
+.merchant-access-request-table :is(th, td) { vertical-align: middle; }
+.merchant-access-request-table td:nth-child(2),
+.merchant-access-request-table td:nth-child(3),
+.merchant-access-request-table td:nth-child(6),
+.merchant-access-request-table td:nth-child(7) {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+/* Bootstrap badges normally disallow wrapping; duplicate-evidence notes must fit. */
+.merchant-access-request-table .badge.bg-warning {
+  white-space: normal;
+  text-align: left;
+  line-height: 1.45;
+}
+.merchant-access-request-table .merchant-review-form input[name="note"] {
+  min-width: 0;
+  width: 100%;
+}
+.merchant-access-request-table td:nth-child(7) .btn {
+  margin: 2px 4px 2px 0;
+}
+.merchant-access-membership-table {
+  width: 100%;
+  min-width: 790px;
+  table-layout: fixed;
+}
+.merchant-access-membership-table thead th:nth-child(1) { width: 225px; }
+.merchant-access-membership-table thead th:nth-child(2) { width: 165px; }
+.merchant-access-membership-table thead th:nth-child(3) { width: 110px; }
+.merchant-access-membership-table thead th:nth-child(4) { width: 290px; }
+.merchant-access-membership-table td {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+.merchant-access-membership-table td:last-child form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.merchant-access-membership-table td:last-child input[name="note"] {
+  flex: 1 1 180px;
+  min-width: 0;
 }

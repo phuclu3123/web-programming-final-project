@@ -112,8 +112,11 @@
 .member-points-value strong { font-size: 64px; font-weight: 650; letter-spacing: -.06em; line-height: 1; }
 .member-points-value span { color: #afc1e8; font-size: 13px; }
 .member-points p { color: #cad6ef; font-size: 12px; margin-bottom: 12px; }
-.member-progress { height: 5px; overflow: hidden; border-radius: 99px; background: #ffffff20; }
-.member-progress span { display: block; height: 100%; border-radius: inherit; background: #9ab4ff; }
+/* Native progress keeps the dynamic value out of inline CSS for strict CSP. */
+.member-progress { display: block; width: 100%; height: 5px; overflow: hidden; border: 0; border-radius: 99px; background: #ffffff20; appearance: none; -webkit-appearance: none; }
+.member-progress::-webkit-progress-bar { background: #ffffff20; border-radius: 99px; }
+.member-progress::-webkit-progress-value { background: #9ab4ff; border-radius: 99px; }
+.member-progress::-moz-progress-bar { background: #9ab4ff; border-radius: 99px; }
 .member-points > a { display: inline-flex; align-items: center; gap: 7px; margin-top: 17px; color: #fff; font-size: 11px; text-decoration: none; }
 .member-points .icon { width: 14px; height: 14px; fill: none; stroke: currentColor; }
 .member-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 20px; }
@@ -326,8 +329,8 @@ a.member-stat:hover { color: var(--ink); border-color: #b7c6ee; transform: trans
     font-size: 22px;
   }
 }
-/* MEMBER WORKSPACE */
 
+/* MEMBER WORKSPACE */
 .unified-page .member-main {
   background: var(--paper);
 }

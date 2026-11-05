@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\ValidationException;
+use App\Core\UserFacingException;
 use App\Contracts\CouponRepositoryInterface;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -90,10 +91,10 @@ final class CouponService
         } catch (mysqli_sql_exception $e) {
             $message = $e->getMessage();
             if (stripos($message, 'Only approved merchant owner') !== false) {
-                throw new RuntimeException('Chỉ chủ Merchant đã được duyệt mới có thể tạo Official Deal.');
+                throw new UserFacingException('Chỉ chủ Merchant đã được duyệt mới có thể tạo Official Deal.');
             }
             if (stripos($message, 'Duplicate code with overlapping validity') !== false) {
-                throw new RuntimeException('Mã coupon này bị trùng khoảng hiệu lực với coupon khác của Merchant.');
+                throw new UserFacingException('Mã coupon này bị trùng khoảng hiệu lực với coupon khác của Merchant.');
             }
             throw $e;
         }
