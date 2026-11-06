@@ -13,12 +13,9 @@ final class ArticleController extends Controller
 {
     public function guide(Request $request, string $slug): void
     {
-        $guides = productGuides();
-        if (!isset($guides[$slug])) {
-            $this->renderError(404, 'Hướng dẫn không tồn tại.');
-            return;
-        }
-        $this->view('articles/guide', ['pageTitle' => $guides[$slug]['title'], 'guide' => $guides[$slug], 'guideSlug' => $slug, 'guides' => $guides]);
+        $article=(new ArticleRepository(Database::connection()))->findPublished($slug);
+        if(!$article){$this->renderError(404,'Hướng dẫn chưa được xuất bản.');return;}
+        \App\Core\Response::redirect(url('/articles/'.$article['slug']),302);
     }
     public function index(Request $request): void
     {
@@ -36,6 +33,9 @@ final class ArticleController extends Controller
             $this->renderError(404, 'Bài viết không tồn tại hoặc chưa được xuất bản.');
             return;
         }
-        $this->view('articles/show', ['pageTitle' => (string)$article['title'], 'article' => $article]);
+        $viewer=\App\Core\Auth::user();$before=$request->query('before','');
+        if(!is_scalar($before) || ($before!=='' && filter_var($before,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])===false))throw new \App\Core\HttpError(422,'Trang bình luận không hợp lệ.');
+        $comments=(new \App\Repositories\ArticleCommentRepository(Database::connection()))->page((int)$article['id'],(int)($viewer['id']??0),(int)$before);
+        $this->view('articles/show', ['pageTitle' => (string)$article['title'], 'article' => $article,'commentPage'=>$comments,'commentViewer'=>$viewer]);
     }
 }

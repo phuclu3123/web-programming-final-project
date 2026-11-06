@@ -33,7 +33,7 @@ test('editorial header resets do not match generic image-adjacent div and header
   assert.doesNotMatch(css, /(^|\n)\s*(?:div|header):has\(\+/m);
   assert.match(css, /\.article-reading > div:has\(\+ img\)/);
   assert.match(css, /\.guide-page > \.guide-masthead:has\(\+ img\)/);
-  assert.match(read('app/views/articles/show.php'), /class="article-reading"/);
+  assert.match(read('app/views/articles/show.php'), /class="[^\"]*\barticle-reading\b[^\"]*"/);
   assert.match(read('app/views/articles/guide.php'), /class="guide-page"/);
   assert.match(read('app/views/articles/guide.php'), /class="guide-masthead"/);
 });

@@ -12,6 +12,7 @@ $workspaceLinks = $workspaceArea === 'admin' ? [
     ['/admin/campaigns', 'Chiến dịch', 'clock'],
     ['/admin/categories', 'Danh mục', 'grid'],
     ['/admin/articles', 'Bài viết', 'grid'],
+    ['/admin/article-comments', 'Bình luận bài viết', 'users'],
 ] : [
     ['/merchant', 'Tổng quan', 'grid'],
     ['/merchant/coupons', 'Coupon cửa hàng', 'ticket'],

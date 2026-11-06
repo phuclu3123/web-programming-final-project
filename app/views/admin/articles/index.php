@@ -1,5 +1,5 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3">Quản lý bài viết</h1><a class="btn btn-primary" href="<?= e(url('/admin/articles/create')) ?>">+ Viết
+    <h1 class="h3">Quản lý bài viết</h1><a class="btn btn-outline-primary" href="<?= e(url('/admin/article-comments')) ?>">Bình luận</a><a class="btn btn-primary" href="<?= e(url('/admin/articles/create')) ?>">+ Viết
         bài</a>
 </div>
 <div class="table-responsive">

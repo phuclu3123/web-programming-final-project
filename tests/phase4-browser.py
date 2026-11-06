@@ -34,6 +34,9 @@ for port in (8098,9228):
         assert probe.connect_ex(('127.0.0.1',port))!=0,f'Refusing to reuse occupied test port {port}'
 env=os.environ|{'COUPONHUB_APP_URL':origin,'COUPONHUB_HOST':'127.0.0.1','COUPONHUB_PORT':'13379','COUPONHUB_DB':'couponhub_merge_test','COUPONHUB_USER':'root','COUPONHUB_PASSWORD':'','COUPONHUB_SESSION_PATH':str(runtime/'sessions'),'COUPONHUB_RATE_LIMIT_DIR':str(runtime/'limits')}
 flags=getattr(subprocess,'CREATE_NO_WINDOW',0)
+# Published editorial fixture for the database-backed guide bookmark.
+article_author=subprocess.check_output(mysql+["SELECT id FROM users WHERE username='admin_demo'"]).decode().strip()
+subprocess.run(['C:/xampp/php/php.exe','scripts/publish-editorial.php','--apply','--expected-database=couponhub_merge_test','--author-id='+article_author],cwd=ROOT,env=env,check=True,stdout=subprocess.PIPE)
 class CDP:
     def __init__(self,url):self.socket=websocket.create_connection(url,timeout=15,suppress_origin=True);self.next=0;self.responses=[]
     def call(self,method,params=None):
@@ -65,6 +68,7 @@ def cookies_for(username,password):
     assert json.load(response)['success']
     return list(jar)
 server=browser=None;cdp=None;results=[]
+expected_operations=len(json.loads((ROOT/'docs/api/route-catalog.json').read_text(encoding='utf-8')))
 with (runtime/'php.log').open('w') as php_log,(runtime/'chrome.log').open('w') as chrome_log:
     try:
         server=subprocess.Popen(['C:/xampp/php/php.exe','-S','127.0.0.1:8098','router.php'],cwd=ROOT,env=env,stdout=php_log,stderr=php_log,creationflags=flags)
@@ -91,7 +95,7 @@ with (runtime/'php.log').open('w') as php_log,(runtime/'chrome.log').open('w') a
         full_audit=os.environ.get('COUPONHUB_FULL_UI_AUDIT')=='1'
         banner_only=os.environ.get('COUPONHUB_BANNER_ONLY')=='1'
         if full_audit:
-            suites[0][3].extend(['/campaign-calendar?calendarOpen=1','/articles','/guides/doc-dieu-kien-ma','/about','/contact','/terms','/privacy','/community-guidelines','/forgot-password'])
+            suites[0][3].extend(['/campaign-calendar?calendarOpen=1','/articles','/articles/doc-dieu-kien-ma','/about','/contact','/terms','/privacy','/community-guidelines','/forgot-password'])
             suites[1][3].extend(['/dashboard','/my-coupons','/notifications','/merchant/apply'])
             suites.append(('admin','admin_demo','AdminDemo!2026',['/admin','/admin/users','/admin/merchants','/admin/merchant-requests','/admin/categories','/admin/coupons','/admin/reports','/admin/campaigns',f'/admin/campaigns/{campaign}','/admin/articles','/admin/articles/create']))
         if os.environ.get('COUPONHUB_PROVIDER_UI_TEST')=='1':
@@ -118,9 +122,9 @@ with (runtime/'php.log').open('w') as php_log,(runtime/'chrome.log').open('w') a
                     assert not any(word in state['text'] for word in ['Fatal error','Warning:','Parse error']),state
                     if path=='/admin/api-docs':
                         for _ in range(100):
-                            if cdp.evaluate("document.querySelectorAll('#swagger-ui .opblock').length===119"):break
+                            if cdp.evaluate("document.querySelectorAll('#swagger-ui .opblock').length==="+str(expected_operations)):break
                             time.sleep(.1)
-                        else:raise AssertionError('Swagger must render the actual 119 operations')
+                        else:raise AssertionError('Swagger must render all '+str(expected_operations)+' current route operations')
                         assert cdp.evaluate("!document.querySelector('#swagger-ui .errors-wrapper')"),'Swagger spec validation error'
                         assert cdp.evaluate('document.documentElement.scrollWidth<=innerWidth+2'),'Swagger horizontally overflows'
                     if path=='/admin/api-docs' and width==1440:

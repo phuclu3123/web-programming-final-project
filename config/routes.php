@@ -61,6 +61,11 @@ $router->get('/contact', [InfoController::class, 'contact']);
 $router->get('/articles', [ArticleController::class, 'index']);
 $router->get('/guides/{slug}', [ArticleController::class, 'guide']);
 $router->get('/articles/{slug}', [ArticleController::class, 'show']);
+$router->get('/api/articles/{id}/comments', [\App\Controllers\ArticleCommentController::class, 'index']);
+$router->post('/api/articles/{id}/comments', [\App\Controllers\ArticleCommentController::class, 'store']);
+$router->post('/api/article-comments/{id}/delete', [\App\Controllers\ArticleCommentController::class, 'delete']);
+$router->get('/admin/article-comments', [\App\Controllers\ArticleCommentController::class, 'moderation']);
+$router->post('/admin/article-comments/{id}/status', [\App\Controllers\ArticleCommentController::class, 'moderate']);
 $router->get('/campaign-calendar', [HolidayController::class, 'index']);
 
 $router->get('/login', [AuthController::class, 'showLogin']);

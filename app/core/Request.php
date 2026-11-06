@@ -84,6 +84,14 @@ final class Request
             || str_starts_with($this->path(), '/api/');
     }
 
+    /** Explicit native browser form submission; AJAX/API requests keep JSON responses. */
+    public function acceptsHtml(): bool
+    {
+        $accept=strtolower($this->server['HTTP_ACCEPT']??'');
+        return str_contains($accept,'text/html') && !str_contains($accept,'application/json')
+            && !$this->isJson() && empty($this->server['HTTP_X_REQUESTED_WITH']);
+    }
+
     private function stringValue(array $source, string $name, string $default, string $label): string
     {
         $value = $source[$name] ?? $default;
