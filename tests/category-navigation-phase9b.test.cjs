@@ -30,7 +30,7 @@ test('both pages use a single original category source and one accessible dialog
     assert.match(sharedDialog, /<dialog id="<\?= e\(\$categoryPickerDialogId\) \?>" class="couponhub-category-dialog"/);
     assert.match(sharedDialog, /data-category-dialog-options/);
     assert.match(sharedDialog, /data-category-close aria-label="Đóng danh mục"/);
-    for (const fontAwesome of ['fa-chevron-down', 'fa-border-all']) assert.ok(source.includes(fontAwesome));
+    assert.ok(source.includes('fa-chevron-down')); // Category labels can remain text-only.
     assert.match(sharedDialog, /fa-xmark/);
     assert.equal((source.match(/data-category-rail/g) || []).length, 1);
   }

@@ -1,6 +1,9 @@
 /* Phase 8: shared floating actions for head.php and main.php layouts.
    Scoped selectors prevent collisions with the legacy #back-to-top styles. */
 .floating-support {
+  --support-return-size: 48px;
+  --support-gap: 10px;
+  left: auto;
   right: max(16px, env(safe-area-inset-right, 0px));
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   z-index: 990;
@@ -10,21 +13,24 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: var(--support-gap);
 }
 .floating-support .glass-action {
   min-width: 48px;
   height: 48px;
   border-radius: 999px;
   box-shadow: 0 8px 24px rgba(18, 38, 80, .19);
-  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease, opacity .18s ease;
+  transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .18s cubic-bezier(.22,1,.36,1);
 }
 .floating-support .contact-trigger {
   background: #2857c8;
   border-color: #2857c8;
   color: #fff;
   font-weight: 700;
+  /* Cover the reserved return-button slot until that action is needed. */
+  transform: translateX(calc(var(--support-return-size) + var(--support-gap)));
 }
+.floating-support.has-top-action .contact-trigger { transform: translateX(0); }
 .floating-support .contact-trigger:hover,
 .floating-support .contact-trigger[aria-expanded="true"] {
   background: #1e44a8;
@@ -48,13 +54,16 @@
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(7px);
+  transform: translate(-8px,5px) scale(.94);
+  transform-origin: left center;
+  transition: transform .24s cubic-bezier(.22,1,.36,1), opacity .16s cubic-bezier(.22,1,.36,1), visibility 0s linear .2s;
 }
 .floating-support .back-to-top.is-visible {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
+  transition-delay: .04s, .04s, 0s;
 }
 .floating-support .back-to-top.is-visible:hover {
   background: #eaf0ff;
@@ -67,17 +76,19 @@
   outline: 3px solid #f1aa33;
   outline-offset: 3px;
 }
-.floating-support .contact-popover { right: 0; max-width: calc(100vw - 24px); }
+.floating-support .contact-popover { left:auto; right:0; max-width:calc(100vw - 24px); transform-origin:right bottom; }
 @media (max-width: 575.98px) {
   .floating-support {
-    right: calc(12px + env(safe-area-inset-right, 0px));
+    --support-return-size: 46px;
+    --support-gap: 8px;
+    left: auto;
+    right: max(12px, env(safe-area-inset-right, 0px));
     bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
-  .floating-support .floating-support-actions { gap: 8px; }
   .floating-support .glass-action { height: 46px; min-width: 46px; }
   .floating-support .back-to-top { width: 46px; height: 46px; flex-basis: 46px; }
   .floating-support .contact-popover { width: min(292px, calc(100vw - 24px)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .floating-support .glass-action { transition: none; }
+  .floating-support .glass-action, .floating-support .contact-popover { transition: none !important; }
 }

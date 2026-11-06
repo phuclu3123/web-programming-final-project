@@ -3,6 +3,8 @@
 $workspaceLinks = $workspaceArea === 'admin' ? [
     ['/admin', 'Tổng quan', 'grid'],
     ['/admin/coupons', 'Kiểm duyệt coupon', 'ticket'],
+    ['/admin/integrations', 'Nguồn ACCESSTRADE', 'store'],
+    ['/admin/api-docs', 'API & nghiệm thu', 'grid'],
     ['/admin/reports', 'Báo cáo vi phạm', 'flag'],
     ['/admin/merchant-requests', 'Yêu cầu quyền shop', 'users'],
     ['/admin/merchants', 'Cửa hàng', 'store'],
@@ -25,5 +27,5 @@ $workspaceLinks = $workspaceArea === 'admin' ? [
             ?><a href="<?= e(url($workspaceHref)) ?>" <?= $workspaceActive ? 'aria-current="page"' : '' ?>><?= icon($workspaceIcon) ?><span><?= e($workspaceLabel) ?></span></a><?php endforeach; ?>
         </nav>
     </details>
-    <a class="workspace-return" href="<?= e(url('/')) ?>"><?= icon('arrow') ?> Xem trang người dùng</a>
+    <p class="workspace-scope"><?= $workspaceArea === 'admin' ? 'Kiểm duyệt, vận hành và quản lý nền tảng.' : 'Quản lý coupon và chiến dịch của cửa hàng.' ?></p>
 </aside>

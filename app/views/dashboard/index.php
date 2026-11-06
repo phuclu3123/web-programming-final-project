@@ -11,8 +11,8 @@ $sectionLinks = [['account-overview', 'Tổng quan'], ['account-saved', 'Coupon 
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Không gian của
             bạn</span></div>
     <div class="member-page-heading">
-        <div><span class="eyebrow">MỘT GÓC RIÊNG CHO BẠN</span>
-            <h1>Ưu đãi hay. Lưu ở đây.</h1>
+        <div>
+            <h1>Không gian của bạn.</h1>
             <p>Giữ lại mã yêu thích, theo dõi đóng góp và tích lũy CouponPoint.</p>
         </div>
         <a class="btn btn-brand" href="<?= e(url('/coupons')) ?>">Khám phá ưu đãi <?= icon('arrow') ?></a>

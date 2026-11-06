@@ -38,7 +38,7 @@ final class ReviewController extends Controller
         $status = $request->query('status', 'PENDING');
         if (!in_array($status, ['PENDING', 'APPROVED', 'REJECTED'], true)) throw new HttpError(422, 'Trạng thái không hợp lệ.');
         if ($method === 'POST') {
-            Session::checkCsrf($request->post('csrf'));
+            Session::checkCsrf($request->csrfToken());
             $selectedId = positiveId($request->post('coupon_id'));
             $action = $request->post('action', 'approve');
             try {

@@ -12,6 +12,11 @@ try {
     envCheck(getenv('COUPONHUB_ENV_EMPTY')==='' && getenv('COUPONHUB_ENV_QUOTED')==='CouponHub <test@example.test>','empty and quoted dotenv values');
     envCheck(getenv('COUPONHUB_ENV_HASH')==='literal#value' && getenv('COUPONHUB_ENV_COMMENT')==='value','comments do not corrupt quoted values');
     envCheck(getenv('UNRELATED_ENV_TEST')===false,'dotenv cannot inject unrelated process settings');
+    foreach(['ACCESSTRADE_ACCESS_KEY','TURNSTILE_SITE_KEY','TURNSTILE_SECRET_KEY','TURNSTILE_HOSTNAMES'] as $name)putenv($name);
+    file_put_contents($file,"ACCESSTRADE_ACCESS_KEY=publisher-fixture\nTURNSTILE_SITE_KEY=public-fixture\nTURNSTILE_SECRET_KEY=private-fixture\nTURNSTILE_HOSTNAMES=couponhub.example\nTURNSTILE_UNRELATED=ignored\n");
+    \App\Core\Env::load($file);
+    envCheck(getenv('ACCESSTRADE_ACCESS_KEY')==='publisher-fixture' && getenv('TURNSTILE_SITE_KEY')==='public-fixture' && getenv('TURNSTILE_SECRET_KEY')==='private-fixture' && getenv('TURNSTILE_HOSTNAMES')==='couponhub.example','provider keys load from dotenv, not only process variables');
+    envCheck(getenv('TURNSTILE_UNRELATED')===false,'provider dotenv names remain allowlisted');
     file_put_contents($file,'COUPONHUB_ENV_BROKEN="unclosed');
     try {\App\Core\Env::load($file);throw new LogicException('Invalid file accepted');}
     catch (RuntimeException $e) {envCheck(!str_contains($e->getMessage(),'unclosed'),'dotenv syntax error does not print secret values');}

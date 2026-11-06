@@ -9,9 +9,9 @@ $types = ['PERCENTAGE'=>'Giảm phần trăm','FIXED_AMOUNT'=>'Giảm số tiề
         <img class="community-cover-photo" src="<?= e(url('/assets/images/hero/category-food.webp')) ?>" alt=""
             width="2560" height="1707" fetchpriority="high" decoding="async">
         <div class="community-cover-copy">
-            <h1>COUPON CỘNG ĐỒNG <span data-community-total><?= (int)$pagination['total'] ?></span></h1>
-            <h2>Của bạn.<br>Cho cả hội.</h2>
-            <p>Một mã tìm được. Thêm người dùng được.<br>Chia sẻ ưu đãi và trải nghiệm thật cùng CouponHub.</p>
+            <h1>Mã hay,<br>cùng chia sẻ.</h1>
+            <p>Tìm ưu đãi từ cửa hàng và cộng đồng.<br>Đọc điều kiện, dùng thử và chia sẻ trải nghiệm.</p>
+            <span class="community-cover-total"><strong data-community-total><?= (int)$pagination['total'] ?></strong> coupon trong lựa chọn của bạn</span>
         </div>
         <div class="community-feed-actions">
             <?php if (in_array(Auth::role(),['USER','MERCHANT'],true)): ?><a class="btn btn-brand"

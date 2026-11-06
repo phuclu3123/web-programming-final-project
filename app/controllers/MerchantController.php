@@ -216,7 +216,7 @@ final class MerchantController extends Controller
 
     private function verifyCsrf(Request $request): void
     {
-        if (!Session::verifyCsrf((string) $request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             exit;
         }

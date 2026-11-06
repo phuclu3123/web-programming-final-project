@@ -25,7 +25,7 @@ $check((int)$db->query("SELECT COUNT(*) FROM coupons WHERE moderation_status='RE
 $check((int)$db->query("SELECT COUNT(*) FROM v_coupon_status WHERE effective_status='SCHEDULED'")->fetchColumn()===1, 'Scheduled coupon');
 $check((int)$db->query("SELECT COUNT(*) FROM v_coupon_status WHERE effective_status='EXPIRED'")->fetchColumn()===1, 'Expired history');
 $check((int)$db->query("SELECT COUNT(*) FROM coupons WHERE title NOT LIKE '[DEMO]%' OR code NOT LIKE 'DEMO!_%' ESCAPE '!'")->fetchColumn()===0, 'Clear demo labels');
-$check((int)$db->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND COLLATION_NAME IS NOT NULL AND COLLATION_NAME<>'utf8mb4_vietnamese_ci'")->fetchColumn()===0, 'Vietnamese column/view collation');
+$check((int)$db->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND COLLATION_NAME IS NOT NULL AND COLLATION_NAME<>'utf8mb4_vietnamese_ci' AND NOT (TABLE_NAME='external_offers' AND COLUMN_NAME IN ('external_key','fingerprint','imported_fingerprint') AND COLLATION_NAME='ascii_bin')")->fetchColumn()===0, 'Vietnamese content collation; binary ASCII hashes are intentional');
 $check((int)$db->query("SELECT COUNT(*) FROM information_schema.PARAMETERS WHERE SPECIFIC_SCHEMA=DATABASE() AND COLLATION_NAME IS NOT NULL AND COLLATION_NAME<>'utf8mb4_vietnamese_ci'")->fetchColumn()===0, 'Vietnamese routine collation');
 foreach ($fixture['merchants'] as $platform=>$merchant) {
     $stmt=$db->prepare("SELECT u.username FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id JOIN users u ON u.id=mm.user_id WHERE m.slug=? AND m.status='APPROVED' AND mm.status='ACTIVE'");

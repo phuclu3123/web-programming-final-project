@@ -29,7 +29,7 @@ verify(Database::connection() === App\Core\Database::connection(), 'one mysqli c
 $wrongCollations = $db->query("SELECT COUNT(*) FROM information_schema.PARAMETERS WHERE SPECIFIC_SCHEMA=DATABASE() AND COLLATION_NAME IS NOT NULL AND COLLATION_NAME<>'utf8mb4_vietnamese_ci' AND (SPECIFIC_NAME LIKE 'ch_%' OR SPECIFIC_NAME LIKE 'sp_%')")->fetchColumn();
 verify((int) $wrongCollations === 0, 'routine string parameters use explicit Vietnamese collation');
 verify($db->query('SELECT @@collation_connection')->fetchColumn() === 'utf8mb4_vietnamese_ci', 'mysqli connection uses Vietnamese collation');
-$wrongColumns = $db->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND COLLATION_NAME IS NOT NULL AND COLLATION_NAME<>'utf8mb4_vietnamese_ci'")->fetchColumn();
+$wrongColumns = $db->query("SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND COLLATION_NAME IS NOT NULL AND COLLATION_NAME<>'utf8mb4_vietnamese_ci' AND NOT (TABLE_NAME='external_offers' AND COLUMN_NAME IN ('external_key','fingerprint','imported_fingerprint') AND COLLATION_NAME='ascii_bin')")->fetchColumn();
 verify((int) $wrongColumns === 0, 'all text columns and views use Vietnamese collation');
 verify(class_exists('App\\Core\\Session') && is_a('App\\Core\\Session', Session::class, true), 'one session class');
 $probe = $db->prepare('SELECT ? AS first_value, ? AS optional_value, ? AS count_value');

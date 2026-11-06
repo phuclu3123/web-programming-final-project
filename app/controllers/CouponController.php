@@ -110,7 +110,7 @@ final class CouponController extends Controller
     public function store(Request $request): void
     {
         Auth::requireRole(['USER', 'MERCHANT']);
-        if (!Session::verifyCsrf((string) $request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
             return;
         }
@@ -182,6 +182,8 @@ final class CouponController extends Controller
                 ob_end_clean();
             }
             Response::json(['success' => true, 'data' => $data, 'cardsHtml' => $cardsHtml, 'filters' => $filters, 'pagination' => $pagination]);
+        } catch (\App\Core\HttpError $e) {
+            Response::json(['success'=>false,'message'=>$e->getMessage()],$e->status);
         } catch (Throwable $e) {
             Response::json([
                 'success' => false,

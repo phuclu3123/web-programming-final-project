@@ -42,7 +42,7 @@ final class ShopController extends Controller
         ];
         $errors = [];
         if ($method === 'POST') {
-            Session::checkCsrf($request->post('csrf'));
+            Session::checkCsrf($request->csrfToken());
             foreach ($input as $key => $_) $input[$key] = $request->post($key);
             $errors = $this->validate($input);
             if ($errors === []) {

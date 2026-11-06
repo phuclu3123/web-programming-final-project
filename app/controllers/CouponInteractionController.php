@@ -136,8 +136,8 @@ final class CouponInteractionController extends Controller
             ], 401);
         }
 
-        $token = (string) $request->input('_token', '');
-        if (!Session::verifyCsrf($token)) {
+        $token = $request->input('csrf', $request->input('_token', ''));
+        if (!is_string($token) || !Session::verifyCsrf($token)) {
             Response::json(['success' => false, 'message' => 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.'], 419);
         }
 

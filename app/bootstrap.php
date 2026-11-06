@@ -19,4 +19,5 @@ App\Core\App::init([
     'mail' => require __DIR__ . '/../config/mail.php',
     'oauth' => require __DIR__ . '/../config/oauth.php',
     'auth' => require __DIR__ . '/../config/auth.php',
+    'integrations' => require __DIR__ . '/../config/integrations.php',
 ]);

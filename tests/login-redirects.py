@@ -113,7 +113,8 @@ for base, port in [('', 8088), ('/' + ROOT.name, 8089)]:
                 status, _, html = client.request(result['redirect'])
                 assert status == 200, ('Destination did not render', username, status, html[:200])
                 if home != '/index.php':
-                    assert 'Xem trang người dùng' in html, 'Public navigation for center users'
+                    assert ('Xem trang người dùng' in html)==(home=='/merchant'), 'Only Merchant workspace promotes public preview'
+                    assert 'workspace-header' in html, 'Dedicated operational shell'
                     assert client.request(base + '/')[0] == 200, 'Public browsing does not change role'
                 status, _, notifications = client.request(base + '/notifications')
                 assert status == 200, 'Notification page is implemented'

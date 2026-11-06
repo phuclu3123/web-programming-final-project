@@ -45,7 +45,8 @@ use App\Core\Session; ?>
                             class="text-muted">Đây là thông tin do bạn cung cấp, không phải mã đơn hệ thống. Admin phải
                             xác minh riêng từng người; không đăng dữ liệu nhạy cảm.</small></div>
                     <button class="btn btn-primary" type="submit">Gửi yêu cầu Merchant</button>
-                </form>
+                <?php $turnstileAction='merchant_application'; require __DIR__.'/../partials/turnstile.php'; ?>
+</form>
             </div>
         </div>
     </div>

@@ -54,7 +54,8 @@ use App\Core\Session;
             </div>
 
 
-        </form>
+        <?php $turnstileAction='login'; require __DIR__.'/../partials/turnstile.php'; ?>
+</form>
 
         <!-- button Đăng nhập -->
 

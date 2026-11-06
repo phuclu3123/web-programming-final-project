@@ -179,7 +179,7 @@ final class CouponController extends Controller
 
     private function verifyCsrf(Request $request): bool
     {
-        if (Session::verifyCsrf((string)$request->input('_token', ''))) return true;
+        if (Session::verifyCsrf($request->csrfToken())) return true;
         $this->renderError(419, 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
         return false;
     }

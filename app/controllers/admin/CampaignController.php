@@ -35,7 +35,7 @@ final class CampaignController extends Controller
     public function store(Request $request): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
@@ -52,7 +52,7 @@ final class CampaignController extends Controller
     public function status(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
@@ -83,7 +83,7 @@ final class CampaignController extends Controller
     public function attach(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
@@ -98,7 +98,7 @@ final class CampaignController extends Controller
     public function detach(Request $request, string $id, string $couponId): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }

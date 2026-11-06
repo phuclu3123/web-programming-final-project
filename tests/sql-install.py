@@ -56,10 +56,10 @@ def objects():
 
 
 reset()
-assert objects() == (21, 6, 21), 'Incomplete schema'
+assert objects() == (22, 6, 21), 'Incomplete schema'
 assert sum(counts().values()) == 0, 'Schema must not seed demo data'
 load('demo.sql')
-assert objects() == (21, 6, 21), 'Temporary installer must be removed after success'
+assert objects() == (22, 6, 21), 'Temporary installer must be removed after success'
 env = os.environ | {'COUPONHUB_HOST': '127.0.0.1', 'COUPONHUB_PORT': '13379',
                     'COUPONHUB_DB': database, 'COUPONHUB_USER': 'root', 'COUPONHUB_PASSWORD': ''}
 # Local overrides could redirect PHP to a different DB: fail before invoking it.
@@ -73,7 +73,7 @@ assert counts() == before, 'Repeated import changed data'
 assert query('SELECT GROUP_CONCAT(password_hash ORDER BY id) FROM users') == hash_before
 # A CLI stops on SIGNAL before reaching cleanup; remove only our installer.
 query('DROP PROCEDURE IF EXISTS couponhub_install_demo')
-assert objects() == (21, 6, 21)
+assert objects() == (22, 6, 21)
 print('PASS: separate schema/demo import, fixture login/roles, nonempty guard, no duplicate data.', flush=True)
 
 # Prove a late seed failure rolls back earlier account/config/shop inserts.
@@ -88,4 +88,4 @@ assert query('SELECT @@foreign_key_checks') == '1'
 # Leave a clean, successfully imported demo DB for subsequent integration tests.
 reset()
 load('demo.sql')
-assert objects() == (21, 6, 21)
+assert objects() == (22, 6, 21)

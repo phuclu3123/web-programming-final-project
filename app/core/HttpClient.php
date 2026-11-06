@@ -27,7 +27,7 @@ final class HttpClient implements \App\Contracts\HttpClientInterface
             $success = curl_exec($handle);
             $status = (int)curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
             if ($success === false || $status < 200 || $status >= 300) throw new \RuntimeException('Provider request failed (HTTP '.$status.')');
-            $data = json_decode($response, true, 64, JSON_THROW_ON_ERROR);
+            $data = json_decode($response, true, 64, JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING);
             if (!is_array($data)) throw new \RuntimeException('Invalid provider response');
             return $data;
         } finally { curl_close($handle); }

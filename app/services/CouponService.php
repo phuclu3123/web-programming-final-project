@@ -22,6 +22,7 @@ final class CouponService
     /** @param array<string,mixed> $input @return array<string,mixed> */
     public function normalizeSearch(array $input): array
     {
+        foreach ($input as $value) if ($value!==null && (!is_scalar($value) || !mb_check_encoding((string)$value,'UTF-8'))) throw new \App\Core\HttpError(422, 'Bộ lọc coupon không hợp lệ.');
         $keyword = trim((string) ($input['keyword'] ?? ''));
         if (mb_strlen($keyword) > 200) {
             $keyword = mb_substr($keyword, 0, 200);
@@ -138,6 +139,11 @@ final class CouponService
     /** @param array<string,mixed> $input @return array<string,mixed> */
     public function validateSubmission(array $input): array
     {
+        foreach ($input as $value) {
+            if ($value!==null && (!is_scalar($value) || !mb_check_encoding((string)$value,'UTF-8'))) {
+                throw new ValidationException(['form'=>'Dữ liệu coupon không hợp lệ.']);
+            }
+        }
         $errors = [];
         $title = trim((string) ($input['title'] ?? ''));
         $code = trim((string) ($input['code'] ?? ''));
@@ -152,6 +158,10 @@ final class CouponService
 
         if ($title === '') $errors['title'] = 'Tên coupon là bắt buộc.';
         elseif (mb_strlen($title) > 200) $errors['title'] = 'Tên coupon không được vượt quá 200 ký tự.';
+        if (mb_strlen($code)>100 || preg_match('/[\x00-\x1f\x7f]/',$code)) $errors['code']='Mã tối đa 100 ký tự, không chứa ký tự điều khiển.';
+        if (mb_strlen($description)>20000) $errors['description']='Mô tả tối đa 20.000 ký tự.';
+        if (mb_strlen($terms)>20000) $errors['terms']='Điều kiện tối đa 20.000 ký tự.';
+        if (strlen($promotionUrl)>2048) $errors['promotion_url']='Liên kết tối đa 2.048 ký tự.';
         if ($terms === '') $errors['terms'] = 'Điều kiện sử dụng là bắt buộc.';
         if ($merchantId === null) $errors['merchant_id'] = 'Vui lòng chọn Merchant.';
         if ($categoryId === null) $errors['category_id'] = 'Vui lòng chọn danh mục.';
@@ -166,6 +176,9 @@ final class CouponService
         $discountValue = $this->nullableDecimal($discountRaw);
         $minOrder = $this->nullableDecimal($minOrderRaw) ?? 0.0;
         $maxDiscount = $this->nullableDecimal($maxDiscountRaw);
+        foreach (['discount_value'=>$discountRaw,'min_order_amount'=>$minOrderRaw,'max_discount_amount'=>$maxDiscountRaw] as $field=>$raw) {
+            if ($raw!=='' && (!is_numeric($raw) || !is_finite((float)$raw) || abs((float)$raw)>9999999999999.99)) $errors[$field]='Giá trị tiền hoặc phần trăm không hợp lệ.';
+        }
         if ($minOrderRaw !== '' && !is_numeric($minOrderRaw)) $errors['min_order_amount'] = 'Giá trị đơn hàng tối thiểu phải là số.';
         elseif ($minOrder < 0) $errors['min_order_amount'] = 'Giá trị đơn hàng tối thiểu không được âm.';
         if ($maxDiscountRaw !== '' && !is_numeric($maxDiscountRaw)) $errors['max_discount_amount'] = 'Mức giảm tối đa phải là số.';

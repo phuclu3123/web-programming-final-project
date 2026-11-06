@@ -1,3 +1,5 @@
+> Cập nhật 06/11/2026: ACCESSTRADE và Turnstile đã có code tích hợp; xem [PROVIDER_SETUP.md](PROVIDER_SETUP.md) để cấu hình và phân biệt test local với nghiệm thu bằng khóa thật. Các đề xuất khác bên dưới vẫn chỉ là tham khảo.
+
 # API phù hợp với CouponHub
 
 Tra cứu tài liệu chính chủ ngày 04/11/2026. Đây là đề xuất tích hợp tiếp theo, **chưa bật API mới hoặc nhập dữ liệu từ nhà cung cấp**. Thứ tự dưới đây là đánh giá cho nghiệp vụ và code PHP hiện tại.

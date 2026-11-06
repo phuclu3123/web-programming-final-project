@@ -68,6 +68,13 @@ final class Request
         return array_merge($this->query, $this->json);
     }
     public function input(string $name, mixed $default = null): mixed { return $this->all()[$name] ?? $default; }
+    /** One token contract for browser forms and API clients. */
+    public function csrfToken(): string
+    {
+        $token=$this->input('csrf', $this->input('_token', ''));
+        if (!is_string($token)) throw new HttpError(403, 'Token không hợp lệ.');
+        return $token;
+    }
     public function queryString(): string { return http_build_query($this->query, '', '&', PHP_QUERY_RFC3986); }
     public function isJson(): bool { return str_contains(strtolower($this->server['CONTENT_TYPE'] ?? ''), 'application/json'); }
     public function expectsJson(): bool

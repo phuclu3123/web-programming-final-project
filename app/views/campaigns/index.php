@@ -1,135 +1,52 @@
-<div class="discovery-page editorial-campaign-page">
+<div class="discovery-page editorial-campaign-page event-directory">
     <div class="member-breadcrumb">
         <a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Chiến dịch</span>
     </div>
 
-    <!-- TIÊU ĐỀ TRANG BAN ĐẦU -->
-    <div class="editorial-section-head campaign-page-heading">
-        <div>
-            <span class="eyebrow">NHỮNG DỊP MUA SẮM ĐÁNG CHỜ</span>
-            <h1>Đúng thời điểm.<br><em>Thêm nhiều giá trị.</em></h1>
-        </div>
-        <a href="<?= e(url('/campaign-calendar')) ?>">Lịch ưu đãi <?= icon('arrow') ?></a>
-    </div>
-
-    <?php 
-    // Tự động mở bộ lọc nếu người dùng đang chọn lọc
-    $hasCampaignFilters = !empty($selectedCategory) || !empty($selectedPlatform) || ($selectedChannel !== 'ALL') || $phase !== 'ALL';
-    ?>
-
-    <!-- BỘ LỌC CHIẾN DỊCH (TẮT/MỞ DẠNG TEXT TRONG SUỐT) -->
-    <details class="campaign-advanced" <?= $hasCampaignFilters ? 'open' : '' ?>>
-        <summary class="btn-filter-toggle">
-            <?= icon('filter') ?>
-            <span>Bộ lọc</span>
-            <?= icon('chevron') ?>
-        </summary>
-
-        <form class="campaign-filter-row" method="GET" action="<?= e(url('/campaigns')) ?>">
-            <!-- 1. Danh mục -->
-            <div class="filter-field">
-                <label for="campaign-category">Danh mục</label>
-                <select id="campaign-category" name="category_id" class="form-select">
-                    <option value="0">Tất cả danh mục</option>
-                    <?php foreach ($categories as $category): ?>
-                        <option
-                            value="<?= (int) $category['id'] ?>"
-                            <?= (int) $selectedCategory === (int) $category['id'] ? 'selected' : '' ?>
-                        >
-                            <?= e($category['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <!-- 2. Kênh sử dụng -->
-            <div class="filter-field">
-                <label for="campaign-channel">Kênh sử dụng</label>
-                <select id="campaign-channel" name="usage_channel" class="form-select">
-                    <option value="ALL" <?= $selectedChannel === 'ALL' ? 'selected' : '' ?>>Tất cả kênh</option>
-                    <option value="ONLINE" <?= $selectedChannel === 'ONLINE' ? 'selected' : '' ?>>Online</option>
-                    <option value="OFFLINE" <?= $selectedChannel === 'OFFLINE' ? 'selected' : '' ?>>Offline</option>
-                    <option value="BOTH" <?= $selectedChannel === 'BOTH' ? 'selected' : '' ?>>Online và Offline</option>
-                </select>
-            </div>
-
-            <div class="filter-field">
-                <?php $platformSelectId='campaign-platform'; require __DIR__.'/../partials/campaign-platform-filter.php'; ?>
-            </div>
-
-            <!-- Thời gian -->
-            <div class="filter-field">
-                <label for="campaign-status">Thời gian</label>
-                <select id="campaign-status" name="phase" class="form-select">
-                    <option value="ALL" <?= $phase === 'ALL' ? 'selected' : '' ?>>Tất cả thời gian</option>
-                    <option value="ACTIVE" <?= $phase === 'ACTIVE' ? 'selected' : '' ?>>Đang diễn ra</option>
-                    <option value="UPCOMING" <?= $phase === 'UPCOMING' ? 'selected' : '' ?>>Sắp diễn ra</option>
-                </select>
-            </div>
-
-            <!-- 4. Nút bấm thao tác -->
-            <div class="filter-actions">
-                <button type="submit" class="btn btn-apply-filter">Áp dụng bộ lọc</button>
-                <a href="<?= e(url('/campaigns')) ?>" class="btn-reset-filter">Đặt lại</a>
-            </div>
-        </form>
-    </details>
+    <header class="event-masthead"><div><h1>Chiến dịch ưu đãi.</h1><p>Một điểm hẹn cho những lần mua sắm có kế hoạch.</p></div><a class="event-calendar-link" href="<?= e(url('/campaign-calendar')) ?>"><?= icon('clock') ?> Lịch ưu đãi <?= icon('arrow') ?></a></header>
+    <div class="event-directory-meta"><span><?= (int)$listing['total'] ?> chiến dịch để khám phá</span><?php if ($selectedCategory || $selectedPlatform || $selectedChannel !== 'ALL' || $phase !== 'ALL'): ?><a href="<?= e(url('/campaigns')) ?>">Xem tất cả chiến dịch <?= icon('arrow') ?></a><?php endif; ?></div>
 
     <?php if (!empty($listing['items'])): ?>
         <?php $mainCampaign = $listing['items'][0]; ?>
-        
+
         <!-- CHIẾN DỊCH ĐANG DIỄN RA (BANNER LỚN NỔI BẬT) -->
         <section class="campaign-section-block">
-            <span class="section-label"><?= !empty($mainCampaign['upcoming']) ? 'CHIẾN DỊCH SẮP BẮT ĐẦU' : 'CHIẾN DỊCH ĐANG DIỄN RA' ?></span>
-            
-            <?php 
-                $campaign = $mainCampaign; 
-                $isMainPoster = true; 
-                $posterPriority = true; 
-                require __DIR__ . '/../partials/campaign-poster.php'; 
+
+
+            <?php
+                $campaign = $mainCampaign;
+                $isMainPoster = true; $detailMode=false;
+                $posterPriority = true;
+                require __DIR__ . '/../partials/campaign-feature.php';
             ?>
         </section>
 
         <!-- CÁC CHIẾN DỊCH KHÁC + THẺ LỊCH SĂN MÃ -->
         <?php $otherCampaigns = array_slice($listing['items'], 1); ?>
-        <section class="campaign-section-block">
-            <span class="section-label">CÁC CHIẾN DỊCH KHÁC</span>
-
-            <div class="other-campaigns-grid">
+        <?php if ($otherCampaigns): ?><section class="campaign-section-block event-more-section" data-event-gallery>
+            <div class="event-gallery-heading"><div><h2 class="event-more-title">Theo thương hiệu bạn thích.</h2><p>Một buổi tập, một cuộc hẹn, một khoảng nghỉ.</p></div></div>
+            <div class="event-gallery-frame">
+                <div class="event-gallery-controls">
+                    <button type="button" data-event-prev aria-label="Xem thương hiệu trước" aria-controls="event-brand-gallery"><?= icon('arrow') ?></button>
+                    <button type="button" data-event-next aria-label="Xem thương hiệu tiếp theo" aria-controls="event-brand-gallery"><?= icon('arrow') ?></button>
+                </div>
+            <div class="event-more-list" id="event-brand-gallery" tabindex="0" aria-label="Các chiến dịch theo thương hiệu">
                 <?php foreach ($otherCampaigns as $campaign): ?>
-                    <?php 
-                        $isMainPoster = false; 
-                        require __DIR__ . '/../partials/campaign-poster.php'; 
+                    <?php
+                        $isMainPoster = false; $detailMode=false; $posterPriority=false;
+                        require __DIR__ . '/../partials/campaign-feature.php';
                     ?>
                 <?php endforeach; ?>
 
-                <?php if (count($otherCampaigns) < 2): ?>
-                    <aside class="campaign-planner">
-                        <span class="eyebrow">LÊN LỊCH CHO LẦN SĂN MÃ TIẾP THEO</span>
-                        
-                        <div class="planner-date">
-                            <strong data-planner-day><?= date('d') ?></strong>
-                            <div>
-                                <span data-planner-month>THÁNG <?= date('m') ?> / <?= date('Y') ?></span>
-                                <time data-time-vn datetime="<?= date(DATE_ATOM) ?>"><?= date('H:i:s') ?></time>
-                                <small>Giờ Việt Nam</small>
-                            </div>
-                        </div>
 
-                        <p>Xem các dịp mua sắm và chiến dịch trong một lịch chung.</p>
-
-                        <a href="<?= e(url('/campaign-calendar')) ?>">
-                            Khám phá lịch ưu đãi <?= icon('arrow') ?>
-                        </a>
-                    </aside>
-                <?php endif; ?>
             </div>
-        </section>
+            </div>
+        </section><?php endif; ?>
 
     <?php else: ?>
         <div class="member-empty">
             <strong>Chưa tìm thấy chiến dịch phù hợp.</strong>
-            <p>Vui lòng thử lại với bộ lọc hoặc chọn danh mục khác.</p>
+            <p>Bạn có thể xem lịch ưu đãi hoặc quay lại danh sách đầy đủ.</p>
             <a href="<?= e(url('/campaigns')) ?>" class="btn-reset-filter">Xóa bộ lọc</a>
         </div>
     <?php endif; ?>

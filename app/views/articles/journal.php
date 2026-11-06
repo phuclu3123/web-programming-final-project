@@ -2,66 +2,58 @@
 $guideGroups = ['doc-dieu-kien-ma' => 'dung-ma', 'so-sanh-muc-tiet-kiem' => 'tinh-toan', 'kiem-chung-cung-cong-dong' => 'cong-dong']; ?>
 <div class="editorial-article-page studio-journal">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Góc đọc</span></div>
-    <header class="journal-heading journal-masthead">
-        <div><span class="eyebrow">Cẩm nang CouponHub</span>
-            <h1>Góc đọc.</h1>
+    <header class="journal-page-heading"><h1>Góc đọc.</h1></header>
+    <?php if ($guideTopic === 'all'): ?>
+    <section class="journal-lead" aria-labelledby="journal-lead-title">
+        <div class="journal-lead-copy">
+            <span>4 phút đọc</span>
+            <h2 id="journal-lead-title">Một mã tốt.<br>Bốn điều cần rõ.</h2>
+            <a class="btn btn-brand" href="<?= e(url('/guides/doc-dieu-kien-ma')) ?>">Đọc bài <?= icon('arrow') ?></a>
         </div>
-        <p>Đọc đúng điều kiện.<br>Chọn mã hợp với bạn.<small><?= count($guides) ?> hướng dẫn sử dụng ưu đãi</small>
-        </p>
-    </header>
-    <section class="journal-cover">
-        <a href="<?= e(url('/guides/doc-dieu-kien-ma')) ?>" class="journal-cover-image"><img
-                src="<?= e(editorialLargePhoto('shopping')) ?>" alt="" width="1200" height="800"
-                fetchpriority="high"><span>CẨM NANG / 01</span></a>
-        <div class="journal-cover-copy">
-            <nav class="journal-shelf" aria-label="Ba hướng dẫn trên kệ đọc">
-                <a class="shelf-spine shelf-spine-blue"
-                    href="<?= e(url('/guides/doc-dieu-kien-ma')) ?>"><small>01</small><span>ĐỌC ĐIỀU KIỆN</span></a>
-                <a class="shelf-spine shelf-spine-paper"
-                    href="<?= e(url('/guides/so-sanh-muc-tiet-kiem')) ?>"><small>02</small><span>TÍNH TIẾT
-                        KIỆM</span></a>
-                <a class="shelf-spine shelf-spine-olive"
-                    href="<?= e(url('/guides/kiem-chung-cung-cong-dong')) ?>"><small>03</small><span>CÙNG KIỂM
-                        CHỨNG</span></a>
-                <img src="<?= e(url('/assets/images/editorial/headphones-cutout.webp')) ?>" alt="" width="479"
-                    height="499">
-            </nav>
-            <span class="eyebrow">BẮT ĐẦU TỪ ĐIỀU CỐT LÕI</span>
-            <h2>Một mã tốt.<br>Bốn điều cần rõ.</h2>
-            <p>Đơn tối thiểu. Trần giảm. Kênh áp dụng. Hạn dùng. Dành vài phút để hiểu trước khi lấy mã.</p><a
-                class="btn btn-brand" href="<?= e(url('/guides/doc-dieu-kien-ma')) ?>">Đọc hướng dẫn
-                <?= icon('arrow') ?></a><small>Hướng dẫn CouponHub · 4 phút đọc</small>
-        </div>
+        <a class="journal-lead-image" href="<?= e(url('/guides/doc-dieu-kien-ma')) ?>" aria-label="Đọc hướng dẫn về điều kiện coupon">
+            <img src="<?= e(editorialLargePhoto('shopping')) ?>" alt="" width="1200" height="800" fetchpriority="high">
+        </a>
     </section>
-    <section class="studio-section" aria-labelledby="guide-library-title">
-        <div class="studio-section-title">
-            <div><span class="eyebrow">THƯ VIỆN HƯỚNG DẪN</span>
-                <h2 id="guide-library-title">Đọc theo điều bạn cần.</h2>
-            </div>
-        </div>
-        <nav class="journal-topics" aria-label="Lọc chủ đề hướng dẫn">
-            <?php foreach (['all' => 'Tất cả', 'dung-ma' => 'Dùng mã', 'tinh-toan' => 'Tính tiết kiệm', 'cong-dong' => 'Cộng đồng'] as $topic => $label): ?><a
-                    href="<?= e(url('/articles') . '?topic=' . $topic) ?>#guide-library-title"
-                    <?= $guideTopic === $topic ? 'aria-current="page"' : '' ?>><?= e($label) ?></a><?php endforeach; ?>
-        </nav>
-        <div class="guide-card-grid">
-            <?php foreach ($guides as $slug => $item): if ($guideTopic !== 'all' && $guideGroups[$slug] !== $guideTopic) continue;
-                require __DIR__ . '/../partials/guide-card.php';
-            endforeach; ?>
+    <?php endif; ?>
+    <section class="journal-next" aria-labelledby="guide-library-title">
+        <div class="journal-next-heading"><h2 id="guide-library-title"><?= $guideTopic === 'all' ? 'Đọc tiếp.' : 'Bài theo chủ đề.' ?></h2><?php if ($guideTopic !== 'all'): ?><a href="<?= e(url('/articles')) ?>">Tất cả bài đọc <?= icon('arrow') ?></a><?php endif; ?></div>
+        <div class="journal-reading-list">
+            <?php
+            $shortTitles = ['doc-dieu-kien-ma' => 'Đọc đúng điều kiện.', 'so-sanh-muc-tiet-kiem' => '20% hay 40.000đ?', 'kiem-chung-cung-cong-dong' => 'Cùng kiểm chứng mã.'];
+            foreach ($guides as $slug => $item):
+                if ($guideTopic === 'all' && $slug === 'doc-dieu-kien-ma') continue;
+                if ($guideTopic !== 'all' && $guideGroups[$slug] !== $guideTopic) continue;
+            ?>
+            <a class="journal-quick-read" href="<?= e(url('/guides/'.$slug)) ?>">
+                <div class="journal-quick-art">
+                    <?php if ($slug === 'so-sanh-muc-tiet-kiem'): ?><strong>20<span>%</span><small>hay</small>40<span>k</span></strong>
+                    <?php else: ?><img src="<?= e($slug === 'kiem-chung-cung-cong-dong' ? brandPhoto('grab-delivery') : editorialPhoto('shopping')) ?>" alt="" width="720" height="480" loading="lazy"><?php endif; ?>
+                </div>
+                <div class="journal-quick-copy"><small><?= (int)$item['minutes'] ?> phút đọc</small><h3><?= e($shortTitles[$slug]) ?></h3><span>Đọc bài <?= icon('arrow') ?></span></div>
+            </a>
+            <?php endforeach; ?>
         </div>
     </section>
     <?php if ($articles): ?><section class="studio-section">
             <div class="studio-section-title">
-                <div><span class="eyebrow">TỪ BAN BIÊN TẬP</span>
-                    <h2>Bài viết mới.</h2>
-                </div><span><?= count($articles) ?> bài đã xuất bản</span>
+                <div><h2>Bài viết mới.</h2></div>
             </div>
             <div class="editorial-articles">
                 <?php foreach ($articles as $a): require __DIR__ . '/../partials/editorial-article.php';
                 endforeach; ?></div>
         </section><?php endif; ?>
-    <section class="studio-manifesto"><span class="eyebrow">ĐỌC XONG, THỬ NGAY</span>
-        <h2>Khoản giảm nên hợp<br>với đơn hàng của bạn.</h2><a href="<?= e(url('/index.php')) ?>#estimate">Mở công cụ
-            ước tính <?= icon('arrow') ?></a>
+    <section class="journal-playground" aria-labelledby="journal-try-title">
+        <div class="journal-brand-column journal-brand-column-left" aria-hidden="true">
+            <?php foreach (['Nike', 'Phúc Long', 'CGV'] as $brand): ?><span><?= brandLogo($brand) ?><b><?= e($brand) ?></b></span><?php endforeach; ?>
+        </div>
+        <div class="journal-playground-copy">
+            <h2 id="journal-try-title">Chọn đúng mã.<br><em>Giữ lại nhiều hơn.</em></h2>
+            <a class="btn btn-brand" href="<?= e(url('/index.php')) ?>#estimate">Thử tính ưu đãi <?= icon('arrow') ?></a>
+        </div>
+        <div class="journal-brand-column journal-brand-column-right" aria-hidden="true">
+            <?php foreach (['Coolmate', 'Hasaki', 'Highlands Coffee'] as $brand): ?><span><?= brandLogo($brand) ?><b><?= e($brand) ?></b></span><?php endforeach; ?>
+        </div>
+        <span class="journal-orbit" aria-hidden="true"></span>
+        <svg class="journal-spark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M32 4v56M4 32h56M12 12l40 40M12 52l40-40"/></svg>
     </section>
 </div>

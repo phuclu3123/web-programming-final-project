@@ -1,0 +1,909 @@
+[
+  {
+    "method": "GET",
+    "path": "/login.php",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::showLogin"
+  },
+  {
+    "method": "POST",
+    "path": "/logout.php",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::logout"
+  },
+  {
+    "method": "POST",
+    "path": "/api/login.php",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::login"
+  },
+  {
+    "method": "POST",
+    "path": "/api/register.php",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::register"
+  },
+  {
+    "method": "POST",
+    "path": "/api/oauth/prepare.php",
+    "roles": [],
+    "handler": "App\\Controllers\\OAuthController::prepare"
+  },
+  {
+    "method": "POST",
+    "path": "/auth/oauth/{provider}",
+    "roles": [],
+    "handler": "App\\Controllers\\OAuthController::start"
+  },
+  {
+    "method": "GET",
+    "path": "/api/oauth/google-callback.php",
+    "roles": [],
+    "handler": "App\\Controllers\\OAuthController::google"
+  },
+  {
+    "method": "GET",
+    "path": "/api/oauth/github-callback.php",
+    "roles": [],
+    "handler": "App\\Controllers\\OAuthController::github"
+  },
+  {
+    "method": "GET",
+    "path": "/api/oauth/facebook-callback.php",
+    "roles": [],
+    "handler": "App\\Controllers\\OAuthController::facebook"
+  },
+  {
+    "method": "GET",
+    "path": "/index.php",
+    "roles": [],
+    "handler": "App\\Controllers\\CatalogController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/admin.php",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ReviewController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin.php",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ReviewController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/shop.php",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\ShopController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/shop.php",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\ShopController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/",
+    "roles": [],
+    "handler": "App\\Controllers\\CatalogController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/portal",
+    "roles": [],
+    "handler": "App\\Controllers\\PortalController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/dashboard",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\PortalController::dashboard"
+  },
+  {
+    "method": "GET",
+    "path": "/notifications",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\NotificationController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/notifications/read",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\NotificationController::read"
+  },
+  {
+    "method": "GET",
+    "path": "/account",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\AccountController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/account",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\AccountController::update"
+  },
+  {
+    "method": "POST",
+    "path": "/account/password",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\AccountController::changePassword"
+  },
+  {
+    "method": "GET",
+    "path": "/about",
+    "roles": [],
+    "handler": "App\\Controllers\\InfoController::about"
+  },
+  {
+    "method": "GET",
+    "path": "/terms",
+    "roles": [],
+    "handler": "App\\Controllers\\InfoController::terms"
+  },
+  {
+    "method": "GET",
+    "path": "/privacy",
+    "roles": [],
+    "handler": "App\\Controllers\\InfoController::privacy"
+  },
+  {
+    "method": "GET",
+    "path": "/community-guidelines",
+    "roles": [],
+    "handler": "App\\Controllers\\InfoController::communityGuidelines"
+  },
+  {
+    "method": "GET",
+    "path": "/contact",
+    "roles": [],
+    "handler": "App\\Controllers\\InfoController::contact"
+  },
+  {
+    "method": "GET",
+    "path": "/articles",
+    "roles": [],
+    "handler": "App\\Controllers\\ArticleController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/guides/{slug}",
+    "roles": [],
+    "handler": "App\\Controllers\\ArticleController::guide"
+  },
+  {
+    "method": "GET",
+    "path": "/articles/{slug}",
+    "roles": [],
+    "handler": "App\\Controllers\\ArticleController::show"
+  },
+  {
+    "method": "GET",
+    "path": "/campaign-calendar",
+    "roles": [],
+    "handler": "App\\Controllers\\HolidayController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/login",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::showLogin"
+  },
+  {
+    "method": "POST",
+    "path": "/login",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::login"
+  },
+  {
+    "method": "GET",
+    "path": "/forgot-password",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::showForgotPassword"
+  },
+  {
+    "method": "POST",
+    "path": "/forgot-password",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::forgotPassword"
+  },
+  {
+    "method": "POST",
+    "path": "/auth/reset-otp",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::resetOtp"
+  },
+  {
+    "method": "GET",
+    "path": "/reset-password",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::showResetPassword"
+  },
+  {
+    "method": "POST",
+    "path": "/reset-password",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::resetPassword"
+  },
+  {
+    "method": "GET",
+    "path": "/register",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::showRegister"
+  },
+  {
+    "method": "POST",
+    "path": "/register",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::register"
+  },
+  {
+    "method": "POST",
+    "path": "/logout",
+    "roles": [],
+    "handler": "App\\Controllers\\AuthController::logout"
+  },
+  {
+    "method": "GET",
+    "path": "/categories",
+    "roles": [],
+    "handler": "App\\Controllers\\CategoryController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/campaigns",
+    "roles": [],
+    "handler": "App\\Controllers\\CampaignController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/coupons",
+    "roles": [],
+    "handler": "App\\Controllers\\CouponController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/coupons/create",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\CouponController::create"
+  },
+  {
+    "method": "POST",
+    "path": "/coupons",
+    "roles": [
+      "USER",
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CouponController::store"
+  },
+  {
+    "method": "GET",
+    "path": "/my-coupons",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\CouponController::myCoupons"
+  },
+  {
+    "method": "GET",
+    "path": "/saved-coupons",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\SavedCouponController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/saved-coupons/{id}/save",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\SavedCouponController::save"
+  },
+  {
+    "method": "POST",
+    "path": "/saved-coupons/{id}/remove",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\SavedCouponController::remove"
+  },
+  {
+    "method": "GET",
+    "path": "/coupons/{id}",
+    "roles": [],
+    "handler": "App\\Controllers\\CouponController::show"
+  },
+  {
+    "method": "GET",
+    "path": "/campaigns/{id}",
+    "roles": [],
+    "handler": "App\\Controllers\\CampaignController::show"
+  },
+  {
+    "method": "GET",
+    "path": "/api/health",
+    "roles": [],
+    "handler": "App\\Controllers\\PortalController::apiHealth"
+  },
+  {
+    "method": "GET",
+    "path": "/api/coupons/search",
+    "roles": [],
+    "handler": "App\\Controllers\\CouponController::apiSearch"
+  },
+  {
+    "method": "POST",
+    "path": "/api/coupons/{id}/events",
+    "roles": [],
+    "handler": "App\\Controllers\\CouponEventController::record"
+  },
+  {
+    "method": "POST",
+    "path": "/api/coupons/{id}/favorite",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\CouponInteractionController::favorite"
+  },
+  {
+    "method": "POST",
+    "path": "/api/coupons/{id}/vote",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\CouponInteractionController::vote"
+  },
+  {
+    "method": "POST",
+    "path": "/api/coupons/{id}/comments",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\CouponInteractionController::comment"
+  },
+  {
+    "method": "POST",
+    "path": "/api/coupons/{id}/reports",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\CouponInteractionController::report"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/apply",
+    "roles": [
+      "USER",
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::apply"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/apply",
+    "roles": [
+      "USER",
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::submitApplication"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::dashboard"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/profile/{id}",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::profile"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/profile/{id}",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::updateProfile"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/coupons",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::coupons"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/coupons/create",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::createCoupon"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/coupons",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::storeCoupon"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/coupons/{id}/edit",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::editCoupon"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/coupons/{id}/edit",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::updateCoupon"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/coupons/{id}/disable",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\MerchantController::disableCoupon"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/campaigns",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::merchantIndex"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/campaigns/create",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::merchantCreate"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/campaigns",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::merchantStore"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/campaigns/{id}",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::merchantShow"
+  },
+  {
+    "method": "GET",
+    "path": "/merchant/campaigns/{id}/edit",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::merchantEdit"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/campaigns/{id}/edit",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::merchantUpdate"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/campaigns/{id}/attach",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::attach"
+  },
+  {
+    "method": "POST",
+    "path": "/merchant/campaigns/{id}/coupons/{couponId}/detach",
+    "roles": [
+      "MERCHANT"
+    ],
+    "handler": "App\\Controllers\\CampaignController::detach"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/api-docs",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ApiDocsController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/api-spec",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ApiDocsController::spec"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/integrations",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\IntegrationController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/integrations/sync",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\IntegrationController::sync"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/integrations/{id}/review",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\IntegrationController::review"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/integrations/{id}/import",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\IntegrationController::import"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/integrations/{id}/dismiss",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\IntegrationController::dismiss"
+  },
+  {
+    "method": "GET",
+    "path": "/admin",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\DashboardController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/users",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\UserController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/users/{id}/status",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\UserController::status"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/merchants",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\MerchantController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/merchants/{id}/status",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\MerchantController::shopStatus"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/merchants/{id}/review",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\MerchantController::review"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/categories",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CategoryController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/categories",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CategoryController::store"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/categories/{id}/toggle",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CategoryController::toggle"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/categories/{id}/edit",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CategoryController::update"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/categories/{id}/delete",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CategoryController::delete"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/campaigns",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CampaignController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/campaigns/{id}",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CampaignController::show"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/campaigns/{id}/attach",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CampaignController::attach"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/campaigns/{id}/coupons/{couponId}/detach",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CampaignController::detach"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/campaigns",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CampaignController::store"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/campaigns/{id}/status",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CampaignController::status"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/coupons",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CouponController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/coupons/{id}/moderate",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CouponController::moderate"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/coupons/{id}/edit",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CouponController::edit"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/coupons/{id}/edit",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CouponController::update"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/coupons/{id}/expire",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CouponController::expire"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/coupons/{id}/revoke",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CouponController::revoke"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/coupons/{id}/delete",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\CouponController::delete"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/reports",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ReportController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/reports/{id}/resolve",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ReportController::resolve"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/merchant-requests",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\MerchantAccessController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/merchant-requests/{id}/review",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\MerchantAccessController::review"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/merchant-memberships/{userId}/{merchantId}/revoke",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\MerchantAccessController::revoke"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/articles",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ArticleController::index"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/articles/create",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ArticleController::create"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/articles",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ArticleController::store"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/articles/{id}/edit",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ArticleController::edit"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/articles/{id}/edit",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\Admin\\ArticleController::update"
+  }
+]

@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 import time
+import tempfile
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -40,7 +41,8 @@ for base,port in [('',8096),('/CouponHub_UI',8097)]:
     origin=f'http://127.0.0.1:{port}';runtime=ROOT/'.runtime'/('phase4-http-'+str(port)+'-'+str(time.time_ns()));runtime.mkdir(parents=True)
     (runtime/'sessions').mkdir()
     env=os.environ|{'COUPONHUB_HOST':'127.0.0.1','COUPONHUB_PORT':'13379','COUPONHUB_DB':'couponhub_merge_test','COUPONHUB_USER':'root','COUPONHUB_PASSWORD':'','COUPONHUB_APP_URL':origin+base,'COUPONHUB_SESSION_PATH':str(runtime/'sessions'),'COUPONHUB_RATE_LIMIT_DIR':str(runtime/'limits')}
-    command=['C:/xampp/php/php.exe','-S',f'127.0.0.1:{port}']+(['-t',str(ROOT.parent)] if base else ['router.php'])
+    upload_tmp=tempfile.TemporaryDirectory(prefix='couponhub-http-')
+    command=['C:/xampp/php/php.exe','-d','sys_temp_dir='+upload_tmp.name,'-d','upload_tmp_dir='+upload_tmp.name,'-S',f'127.0.0.1:{port}']+(['-t',str(ROOT.parent),str(ROOT/'router.php')] if base else ['router.php'])
     with (runtime/'server.log').open('w',encoding='utf-8') as log:
         server=subprocess.Popen(command,cwd=ROOT,env=env,stdout=log,stderr=log,creationflags=getattr(subprocess,'CREATE_NO_WINDOW',0))
         try:
@@ -53,6 +55,8 @@ for base,port in [('',8096),('/CouponHub_UI',8097)]:
                 time.sleep(.1)
             else:raise RuntimeError('Server unavailable')
             _,headers,html=guest.request('/login')
+            for private in ['/.env.example','/database/schema.sql','/config/integrations.php','/storage/sessions','/docs/api/openapi.json']:
+                assert guest.request(private)[0]==403,('private resource exposed',base,private)
             assert 'no-store' in headers['Cache-Control']
             assert headers['X-Content-Type-Options']=='nosniff' and headers['X-Frame-Options']=='DENY'
             cookie=';'.join(headers.get_all('Set-Cookie') or [])
@@ -143,7 +147,7 @@ for base,port in [('',8096),('/CouponHub_UI',8097)]:
             assert admin.request('/admin',headers={'Accept':'application/json'})[0]==401
             print(f'PASS {base or "/"}: headers/cookies, origins, body limit, OAuth rejection, throttles, revoked session, logout',flush=True)
         finally:
-            server.terminate();server.wait(timeout=10)
+            server.terminate();server.wait(timeout=10);upload_tmp.cleanup()
     errors=(runtime/'server.log').read_text(encoding='utf-8',errors='replace')
     assert not re.search(r'PHP (?:Fatal error|Parse error|Warning)',errors),errors[-2500:]
 print('PASS phase 4 HTTP acceptance; no external identity/email calls')

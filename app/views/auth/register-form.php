@@ -98,7 +98,8 @@ use App\Core\Session;
             thể chiếm nhiều byte).
         </p>
 
-    </form>
+    <?php $turnstileAction='register'; require __DIR__.'/../partials/turnstile.php'; ?>
+</form>
     <button type="submit" form="registerForm" class="btn w-100 rounded-4 fw-bold text-white login-btn mb-2">
         Tạo tài khoản
     </button>

@@ -38,7 +38,8 @@
 
   let scrollFrame = 0;
   const syncTopButton = () => {
-    const visible = window.scrollY > Math.min(560, window.innerHeight * 0.7);
+    const visible = window.scrollY > Math.min(240, window.innerHeight * 0.4);
+    shell.classList.toggle('has-top-action', visible);
     topButton.classList.toggle('is-visible', visible);
     topButton.tabIndex = visible ? 0 : -1;
     topButton.setAttribute('aria-hidden', String(!visible));
@@ -49,11 +50,11 @@
   }, { passive: true });
   window.addEventListener('resize', syncTopButton);
   window.addEventListener('pageshow', syncTopButton);
-  topButton.addEventListener('click', () => {
+  topButton.addEventListener('click', event => {
     setContactOpen(false);
     window.scrollTo({
       top: 0,
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      behavior: event?.detail === 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     });
   });
 

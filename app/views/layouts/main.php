@@ -9,7 +9,7 @@ $warning = Session::flash('warning');
 $info = Session::flash('info');
 $currentUser = $currentUser ?? Auth::user();
 $currentPath = (new \App\Core\Request())->path();
-$workspaceArea = str_starts_with($currentPath, '/admin') && ($currentUser['role'] ?? '') === 'ADMIN' ? 'admin'
+$workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPath,['/account','/notifications'],true)) && ($currentUser['role'] ?? '') === 'ADMIN' ? 'admin'
     : ((($currentPath === '/merchant' || str_starts_with($currentPath, '/merchant/')) && $currentPath !== '/merchant/apply' && ($currentUser['role'] ?? '') === 'MERCHANT') ? 'merchant' : null);
 ?>
 <!doctype html>
@@ -42,6 +42,7 @@ $workspaceArea = str_starts_with($currentPath, '/admin') && ($currentUser['role'
     <script
         src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/campaign-clock.js') ?>"
         defer></script>
+    <script src="<?= e(url('/assets/js/campaign-gallery.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/campaign-gallery.js') ?>" defer></script>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/product.css') ?>">
     <link rel="stylesheet"
@@ -55,7 +56,7 @@ $workspaceArea = str_starts_with($currentPath, '/admin') && ($currentUser['role'
 
 <body class="unified-page<?= $workspaceArea ? ' workspace-page' : '' ?>">
     <a class="skip-link" href="#main">Đến nội dung chính</a>
-    <?php require __DIR__ . '/../partials/public-header.php'; ?>
+    <?php require __DIR__ . ($workspaceArea ? '/../partials/workspace-header.php' : '/../partials/public-header.php'); ?>
     <main id="main" class="member-main py-4">
         <div class="container-wide">
             <?php if ($workspaceArea): ?><div class="workspace-layout"><?php require __DIR__.'/../partials/workspace-nav.php'; ?><div class="workspace-content"><?php endif; ?>
@@ -73,8 +74,7 @@ $workspaceArea = str_starts_with($currentPath, '/admin') && ($currentUser['role'
             <?php if ($workspaceArea): ?></div></div><?php endif; ?>
         </div>
     </main>
-    <?php require __DIR__ . '/../partials/public-footer.php'; ?>
-    <?php require __DIR__ . '/../partials/floating-support.php'; ?>
+    <?php if (!$workspaceArea): require __DIR__ . '/../partials/public-footer.php'; require __DIR__ . '/../partials/floating-support.php'; endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= e(url('/assets/js/coupon-events.js')) ?>"></script>
@@ -84,6 +84,7 @@ $workspaceArea = str_starts_with($currentPath, '/admin') && ($currentUser['role'
             src="<?= e(asset((string)$pageScript)) ?>"></script><?php endforeach; ?>
     <?php if (!$currentUser) require __DIR__ . '/../auth/auth-modal.php'; ?>
     <?php if ($workspaceArea): ?><script src="<?= e(url('/assets/js/workspace.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/workspace.js') ?>" defer></script><?php endif; ?>
+<script src="<?= e(url('/assets/js/turnstile.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/turnstile.js') ?>" defer></script>
 </body>
 
 </html>

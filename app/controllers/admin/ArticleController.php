@@ -43,7 +43,7 @@ final class ArticleController extends Controller
     private function persist(Request $request, ?int $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Token không hợp lệ');
             return;
         }

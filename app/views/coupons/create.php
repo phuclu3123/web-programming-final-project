@@ -201,10 +201,11 @@ use App\Core\Session; ?>
                     phải ở tương lai và phải sau ngày bắt đầu. Hệ thống lưu UTC nhưng hiển thị theo giờ Việt Nam.
                 </div>
 
+                <?php $turnstileAction='community_coupon'; require __DIR__.'/../partials/turnstile.php'; ?>
                 <button type="submit" class="btn btn-primary" <?= $merchants === [] ? 'disabled' : '' ?>>Gửi coupon để
                     kiểm duyệt</button>
                 <a class="btn btn-link" href="<?= e(url('/coupons')) ?>">Hủy</a>
             </div>
-        </form>
+</form>
     </div>
 </div>

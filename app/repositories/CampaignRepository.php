@@ -87,8 +87,8 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
     /*Lấy coupon công khai thuộc chiến dịch.
  * @return array<int,array<string,mixed>>*/
     public function publicCoupons(int $campaignId, int $categoryId = 0, string $usageChannel = 'ALL', int $merchantId = 0): array {
-        $sql = " SELECT c.id, c.title, c.code, c.discount_type, c.discount_value, c.cashback_unit, c.min_order_amount, c.max_discount_amount, c.usage_channel, c.ends_at, m.name 
-            AS merchant_name, cat.name 
+        $sql = " SELECT c.id, c.merchant_id, c.category_id, c.title, c.code, c.discount_type, c.discount_value, c.cashback_unit, c.min_order_amount, c.max_discount_amount, c.usage_channel, c.ends_at, m.name
+            AS merchant_name, cat.name
             AS category_name, s.trust_score,
             s.total_votes,
             (

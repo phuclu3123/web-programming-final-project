@@ -207,10 +207,20 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
         $this->db->beginTransaction();
         try {
             $this->requireActiveAdmin($actorId);
-            $lock=$this->db->prepare('SELECT status FROM campaigns WHERE id=? FOR UPDATE');
+            $lock=$this->db->prepare('SELECT status,owner_merchant_id,ends_at FROM campaigns WHERE id=? FOR UPDATE');
             $lock->execute([$campaignId]);
-            $old=$lock->fetchColumn();
-            if ($old===false) throw new RuntimeException('Không tìm thấy chiến dịch.');
+            $campaign=$lock->fetch();
+            if (!$campaign) throw new RuntimeException('Không tìm thấy chiến dịch.');
+            $old=$campaign['status'];
+            if ($old==='ARCHIVED' && $status!=='ARCHIVED') throw new RuntimeException('Chiến dịch đã lưu trữ không thể xuất bản lại. Tạo chiến dịch mới nếu cần.');
+            if ($status==='PUBLISHED') {
+                if ($campaign['ends_at']<=gmdate('Y-m-d H:i:s')) throw new RuntimeException('Không thể xuất bản chiến dịch đã hết hạn.');
+                if ($campaign['owner_merchant_id']!==null) {
+                    $merchant=$this->db->prepare("SELECT id FROM merchants WHERE id=? AND status='APPROVED' AND deleted_at IS NULL LOCK IN SHARE MODE");
+                    $merchant->execute([(int)$campaign['owner_merchant_id']]);
+                    if (!$merchant->fetch()) throw new RuntimeException('Cửa hàng của chiến dịch chưa được duyệt hoặc đã bị khóa.');
+                }
+            }
             if ($old!==$status) {
                 $this->db->prepare('UPDATE campaigns SET status=? WHERE id=?')->execute([$status,$campaignId]);
                 $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')->execute([$actorId,'CAMPAIGN_STATUS',json_encode(['campaign_id'=>$campaignId,'from'=>$old,'to'=>$status],JSON_THROW_ON_ERROR)]);

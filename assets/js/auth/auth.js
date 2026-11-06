@@ -152,7 +152,7 @@
             const resetForm = modal.querySelector('#resetOtpForm');
             if (resetForm) showMessage(resetForm, result.message, 'success');
         } catch { showMessage(form, 'Không thể kết nối. Vui lòng thử lại.', 'error'); }
-        finally { if (button) { button.disabled = false; button.textContent = original; } }
+        finally { form.dispatchEvent(new CustomEvent('couponhub:form-finished', {bubbles:true})); if (button) { button.disabled = false; button.textContent = original; } }
     }
 
     // PHẦN ĐĂNG KÝ (BỔ SUNG): gửi dữ liệu và chuyển về đăng nhập
@@ -225,6 +225,7 @@
                 "error",
             );
         } finally {
+                form.dispatchEvent(new CustomEvent('couponhub:form-finished', {bubbles:true}));
             if (button) {
                 button.disabled = false;
                 button.textContent = originalText;
@@ -310,6 +311,7 @@
                     "error",
                 );
             } finally {
+                form.dispatchEvent(new CustomEvent('couponhub:form-finished', {bubbles:true}));
                 // Luôn mở lại nút và trả chữ ban đầu khi xử lý đã kết thúc.
                 if (submitButton) {
                     submitButton.disabled = false;

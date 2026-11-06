@@ -66,15 +66,15 @@ final class CampaignController extends Controller
         }
 
         $platform = positiveId($request->query('platform', '0'), true);
+        $allCoupons = $this->campaigns->publicCoupons((int)$campaign['id']);
+        $filteredCoupons = $categoryId || $platform || $usageChannel !== 'ALL'
+            ? $this->campaigns->publicCoupons((int)$campaign['id'], $categoryId, $usageChannel, $platform)
+            : $allCoupons;
         $this->view('campaigns/show', [
             'pageTitle' => (string) $campaign['name'],
             'campaign' => $campaign,
-            'coupons' => $this->campaigns->publicCoupons(
-                (int) $campaign['id'],
-                $categoryId,
-                $usageChannel,
-                $platform
-            ),
+            'coupons' => $filteredCoupons,
+            'campaignOverview' => campaignOverview($allCoupons),
             'categories' => $this->campaigns->publicCategories(),
             'selectedCategory' => $categoryId,
             'selectedChannel' => $usageChannel,
@@ -93,7 +93,8 @@ final class CampaignController extends Controller
         $usageChannel = $request->query('usage_channel', 'ALL');
         if (!in_array($usageChannel, ['ALL', 'ONLINE', 'OFFLINE', 'BOTH'], true)) $usageChannel = 'ALL';
         $platform = positiveId($request->query('platform', '0'), true);
-        $listing = $this->campaigns->publicFilteredListing($phase, $categoryId, $usageChannel, positiveId($request->query('page', '1')), 9, $platform);
+        // Keep a small campaign collection together; retain bounded pagination for growth.
+        $listing = $this->campaigns->publicFilteredListing($phase, $categoryId, $usageChannel, positiveId($request->query('page', '1')), 24, $platform);
         $previewId = positiveId($request->query('preview', '0'), true);
         $campaignPreview = $listing['items'][0] ?? null;
         if ($previewId > 0) {
@@ -361,7 +362,7 @@ final class CampaignController extends Controller
     {
         if (
             !Session::verifyCsrf(
-                (string) $request->input('_token', '')
+                $request->csrfToken()
             )
         ) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');

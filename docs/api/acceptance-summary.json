@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-06",
+  "status": "LOCAL_PASS_REAL_PROVIDER_ACCEPTANCE_PENDING",
+  "declared_route_operations": 119,
+  "javascript_tests_passed": 93,
+  "postman": {
+    "requests": 271,
+    "assertions": 287,
+    "failed": 0
+  },
+  "chrome": {
+    "page_viewport_checks": 176,
+    "widths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "swagger_session_csrf_post": "PASS"
+  },
+  "provider_contract_checks": 25,
+  "source_revocation_database_checks": 34,
+  "source_workflow_http_checks": 14,
+  "turnstile_http_checks": 38,
+  "live_migration": {
+    "name": "20261105_external_offers.sql",
+    "previous_tables_preserved": 21,
+    "accounts": 6,
+    "merchants": 14,
+    "coupons": 40,
+    "campaigns": 10,
+    "external_offers": 0
+  },
+  "real_provider_credentials_used": false,
+  "public_https_connectivity": [
+    "Google signing keys",
+    "GitHub public API"
+  ],
+  "evidence": {
+    "integration_run": ".runtime/integrations-acceptance-1793902930199673400/results.json",
+    "reused_phase4_regression": ".runtime/integrations-acceptance-1793901170508988900/phase4-regression.log"
+  },
+  "pending": [
+    "ACCESSTRADE account permissions and live data import",
+    "Turnstile live token/hostname/action/replay checks",
+    "OAuth real authorization/link/cancellation flows",
+    "Resend verified sender and mailbox delivery",
+    "Production HTTPS/proxy/private-file/session checks"
+  ]
+}

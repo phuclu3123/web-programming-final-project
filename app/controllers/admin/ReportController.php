@@ -40,7 +40,7 @@ final class ReportController extends Controller
     public function resolve(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string) $request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
             return;
         }

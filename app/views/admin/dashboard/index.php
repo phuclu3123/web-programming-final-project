@@ -12,7 +12,7 @@
     </div>
 </section>
 <section class="workspace-panel" aria-labelledby="system-overview-title">
-    <div class="workspace-panel-heading"><h2 id="system-overview-title">Trên CouponHub</h2><a href="<?= e(url('/coupons')) ?>">Xem trang người dùng <?= icon('arrow') ?></a></div>
+    <div class="workspace-panel-heading"><h2 id="system-overview-title">Tình hình nền tảng</h2><a href="<?= e(url('/admin/coupons')) ?>">Quản lý coupon <?= icon('arrow') ?></a></div>
     <dl class="workspace-metrics">
         <?php foreach ([['Người dùng','users'],['Tài khoản bị khóa','locked_users'],['Cửa hàng đã duyệt','approved_merchants'],['Coupon hoạt động','active_coupons'],['Chiến dịch đã xuất bản','published_campaigns']] as [$label,$key]): ?>
         <div><dt><?= e($label) ?></dt><dd><?= (int)($stats[$key] ?? 0) ?></dd></div><?php endforeach; ?>

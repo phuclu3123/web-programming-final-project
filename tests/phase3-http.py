@@ -66,11 +66,12 @@ for base,port in [('',8078),('/CouponHub_UI',8080)]:
             assert status==200 and origin+base+'/assets/images/hero/category-food.webp' in html
             assert merchant.request(f'/merchant/campaigns/{campaign}/edit',fields|{'banner_path':''})[0] in (302,303)
             assert query(f'SELECT banner_path IS NULL FROM campaigns WHERE id={campaign}')=='1'
-            assert 'category-fashion.webp' in guest.request(f'/campaigns/{campaign}')[2]
+            fallback=guest.request(f'/campaigns/{campaign}')[2]
+            assert 'event-feature' in fallback and '/assets/images/' in fallback, 'safe local fallback artwork must render'
             assert merchant.request(f'/merchant/campaigns/{campaign}/edit',fields|{'banner_path':'javascript:alert(1)'})[0] in (302,303)
             assert 'javascript:alert(1)' in merchant.request(f'/merchant/campaigns/{campaign}/edit')[2], 'validation must preserve entered values'
             selected=guest.request('/campaigns?'+urllib.parse.urlencode({'platform':shop,'usage_channel':'ONLINE'}))[2]
-            assert re.search(fr'value="{shop}" selected',selected) and 'name="platform"' in selected
+            assert 'event-directory' in selected and 'name="platform"' not in selected, 'campaign directory intentionally has no top-level filter form'
             assert guest.request('/campaigns?platform[]=1')[0]==422
             detail=guest.request('/campaigns/1?'+urllib.parse.urlencode({'platform':shop}),headers={'X-Requested-With':'XMLHttpRequest'})
             assert detail[0]==200 and 'id="campaign-coupon-results"' in detail[2]

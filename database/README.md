@@ -2,11 +2,13 @@
 
 Đợt 4: bản cài đã có dữ liệu cần backup rồi chạy [20261104_phase4_auth_guards.sql](migrations/20261104_phase4_auth_guards.sql), sau migration đợt 3 nếu máy chưa áp. Không import lại schema/demo. Xem [nghiệm thu Phúc đợt 4](../docs/PHUC_PHASE4_REVIEW.md).
 
+Nguồn coupon bên ngoài: sau backup, chạy [20261105_external_offers.sql](migrations/20261105_external_offers.sql) để thêm hàng chờ; xem [cấu hình provider](../docs/PROVIDER_SETUP.md). Không nạp lại schema/demo vào database hiện có.
+
 Hai file SQL có mục đích riêng:
 
 | File | Nội dung | Thứ tự import |
 |---|---|---|
-| [schema.sql](schema.sql) | Toàn bộ cấu trúc: 21 bảng, index, khóa ngoại, 6 view, 21 procedure | 1 — bắt buộc trên database mới, trống |
+| [schema.sql](schema.sql) | Toàn bộ cấu trúc: 22 bảng, index, khóa ngoại, 6 view, 21 procedure | 1 — bắt buộc trên database mới, trống |
 | [demo.sql](demo.sql) | Tài khoản thử, shop, coupon, chiến dịch và tương tác mẫu | 2 — tùy chọn, sau schema, khi các bảng còn trống |
 
 `schema.sql` **không chứa dữ liệu demo**. Các INSERT/UPDATE/DELETE trong procedure chỉ chạy khi ứng dụng gọi nghiệp vụ tương ứng. `demo.sql` không thay cấu trúc hay logic backend/API.

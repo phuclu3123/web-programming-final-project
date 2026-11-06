@@ -9,7 +9,7 @@
         <div>
             <span class="eyebrow">ĐI TỪ CHIẾN DỊCH ĐẾN ƯU ĐÃI</span>
             <h2 id="campaign-deals-title">Có mã gì cho bạn?</h2>
-            <p>Chọn chiến dịch, lọc danh mục và tìm coupon phù hợp với bạn.</p>
+            <p>Chọn thương hiệu để xem mã và điều kiện áp dụng.</p>
         </div>
 
         <a href="<?= e(url('/campaigns/' . (int) $campaignPreview['id']).'?'.http_build_query(['category_id'=>$selectedCategory,'usage_channel'=>$selectedChannel,'platform'=>$selectedPlatform])) ?>">
@@ -33,83 +33,11 @@
                     : '' ?>
             >
                 <?= brandLogo($previewOption['merchant_name'] ?: 'CouponHub') ?>
-                <span><?= e(editorialTitle($previewOption['name'])) ?></span>
+                <span><?= e($previewOption['merchant_name'] ?: editorialTitle($previewOption['name'])) ?></span>
                 <small><?= (int) $previewOption['coupon_count'] ?> mã</small>
             </a>
         <?php endforeach; ?>
     </nav>
-
-    <form
-        class="campaign-coupon-filters"
-        method="get"
-        action="<?= e(url('/campaigns')) ?>#campaign-deals"
-    >
-        <input type="hidden" name="phase" value="<?= e($phase) ?>">
-        <input type="hidden" name="page" value="1">
-
-        <div class="campaign-coupon-filter-field">
-            <label for="campaign-category-filter">Danh mục coupon</label>
-            <select id="campaign-category-filter" name="category_id">
-                <option value="0">Tất cả danh mục</option>
-
-                <?php foreach (($categories ?? []) as $category): ?>
-                    <option
-                        value="<?= (int) $category['id'] ?>"
-                        <?= (int) ($selectedCategory ?? 0) === (int) $category['id']
-                            ? 'selected'
-                            : '' ?>
-                    >
-                        <?= e($category['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div class="campaign-coupon-filter-field">
-            <label for="campaign-channel-filter">Kênh sử dụng</label>
-            <select id="campaign-channel-filter" name="usage_channel">
-                <option value="ALL"
-                    <?= ($selectedChannel ?? 'ALL') === 'ALL' ? 'selected' : '' ?>>
-                    Tất cả kênh
-                </option>
-
-                <option value="ONLINE"
-                    <?= ($selectedChannel ?? 'ALL') === 'ONLINE' ? 'selected' : '' ?>>
-                    Online
-                </option>
-
-                <option value="OFFLINE"
-                    <?= ($selectedChannel ?? 'ALL') === 'OFFLINE' ? 'selected' : '' ?>>
-                    Offline
-                </option>
-
-                <option value="BOTH"
-                    <?= ($selectedChannel ?? 'ALL') === 'BOTH' ? 'selected' : '' ?>>
-                    Dùng được cả Online và Offline
-                </option>
-            </select>
-        </div>
-
-        <div class="campaign-coupon-filter-field">
-            <?php $platformSelectId='campaign-platform-filter'; require __DIR__.'/campaign-platform-filter.php'; ?>
-        </div>
-        <div class="campaign-coupon-filter-actions">
-            <button type="submit" class="campaign-coupon-filter-submit">
-                Lọc coupon
-            </button>
-
-            <a
-                class="campaign-coupon-filter-reset"
-                href="<?= e(url('/campaigns') . '?' . http_build_query([
-                    'phase' => $phase,
-                    'page' => $listing['page'],
-                    'preview' => (int) $campaignPreview['id'],
-                ])) ?>#campaign-deals"
-            >
-                Xóa bộ lọc
-            </a>
-        </div>
-    </form>
 
     <?php if ($campaignCoupons): ?>
         <div class="campaign-deal-grid <?= count($campaignCoupons) === 1

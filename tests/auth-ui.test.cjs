@@ -25,7 +25,7 @@ function setup(fetchResult, active = 'login', location = 'http://localhost:8000/
     function form(id, inputs) {
         const message = { dataset: {}, hidden: true, textContent: '', scrollIntoView() {} };
         const button = { type: 'submit', textContent: 'Submit', disabled: false };
-        return { id, inputs, message, button, elements: [...inputs, button], handlers: {},
+        return { id, inputs, message, button, events: [], dispatchEvent(e) { this.events.push(e); }, elements: [...inputs, button], handlers: {},
             querySelector(s) {
                 if (s === '.auth-message') return message;
                 if (s.startsWith('label')) return { textContent: 'Field' };
@@ -53,6 +53,7 @@ function setup(fetchResult, active = 'login', location = 'http://localhost:8000/
     };
     vm.runInNewContext(source, {
         document: { baseURI, getElementById() { return modal; } }, URL, TextEncoder,
+        CustomEvent: class { constructor(type, options) { this.type=type; this.bubbles=options.bubbles; } },
         window: { location: { href: location, origin: new URL(location).origin, assign(url) { destinations.push(url); } } },
         FormData: class { constructor(form) { this.fields = Object.fromEntries(form.inputs.map(i => [i.name, i.value])); } },
         fetch: async (url, options) => { requests.push({ url, options }); return fetchResult(); },
@@ -72,6 +73,7 @@ test('login posts CSRF and password unchanged, follows role redirect', async () 
     assert.equal(app.requests[0].options.body.fields.password, ' Demo123! ');
     assert.deepEqual(app.destinations, ['http://localhost:8000/admin.php?section=reports']);
     assert.equal(app.forms[0].button.disabled, false);
+    assert.equal(app.forms[0].events.at(-1).type, 'couponhub:form-finished');
 });
 test('server errors, failed JSON and network failure leave inline feedback and unlock', async () => {
     for (const result of [() => response({ success: false, message: 'Rejected' }),
@@ -82,6 +84,7 @@ test('server errors, failed JSON and network failure leave inline feedback and u
         await app.submit(0);
         assert.equal(app.forms[0].message.dataset.state, 'error');
         assert.equal(app.forms[0].button.disabled, false);
+    assert.equal(app.forms[0].events.at(-1).type, 'couponhub:form-finished');
         assert.equal(app.destinations.length, 0);
     }
 });
@@ -121,6 +124,7 @@ test('duplicate submit only sends once', async () => {
     finish(response({ success: false, message: 'Rejected' }));
     await first;
     assert.equal(app.forms[0].button.disabled, false);
+    assert.equal(app.forms[0].events.at(-1).type, 'couponhub:form-finished');
 });
 test('register returns to login with username, without password or redirect', async () => {
     const app = setup(() => response({ success: true, message: 'Created' }), 'register');

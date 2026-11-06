@@ -74,7 +74,7 @@ final class SavedCouponController extends Controller
     public function remove(Request $request, string $id): void
     {
         Auth::requireRole(['USER', 'MERCHANT']);
-        if (!Session::verifyCsrf((string) $request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
             return;
         }

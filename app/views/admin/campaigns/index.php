@@ -5,9 +5,8 @@ use App\Core\Session; ?>
     <div class="col-xl-4 mb-4">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h1 class="h5">Campaign nền tảng</h1>
-                <p class="small text-muted">owner_merchant_id = NULL; Admin quản lý, có thể chứa coupon từ nhiều
-                    Merchant.</p>
+                <h1 class="h5">Chiến dịch chung</h1>
+                <p class="small text-muted">Tập hợp ưu đãi từ nhiều cửa hàng. Tạm tắt chỉ ẩn chiến dịch; coupon còn hiệu lực ở nơi khác. Thu hồi từng mã tại kho coupon.</p>
                 <form method="post" action="<?= e(url('/admin/campaigns')) ?>"><input type="hidden" name="_token"
                         value="<?= e(Session::csrfToken()) ?>">
                     <div class="mb-3"><label>Tên</label><input aria-label="Tên chiến dịch" class="form-control" name="name" maxlength="200"
@@ -58,11 +57,8 @@ use App\Core\Session; ?>
                                         action="<?= e(url('/admin/campaigns/' . (int)$c['id'] . '/status')) ?>">
                                         <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><select aria-label="Trạng thái"
                                             class="form-control form-control-sm mb-1" name="status">
-                                            <option>DRAFT</option>
-                                            <option>PUBLISHED</option>
-                                            <option>DISABLED</option>
-                                            <option>ARCHIVED</option>
-                                        </select><button class="btn btn-sm btn-outline-primary w-100">Cập nhật</button>
+                                            <?php foreach (['DRAFT'=>'Bản nháp','PUBLISHED'=>'Xuất bản','DISABLED'=>'Tạm tắt','ARCHIVED'=>'Lưu trữ vĩnh viễn'] as $state=>$label): ?><option value="<?= $state ?>" <?= $c['status']===$state?'selected':'' ?> <?= $c['status']==='ARCHIVED' && $state!=='ARCHIVED'?'disabled':'' ?>><?= e($label) ?></option><?php endforeach; ?>
+                                        </select><button class="btn btn-sm btn-outline-primary w-100" <?= $c['status']==='ARCHIVED'?'disabled':'' ?>>Cập nhật</button>
                                     </form>
                                 </td>
                             </tr><?php endforeach; ?></tbody>

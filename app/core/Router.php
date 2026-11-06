@@ -30,15 +30,16 @@ final class Router
                 $this->guard($request->path(), $request->method());
                 if ($request->method() !== 'GET') {
                     RequestSecurity::checkWrite();
-                    $input = $request->input('csrf', $request->input('_token', ''));
+                    $input = $request->csrfToken();
                     if (!is_string($input)) throw new HttpError(403, 'Token không hợp lệ.');
                     Session::checkCsrf($input);
-                    // Admin forms use scalar fields only. Reject foo[]=... before casts
-                    // such as (int)array can silently select an unintended record.
-                    if ($request->path() === '/admin.php' || str_starts_with($request->path(), '/admin/')) {
-                        foreach ($request->all() as $value) if (is_array($value) || is_object($value)) throw new HttpError(422, 'Dữ liệu biểu mẫu không hợp lệ.');
+                    // All current forms/APIs have flat fields. Reject foo[]=... for
+                    // every role before an array can be cast into a different record ID.
+                    foreach ($request->all() as $value) {
+                        if (($value!==null && !is_scalar($value)) || (is_string($value) && !mb_check_encoding($value,'UTF-8'))) throw new HttpError(422, 'Dữ liệu biểu mẫu không hợp lệ.');
                     }
                     RequestSecurity::limitWrite();
+                    TurnstileGuard::check($request);
                 }
                 [$class, $action] = $route['handler'];
                 (new $class())->{$action}($request, ...array_values($params));
@@ -52,7 +53,7 @@ final class Router
         } catch (\Throwable $error) {
             $businessError = $error instanceof \mysqli_sql_exception && $error->getCode() === 1644;
             $status = $error instanceof HttpError ? $error->status : ($businessError ? 422 : 503);
-            if ($status === 503) error_log((string) $error);
+            if ($status === 503) error_log('CouponHub request failed: '.get_class($error).' status=503'); // No request bodies, secrets or exception arguments in logs.
             if ($status === 401 && $request->method() === 'GET' && !$request->expectsJson()) {
                 $return = parse_url(url($request->path()), PHP_URL_PATH) ?: '/';
                 if ($request->queryString() !== '') $return .= '?' . $request->queryString();
