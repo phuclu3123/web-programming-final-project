@@ -32,7 +32,7 @@ $promotionUrl = safeHttpUrl($coupon['promotion_url'] ?? null);
                                 href="<?= e(url('/coupons') . '?merchant_id=' . (int)$coupon['merchant_id']) ?>"><?= e($coupon['merchant_name']) ?></a><span><?= (int)$coupon['is_official'] === 1 ? 'Ưu đãi từ cửa hàng' : 'Được cộng đồng chia sẻ' ?></span>
                         </div>
                     </div>
-                    <div class="mb-3 d-flex flex-wrap align-items-center" style="gap:.35rem">
+                    <div class="mb-3 d-flex flex-wrap align-items-center csp-gap-035">
                         <?php if (str_contains($coupon['title'], '[DEMO]')): ?><span class="badge-soft">Ưu đãi minh
                                 họa</span><?php endif; ?>
                         <span

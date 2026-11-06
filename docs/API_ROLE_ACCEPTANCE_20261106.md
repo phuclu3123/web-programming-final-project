@@ -73,3 +73,9 @@ python tests/run-integrations.py --browser
 ```
 
 Collection và environment mẫu: `docs/api/couponhub.postman_collection.json`, `docs/api/local.postman_environment.json`. Postman chạy local với `--no-report-events`, không cần đăng nhập để xuất JSON report local. Nút Execute của Swagger dùng phiên hiện tại và có thể ghi dữ liệu thật; dùng DB kiểm thử cho kịch bản phá trạng thái.
+
+## Release verification after merging current main
+
+Fetched `origin/main` at `963139c` and merged its security and asset-policy updates into the Phuc release. Conflict resolution preserves the current workspaces, conditional public assets, external CSP event handlers, current-policy expiry checks, and the ADMIN/MERCHANT 8-hour absolute / 30-minute idle caps even when environment overrides allow longer USER sessions. Added runtime coverage for both privileged roles and included the provider/security regression checks in GitHub Actions.
+
+Re-ran the complete isolated phase 3/4, migration, provider, role/API, Postman and Chrome acceptance after integration; 128 JavaScript tests passed. This run does not reuse prior regression evidence. Local evidence: `.runtime/integrations-acceptance-1793966356676545500/results.json`. Real provider credentials and production HTTPS remain pending as described above.

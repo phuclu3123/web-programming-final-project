@@ -52,3 +52,10 @@ jobs:
           php tests/oauth-auth.php
           php tests/facebook-oauth.php
           php tests/phase4-security.php
+          php tests/security-hardening-phase10b.php
+          php tests/interaction-rate-limit-phase10c.php
+          php tests/interaction-http-response-phase10c.php
+          php tests/route-aware-assets-phase9gd2.php
+          php tests/provider-integrations.php
+          php tests/request-token-contract.php
+          php tests/campaign-presentation.php

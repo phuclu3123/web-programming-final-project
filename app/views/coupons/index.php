@@ -1,55 +1,66 @@
 <?php
+
 use App\Core\Auth;
+
 $currentUser = Auth::user();
 $advancedCount = (int)!empty($filters['merchant_id']) + (int)!empty($filters['discount_type']) + (int)!empty($filters['usage_channel']) + (int)!empty($filters['ending_soon']);
-$types = ['PERCENTAGE'=>'Giảm phần trăm','FIXED_AMOUNT'=>'Giảm số tiền','FREE_SHIPPING'=>'Miễn phí vận chuyển','BUY_X_GET_Y'=>'Mua X tặng Y','GIFT'=>'Quà tặng','CASHBACK'=>'Hoàn tiền'];
+$types = ['PERCENTAGE' => 'Giảm phần trăm', 'FIXED_AMOUNT' => 'Giảm số tiền', 'FREE_SHIPPING' => 'Miễn phí vận chuyển', 'BUY_X_GET_Y' => 'Mua X tặng Y', 'GIFT' => 'Quà tặng', 'CASHBACK' => 'Hoàn tiền'];
 ?>
 <div class="community-catalog">
     <header class="community-feed-header community-cover">
-        <img class="community-cover-photo" src="<?= e(url('/assets/images/hero/category-food.webp')) ?>" alt=""
-            width="2560" height="1707" fetchpriority="high" decoding="async">
+        <img class="community-cover-photo" src="<?= e(url('/assets/images/hero/category-food.webp')) ?>" alt="" srcset="<?= e(url('/assets/images/hero/category-food-640.webp')) ?> 640w,
+                    <?= e(url('/assets/images/hero/category-food-960.webp')) ?> 960w,
+                    <?= e(url('/assets/images/hero/category-food-1280.webp')) ?> 1280w,
+                    <?= e(url('/assets/images/hero/category-food-1920.webp')) ?> 1920w,
+                    <?= e(url('/assets/images/hero/category-food.webp')) ?> 2560w"
+            sizes="(max-width: 767px) calc(100vw - 48px), (max-width: 1440px) calc(100vw - 80px), 1360px" width="2560"
+            height="1707" fetchpriority="high" decoding="async">
         <div class="community-cover-copy">
             <h1>Mã hay,<br>cùng chia sẻ.</h1>
             <p>Tìm ưu đãi từ cửa hàng và cộng đồng.<br>Đọc điều kiện, dùng thử và chia sẻ trải nghiệm.</p>
             <span class="community-cover-total"><strong data-community-total><?= (int)$pagination['total'] ?></strong> coupon trong lựa chọn của bạn</span>
         </div>
         <div class="community-feed-actions">
-            <?php if (in_array(Auth::role(),['USER','MERCHANT'],true)): ?><a class="btn btn-brand"
+            <?php if (in_array(Auth::role(), ['USER', 'MERCHANT'], true)): ?><a class="btn btn-brand"
                 href="<?= e(url('/coupons/create')) ?>">Chia sẻ coupon <span aria-hidden="true">+</span></a>
             <?php elseif (!$currentUser): ?><a class="btn btn-brand"
-                href="<?= e(url('/login').'?return='.rawurlencode(url('/coupons/create'))) ?>">Chia sẻ coupon <span
+                href="<?= e(url('/login') . '?return=' . rawurlencode(url('/coupons/create'))) ?>">Chia sẻ coupon <span
                     aria-hidden="true">+</span></a><?php endif; ?><a
                 href="<?= e(url('/guides/kiem-chung-cung-cong-dong')) ?>">Cách kiểm chứng mã <?= icon('arrow') ?></a>
         </div>
     </header>
     <div class="community-board">
         <div class="community-board-main">
-            <form id="coupon-search-form" class="community-search couponhub-search-form" method="get" action="<?= e(url('/coupons')) ?>"
-                data-api-url="<?= e(url('/api/coupons/search')) ?>">
+            <form id="coupon-search-form" class="community-search couponhub-search-form" method="get"
+                action="<?= e(url('/coupons')) ?>" data-api-url="<?= e(url('/api/coupons/search')) ?>">
                 <input type="hidden" name="page" id="coupon-page" value="<?= (int)$pagination['page'] ?>">
                 <div class="community-search-row">
                     <div class="community-search-input"><label class="sr-only" for="keyword">Tìm ưu
                             đãi</label><input type="search" id="keyword" name="keyword" maxlength="200"
                             value="<?= e((string)($filters['keyword'] ?? '')) ?>"
-                            placeholder="Tìm cửa hàng, mã giảm giá, ưu đãi…"><button class="btn btn-brand community-search-submit couponhub-search-action"
-                            type="submit" aria-label="Tìm kiếm ưu đãi"><span class="community-search-submit-label">Tìm kiếm</span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button></div>
+                            placeholder="Tìm cửa hàng, mã giảm giá, ưu đãi…"><button
+                            class="btn btn-brand community-search-submit couponhub-search-action" type="submit"
+                            aria-label="Tìm kiếm ưu đãi"><span class="community-search-submit-label">Tìm kiếm</span><i
+                                class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button></div>
                 </div>
                 <div class="couponhub-category-tools" data-category-picker>
-                  <fieldset class="community-categories" data-category-rail>
-                    <legend class="sr-only">Danh mục ưu đãi</legend>
-                    <label><input type="radio" name="category_id" value=""
-                            <?= empty($filters['category_id']) ? 'checked' : '' ?>><span><i class="fa-solid fa-border-all" aria-hidden="true"></i> Tất
-                            cả</span></label>
-                    <?php foreach ($categories as $category): ?><label><input type="radio" name="category_id"
-                            value="<?= $category->id ?>"
-                            <?= (int)($filters['category_id'] ?? 0) === $category->id ? 'checked' : '' ?>><span><?= e($category->name) ?></span></label><?php endforeach; ?>
-                  </fieldset>
-                  <button type="button" class="couponhub-category-open" data-category-open
-                    aria-haspopup="dialog" aria-controls="community-category-dialog">
-                    <span>Xem thêm</span>
-                    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
-                  </button>
-                  <?php $categoryPickerDialogId = 'community-category-dialog'; require __DIR__ . '/../partials/category-picker-dialog.php'; ?>
+                    <fieldset class="community-categories" data-category-rail>
+                        <legend class="sr-only">Danh mục ưu đãi</legend>
+                        <label><input type="radio" name="category_id" value=""
+                                <?= empty($filters['category_id']) ? 'checked' : '' ?>><span><i
+                                    class="fa-solid fa-border-all" aria-hidden="true"></i> Tất
+                                cả</span></label>
+                        <?php foreach ($categories as $category): ?><label><input type="radio" name="category_id"
+                                value="<?= $category->id ?>"
+                                <?= (int)($filters['category_id'] ?? 0) === $category->id ? 'checked' : '' ?>><span><?= e($category->name) ?></span></label><?php endforeach; ?>
+                    </fieldset>
+                    <button type="button" class="couponhub-category-open" data-category-open aria-haspopup="dialog"
+                        aria-controls="community-category-dialog">
+                        <span>Xem thêm</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <?php $categoryPickerDialogId = 'community-category-dialog';
+                    require __DIR__ . '/../partials/category-picker-dialog.php'; ?>
                 </div>
                 <!-- BỘ LỌC NÚT BẤM CÓ THỂ ĐÓNG / MỞ (COLLAPSIBLE FILTER) -->
                 <div class="community-controls">
@@ -142,32 +153,32 @@ $types = ['PERCENTAGE'=>'Giảm phần trăm','FIXED_AMOUNT'=>'Giảm số tiề
             <div class="community-results-heading">
                 <p id="coupon-search-status" role="status" aria-live="polite">
                     <strong><?= (int)$pagination['total'] ?></strong> ưu đãi phù hợp <span>· Trang
-                        <?= (int)$pagination['page'] ?>/<?= (int)$pagination['totalPages'] ?></span></p><span
-                    class="community-results-note"><?= icon('shield') ?>Chỉ hiển thị mã còn hiệu lực</span>
+                        <?= (int)$pagination['page'] ?>/<?= (int)$pagination['totalPages'] ?></span>
+                </p><span class="community-results-note"><?= icon('shield') ?>Chỉ hiển thị mã còn hiệu lực</span>
             </div>
             <div id="coupon-results" class="community-ticket-grid">
-                <?php require __DIR__.'/../partials/community-coupon-results.php'; ?></div>
+                <?php require __DIR__ . '/../partials/community-coupon-results.php'; ?></div>
             <div id="coupon-empty" class="community-empty <?= $coupons !== [] ? 'd-none' : '' ?>"><?= icon('search') ?>
                 <h2>Chưa tìm thấy ưu đãi phù hợp.</h2>
                 <p>Thử từ khóa ngắn hơn hoặc bớt một vài bộ lọc.</p><a href="<?= e(url('/coupons')) ?>"
                     class="btn btn-outline-brand">Xem tất cả ưu đãi</a>
             </div>
             <?php
-$page = (int) $pagination['page'];
-$totalPages = (int) $pagination['totalPages'];
-$query = array_filter([
-    'keyword' => $filters['keyword'],
-    'category_id' => $filters['category_id'],
-    'merchant_id' => $filters['merchant_id'],
-    'discount_type' => $filters['discount_type'],
-    'usage_channel' => $filters['usage_channel'],
-    'sort' => $filters['sort'],
-    'ending_soon' => $filters['ending_soon'] ? '1' : null,
-], static fn($v): bool => $v !== null && $v !== '');
-$pageHref = static function (int $targetPage) use ($query): string {
-    return url('/coupons') . '?' . http_build_query(array_merge($query, ['page' => $targetPage]));
-};
-?>
+            $page = (int) $pagination['page'];
+            $totalPages = (int) $pagination['totalPages'];
+            $query = array_filter([
+                'keyword' => $filters['keyword'],
+                'category_id' => $filters['category_id'],
+                'merchant_id' => $filters['merchant_id'],
+                'discount_type' => $filters['discount_type'],
+                'usage_channel' => $filters['usage_channel'],
+                'sort' => $filters['sort'],
+                'ending_soon' => $filters['ending_soon'] ? '1' : null,
+            ], static fn($v): bool => $v !== null && $v !== '');
+            $pageHref = static function (int $targetPage) use ($query): string {
+                return url('/coupons') . '?' . http_build_query(array_merge($query, ['page' => $targetPage]));
+            };
+            ?>
             <nav id="coupon-pagination" class="<?= $totalPages > 1 ? '' : 'd-none' ?>" aria-label="Phân trang coupon">
                 <ul class="pagination justify-content-center flex-wrap mt-3">
                     <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
@@ -186,6 +197,6 @@ $pageHref = static function (int $targetPage) use ($query): string {
                     </li>
                 </ul>
             </nav>
-        </div><?php require __DIR__.'/../partials/community-sidebar.php'; ?>
+        </div><?php require __DIR__ . '/../partials/community-sidebar.php'; ?>
     </div>
 </div>

@@ -11,8 +11,8 @@ const release = read('assets/css/release.css');
 
 test('search CSS uses a stable component class instead of placeholder text', () => {
   assert.doesNotMatch(release, /form:has\(input\[placeholder\*=/);
-  assert.match(release, /\.couponhub-search-form input\[type="search"\]/);
-  assert.match(release, /\.couponhub-search-form button::after/);
+  assert.doesNotMatch(release, /\.community-catalog \.community-search-input > input\[type="search"\]/);
+  assert.match(release, /\.couponhub-search-form \.couponhub-search-action::after/);
   for (const [file, id] of [
     ['app/views/home.php', 'home-filter-form'],
     ['app/views/coupons/index.php', 'coupon-search-form'],

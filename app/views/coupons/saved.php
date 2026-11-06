@@ -66,7 +66,7 @@ $makePageLink = static function (int $next) use ($filters): string {
                     </select>
                 </div>
             </div>
-            <div class="d-flex justify-content-end flex-wrap" style="gap:.5rem">
+            <div class="d-flex justify-content-end flex-wrap gap-2">
                 <a class="btn btn-outline-secondary" href="<?= e(url('/saved-coupons')) ?>">Xóa lọc</a>
                 <button class="btn btn-primary" type="submit"><i class="fa-solid fa-filter me-1"
                         aria-hidden="true"></i>Áp dụng</button>
@@ -104,7 +104,7 @@ $makePageLink = static function (int $next) use ($filters): string {
             <div class="col-md-6 col-lg-4 mb-4">
                 <article class="card shadow-sm h-100 coupon-card saved-coupon-card">
                     <div class="card-body d-flex flex-column">
-                        <div class="d-flex justify-content-between align-items-start mb-2" style="gap:.5rem">
+                        <div class="d-flex justify-content-between align-items-start mb-2 gap-2">
                             <span
                                 class="badge bg-<?= e(coupon_status_class($currentStatus)) ?> saved-status-badge"><?= e(coupon_status_label($currentStatus)) ?></span>
                             <span class="small text-muted text-end">#<?= (int) $item['id'] ?></span>
@@ -131,7 +131,7 @@ $makePageLink = static function (int $next) use ($filters): string {
                                         aria-hidden="true"></i>Lượt lưu này không tính vào xếp hạng hoặc CouponPoint.</div>
                             <?php endif; ?>
                         </div>
-                        <div class="d-flex mt-3 saved-card-actions" style="gap:.5rem">
+                        <div class="d-flex mt-3 saved-card-actions gap-2">
                             <?php if ($isAvailable): ?>
                                 <a class="btn btn-outline-primary btn-sm flex-fill"
                                     href="<?= e(url('/coupons/' . (int) $item['id'])) ?>">Xem chi tiết</a>

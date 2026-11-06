@@ -1,4 +1,4 @@
-/* Phase 8: shared floating actions for head.php and main.php layouts.
+/* Shared floating actions for head.php and main.php layouts.
    Scoped selectors prevent collisions with the legacy #back-to-top styles. */
 .floating-support {
   --support-return-size: 48px;

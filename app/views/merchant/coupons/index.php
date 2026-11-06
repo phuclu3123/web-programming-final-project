@@ -46,11 +46,10 @@ use App\Core\Session; ?>
                         </td>
                         <td class="text-end merchant-coupon-actions"><?php if ($canEdit): ?><a class="btn btn-sm btn-outline-primary"
                                 href="<?= e(url('/merchant/coupons/' . (int)$c['id'] . '/edit')) ?>">Sửa</a><?php if ((string)$c['publication_status'] !== 'DISABLED'): ?>
-                                <form class="d-inline" method="post"
+                                <form class="d-inline" method="post" data-confirm-submit="Ngừng coupon này?"
                                     action="<?= e(url('/merchant/coupons/' . (int)$c['id'] . '/disable')) ?>"><input
                                         type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><button
-                                        class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Ngừng coupon này?')">Ngừng</button></form><?php endif; ?>
+                                        class="btn btn-sm btn-outline-danger">Ngừng</button></form><?php endif; ?>
                             <?php else: ?><span class="small text-muted">Không thể chỉnh sửa<?= $revoked ? ' mã đã thu hồi' : ' ở trạng thái này' ?>.</span><?php endif; ?>
                         </td>
                     </tr><?php endforeach; ?>
@@ -59,3 +58,4 @@ use App\Core\Session; ?>
     </div>
 </div>
 </div>
+<script src="<?= e(url('/assets/js/csp/page-actions.js')) ?>" defer></script>

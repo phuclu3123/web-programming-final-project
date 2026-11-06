@@ -7,6 +7,8 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Database;
+use App\Core\HttpError;
+use App\Core\InteractionRateLimit;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
@@ -37,6 +39,7 @@ final class CouponInteractionController extends Controller
         $saved = in_array((string) $savedRaw, ['1', 'true', 'on'], true);
 
         try {
+            InteractionRateLimit::check('favorite', $actorId);
             $data = $this->service->setFavorite($actorId, $couponId, $saved);
             Response::json([
                 'success' => true,
@@ -54,6 +57,7 @@ final class CouponInteractionController extends Controller
         $couponId = $this->couponId($id);
 
         try {
+            InteractionRateLimit::check('vote', $actorId);
             $data = $this->service->setVote($actorId, $couponId, (string) $request->input('vote', ''));
             Response::json([
                 'success' => true,
@@ -71,6 +75,7 @@ final class CouponInteractionController extends Controller
         $couponId = $this->couponId($id);
 
         try {
+            InteractionRateLimit::check('comment', $actorId);
             $comment = $this->service->addComment($actorId, $couponId, (string) $request->input('body', ''));
             Response::json([
                 'success' => true,
@@ -95,6 +100,7 @@ final class CouponInteractionController extends Controller
         $couponId = $this->couponId($id);
 
         try {
+            InteractionRateLimit::check('report', $actorId);
             $reportId = $this->service->createReport(
                 $actorId,
                 $couponId,
@@ -117,6 +123,10 @@ final class CouponInteractionController extends Controller
      */
     private function respondFailure(Throwable $error, string $fallback): never
     {
+        // HttpError (e.g. rate limit 429 with Retry-After) must not be flattened to 422.
+        if ($error instanceof HttpError) {
+            Response::json(['success' => false, 'message' => $error->getMessage()], $error->status);
+        }
         $expected = $error instanceof RuntimeException;
         Response::json([
             'success' => false,

@@ -7,7 +7,8 @@ const root = path.resolve(__dirname, '..');
 const read = filename => fs.readFileSync(path.join(root, filename), 'utf8');
 const home = read('app/views/home.php');
 const community = read('app/views/coupons/index.php');
-const css = read('assets/css/category-navigation.css').split('/* Phase 9B —')[1];
+// Read the complete stylesheet: phase comments are documentation, not test APIs.
+const css = read('assets/css/category-navigation.css');
 const picker = read('assets/js/category-picker.js');
 const sharedDialog = read('app/views/partials/category-picker-dialog.php');
 
@@ -17,7 +18,7 @@ test('search buttons on home/community use the same Font Awesome action componen
   assert.match(home, /fa-solid fa-magnifying-glass/);
   assert.match(community, /fa-solid fa-magnifying-glass/);
   assert.doesNotMatch(community, /community-search-submit-label">Tìm kiếm<\/span>\s*<\?= icon\('search'\)/);
-  assert.match(css, /\.community-search-input > \.couponhub-search-action,[\s\S]*?\.hero-search \.couponhub-search-action/);
+  assert.match(css, /\.community-search-input\s*>\s*\.couponhub-search-action,\s*\.editorial-home\s+\.discovery-section\s+\.hero-search\s+\.couponhub-search-action\s*\{/);
 });
 
 test('both pages use a single original category source and one accessible dialog', () => {
@@ -85,7 +86,7 @@ test('self-hosted Font Awesome and phase9b script load on both public layouts', 
 // Regression for issues seen on actual mobile Chrome after Phase 9B.
 test('legacy generated SVG magnifier is disabled; one self-hosted FA icon remains', () => {
   const release = read('assets/css/release.css');
-  const legacy = release.match(/\.couponhub-search-form button::after\s*\{([^}]+)\}/)?.[1];
+  const legacy = release.match(/\.couponhub-search-form \.couponhub-search-action::after\s*\{([^}]+)\}/)?.[1];
   assert.ok(legacy, 'Legacy rule must be neutralized, not left drawing an SVG');
   assert.match(legacy, /content:\s*none\s*!important/);
   assert.match(legacy, /display:\s*none\s*!important/);
@@ -96,7 +97,8 @@ test('legacy generated SVG magnifier is disabled; one self-hosted FA icon remain
 });
 
 test('mobile category trigger is a short horizontal labeled pill, not a two-row tile', () => {
-  const mobile = css.split('@media (max-width: 600px)')[1].split('@media (max-width: 359.98px)')[0];
+  const mobile = css.split('@media (max-width: 600px) {')[1]?.split('@media (max-width: 359.98px)')[0];
+  assert.ok(mobile, 'Expected compact category styling below 600px');
   const trigger = mobile.match(/\.couponhub-category-open\s*\{([^}]+)\}/)?.[1];
   assert.ok(trigger);
   assert.match(trigger, /flex-direction:\s*row/);

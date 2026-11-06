@@ -50,38 +50,38 @@ use App\Core\Session; ?>
                         <button name="action" value="REJECT" class="btn btn-sm btn-outline-danger" type="submit">Từ chối</button>
                     </form>
                 <?php endif; ?>
-                <?php if ($coupon['moderation_status']==='APPROVED' && $coupon['publication_status']!=='ARCHIVED'): ?>
-                <form method="post" action="<?= e(url('/admin/coupons/'.$id.'/revoke')) ?>" class="border-top pt-3 mb-3">
-                    <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
-                    <label class="form-label" for="revoke-reason-<?= $id ?>">Lý do thu hồi (10–500 ký tự)</label>
-                    <div class="d-flex flex-wrap gap-2">
-                        <input id="revoke-reason-<?= $id ?>" name="reason" class="form-control" minlength="10" maxlength="500" required>
-                        <button type="submit" class="btn btn-danger">Thu hồi coupon</button>
-                    </div>
-                    <small class="text-muted">Ngừng phát hành ngay, giữ lịch sử và ngày hiệu lực; Merchant không thể bật lại.</small>
-                </form>
+                <?php if ($coupon['moderation_status'] === 'APPROVED' && $coupon['publication_status'] !== 'ARCHIVED'): ?>
+                    <form method="post" action="<?= e(url('/admin/coupons/' . $id . '/revoke')) ?>" class="border-top pt-3 mb-3">
+                        <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
+                        <label class="form-label" for="revoke-reason-<?= $id ?>">Lý do thu hồi (10–500 ký tự)</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <input id="revoke-reason-<?= $id ?>" name="reason" class="form-control" minlength="10" maxlength="500"
+                                required>
+                            <button type="submit" class="btn btn-danger">Thu hồi coupon</button>
+                        </div>
+                        <small class="text-muted">Ngừng phát hành ngay, giữ lịch sử và ngày hiệu lực; Merchant không thể bật
+                            lại.</small>
+                    </form>
                 <?php endif; ?>
                 <form method="post" action="<?= e(url('/admin/coupons/' . $id . '/expire')) ?>" class="border-top pt-3 mb-2"
-                    onsubmit="return confirm('Buộc hết hạn coupon #<?= $id ?>?');">
+                    data-confirm-submit="Buộc hết hạn coupon #<?= $id ?>?">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                     <label class="form-label" for="expire-reason-<?= $id ?>">Lý do buộc hết hạn (10–500 ký tự)</label>
                     <div class="d-flex flex-wrap gap-2">
-                        <input id="expire-reason-<?= $id ?>" name="reason" class="form-control flex-grow-1"
-                            style="max-width:640px" minlength="10" maxlength="500" required
-                            placeholder="Ví dụ: Merchant thông báo ngừng ưu đãi">
+                        <input id="expire-reason-<?= $id ?>" name="reason" class="form-control flex-grow-1 csp-max-w-640"
+                            minlength="10" maxlength="500" required placeholder="Ví dụ: Merchant thông báo ngừng ưu đãi">
                         <button type="submit" class="btn btn-outline-warning"
                             <?= (string)$coupon['moderation_status'] !== 'APPROVED' || (string)$coupon['publication_status'] !== 'ENABLED' ? 'disabled' : '' ?>>Buộc
                             hết hạn</button>
                     </div>
                 </form>
                 <form method="post" action="<?= e(url('/admin/coupons/' . $id . '/delete')) ?>" class="pt-2"
-                    onsubmit="return confirm('Xóa mềm coupon #<?= $id ?>? Thao tác này không hiển thị coupon nữa.');">
+                    data-confirm-submit="Xóa mềm coupon #<?= $id ?>? Thao tác này không hiển thị coupon nữa.">
                     <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                     <label class="form-label" for="delete-reason-<?= $id ?>">Lý do xóa (10–500 ký tự)</label>
                     <div class="d-flex flex-wrap gap-2">
-                        <input id="delete-reason-<?= $id ?>" name="reason" class="form-control flex-grow-1"
-                            style="max-width:640px" minlength="10" maxlength="500" required
-                            placeholder="Ví dụ: Coupon giả hoặc vi phạm quy định">
+                        <input id="delete-reason-<?= $id ?>" name="reason" class="form-control flex-grow-1 csp-max-w-640"
+                            minlength="10" maxlength="500" required placeholder="Ví dụ: Coupon giả hoặc vi phạm quy định">
                         <button type="submit" class="btn btn-outline-danger">Xóa mềm</button>
                     </div>
                 </form>
@@ -98,3 +98,4 @@ use App\Core\Session; ?>
             href="<?= e(url('/admin/coupons?' . http_build_query(['status' => $status, 'page' => $page + 1]))) ?>">Trang
             sau</a><?php endif; ?>
 </nav>
+<script src="<?= e(url('/assets/js/csp/page-actions.js')) ?>" defer></script>

@@ -25,23 +25,33 @@ $workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPa
     <link rel="stylesheet" href="<?= e(url('/assets/vendor/fontawesome/css/all.min.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('/css/style.css')) ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/design-system.css')) ?>">
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'discovery.css')): ?>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/discovery.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/discovery.css') ?>">
+    <?php endif; ?>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/member.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/member.css') ?>">
     <script src="<?= e(url('/assets/js/member.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/member.js') ?>"
         defer></script>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'discovery.js')): ?>
     <script
         src="<?= e(url('/assets/js/discovery.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/discovery.js') ?>"
         defer></script>
+    <?php endif; ?>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'editorial.css')): ?>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/editorial.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/editorial.css') ?>">
+    <?php endif; ?>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'editorial.js')): ?>
     <script
         src="<?= e(url('/assets/js/editorial.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/editorial.js') ?>"
         defer></script>
+    <?php endif; ?>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'campaign-clock.js')): ?>
     <script
         src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/campaign-clock.js') ?>"
         defer></script>
+    <?php endif; ?>
     <script src="<?= e(url('/assets/js/campaign-gallery.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/campaign-gallery.js') ?>" defer></script>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/product.css') ?>">
@@ -49,9 +59,13 @@ $workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPa
         href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/release.css') ?>">
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/integration.css') ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/category-navigation.css') ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/refinement.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/refinement.css') ?>">
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'category-navigation.css')): ?>
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
+    <?php endif; ?>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/refinement.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/refinement.css') ?>">
 </head>
 
 <body class="unified-page<?= $workspaceArea ? ' workspace-page' : '' ?>">
@@ -79,9 +93,17 @@ $workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPa
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= e(url('/assets/js/coupon-events.js')) ?>"></script>
     <script src="<?= e(asset('/js/app.js')) ?>"></script>
-    <script src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>"></script>
-    <script src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>"></script><?php foreach (($pageScripts ?? []) as $pageScript): ?><script
-            src="<?= e(asset((string)$pageScript)) ?>"></script><?php endforeach; ?>
+    <script
+        src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>">
+    </script>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'category-picker.js')): ?>
+    <script
+        src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>">
+    </script>
+    <?php endif; ?>
+    <?php foreach (($pageScripts ?? []) as $pageScript): ?>
+    <script src="<?= e(asset((string)$pageScript)) ?>"></script>
+    <?php endforeach; ?>
     <?php if (!$currentUser) require __DIR__ . '/../auth/auth-modal.php'; ?>
     <?php if ($workspaceArea): ?><script src="<?= e(url('/assets/js/workspace.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/workspace.js') ?>" defer></script><?php endif; ?>
 <script src="<?= e(url('/assets/js/turnstile.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/turnstile.js') ?>" defer></script>

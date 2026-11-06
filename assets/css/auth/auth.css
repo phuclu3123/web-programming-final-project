@@ -229,11 +229,8 @@
   box-shadow: 0 24px 70px rgba(23, 43, 77, 0.18);
 }
 
-#loginModal h1,
-#loginModal h2,
-#loginModal h3,
-.auth-page h1,
-.auth-page h2 {
+#loginModal h1, #loginModal h2, #loginModal h3,
+.auth-page h1, .auth-page h2 {
   color: var(--ink);
   font-family: var(--bs-body-font-family);
   font-weight: 800;
@@ -259,6 +256,7 @@
   border-color: #91a8ee;
   box-shadow: 0 0 0 4px rgba(49, 86, 201, 0.09);
 }
+
 /* Font Awesome webfont icons: one authoritative rule per control. */
 #loginModal .auth-field-icon {
     display: block;

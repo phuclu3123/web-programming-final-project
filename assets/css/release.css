@@ -106,14 +106,11 @@ button:disabled { cursor:wait; opacity:.65; }
 .hero-carousel-dots > button { width:24px; min-height:28px; }
 @media(prefers-reduced-motion:reduce) { .brand-section .brand-track,.brand-section:hover .brand-track,.brand-section:focus-within .brand-track { animation:none; }.brand-section .brand-track { width:100%; }.brand-section .brand-group { flex-wrap:wrap; justify-content:center; gap:8px; padding:0; }.brand-section .brand-group[aria-hidden] { display:none; }.brand-section .brand-window { mask-image:none; } }
 
-/* =========================================================
-   COUPONHUB — UI REFINEMENT
+/* COUPONHUB — UI REFINEMENT
    Mục tiêu: hiện đại, chuyên nghiệp, đồng bộ
-   Chỉ thay đổi giao diện, không thay đổi chức năng
-========================================================= */
+   Chỉ thay đổi giao diện, không thay đổi chức năng */
 
 /* 1. FONT CHỮ VÀ HỆ THỐNG MÀU */
-
 :root {
     --ch-brand: #3454d6;
     --ch-brand-dark: #2442b8;
@@ -133,16 +130,12 @@ button:disabled { cursor:wait; opacity:.65; }
 }
 
 /* Dùng chung một hệ font cho toàn bộ giao diện */
-body,
-button,
-input,
-select,
-textarea {
-    font-family:
-        "Inter",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+body, button, input, select, textarea {
+  font-family:
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
 }
 
 body {
@@ -154,43 +147,36 @@ body {
 }
 
 /* Tiêu đề dùng cùng font, khác kích thước và độ đậm */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    color: var(--ch-heading);
-    font-family:
-        "Inter",
-        "Segoe UI",
-        Arial,
-        sans-serif;
-    font-weight: 750;
-    line-height: 1.3;
-    letter-spacing: -0.035em;
+h1, h2, h3, h4, h5, h6 {
+  color: var(--ch-heading);
+  font-family:
+    "Inter",
+    "Segoe UI",
+    Arial,
+    sans-serif;
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.035em;
 }
 
 p {
-    line-height: 1.75;
+  line-height: 1.75;
 }
 
-small,
-.text-muted {
-    color: var(--ch-muted);
+small, .text-muted {
+  color: var(--ch-muted);
 }
 
 /* 2. NỀN VÀ KHUNG NỘI DUNG */
 
-.public-header .container-wide,
-.container-wide {
-    width: min(100% - 40px, 1320px);
-    margin-inline: auto;
+.public-header .container-wide, .container-wide {
+  width: min(100% - 40px, 1320px);
+  margin-inline: auto;
 }
 
 .editorial-home {
-    padding-top: 28px;
-    padding-bottom: 40px;
+  padding-top: 28px;
+  padding-bottom: 40px;
 }
 
 .member-main {
@@ -198,8 +184,7 @@ small,
 }
 
 @media (max-width: 640px) {
-    .public-header .container-wide,
-    .container-wide {
+    .public-header .container-wide, .container-wide {
         width: min(100% - 28px, 1320px);
     }
 
@@ -209,7 +194,6 @@ small,
 }
 
 /* 3. HEADER VÀ MENU */
-
 .public-header {
     background: rgba(255, 255, 255, 0.96);
     border-bottom: 1px solid var(--ch-border);
@@ -280,7 +264,6 @@ small,
 }
 
 /* 4. NÚT THƯƠNG HIỆU */
-
 .btn-brand {
     border: 1px solid var(--ch-brand);
     border-radius: 11px;
@@ -301,7 +284,6 @@ small,
 }
 
 /* 5. TIÊU ĐỀ CÁC KHU VỰC */
-
 .editorial-home .section-heading h2,
 .editorial-home .editorial-section-head h2,
 .editorial-home .discovery-section h2 {
@@ -342,7 +324,6 @@ small,
 }
 
 /* 6. BANNER ƯU ĐÃI */
-
 .editorial-home .studio-hero-art {
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -433,7 +414,6 @@ small,
 }
 
 /* 7. THẺ COUPON */
-
 .editorial-home .coupon-card {
     overflow: hidden;
     border: 1px solid var(--ch-border);
@@ -611,7 +591,6 @@ textarea:focus {
   --ui-blue: #3156c9;
   --ui-surface: #ffffff;
   --ui-radius: 18px;
-
   --ui-font:
     "Inter",
     "Segoe UI",
@@ -887,6 +866,7 @@ h3, .h3 {
 .category-directory-visual figcaption * {
   color: #ffffff !important;
 }
+
 /* BỎ KHUNG & PHÓNG TO SỐ 01, 02, 03... BẰNG CHIỀU CAO 2 DÒNG NỘI DUNG */
 .category-directory-link small {
   font-size: 34px !important;         /* Phóng to số bằng chiều cao 2 dòng chữ */
@@ -1056,9 +1036,8 @@ span.eyebrow,
 }
 
 /* 2. CHO Ô NHẬP LỆNH NẰM TRỰC TIẾP TRÊN NỀN KHUNG CARD NGOÀI */
-.couponhub-search-form input[type="text"],
-.couponhub-search-form input[type="search"],
-.couponhub-search-form input {
+/* Preserve the Explore input style only; Community uses one outer frame. */
+.editorial-home .hero-search > input[name="q"] {
   background: #f8fafc !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 999px !important;
@@ -1070,14 +1049,14 @@ span.eyebrow,
   transition: all 0.2s ease !important;
 }
 
-/* Hiệu ứng khi bấm gõ vào ô tìm kiếm */
-.couponhub-search-form input:focus {
+/* Explore input focus; Community uses focus-within on its outer wrapper. */
+.editorial-home .hero-search > input[name="q"]:focus {
   background: #ffffff !important;
   border-color: #1d4ed8 !important;
   box-shadow: 0 0 0 4px rgba(29, 78, 216, 0.12) !important;
 }
-/* XÓA VIỀN DƯỚI THANH TÌM KIẾM & THAY ICON KÍNH LÚP VÀO NÚT TÌM KIẾM */
 
+/* XÓA VIỀN DƯỚI THANH TÌM KIẾM & THAY ICON KÍNH LÚP VÀO NÚT TÌM KIẾM */
 /* 1. XÓA VIỀN / LẰN KẺ GẠCH MỜ DƯỚI THANH TÌM KIẾM */
 .couponhub-search-form > div:first-child,
 .couponhub-search-form hr,
@@ -1095,15 +1074,14 @@ span.eyebrow,
 }
 
 /* 3. ẨN MŨI TÊN (->) CŨ TRONG NÚT TÌM KIẾM */
-.couponhub-search-form button svg,
-.couponhub-search-form button .icon {
+.couponhub-search-form .couponhub-search-action > svg,
+.couponhub-search-form .couponhub-search-action > .icon {
   display: none !important;
 }
 
-/* Phase 9B: All search-action icons are explicit self-hosted Font Awesome elements.
-   Keep this rule to neutralize the retired generated SVG icon on ALL form buttons
-   (submit, category picker and modal close), not just the submit button. */
-.couponhub-search-form button::after {
+/* Only the search submit has a retired generated SVG glyph.
+   The category dialog's buttons must own their pseudo-elements. */
+.couponhub-search-form .couponhub-search-action::after {
   content: none !important;
   display: none !important;
 }
@@ -1114,22 +1092,18 @@ span.eyebrow,
 .discovery-toolbar div,
 .discovery-filter-form div,
 .couponhub-search-form div,
-.category-pick-tabs,
-.discovery-tabs {
+.category-pick-tabs {
   border-top: none !important;
   border-bottom: none !important;
   box-shadow: none !important;
 }
 
-/* 2. Xóa các lằn kẻ tạo bằng phần tử ảo (::after / ::before) */
-.discovery-section *::after,
-.discovery-section *::before,
-.discovery-toolbar *::after,
-.discovery-toolbar *::before {
-  display: none !important;
-  content: none !important;
-  border: none !important;
-  height: 0 !important;
+/* Do not blank every pseudo-element in discovery/filter regions.
+   Font Awesome renders icons through ::before. Hide only this legacy heading
+   ornament, which the previous blanket reset had also hidden. */
+.editorial-home .discovery-section .section-heading h2::after {
+  display: none;
+  content: none;
 }
 
 /* 3. Ẩn thẻ kẻ ngang <hr> nếu có */
@@ -1232,8 +1206,8 @@ span.eyebrow,
   border-radius: 50% !important;
   border: 1px solid #ffffff !important;
 }
-/* ÉP NÚT CHUÔNG VÀ NÚT TÌM KIẾM GIỐNG HỆT NHAU 100% */
 
+/* ÉP NÚT CHUÔNG VÀ NÚT TÌM KIẾM GIỐNG HỆT NHAU 100% */
 /* 1. Ép cả 2 nút chung khung kích thước, viền và màu nền */
 .header-account .header-search,
 .header-account .header-notification {

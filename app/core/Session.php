@@ -8,7 +8,7 @@ use RuntimeException;
 
 final class Session
 {
-    // ---- SESSION DÙNG CHUNG: login/API/trang HTML dùng cùng cấu hình ----
+    // SESSION DÙNG CHUNG: login/API/trang HTML dùng cùng cấu hình
     private const IDLE_SECONDS = 1800; // 30 phút không thao tác.
     private const MAX_SECONDS = 28800; // Tối đa 8 giờ cho một phiên đăng nhập.
     private const AUTH_SCHEMA = 'quang-integration-20261016';
@@ -68,10 +68,19 @@ final class Session
             return 0;
         }
         $now = time();
+        $authenticatedAt = (int) ($_SESSION['authenticated_at'] ?? 0);
+        $expiresAt = (int) ($_SESSION['expires_at'] ?? 0);
+        $absoluteLimit = (int) config('auth.session_lifetime', self::MAX_SECONDS);
+        if (in_array($_SESSION['user_role'] ?? '', ['ADMIN', 'MERCHANT'], true)) $absoluteLimit = min($absoluteLimit, self::MAX_SECONDS);
+        // Enforce the current absolute policy even for sessions established before
+        // the policy was tightened. Never let a legacy cookie extend the deadline.
+        $effectiveExpiry = $authenticatedAt > 0 && $expiresAt > 0
+            ? min($expiresAt, $authenticatedAt + $absoluteLimit)
+            : 0;
         if (
             $now - (int) ($_SESSION['last_activity'] ?? 0) > (in_array($_SESSION['user_role'] ?? '', ['ADMIN', 'MERCHANT'], true)
                 ? min(self::IDLE_SECONDS, (int)config('auth.session_idle', self::IDLE_SECONDS)) : (int)config('auth.session_idle', self::IDLE_SECONDS))
-            || $now >= (int)($_SESSION['expires_at'] ?? ((int)($_SESSION['authenticated_at'] ?? 0) + self::MAX_SECONDS))
+            || $now >= $effectiveExpiry
         ) {
             self::clearAuthentication();
             return 0;
