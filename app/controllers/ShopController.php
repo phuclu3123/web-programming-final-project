@@ -46,7 +46,7 @@ final class ShopController extends Controller
             foreach ($input as $key => $_) $input[$key] = $request->post($key);
             $errors = $this->validate($input);
             if ($errors === []) {
-                // ---- OWNER GUARD: sửa merchant_id trong request không đổi được chủ ----
+                // OWNER GUARD: sửa merchant_id trong request không đổi được chủ
                 Auth::requireMerchantOwner(Database::connection(), $actor, (int) $input['merchant_id']);
                 try {
                     $id = $model->create((int) $actor['id'], $input);

@@ -12,7 +12,7 @@
             yêu cầu Merchant</a>.</div>
 <?php else: ?>
     <form method="get" class="form-inline mb-4"><label class="me-2">Đang xem:</label><select aria-label="Cửa hàng"
-            class="form-control me-2" name="merchant_id" onchange="this.form.submit()"><?php foreach ($shops as $shop): ?>
+            class="form-control me-2" name="merchant_id" data-auto-submit><?php foreach ($shops as $shop): ?>
                 <option value="<?= (int)$shop['id'] ?>"
                     <?= $merchant && (int)$merchant['id'] === (int)$shop['id'] ? 'selected' : '' ?>>
                     <?= e((string)$shop['name']) ?></option><?php endforeach; ?>
@@ -37,3 +37,4 @@
                 Campaign</a></div>
     </div>
 <?php endif; ?>
+<script src="<?= e(url('/assets/js/csp/page-actions.js')) ?>" defer></script>

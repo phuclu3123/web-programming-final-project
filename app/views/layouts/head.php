@@ -16,39 +16,61 @@ $demo = $demo ?? false; ?>
   <link rel="stylesheet" href="<?= e(url('/assets/vendor/fontawesome/css/all.min.css')) ?>">
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="stylesheet" href="assets/css/design-system.css">
-  <link rel="stylesheet"
-    href="<?= e(url('/assets/css/discovery.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/discovery.css') ?>">
-  <script
-    src="<?= e(url('/assets/js/discovery.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/discovery.js') ?>"
-    defer></script>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'discovery.css')): ?>
+    <link rel="stylesheet"
+      href="<?= e(url('/assets/css/discovery.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/discovery.css') ?>">
+  <?php endif; ?>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'discovery.js')): ?>
+    <script
+      src="<?= e(url('/assets/js/discovery.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/discovery.js') ?>"
+      defer></script>
+  <?php endif; ?>
   <link rel="stylesheet"
     href="<?= e(url('/assets/css/member.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/member.css') ?>">
   <script src="<?= e(url('/assets/js/member.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/member.js') ?>"
     defer></script>
-  <link rel="stylesheet"
-    href="<?= e(url('/assets/css/editorial.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/editorial.css') ?>">
-  <script
-    src="<?= e(url('/assets/js/editorial.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/editorial.js') ?>"
-    defer></script>
-  <script
-    src="<?= e(url('/assets/js/hero-carousel.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/hero-carousel.js') ?>"
-    defer></script>
-  <script
-    src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/campaign-clock.js') ?>"
-    defer></script>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'editorial.css')): ?>
+    <link rel="stylesheet"
+      href="<?= e(url('/assets/css/editorial.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/editorial.css') ?>">
+  <?php endif; ?>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'editorial.js')): ?>
+    <script
+      src="<?= e(url('/assets/js/editorial.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/editorial.js') ?>"
+      defer></script>
+  <?php endif; ?>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'hero-carousel.js')): ?>
+    <script
+      src="<?= e(url('/assets/js/hero-carousel.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/hero-carousel.js') ?>"
+      defer></script>
+  <?php endif; ?>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'campaign-clock.js')): ?>
+    <script
+      src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/campaign-clock.js') ?>"
+      defer></script>
+  <?php endif; ?>
   <link rel="stylesheet"
     href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/product.css') ?>">
   <link rel="stylesheet"
     href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/release.css') ?>">
   <link rel="stylesheet"
     href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/integration.css') ?>">
-  <link rel="stylesheet" href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
+  <link rel="stylesheet"
+    href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
   <script src="<?= e(url('/assets/js/coupon-events.js')) ?>" defer></script>
   <script src="assets/js/app.js?v=<?= filemtime(__DIR__ . '/../../../assets/js/app.js') ?>" defer></script>
-  <script src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>" defer></script>
-  <link rel="stylesheet" href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
-  <script src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>" defer></script>
+  <script
+    src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>"
+    defer></script>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'category-navigation.css')): ?>
+    <link rel="stylesheet"
+      href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
+  <?php endif; ?>
+  <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'category-picker.js')): ?>
+    <script
+      src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>"
+      defer></script>
+  <?php endif; ?>
 </head>
 
 <body data-page="<?= e($role) ?>" data-demo="<?= $demo ? 'true' : 'false' ?>">

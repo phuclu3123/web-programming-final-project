@@ -151,9 +151,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .search-clear { width: 30px; height: 30px; display: inline-grid; place-items: center; flex: 0 0 auto; border-radius: 50%; color: #5d606a; font-size: 19px; }
 .search-clear:hover { background: #f0f1f3; }
 .hero-tip { margin-top: 11px; color: #7f838e; font-size: 11px; }
-.hero-proof { display: flex; flex-wrap: wrap; gap: 11px 20px; margin-top: 29px; color: #c3c6ce; font-size: 11px; }
-.hero-proof span { display: inline-flex; align-items: center; gap: 6px; }
-.hero-proof .icon { width: 15px; height: 15px; color: #8fa5ff; }
+
+
+
 
 .hero-compact .hero-art { position: relative; min-width: 0; min-height: 680px; display: grid; place-items: center; padding: clamp(42px,5vw,76px); background: transparent; transform: none; }
 .hero-art::before { content: ""; position: absolute; width: min(42vw,620px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(86,111,232,.22), rgba(86,111,232,0) 68%); filter: blur(5px); }
@@ -198,12 +198,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 /* Discovery */
 #discovery-results { padding-top: 0; }
 .market-snapshot { display: grid; grid-template-columns: repeat(3,minmax(150px,.78fr)) minmax(270px,1.36fr); align-items: stretch; gap: 0; margin: 0 0 82px; padding: 25px 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; overflow: visible; }
-.snapshot-card { min-height: 95px; display: flex; flex-direction: column; justify-content: flex-end; padding: 13px 24px; border-right: 1px solid #dedfe4; background: transparent; color: var(--ink); overflow: hidden; }
-.snapshot-card:first-child { padding-left: 0; }
-.snapshot-card small { display: flex; align-items: center; gap: 8px; margin-bottom: auto; color: #7f8490; font-size: 8px; font-weight: 780; letter-spacing: .13em; }
-.snapshot-card small::before { content: ''; width: 16px; height: 2px; border-radius: 99px; background: #b5bdd3; }
-.snapshot-card strong { display: block; margin-top: 18px; color: #24262d; font-size: 34px; font-weight: 730; line-height: .9; letter-spacing: -.06em; }
-.snapshot-card span { display: block; margin-top: 8px; color: #7b7f89; font-size: 10px; }
+
+
+
+
+
+
 .snapshot-live { background: transparent; box-shadow: none; }
 .snapshot-live small { color: var(--blue-dark); }
 .snapshot-live small::before { background: var(--blue); }
@@ -520,12 +520,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .site-nav { gap: 18px; }
   .hero-compact .hero-box { grid-template-columns: minmax(0,1fr); }
   .hero-compact .hero-copy { padding: 62px max(34px,7vw) 52px; text-align: center; }
-  .hero .eyebrow, .hero-proof { justify-content: center; }
+  .hero .eyebrow { justify-content: center; }
   .hero-compact h1, .hero-compact p, .hero-search { margin-left: auto; margin-right: auto; }
   .hero-compact .hero-art { min-height: 560px; padding: 30px max(28px,7vw) 44px; }
   .hero-stage { max-width: 580px; min-height: 470px; }
   .market-snapshot { grid-template-columns: repeat(2,minmax(0,1fr)); }
-  .snapshot-card { border-bottom: 1px solid #dedfe4; }
   .snapshot-partners { border-right: 0; }
   .snapshot-note { padding-left: 24px; }
   .snapshot-note p { max-width: none; }
@@ -555,8 +554,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .hero-stage .hero-feature { min-height: 395px; padding: 29px; border-radius: 25px; }
   .hero-feature-saving { font-size: clamp(61px,12vw,82px); }
   .market-snapshot { margin: 18px 0 65px; }
-  .snapshot-card { min-height: 116px; }
-  .snapshot-card strong { font-size: 30px; }
   .section-heading h2 { font-size: 31px; }
   .category-strip { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 7px; scrollbar-width: thin; }
   .category-chip { flex: 0 0 auto; }
@@ -590,7 +587,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .brand-mark { width: 30px; height: 30px; }
   .header-account .btn .icon { display: none; }
   .hero-compact .hero-copy { padding: 47px 20px 42px; text-align: left; }
-  .hero .eyebrow, .hero-proof { justify-content: flex-start; }
+  .hero .eyebrow { justify-content: flex-start; }
   .hero-compact h1 { font-size: clamp(41px,10vw,53px); }
   .hero-search { flex-wrap: wrap; padding: 6px; border-radius: 14px; }
   .hero-search input { width: auto; min-width: 110px; flex: 1 1 0; }
@@ -608,7 +605,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .hero-feature-facts { gap: 12px; }
   .hero-feature-bottom { align-items: end; }
   .market-snapshot { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0; }
-  .snapshot-card { min-height: 112px; padding: 16px; }
   .snapshot-needs { grid-column: 1 / -1; border-right: 0; }
   .snapshot-note { grid-column: 1 / -1; min-height: 88px; padding-left: 16px; }
   .section-heading { align-items: start; }

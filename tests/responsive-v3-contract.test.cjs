@@ -24,8 +24,17 @@ test('responsive category directory does not force two columns on tablets', () =
 test('community search has one semantic submit button and explicit search icon', () => {
   const html = read('app/views/coupons/index.php');
   const css = read('assets/css/integration.css');
-  assert.match(html, /class="btn btn-brand community-search-submit couponhub-search-action"\s*type="submit" aria-label="Tìm kiếm ưu đãi"/);
-  assert.match(html, /community-search-submit-label">Tìm kiếm<\/span><i class="fa-solid fa-magnifying-glass" aria-hidden="true"><\/i>/);
+  // Inspect the submit control independently of indentation and line wrapping.
+  const buttons = [...html.matchAll(/<button\b[^>]*>[\s\S]*?<\/button>/g)]
+    .map(match => match[0])
+    .filter(button => /class="[^"]*\bcommunity-search-submit\b[^"]*"/.test(button));
+  assert.equal(buttons.length, 1, 'Exactly one community search submit control');
+  const button = buttons[0];
+  assert.match(button, /class="btn btn-brand community-search-submit couponhub-search-action"/);
+  assert.match(button, /type="submit"/);
+  assert.match(button, /aria-label="Tìm kiếm ưu đãi"/);
+  assert.match(button, /<span class="community-search-submit-label">Tìm kiếm<\/span>/);
+  assert.match(button, /<i\s+class="fa-solid fa-magnifying-glass" aria-hidden="true"><\/i>/);
   assert.match(css, /\.community-search-input > \.community-search-submit\s*\{[^}]*min-height:\s*48px/);
   assert.match(css, /\.community-search-input > \.community-search-submit:focus-visible/);
 });

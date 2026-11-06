@@ -2,10 +2,10 @@ const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
-const source=fs.readFileSync(__dirname+'/../app/views/campaigns/show.php','utf8').match(/<script>([\s\S]*?)<\/script>/)[1];
+const source=fs.readFileSync(__dirname+'/../assets/js/csp/campaign-filter.js','utf8');
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
 function setup(fetcher) {
-  const node=(value='')=>({value,handlers:{},style:{},attributes:{},innerHTML:'old results',textContent:'',hidden:true,
+  const node=(value='')=>({value,handlers:{},style:{},classList:{add(){},remove(){}},attributes:{},innerHTML:'old results',textContent:'',hidden:true,
     addEventListener(k,fn){this.handlers[k]=fn;},setAttribute(k,v){this.attributes[k]=v;},removeAttribute(k){delete this.attributes[k];}});
   const nodes={
     'campaign-coupon-filter':node(),'campaign-category':node('3'),'campaign-channel':node('OFFLINE'),

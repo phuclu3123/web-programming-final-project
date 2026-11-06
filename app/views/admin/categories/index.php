@@ -60,7 +60,7 @@ use App\Core\Session; ?>
                                 type="submit"><?= (int)$category['is_active'] === 1 ? 'Tắt danh mục' : 'Bật danh mục' ?></button>
                         </form>
                         <form method="post" action="<?= e(url('/admin/categories/' . $id . '/delete')) ?>"
-                            onsubmit="return confirm('Chỉ xóa được danh mục chưa dùng trong Coupon/Article. Tiếp tục?');">
+                            data-confirm-submit="Chỉ xóa được danh mục chưa dùng trong Coupon/Article. Tiếp tục?">
                             <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>">
                             <button class="btn btn-sm btn-outline-danger" type="submit">Xóa nếu chưa dùng</button>
                         </form>
@@ -70,3 +70,4 @@ use App\Core\Session; ?>
         <?php endforeach; ?>
     </div>
 </div>
+<script src="<?= e(url('/assets/js/csp/page-actions.js')) ?>" defer></script>

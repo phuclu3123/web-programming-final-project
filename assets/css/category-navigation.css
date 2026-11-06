@@ -1,4 +1,4 @@
-/* Phase 9B — shared search actions and scalable category chooser.
+/* Shared search actions and scalable category chooser.
    All mobile transformations require JS enhancement; without JS category filters wrap. */
 .community-catalog .community-board .community-search-input,
 .editorial-home .discovery-section .hero-search.couponhub-search-form {
@@ -123,7 +123,7 @@
   color: #fff;
 }
 
-/* Phase 9C: progressively disclose category chips on mobile/tablet.
+/* Progressively disclose category chips on mobile/tablet.
    Keep the source anchors/radios for forms and browser fallback. */
 @media (max-width: 991.98px) {
   .couponhub-category-tools[data-category-picker-ready="true"] {
@@ -316,7 +316,7 @@
   }
 }
 
-/* Phase 9D: shared modal and desktop refinement across Explore, Community, Categories. */
+/* Shared modal and desktop refinement across Explore, Community, Categories. */
 .couponhub-category-dialog[open] {
   display: flex;
   flex-direction: column;
@@ -368,7 +368,7 @@
   height: 44px;
   font-size: 17px;
 }
-/* Release.css hides ALL pseudo-glyphs inside Explore; recover self-hosted FA only inside this dialog. */
+/* Keep an explicit Font Awesome glyph contract across all three page layouts. */
 .couponhub-category-dialog .fa-solid::before {
   content: var(--fa) !important;
   display: inline-block !important;
@@ -590,30 +590,13 @@
   .couponhub-category-dialog .couponhub-category-option { transition: none; }
 }
 
-/* Phase 9D follow-up — keep the shared category dialog visually identical when
-   it is nested inside the Community GET search form. Older release.css rules
-   target every .couponhub-search-form input and descendant div with !important;
-   limit our corrections to the dialog instead of changing other search forms. */
-.couponhub-category-dialog .couponhub-category-dialog-search > input[type="search"] {
-  flex: 0 1 auto !important;
-  min-width: 0;
-  width: 100%;
-  height: 48px;
-  padding: 0 15px 0 43px !important;
-  border: 1px solid #d3deed !important;
-  border-radius: 13px !important;
-  background: #f7f9fd !important;
-  color: #15284b !important;
-  font-size: 14px !important;
-  line-height: normal;
-  outline: none !important;
-  box-shadow: none !important;
-  transition: border-color .16s ease, box-shadow .16s ease !important;
-}
-.couponhub-category-dialog .couponhub-category-dialog-search > input[type="search"]:focus {
-  border-color: #315ecb !important;
-  background: #f7f9fd !important;
-  box-shadow: 0 0 0 3px rgba(49, 94, 203, .16) !important;
+/* Phase 9G-B: the host form now styles only its own search input.
+   The shared dialog inherits its single component rule above, without
+   a second block of !important input overrides. Preserve the footer border
+   until the legacy descendant-div reset is scoped in a separate audit. */
+.couponhub-category-dialog .couponhub-category-dialog-search > input:focus {
+  border-color: #315ecb;
+  box-shadow: 0 0 0 3px rgba(49, 94, 203, .16);
 }
 .couponhub-category-dialog .couponhub-category-dialog-footer {
   border-top: 1px solid #e6edf5 !important;
@@ -683,8 +666,7 @@
     background: #2856cc;
     color: #fff;
   }
-  /* release.css hides every ::before under discovery-section; restore only
-     the Font Awesome chevron in the shared desktop category control. */
+  /* Keep the shared desktop category chevron explicit across layouts. */
   .editorial-home .discovery-section .couponhub-category-tools .couponhub-category-open > .fa-solid::before {
     display: inline-block !important;
     content: var(--fa) !important;
