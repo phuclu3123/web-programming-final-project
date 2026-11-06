@@ -1,9 +1,12 @@
-<?php $guides = productGuides();
+<?php $publishedArticles=array_column($articles,null,'slug');
+$guides=array_intersect_key(productGuides(),$publishedArticles);
+foreach($guides as $slug=>&$item){$item['title']=$publishedArticles[$slug]['title'];$item['summary']=$publishedArticles[$slug]['summary'];}unset($item);
+$articles=array_values(array_filter($articles,static fn($a)=>!isset($guides[$a['slug']])));
 $guideGroups = ['doc-dieu-kien-ma' => 'dung-ma', 'so-sanh-muc-tiet-kiem' => 'tinh-toan', 'kiem-chung-cung-cong-dong' => 'cong-dong']; ?>
 <div class="editorial-article-page studio-journal">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Góc đọc</span></div>
     <header class="journal-page-heading"><h1>Góc đọc.</h1></header>
-    <?php if ($guideTopic === 'all'): ?>
+    <?php if ($guideTopic === 'all' && isset($guides['doc-dieu-kien-ma'])): ?>
     <section class="journal-lead" aria-labelledby="journal-lead-title">
         <div class="journal-lead-copy">
             <span>4 phút đọc</span>
