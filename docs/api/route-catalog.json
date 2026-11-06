@@ -213,6 +213,48 @@
   },
   {
     "method": "GET",
+    "path": "/api/articles/{id}/comments",
+    "roles": [],
+    "handler": "App\\Controllers\\ArticleCommentController::index"
+  },
+  {
+    "method": "POST",
+    "path": "/api/articles/{id}/comments",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\ArticleCommentController::store"
+  },
+  {
+    "method": "POST",
+    "path": "/api/article-comments/{id}/delete",
+    "roles": [
+      "USER",
+      "MERCHANT",
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\ArticleCommentController::delete"
+  },
+  {
+    "method": "GET",
+    "path": "/admin/article-comments",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\ArticleCommentController::moderation"
+  },
+  {
+    "method": "POST",
+    "path": "/admin/article-comments/{id}/status",
+    "roles": [
+      "ADMIN"
+    ],
+    "handler": "App\\Controllers\\ArticleCommentController::moderate"
+  },
+  {
+    "method": "GET",
     "path": "/campaign-calendar",
     "roles": [],
     "handler": "App\\Controllers\\HolidayController::index"

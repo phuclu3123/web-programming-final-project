@@ -10,6 +10,7 @@ def roles(path,method):
  if path=='/merchant/apply':return ['USER','MERCHANT']
  if path=='/shop.php' or path=='/merchant' or path.startswith('/merchant/'):return ['MERCHANT']
  if path=='/coupons' and method=='POST':return ['USER','MERCHANT']
+ if method=='POST' and re.match(r'^/api/(articles/[^/]+/comments|article-comments/[^/]+/delete)$',path):return ['USER','MERCHANT','ADMIN']
  if path in ['/notifications','/notifications/read','/dashboard','/account','/account/password','/my-coupons','/saved-coupons','/coupons/create'] or re.match(r'^/(saved-coupons/[^/]+/(remove|save)|api/coupons/[^/]+/(favorite|vote|comments|reports))$',path):return ['USER','MERCHANT','ADMIN']
  return []
 fields={
@@ -22,7 +23,7 @@ fields={
  'attach':['coupon_id'], 'detach':[], 'read':[], 'resolve':['action','note'],
 }
 coupon_fields=['merchant_id','category_id','title','code','description','terms','discount_type','discount_value','cashback_unit','min_order_amount','max_discount_amount','usage_channel','promotion_url','starts_at','ends_at']
-spec={'openapi':'3.0.3','info':{'title':'CouponHub HTTP API and form contracts','version':'2026.11.06','description':'Actual PHP routes. Session cookie authentication, CSRF on every write. Browser form endpoints may return redirects/HTML; JSON APIs are explicitly marked. No bearer JWT is required. OAuth/Resend/ACCESSTRADE real-provider acceptance requires your credentials.'},'servers':[{'url':'http://localhost:8000/CouponHub_UI'}], 'paths':{},'components':{'securitySchemes':{'SessionCookie':{'type':'apiKey','in':'cookie','name':'COUPONHUBSESSID','description':'Obtain via GET /login followed by credential login. Browser sends its HttpOnly cookie automatically.'}},'schemas':{'Error':{'type':'object','properties':{'success':{'type':'boolean','example':False},'message':{'type':'string'},'errors':{'type':'object','additionalProperties':{'type':'string'}}}}}}}
+spec={'openapi':'3.0.3','info':{'title':'CouponHub HTTP API and form contracts','version':'2026.11.06','description':'Actual PHP routes. Session cookie authentication, CSRF on every write. Browser form endpoints may return redirects/HTML; JSON APIs are explicitly marked. No bearer JWT is required. OAuth/Resend/ACCESSTRADE real-provider acceptance requires your credentials.'},'servers':[{'url':'http://localhost:8080/CouponHub_UI'}], 'paths':{},'components':{'securitySchemes':{'SessionCookie':{'type':'apiKey','in':'cookie','name':'COUPONHUBSESSID','description':'Obtain via GET /login followed by credential login. Browser sends its HttpOnly cookie automatically.'}},'schemas':{'Error':{'type':'object','properties':{'success':{'type':'boolean','example':False},'message':{'type':'string'},'errors':{'type':'object','additionalProperties':{'type':'string'}}}}}}}
 catalog=[]
 for i,r in enumerate(routes):
  path,method=r['path'],r['method'];handler,action=r['handler'];json_api=path=='/admin/api-spec' or path.startswith('/api/') or path.startswith('/admin/integrations/') and method=='POST'
@@ -36,6 +37,8 @@ for i,r in enumerate(routes):
   op.setdefault('parameters',[]).append({'name':name,'in':'path','required':True,'schema':schema})
  if method=='POST':
   names=list(fields.get(action,[]))
+  if handler.endswith('ArticleCommentController'):
+   names={'store':['body','request_id'],'delete':[],'moderate':['status']}.get(action,[])
   if action in ['storeCoupon','updateCoupon','update','store','import'] and ('Coupon' in handler or action=='import'):names=coupon_fields
   if 'Campaign' in handler and action in ['store','merchantStore','merchantUpdate']:names=['name','description','merchant_id','starts_at','ends_at','status','banner_path']
   if path in ['/merchant/apply']:names=['merchant_id','name','description','website_url','evidence']
@@ -55,6 +58,12 @@ for i,r in enumerate(routes):
   protected=path in ['/login','/api/login.php','/register','/api/register.php','/forgot-password','/coupons','/merchant/apply']
   if protected:props['cf-turnstile-response']={'type':'string','maxLength':2048,'description':'Fresh one-use Turnstile token when protection is enabled. Never use production secrets here.'}
   required=['csrf']
+  if handler.endswith('ArticleCommentController') and action=='store':
+   required+=['body','request_id']
+   props['body'].update(minLength=1,maxLength=2000)
+   props['request_id'].update(pattern='^[a-f0-9]{32}$',description='One random 32-character hex key per send. Reuse the same key/body on network retry; rotate after success.')
+  if handler.endswith('ArticleCommentController') and action=='moderate':
+   required+=['status'];props['status']['enum']=['VISIBLE','HIDDEN']
   if action=='login':required+=['account','password']
   if action=='register':required+=['full_name','username','email','phone','password','password_confirmation']
   if action=='forgotPassword':required+=['email']
@@ -63,10 +72,11 @@ for i,r in enumerate(routes):
   if action=='import':required+=['merchant_id','category_id','title','terms','discount_type','usage_channel','starts_at','ends_at','min_order_amount']
   schema={'type':'object','required':required,'properties':props,'additionalProperties':True}
   content={'application/x-www-form-urlencoded':{'schema':schema}}
-  if handler.endswith(('CouponInteractionController','CouponEventController')):content['application/json']={'schema':schema}
+  if handler.endswith(('CouponInteractionController','CouponEventController','ArticleCommentController')):content['application/json']={'schema':schema}
   op['requestBody']={'required':True,'content':content}
  else:
   params=[]
+  if path=='/api/articles/{id}/comments':params=['before']
   if path=='/api/coupons/search':params=['keyword','category_id','merchant_id','discount_type','usage_channel','ending_soon','sort','page','page_size']
   elif path in ['/campaigns','/coupons','/admin/coupons','/admin/integrations']:params=['page']
   if path=='/coupons':params+=['keyword','category_id','merchant_id','discount_type','usage_channel','ending_soon','sort']
@@ -79,6 +89,9 @@ for i,r in enumerate(routes):
   op['responses']['303']={'description':'Browser form redirect on success; some legacy forms also redirect with session flash on a business rejection. Inspect the destination and database state in acceptance tests.'}
   op['responses']['302']={'description':'Legacy form redirect.'}
  if method=='POST' and action in ['register','comment','report']:op['responses']['201']={'description':'Account created; JSON for API or Accept JSON.'}
+ if handler.endswith('ArticleCommentController') and action=='store':
+  op['responses']['201']={'description':'Comment persisted; 200 for an identical acknowledged retry.'}
+  op['responses']['303']={'description':'Native browser form redirect to the saved discussion.'}
  op['responses']['200']={'description':'JSON response' if json_api else 'HTML view or JSON when explicitly supported','content':{'application/json' if json_api else 'text/html':{'schema':{'type':'object','additionalProperties':True} if json_api else {'type':'string'}}}}
  for status,description in [('413','Request body exceeds 1 MiB'),('419','Legacy controller CSRF rejection'),('500','Unexpected API failure'),('400','Malformed input'),('401','No active session'),('403','Role, object permission, origin or CSRF rejection'),('404','Missing or not publicly visible resource'),('405','Wrong method'),('409','State conflict / already handled'),('422','Validation/business rule rejected'),('429','Rate limited'),('502','External provider failed'),('503','Missing configuration or service unavailable')]:
   op['responses'][status]={'description':description+'; JSON for Accept: application/json, otherwise HTML.','content':{'application/json':{'schema':{'$ref':'#/components/schemas/Error'}}}}

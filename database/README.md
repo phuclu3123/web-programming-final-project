@@ -8,7 +8,7 @@ Hai file SQL có mục đích riêng:
 
 | File | Nội dung | Thứ tự import |
 |---|---|---|
-| [schema.sql](schema.sql) | Toàn bộ cấu trúc: 22 bảng, index, khóa ngoại, 6 view, 21 procedure | 1 — bắt buộc trên database mới, trống |
+| [schema.sql](schema.sql) | Toàn bộ cấu trúc: 23 bảng, index, khóa ngoại, 6 view, 21 procedure | 1 — bắt buộc trên database mới, trống |
 | [demo.sql](demo.sql) | Tài khoản thử, shop, coupon, chiến dịch và tương tác mẫu | 2 — tùy chọn, sau schema, khi các bảng còn trống |
 
 `schema.sql` **không chứa dữ liệu demo**. Các INSERT/UPDATE/DELETE trong procedure chỉ chạy khi ứng dụng gọi nghiệp vụ tương ứng. `demo.sql` không thay cấu trúc hay logic backend/API.
@@ -33,7 +33,7 @@ SQL không hardcode `USE`, không tạo/xóa database và không tắt khóa ngo
 
 Mốc thời gian được tính lại từ lúc import: phần lớn mã có hiệu lực khoảng 90 ngày, hai mã sắp hết hạn còn khoảng 3/5 ngày, mã sắp bắt đầu sau khoảng 7 ngày. Không phải thay ngày thủ công khi gửi file vào dịp khác.
 
-Mọi coupon có `DEMO_`/`[DEMO]`, không dùng thanh toán thật. Bộ SQL được tạo từ fixture trên database thử riêng, **không xuất dữ liệu của database đang dùng**. Không có tài khoản OAuth hay token đặt lại mật khẩu. Bảng `articles` để trống; nội dung hướng dẫn có sẵn của ứng dụng vẫn hoạt động, không cần tạo bài viết giả.
+Mọi coupon có `DEMO_`/`[DEMO]`, không dùng thanh toán thật. Bộ SQL được tạo từ fixture trên database thử riêng, **không xuất dữ liệu của database đang dùng**. Không có tài khoản OAuth hay token đặt lại mật khẩu. Bảng `articles` để trống sau khi nạp demo; đăng nội dung biên tập bằng lệnh riêng bên dưới. Không tạo bình luận giả.
 
 Tên đăng nhập, mật khẩu và phân quyền shop nằm tại [docs/DEMO_DATA.md](../docs/DEMO_DATA.md). Đây là tài khoản thử có mật khẩu công khai; không dùng nguyên bộ demo cho môi trường công khai.
 
@@ -43,7 +43,19 @@ Tên đăng nhập, mật khẩu và phân quyền shop nằm tại [docs/DEMO_D
 
 Khi cập nhật đợt 3 ngày 31/10/2026, backup rồi import riêng [migrations/20261031_phase3_risk_controls.sql](migrations/20261031_phase3_risk_controls.sql) vào database đang sử dụng. Script cập nhật view hiệu lực và procedure kiểm duyệt để chặn bật lại coupon đã thu hồi; không thay bảng, seed hay sửa bản ghi hiện có. Máy cài mới bằng schema hiện tại đã có thay đổi này. Xem [nghiệm thu đợt 3](../docs/PHASE3_ACCEPTANCE.md).
 
-`demo.sql` kiểm tra cả 21 bảng và từ chối nạp nếu bất kỳ bảng nào đã có dữ liệu. Mọi INSERT nằm trong một transaction; lỗi giữa chừng sẽ rollback toàn bộ dữ liệu demo, không ghi đè tài khoản hay mật khẩu có sẵn. Không nạp thêm bằng CLI sau khi đã import demo.sql.
+`demo.sql` từ chối nạp nếu dữ liệu nghiệp vụ đã tồn tại. Mọi INSERT nằm trong một transaction; lỗi giữa chừng sẽ rollback toàn bộ dữ liệu demo, không ghi đè tài khoản hay mật khẩu có sẵn. Không chạy lại trình cài demo trên database đang dùng.
+
+### Bài viết và bình luận — 06/11/2026
+
+Với database đã có dữ liệu: **backup trước**, chỉ nạp [migrations/20261106_article_comments.sql](migrations/20261106_article_comments.sql). Migration tạo bảng `article_comments`, khóa ngoại và index; không sửa bảng `comments` của coupon, không tạo tài khoản hoặc bình luận. Bản cài mới dùng schema hiện tại đã có bảng này.
+
+Đăng 8 bài biên tập (3 hướng dẫn hiện có và 5 bài mới) vào MySQL bằng tài khoản admin đã tồn tại:
+
+```powershell
+C:/xampp/php/php.exe scripts/publish-editorial.php --apply --expected-database=dbcouponshubweb_v2 --author-id=ID_ADMIN
+```
+
+Thay `ID_ADMIN` bằng ID quản trị viên đang hoạt động trong database của bạn. Lệnh kiểm tra đúng database, thêm bài theo slug cố định và ghi nhật ký; chạy lại sẽ giữ nguyên bài đã có, kể cả bài bạn đã sửa hoặc lưu trữ. Nội dung hiển thị từ MySQL, có thể sửa tại `/admin/articles`. Đường dẫn `/guides/...` chuyển đến bài đã xuất bản tương ứng trong `/articles/...`. Xem [nghiệm thu bình luận](../docs/ARTICLE_DISCUSSION_ACCEPTANCE.md).
 
 File demo dùng procedure tạm `couponhub_install_demo`, được xóa sau khi nạp thành công. Nếu công cụ CLI dừng ngay khi báo lỗi, procedure này có thể còn lại; sau khi kiểm tra lỗi có thể dọn bằng `DROP PROCEDURE IF EXISTS couponhub_install_demo;`. Không xóa dữ liệu để cố import lên database đang sử dụng.
 

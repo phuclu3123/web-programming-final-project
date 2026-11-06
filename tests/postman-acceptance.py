@@ -19,7 +19,7 @@ coupon=sql("SELECT c.id FROM v_coupon_status c WHERE c.effective_status='ACTIVE'
 assert coupon
 campaign=sql("SELECT id FROM campaigns WHERE status='PUBLISHED' AND ends_at>UTC_TIMESTAMP() ORDER BY id LIMIT 1");assert campaign
 # Permission-only denied writes must not change domain records. Favorite is explicitly added/removed.
-snapshot='CHECKSUM TABLE users,coupons,campaigns,campaign_coupons,external_offers,merchant_memberships,merchants,categories,articles,reports,oauth_accounts,password_reset_tokens,point_transactions,favorites EXTENDED'
+snapshot='CHECKSUM TABLE users,coupons,campaigns,campaign_coupons,external_offers,merchant_memberships,merchants,categories,articles,article_comments,reports,oauth_accounts,password_reset_tokens,point_transactions,favorites EXTENDED'
 last_audit=int(sql('SELECT COALESCE(MAX(id),0) FROM activity_logs'))
 user_id=sql("SELECT id FROM users WHERE username='user_demo'")
 before=sql(snapshot)

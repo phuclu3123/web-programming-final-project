@@ -41,7 +41,10 @@ run('external-source-revocation',['C:/xampp/php/php.exe','tests/external-offers-
 run('source-http',[sys.executable,'tests/external-source-http.py'])
 run('turnstile-http',[sys.executable,'tests/turnstile-http.py'])
 run('postman',[sys.executable,'tests/postman-acceptance.py'])
+run('article-discussion-http',[sys.executable,'tests/article-comments-http.py'])
+run('article-discussion-concurrency',['C:/xampp/php/php.exe','tests/article-comments-concurrency.php'])
 if '--browser' in sys.argv:
+ run('article-discussion-browser',[sys.executable,'tests/article-comments-browser.py'])
  run('showcase-fixture',['C:/xampp/php/php.exe','scripts/seed-ui-showcase.php','--apply','--expected-database=couponhub_merge_test'])
  offer=run('review-fixture',['C:/xampp/php/php.exe','tests/external-offer-fixture.php']).decode().strip();assert offer.isdigit()
  env|={'COUPONHUB_FULL_UI_AUDIT':'1','COUPONHUB_PROVIDER_UI_TEST':'1','COUPONHUB_REVIEW_OFFER_ID':offer}
