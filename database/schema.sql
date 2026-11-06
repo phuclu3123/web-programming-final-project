@@ -1,6 +1,6 @@
 -- ---- COUPONHUB: BẢN CÀI ĐẶT DATABASE DUY NHẤT ----
 -- Chỉ import một lần vào database mới, trống đã chọn trong phpMyAdmin.
--- Đủ 22 bảng, 6 view, 21 procedure; không có tài khoản hoặc dữ liệu mẫu.
+-- Đủ 23 bảng, 6 view, 21 procedure; không có tài khoản hoặc dữ liệu mẫu.
 -- Muốn có tài khoản/shop/coupon thử: import demo.sql riêng SAU schema.sql.
 -- Quy ước văn bản: utf8mb4 / utf8mb4_vietnamese_ci; thời gian lưu UTC.
 -- Mã token/hash/ID kỹ thuật dùng VARBINARY để so sánh chính xác từng byte.
@@ -1085,4 +1085,23 @@ CREATE TABLE IF NOT EXISTS external_offers (
  UNIQUE KEY uq_external_offer(provider,external_key),
  KEY ix_external_state(state,fetched_at),
  CONSTRAINT fk_external_coupon FOREIGN KEY(coupon_id) REFERENCES coupons(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+
+-- Additive migration: select the existing CouponHub database; never re-import schema/demo.
+SET NAMES utf8mb4 COLLATE utf8mb4_vietnamese_ci;
+CREATE TABLE IF NOT EXISTS article_comments (
+ id bigint unsigned NOT NULL AUTO_INCREMENT,
+ article_id bigint unsigned NOT NULL,
+ user_id bigint unsigned NOT NULL,
+ body text NOT NULL,
+ status enum('VISIBLE','HIDDEN','DELETED') NOT NULL DEFAULT 'VISIBLE',
+ request_id varbinary(32) NOT NULL,
+ created_at datetime NOT NULL DEFAULT current_timestamp(),
+ updated_at datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+ PRIMARY KEY (id),
+ UNIQUE KEY uq_article_comment_request (user_id,request_id),
+ KEY idx_article_comment_page (article_id,status,id),
+ KEY idx_article_comment_status (status,id),
+ CONSTRAINT fk_article_comment_article FOREIGN KEY (article_id) REFERENCES articles(id),
+ CONSTRAINT fk_article_comment_user FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
