@@ -154,7 +154,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     public function submitCommunity(int $actorId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $actorId,
@@ -172,8 +172,6 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             $data['max_discount_amount'],
             $data['usage_channel'],
             $data['promotion_url'],
-            null,
-            null,
             $data['starts_at_utc'],
             $data['ends_at_utc'],
         ]);
@@ -202,7 +200,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     public function submitOfficial(int $actorId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $actorId,
@@ -220,8 +218,6 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             $data['max_discount_amount'],
             $data['usage_channel'],
             $data['promotion_url'],
-            null,
-            null,
             $data['starts_at_utc'],
             $data['ends_at_utc'],
         ]);
@@ -311,7 +307,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
 
             $this->db->prepare('DELETE FROM votes WHERE coupon_id=?')->execute([$couponId]);
             $history = $this->db->prepare(
-                "INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,?,?)"
+                "INSERT INTO activity_logs(coupon_id,user_id,action,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,'COUPON_STATUS_CHANGE',?,?,?,?,?)"
             );
             $history->execute([$couponId, $actorId, $old['moderation_status'], 'PENDING', $old['publication_status'], 'ENABLED', 'Merchant cập nhật nội dung và gửi duyệt lại']);
             $this->db->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,'COUPON_EDIT','Official coupon updated; re-moderation required')")
@@ -344,7 +340,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             }
             $this->db->prepare("UPDATE coupons SET publication_status='DISABLED' WHERE id=?")->execute([$couponId]);
             $this->db->prepare(
-                "INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,'DISABLED','Merchant ngừng coupon')"
+                "INSERT INTO activity_logs(coupon_id,user_id,action,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,'COUPON_STATUS_CHANGE',?,?,?,'DISABLED','Merchant ngừng coupon')"
             )->execute([$couponId, $actorId, $row['moderation_status'], $row['moderation_status'], $row['publication_status']]);
             $this->db->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,'COUPON_DISABLE','Merchant disabled official coupon')")
                 ->execute([$actorId, $couponId]);

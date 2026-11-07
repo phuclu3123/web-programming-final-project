@@ -149,7 +149,7 @@ final class AdminCouponRepository
     private function recordHistory(int $couponId, int $actorId, array $old, string $newModeration, string $newPublication, string $note): void
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,?,?)'
+            "INSERT INTO activity_logs(coupon_id,user_id,action,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,'COUPON_STATUS_CHANGE',?,?,?,?,?)"
         );
         $stmt->execute([$couponId, $actorId, $old['moderation_status'], $newModeration, $old['publication_status'], $newPublication, $note]);
     }

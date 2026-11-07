@@ -1,3 +1,5 @@
+> **Ghi chú cập nhật 07/11/2026:** Mục bên dưới mô tả nghiệm thu lịch sử với bảng `article_comments`. Baseline hiện tại gộp vào `comments`, xem [DB_MIGRATION_21_TABLES.md](DB_MIGRATION_21_TABLES.md).
+
 # Bài viết và bình luận — 06/11/2026
 
 ## Chức năng đã triển khai

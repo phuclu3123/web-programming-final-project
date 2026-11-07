@@ -24,6 +24,6 @@ foreach($processes as [$p,$pipes]){
     $r=json_decode($out,true,512,JSON_THROW_ON_ERROR);$ids[]=$r['id'];$created+=(int)$r['created'];
 }
 if(count(array_unique($ids))!==1 || $created!==1)throw new RuntimeException('Concurrent retry duplicated a write');
-$q=$db->prepare('SELECT COUNT(*) FROM article_comments WHERE user_id=? AND request_id=?');$q->execute([$actor,$key]);
+$q=$db->prepare('SELECT COUNT(*) FROM comments WHERE user_id=? AND request_id=?');$q->execute([$actor,$key]);
 if((int)$q->fetchColumn()!==1)throw new RuntimeException('Expected one persisted comment');
 echo "PASS 8 concurrent PHP workers: one comment ID, one creation, one persisted row.\n";

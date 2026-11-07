@@ -131,7 +131,7 @@ $addCoupon = static function (string $platform, array $offer, string $state = 'A
         $createdAt = $now->modify('-35 days')->setTimezone($utc)->format('Y-m-d H:i:s');
         $reviewedAt = $now->modify('-34 days')->setTimezone($utc)->format('Y-m-d H:i:s');
         $write('UPDATE coupons SET starts_at=?,ends_at=?,created_at=?,reviewed_at=? WHERE id=?', [$start,$end,$createdAt,$reviewedAt,$id]);
-        $write('UPDATE coupon_status_history SET created_at=? WHERE coupon_id=?', [$reviewedAt,$id]);
+        $write("UPDATE activity_logs SET created_at=? WHERE coupon_id=? AND action='COUPON_STATUS_CHANGE'", [$reviewedAt,$id]);
         $write("UPDATE activity_logs SET created_at=IF(action='COUPON_SUBMIT',?,?) WHERE coupon_id=?", [$createdAt,$reviewedAt,$id]);
     }
     ++$created['coupons']; return $couponIds[$offer['code']] = $id;

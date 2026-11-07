@@ -1,3 +1,5 @@
+-- HISTORICAL ONLY for old 22-table installs. Do NOT run on 21-table baseline!
+-- Current migration: 20261107_unify_comments.sql
 -- Additive migration: select the existing CouponHub database; never re-import schema/demo.
 SET NAMES utf8mb4 COLLATE utf8mb4_vietnamese_ci;
 CREATE TABLE IF NOT EXISTS article_comments (
