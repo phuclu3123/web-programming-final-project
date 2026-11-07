@@ -113,7 +113,7 @@ with log_path.open('w',encoding='utf-8') as log:
         for action in ['expire','delete']:
             assert admin.req(f'/admin/coupons/{cid}/{action}',{'_token':token,'reason':'HTTP isolated workflow verification'})[0]==302
         assert admin.req(route)[0]==404 and guest.req(f'/coupons/{cid}')[0]==404
-        count=query(f'SELECT COUNT(*) FROM coupon_status_history WHERE coupon_id={cid}')
+        count=query(f"SELECT COUNT(*) FROM activity_logs WHERE action='COUPON_STATUS_CHANGE' AND coupon_id={cid}")
         assert int(count)>=3
         assert admin.req('/admin/categories/1/delete',{'_token':token})[0]==302
         assert query('SELECT COUNT(*) FROM categories WHERE id=1')=='1'

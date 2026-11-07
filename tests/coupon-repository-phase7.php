@@ -42,7 +42,7 @@ phase7Assert(is_string($count), 'count method exists');
 $count = strstr($count, 'public function findPublic', true);
 $procedure = strstr($schema, 'CREATE PROCEDURE `sp_search_coupons`');
 phase7Assert(is_string($count) && is_string($procedure), 'count and stored procedure available');
-$procedure = strstr($procedure, 'END$$', true);
+$procedure = strstr($procedure, 'END ;;', true);
 phase7Assert(is_string($procedure), 'stored procedure boundary');
 foreach ([
     'keyword' => ['c.title LIKE ?', 'c.title LIKE CONCAT'],

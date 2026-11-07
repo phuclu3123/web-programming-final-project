@@ -25,8 +25,8 @@ final class NotificationRepository implements \App\Contracts\NotificationReposit
         $stmt = $this->db->prepare("SELECT CONCAT('review-',h.id) AS event_key,
             CONCAT(CASE h.new_moderation WHEN 'APPROVED' THEN 'Coupon đã được duyệt: ' ELSE 'Coupon bị từ chối: ' END,c.title) AS title,
             h.created_at AS occurred_at,'/my-coupons' AS path
-            FROM coupon_status_history h JOIN coupons c ON c.id=h.coupon_id
-            WHERE c.submitted_by=? AND c.deleted_at IS NULL AND h.new_moderation IN ('APPROVED','REJECTED')
+            FROM activity_logs h JOIN coupons c ON c.id=h.coupon_id
+            WHERE c.submitted_by=? AND c.deleted_at IS NULL AND h.action='COUPON_STATUS_CHANGE' AND h.new_moderation IN ('APPROVED','REJECTED') AND h.old_moderation<>h.new_moderation
             UNION ALL SELECT CONCAT('request-',r.id,'-',r.status),
             CONCAT('Yêu cầu shop ',m.name,CASE r.status WHEN 'APPROVED' THEN ' đã được duyệt' ELSE ' bị từ chối' END),
             r.reviewed_at,'/merchant/apply'

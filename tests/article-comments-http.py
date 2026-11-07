@@ -58,14 +58,19 @@ for port,base in [(8091,''),(8092,'/CouponHub_UI')]:
    user=Client(origin+base);user.login('user_demo','UserDemo!2026')
    other=Client(origin+base);other.login('user_community','UserDemo!2026')
    admin=Client(origin+base);admin.login('admin_demo','AdminDemo!2026')
+   # Shared comments table: article endpoint must never mutate a coupon comment.
+   coupon_comment=sql('SELECT id FROM comments WHERE coupon_id IS NOT NULL ORDER BY id LIMIT 1')
+   check(admin.request('/admin/article-comments/'+coupon_comment+'/status',
+     {'csrf':admin.csrf,'status':'HIDDEN'})[0]==404,
+     'article moderation rejects coupon comment IDs')
    def post(data,actor=user,path=endpoint):return actor.request(path,{'csrf':actor.csrf,**data})
    key=('1' if port==8091 else '2')*32
    body="HTTP acceptance: quotes ' and <img src=x onerror=alert(1)> remain plain text."
    s,_,b=post({'body':body,'request_id':key});d=json.loads(b);cid=d.get('comment_id')
    check(s==201 and bool(cid),'customer write returns persisted comment ID')
-   check(sql(f'SELECT HEX(body) FROM article_comments WHERE id={cid}').lower()==body.encode().hex(),'exact body persisted in MySQL')
+   check(sql(f'SELECT HEX(body) FROM comments WHERE id={cid}').lower()==body.encode().hex(),'exact body persisted in MySQL')
    s,_,b=post({'body':body,'request_id':key});check(s==200 and json.loads(b)['comment_id']==cid,'retry same request ID does not duplicate')
-   check(sql(f"SELECT COUNT(*) FROM article_comments WHERE request_id='{key}'")=='1','one row after retry')
+   check(sql(f"SELECT COUNT(*) FROM comments WHERE request_id='{key}'")=='1','one row after retry')
    check(post({'body':'changed','request_id':key})[0]==409,'request ID cannot be reused for a different body')
    check(post({'body':'  ','request_id':'3'*32})[0]==422,'blank body rejected')
    check(post({'body':'x'*2001,'request_id':'3'*32})[0]==422,'oversized body rejected')
@@ -76,7 +81,7 @@ for port,base in [(8091,''),(8092,'/CouponHub_UI')]:
    nativekey=f'{port:032x}'
    s,h,_=other.request(endpoint,{'csrf':other.csrf,'body':'Native browser form acceptance','request_id':nativekey},{'Accept':'text/html'})
    check(s==303 and h['Location'].endswith('/articles/doc-dieu-kien-ma#article-comments'),'native HTML form redirects to persisted discussion')
-   nativeid=sql(f"SELECT id FROM article_comments WHERE request_id='{nativekey}'")
+   nativeid=sql(f"SELECT id FROM comments WHERE request_id='{nativekey}'")
    check(other.request('/api/article-comments/'+nativeid+'/delete',{'csrf':other.csrf},{'Accept':'text/html'})[0]==303,'native form author delete works without AJAX')
    s,_,b=user.request('/articles/doc-dieu-kien-ma',headers={'Accept':'text/html'})
    check(s==200 and '&lt;img' in b and body not in b,'reload renders persisted comment escaped')
@@ -88,7 +93,7 @@ for port,base in [(8091,''),(8092,'/CouponHub_UI')]:
    check(not any(x['id']==cid for x in json.loads(guest.request(endpoint)[2])['data']['items']),'hidden text absent from public API')
    check(post({'status':'VISIBLE'},admin,moderate)[0]==303,'admin can show a hidden comment again')
    check(post({},user,'/api/article-comments/'+str(cid)+'/delete')[0]==200,'author can delete own comment')
-   check(sql(f'SELECT status FROM article_comments WHERE id={cid}')=='DELETED','delete preserves audit row')
+   check(sql(f'SELECT status FROM comments WHERE id={cid}')=='DELETED','delete preserves audit row')
    check(post({'status':'VISIBLE'},admin,moderate)[0]==409,'deleted comment cannot be resurrected')
    check(admin.request('/admin/article-comments',headers={'Accept':'text/html'})[0]==200,'admin moderation screen loads')
    # The shared account limit applies across posts, not just within one PHP session.
@@ -97,7 +102,7 @@ for port,base in [(8091,''),(8092,'/CouponHub_UI')]:
     if status==429:break
    check(status==429,'comment rate limit returns 429')
    # Fixture rows only in the isolated database: enough rows to exercise actual cursor paging.
-   for i in range(25):sql(f"INSERT INTO article_comments(article_id,user_id,body,request_id) VALUES({article},1,'Pagination fixture {i}','{port:04x}{i:027x}f')")
+   for i in range(25):sql(f"INSERT INTO comments(article_id,user_id,body,request_id) VALUES({article},1,'Pagination fixture {i}','{port:04x}{i:027x}f')")
    first=json.loads(guest.request(endpoint)[2])['data'];second=json.loads(guest.request(endpoint+'?before='+str(first['next_before']))[2])['data']
    check(len(first['items'])==20 and bool(first['next_before']) and not ({x['id'] for x in first['items']}&{x['id'] for x in second['items']}),'cursor pagination has no duplicates')
    check(guest.request('/guides/doc-dieu-kien-ma')[0]==302,'guide bookmark resolves to database article')

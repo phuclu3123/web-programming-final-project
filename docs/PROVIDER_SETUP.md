@@ -18,7 +18,7 @@ Copy `.env.example` thành `.env`, giữ file này ngoài Git. `COUPONHUB_APP_UR
 
 ## Database đang có dữ liệu
 
-Sao lưu ra thư mục riêng **ngoài webroot**. Chỉ import `database/migrations/20261105_external_offers.sql` trong phpMyAdmin vào đúng database hiện tại. Migration chỉ tạo bảng hàng chờ `external_offers`, có thể chạy lại. Không import lại `schema.sql` hay `demo.sql` lên database đã dùng. Bản cài mới dùng schema đã có 22 bảng, 6 view và 21 procedure; demo vẫn là file riêng.
+Sao lưu ra thư mục riêng **ngoài webroot**. Chỉ import `database/migrations/20261105_external_offers.sql` trong phpMyAdmin vào đúng database hiện tại. Migration chỉ tạo bảng hàng chờ `external_offers`, có thể chạy lại. Không import lại `schema.sql` hay `demo.sql` lên database đã dùng. Bản cài mới dùng schema đã có 21 bảng, 6 view và 21 procedure; demo vẫn là file riêng.
 
 ## ACCESSTRADE Việt Nam
 

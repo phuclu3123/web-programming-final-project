@@ -54,7 +54,7 @@ rejectsQuang(fn()=>$service->delete($admin,$id,'Blocked account must never delet
 $db->prepare("UPDATE users SET status='ACTIVE' WHERE id=?")->execute([$admin]);
 $db->prepare("INSERT INTO votes(coupon_id,user_id,vote_type) VALUES(?,?,'WORKING')")->execute([$id,$user]);
 $voteCount = fn()=>(int)$db->query('SELECT COUNT(*) FROM votes WHERE coupon_id='.$id)->fetchColumn();
-$historyCount = fn()=>(int)$db->query('SELECT COUNT(*) FROM coupon_status_history WHERE coupon_id='.$id)->fetchColumn();
+$historyCount = fn()=>(int)$db->query("SELECT COUNT(*) FROM activity_logs WHERE action='COUPON_STATUS_CHANGE' AND coupon_id=".$id)->fetchColumn();
 $service->update($admin,$id,$data);
 checkQuang($voteCount()===1 && $historyCount()===0, 'unchanged save preserves votes and avoids false audit events, including seconds');
 $data['title'] .= ' corrected';
