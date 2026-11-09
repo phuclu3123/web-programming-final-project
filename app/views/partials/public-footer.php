@@ -1,4 +1,4 @@
-<footer class="site-footer public-footer">
+<?php /* Dùng chung liên kết chính sách, liên hệ và mở lại lựa chọn cookie. */ ?><footer class="site-footer public-footer">
     <div class="container-wide">
         <div class="footer-main">
             <div class="footer-statement">
@@ -21,6 +21,6 @@
                         href="<?= e(url('/merchant/apply')) ?>">Trở thành đối tác</a></div>
             </nav>
         </div>
-        <div class="footer-bottom"><span>© <?= date('Y') ?> CouponHub · Dự án học tập</span></div>
+        <div class="footer-bottom"><span>© <?= date('Y') ?> CouponHub · Dự án học tập</span><button type="button" class="cookie-settings-button" data-cookie-settings>Quản lý cookie</button></div>
     </div>
 </footer>

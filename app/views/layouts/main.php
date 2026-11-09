@@ -1,4 +1,5 @@
 <?php
+// Ghép nội dung với header/footer dùng chung và asset theo route.
 
 use App\Core\Auth;
 use App\Core\Session;
@@ -104,6 +105,7 @@ $workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPa
     <?php foreach (($pageScripts ?? []) as $pageScript): ?>
     <script src="<?= e(asset((string)$pageScript)) ?>"></script>
     <?php endforeach; ?>
+    <?php require __DIR__ . '/../partials/cookie-consent.php'; ?>
     <?php if (!$currentUser) require __DIR__ . '/../auth/auth-modal.php'; ?>
     <?php if ($workspaceArea): ?><script src="<?= e(url('/assets/js/workspace.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/workspace.js') ?>" defer></script><?php endif; ?>
 <script src="<?= e(url('/assets/js/turnstile.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/turnstile.js') ?>" defer></script>

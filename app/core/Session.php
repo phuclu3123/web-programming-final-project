@@ -13,6 +13,7 @@ final class Session
     private const MAX_SECONDS = 28800; // Tối đa 8 giờ cho một phiên đăng nhập.
     private const AUTH_SCHEMA = 'quang-integration-20261016';
 
+    // Mở phiên với cookie an toàn; đường dẫn lưu có thể tách khỏi webroot bằng env.
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) return;
@@ -38,6 +39,7 @@ final class Session
         ])) throw new RuntimeException('Không thể mở session.');
     }
 
+    // Đổi session ID và gắn auth_version sau xác thực để tránh dùng lại phiên cũ.
     public static function establish(array $user): void
     {
         self::start();
@@ -54,9 +56,10 @@ final class Session
         $params = session_get_cookie_params();
         unset($params['lifetime']);
         setcookie(session_name(), session_id(), ['expires' => $_SESSION['expires_at']] + $params);
-        unset($_SESSION['csrf'], $_SESSION['oauth_pending'], $_SESSION['oauth_login_pending'], $_SESSION['password_reset_flow']);
+        unset($_SESSION['csrf'], $_SESSION['oauth_pending'], $_SESSION['oauth_login_pending'], $_SESSION['google_one_tap_pending'], $_SESSION['oauth_email_flow'], $_SESSION['password_reset_flow']);
     }
 
+    // Kiểm tra cả thời gian không hoạt động và giới hạn tuyệt đối trước khi trả user ID.
     public static function userId(): int
     {
         self::start();
@@ -91,7 +94,7 @@ final class Session
 
     public static function clearAuthentication(): void
     {
-        foreach (['user_id', 'user_role', 'user_name', 'auth_version', 'auth_schema', 'authenticated_at', 'last_activity', 'expires_at', 'csrf', 'oauth_pending', 'oauth_login_pending', 'password_reset_flow'] as $key) {
+        foreach (['user_id', 'user_role', 'user_name', 'auth_version', 'auth_schema', 'authenticated_at', 'last_activity', 'expires_at', 'csrf', 'oauth_pending', 'oauth_login_pending', 'google_one_tap_pending', 'oauth_email_flow', 'password_reset_flow'] as $key) {
             unset($_SESSION[$key]);
         }
     }

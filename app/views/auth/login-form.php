@@ -94,7 +94,7 @@ use App\Core\Session;
                 </div>
             <?php endforeach; ?>
         </div>
-        <p class="small text-muted text-center">Facebook: liên kết lần đầu trong Tài khoản sau khi đăng nhập.</p>
+        <p class="small text-muted text-center">Dùng cùng email để tiếp tục với một tài khoản CouponHub.</p>
 
         <div class="d-flex flex-row justify-content-center align-items-center mb-3 gap-1">
             <span class="form-label mb-0">

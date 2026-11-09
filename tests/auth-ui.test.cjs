@@ -45,6 +45,7 @@ function setup(fetchResult, active = 'login', location = 'http://localhost:8000/
     }));
     const requests = [], destinations = [];
     const modal = {
+        dispatchEvent() {},
         classList: { contains() { return true; } },
         querySelector(s) {
             return s === '#loginForm' ? forms[0] : s === '#resetOtpForm' ? forms[3] : loginFields.find(i => '#' + i.id === s);

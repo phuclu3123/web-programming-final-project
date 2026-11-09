@@ -1,4 +1,5 @@
 <?php
+// Đăng ký method và action trong một router; URL PHP cũ cùng trỏ về nghiệp vụ MVC.
 
 declare(strict_types=1);
 
@@ -36,6 +37,8 @@ $router->post('/logout.php', [AuthController::class, 'logout']);
 $router->post('/api/login.php', [AuthController::class, 'login']);
 $router->post('/api/register.php', [AuthController::class, 'register']);
 $router->post('/api/oauth/prepare.php', [OAuthController::class, 'prepare']);
+$router->post('/api/oauth/google-one-tap/start', [OAuthController::class, 'oneTapStart']);
+$router->post('/api/oauth/google-one-tap', [OAuthController::class, 'oneTapLogin']);
 $router->post('/auth/oauth/{provider}', [OAuthController::class, 'start']);
 $router->get('/api/oauth/google-callback.php', [OAuthController::class, 'google']);
 $router->get('/api/oauth/github-callback.php', [OAuthController::class, 'github']);

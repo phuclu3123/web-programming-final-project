@@ -34,6 +34,24 @@ final class OAuthController extends Controller
         $actor = $mode === 'link' ? Auth::requireAuth() : null;
         Response::redirect($this->service()->begin($provider, $return, $actor), 303);
     }
+    public function oneTapStart(Request $request): void
+    {
+        AuthRateLimit::request('oauth', '', 30);
+        if (Auth::user()) throw new HttpError(409, 'Bạn đã đăng nhập.');
+        if (!$this->preparation()->oneTapReady()) throw new HttpError(503, 'Chưa cấu hình Google One Tap.');
+        $return = $request->input('return_url', '');
+        if (!is_string($return)) throw new HttpError(422, 'Đường dẫn quay lại không hợp lệ.');
+        Response::json(['success' => true] + $this->service()->beginOneTap($return));
+    }
+    public function oneTapLogin(Request $request): void
+    {
+        AuthRateLimit::request('oauth', '', 30);
+        if (Auth::user()) throw new HttpError(409, 'Bạn đã đăng nhập.');
+        $result = $this->service()->completeOneTap($request->all());
+        Auth::login($result['user']);
+        $user = Auth::requireAuth();
+        Response::json(['success' => true, 'redirect' => url(Auth::safeReturn($result['return'], $user['role']))]);
+    }
     public function prepare(Request $request): void
     {
         $preparation = $this->preparation();
@@ -68,11 +86,13 @@ final class OAuthController extends Controller
             $linkAttempt = is_array($pending) && ($pending['provider'] ?? null) === $provider
                 && ($pending['link_actor'] ?? null) !== null;
             $result = $this->service()->complete($provider, $request->all(), $actor);
+            if (isset($result['redirect'])) Response::redirect($result['redirect'], 303);
             if ($result['linked']) {
                 Session::flash('success', 'Đã liên kết tài khoản ' . $provider . '.');
                 Response::redirect(url('/account'), 303);
             }
             Auth::login($result['user']);
+            if ($result['facebook_linked'] ?? false) Session::flash('success', 'Đã liên kết Facebook. Từ lần sau bạn có thể đăng nhập trực tiếp bằng Facebook.');
             $user = Auth::requireAuth();
             Response::redirect(url(Auth::safeReturn($result['return'], $user['role'])), 303);
         } catch (\Throwable $error) {
@@ -90,4 +110,5 @@ final class OAuthController extends Controller
         $this->callback('github', $request);
     }
     public function facebook(Request $request): void { $this->callback('facebook', $request); }
+
 }

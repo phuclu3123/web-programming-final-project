@@ -5,15 +5,63 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Contracts\{HttpClientInterface, OAuthRepositoryInterface};
-use App\Core\{Session, HttpError, OAuthPreparation};
+use App\Core\{Session, HttpError, OAuthPreparation, OAuthAccountLinkRequired};
 
 /** Authorization code + PKCE; no access/refresh tokens are stored or sent to JS. */
 final class OAuthService
 {
     public function __construct(private array $config, private HttpClientInterface $http, private OAuthRepositoryInterface $users) {}
 
+    // Sinh nonce gắn phiên để credential One Tap không dùng lại ở request khác.
+    public function beginOneTap(string $returnUrl = ''): array
+    {
+        if (!(new OAuthPreparation($this->config))->oneTapReady()) throw new HttpError(503, 'Chưa cấu hình Google One Tap.');
+        if (strlen($returnUrl) > 2000) throw new HttpError(422, 'Đường dẫn quay lại không hợp lệ.');
+        Session::start();
+        $pending = array_filter($_SESSION['google_one_tap_pending'] ?? [], static fn($p) => $p['expires'] > time());
+        if (count($pending) >= 5) unset($pending[array_key_first($pending)]);
+        $state = bin2hex(random_bytes(32));
+        $nonce = bin2hex(random_bytes(32));
+        $expires = time() + 600;
+        $pending[$state] = ['nonce' => $nonce, 'expires' => $expires, 'return' => $returnUrl];
+        $_SESSION['google_one_tap_pending'] = $pending;
+        return ['state' => $state, 'nonce' => $nonce, 'expires' => $expires,
+            'client_id' => $this->config['providers']['google']['client_id']];
+    }
+
+    // Kiểm tra credential Google cùng nonce của phiên trước khi tạo tài khoản hoặc đăng nhập.
+    public function completeOneTap(array $input): array
+    {
+        if (!(new OAuthPreparation($this->config))->oneTapReady()) throw new HttpError(503, 'Chưa cấu hình Google One Tap.');
+        Session::start();
+        $state = $input['state'] ?? null;
+        if (!is_string($state) || !preg_match('/\A[a-f0-9]{64}\z/D', $state)) throw new HttpError(403, 'Phiên One Tap không hợp lệ.');
+        $pending = $_SESSION['google_one_tap_pending'][$state] ?? null;
+        unset($_SESSION['google_one_tap_pending'][$state]);
+        if (!$pending || $pending['expires'] <= time()) throw new HttpError(403, 'Phiên One Tap đã hết hạn hoặc đã sử dụng.');
+        $return = $input['return_url'] ?? $pending['return'];
+        if (!is_string($return) || strlen($return) > 2000) throw new HttpError(422, 'Đường dẫn quay lại không hợp lệ.');
+        $credential = $input['credential'] ?? null;
+        if (!is_string($credential) || $credential === '') throw new HttpError(422, 'Thiếu thông tin xác thực Google.');
+        $claims = $this->verifyGoogle($credential, $this->config['providers']['google']['client_id'], $pending['nonce']);
+        if (strlen($claims['email']) > 191 || !filter_var($claims['email'], FILTER_VALIDATE_EMAIL)) throw new HttpError(422, 'Email Google không hợp lệ.');
+        $name = $claims['name'] ?? $claims['email'];
+        if (!is_string($name) || trim($name) === '' || !mb_check_encoding($name, 'UTF-8')) $name = $claims['email'];
+        return $this->resolveIdentity(['provider' => 'google', 'subject' => $claims['sub'],
+            'email' => mb_strtolower($claims['email']), 'email_verified' => self::googleOwnsEmail($claims), 'name' => $name],
+            null, $return, max(1, min((int)config('auth.session_lifetime', 2592000), $claims['exp'] - time())));
+    }
+
+    // Tạo ý định đăng nhập/liên kết trong session trước khi chuyển sang provider.
     public function begin(string $provider, string $returnUrl = '', ?array $linkActor = null): string
     {
+        return $this->beginIntent($provider, $returnUrl, $linkActor);
+    }
+
+    /** A second OAuth intent owns the already-proven Facebook identity; no bearer token is retained. */
+    private function beginIntent(string $provider, string $returnUrl, ?array $linkActor, ?array $facebook = null): string
+    {
+        if (strlen($returnUrl) > 2000) throw new HttpError(422, 'Đường dẫn quay lại không hợp lệ.');
         $ready = (new OAuthPreparation($this->config))->status($provider);
         if (!$ready['ready']) throw new HttpError(503, 'Chưa cấu hình đăng nhập ' . $provider . '.');
         Session::start();
@@ -24,11 +72,12 @@ final class OAuthService
         $nonce = bin2hex(random_bytes(32));
         $pending[$state] = [
             'provider' => $provider,
-            'expires' => time() + 600,
+            'expires' => $facebook !== null ? min(time() + 600, $facebook['expires']) : time() + 600,
             'verifier' => $verifier,
             'nonce' => $nonce,
             'return' => $returnUrl,
-            'link_actor' => $linkActor ? ['id' => (int)$linkActor['id'], 'auth_version' => (int)$linkActor['auth_version']] : null
+            'link_actor' => $linkActor ? ['id' => (int)$linkActor['id'], 'auth_version' => (int)$linkActor['auth_version']] : null,
+            'confirmed_facebook' => $facebook,
         ];
         $_SESSION['oauth_login_pending'] = $pending;
         $p = $this->config['providers'][$provider];
@@ -49,6 +98,7 @@ final class OAuthService
         return $p['authorize_url'] . '?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
     }
 
+    // Tiêu thụ state một lần, xác minh danh tính rồi mới resolve tài khoản hoặc tiếp tục liên kết.
     public function complete(string $provider, array $query, ?array $currentActor = null): array
     {
         if (!in_array($provider, ['google', 'github', 'facebook'], true)) throw new HttpError(404, 'Nhà cung cấp không hợp lệ.');
@@ -59,6 +109,8 @@ final class OAuthService
         unset($_SESSION['oauth_login_pending'][$state]); // Consume before any network request, including failures.
         if (!$pending || $pending['provider'] !== $provider || $pending['expires'] <= time()) throw new HttpError(403, 'Phiên OAuth đã hết hạn hoặc đã sử dụng.');
         $actor = $pending['link_actor'];
+        $facebook = $pending['confirmed_facebook'] ?? null;
+        if ($facebook !== null && ($provider !== 'google' || $currentActor !== null || $actor !== null)) throw new HttpError(401, 'Phiên xác nhận Google đã thay đổi. Vui lòng đăng nhập lại.');
         if ($actor && (!$currentActor || $actor['id'] !== (int)$currentActor['id'] || $actor['auth_version'] !== (int)$currentActor['auth_version'])) throw new HttpError(401, 'Hãy đăng nhập lại trước khi liên kết.');
         if (isset($query['error'])) throw new HttpError(400, 'Bạn đã hủy hoặc nhà cung cấp từ chối đăng nhập.');
         $code = $query['code'] ?? null;
@@ -66,9 +118,8 @@ final class OAuthService
         $p = $this->config['providers'][$provider];
         if ($provider === 'facebook') {
             [$identity, $ttl] = $this->facebookIdentity($p, $code);
-            $user = $this->users->resolve($identity, $actor);
-            $user['session_ttl'] = min((int)config('auth.session_lifetime', 2592000), $ttl);
-            return ['user' => $user, 'linked' => $actor !== null, 'return' => $pending['return']];
+            if ($actor === null && $currentActor !== null) throw new HttpError(409, 'Bạn đã đăng nhập. Hãy liên kết Facebook từ tài khoản hiện tại.');
+            return $this->resolveIdentity($identity, $actor, $pending['return'], min((int)config('auth.session_lifetime', 2592000), $ttl));
         }
         $token = $this->http->json(
             'POST',
@@ -87,7 +138,7 @@ final class OAuthService
         if ($provider === 'google') {
             if (!is_string($token['id_token'] ?? null)) throw new HttpError(502, 'Google không trả thông tin xác thực hợp lệ.');
             $claims = $this->verifyGoogle($token['id_token'], $p['client_id'], $pending['nonce']);
-            $identity = ['provider' => 'google', 'subject' => $claims['sub'], 'email' => $claims['email'], 'name' => $claims['name'] ?? $claims['email']];
+            $identity = ['provider' => 'google', 'subject' => $claims['sub'], 'email' => $claims['email'], 'email_verified' => self::googleOwnsEmail($claims), 'name' => $claims['name'] ?? $claims['email']];
             // Like WEB_TCC's Firebase exchange, do not outlive the verified token.
             $ttl = min($ttl, $claims['exp'] - time());
         } else {
@@ -108,15 +159,43 @@ final class OAuthService
             }
             $subject = is_int($profile['id'] ?? null) || is_string($profile['id'] ?? null) ? (string)$profile['id'] : '';
             if (!ctype_digit($subject) || $subject === '0') throw new HttpError(502, 'GitHub không trả danh tính hợp lệ.');
-            $identity = ['provider' => 'github', 'subject' => $subject, 'email' => $email, 'name' => $profile['name'] ?? $profile['login'] ?? $email];
+            $identity = ['provider' => 'github', 'subject' => $subject, 'email' => $email, 'email_verified' => $email !== null, 'name' => $profile['name'] ?? $profile['login'] ?? $email];
             if (isset($token['expires_in'])) $ttl = min($ttl, max(1, (int)$token['expires_in']));
         }
-        if (!is_string($identity['email']) || strlen($identity['email']) > 191 || !filter_var($identity['email'], FILTER_VALIDATE_EMAIL)) throw new HttpError(422, 'Cần email đã xác minh tại nhà cung cấp để tiếp tục.');
-        if (!is_string($identity['name']) || trim($identity['name']) === '' || !mb_check_encoding($identity['name'], 'UTF-8')) $identity['name'] = $identity['email'];
-        $identity['email'] = mb_strtolower($identity['email']);
-        $user = $this->users->resolve($identity, $actor);
-        $user['session_ttl'] = max(1, $ttl);
-        return ['user' => $user, 'linked' => $actor !== null, 'return' => $pending['return']];
+        if ($identity['email'] !== null && (!is_string($identity['email']) || strlen($identity['email']) > 191 || !filter_var($identity['email'], FILTER_VALIDATE_EMAIL))) throw new HttpError(422, 'Email nhà cung cấp không hợp lệ.');
+        if (!is_string($identity['name']) || trim($identity['name']) === '' || !mb_check_encoding($identity['name'], 'UTF-8')) $identity['name'] = $identity['email'] ?? 'Người dùng';
+        if ($identity['email'] !== null) $identity['email'] = mb_strtolower($identity['email']);
+        if ($facebook !== null) {
+            // Recheck after provider I/O. A completed Google exchange cannot
+            // revive an expired Facebook proof or extend its lifetime.
+            if ($facebook['expires'] <= time()) throw new HttpError(403, 'Phiên xác nhận Facebook đã hết hạn. Vui lòng thử lại.');
+            try { $user = $this->users->resolveLinked($identity, $facebook['identity']); }
+            catch (OAuthAccountLinkRequired $error) { throw new HttpError(422, 'Hãy chọn tài khoản Google đã liên kết với CouponHub hoặc có email Gmail/Workspace đã xác minh.'); }
+            $user['session_ttl'] = max(1, min($ttl, $facebook['session_expires'] - time()));
+            return ['user' => $user, 'linked' => false, 'facebook_linked' => true, 'return' => $pending['return']];
+        }
+        return $this->resolveIdentity($identity, $actor, $pending['return'], max(1, $ttl));
+    }
+
+    private static function googleOwnsEmail(array $claims): bool
+    {
+        // Google explicitly warns that email_verified alone is insufficient for
+        // a non-Gmail/non-Workspace email whose ownership might have changed.
+        return str_ends_with(mb_strtolower($claims['email']), '@gmail.com')
+            || (is_string($claims['hd'] ?? null) && $claims['hd'] !== '');
+    }
+
+    private function resolveIdentity(array $identity, ?array $actor, string $return, int $ttl): array
+    {
+        try {
+            $user = $this->users->resolve($identity, $actor);
+        } catch (OAuthAccountLinkRequired $error) {
+            if ($actor !== null || $identity['provider'] !== 'facebook') throw new HttpError(422, 'Cần email đã xác minh từ nhà cung cấp hoặc một phương thức đã liên kết để đăng nhập.');
+            $proof = ['identity' => $identity, 'expires' => time() + min(600, $ttl), 'session_expires' => time() + $ttl];
+            return ['redirect' => $this->beginIntent('google', $return, null, $proof), 'linked' => false, 'return' => $return];
+        }
+        $user['session_ttl'] = $ttl;
+        return ['user' => $user, 'linked' => $actor !== null, 'return' => $return];
     }
 
     public function verifyGoogle(string $jwt, string $clientId, string $nonce): array
@@ -137,9 +216,7 @@ final class OAuthService
         return $claims;
     }
 
-    /** Facebook proves the app-scoped identity, not ownership of an email address.
-     * First use requires explicit linking from an authenticated local account.
-     */
+    /** Facebook proves the app-scoped identity; an email is a hint, not a verified claim. */
     private function facebookIdentity(array $provider, string $code): array
     {
         $version = $provider['graph_version'] ?? '';
@@ -165,14 +242,17 @@ final class OAuthService
             throw new HttpError(403, 'Danh tính Facebook không hợp lệ hoặc đã hết hạn.');
         }
         $profile = $this->http->json('GET', $base . '/me?' . http_build_query([
-            'fields' => 'id,name', 'appsecret_proof' => hash_hmac('sha256', $access, $provider['client_secret']),
+            'fields' => in_array('email', preg_split('/[ ,]+/', $provider['scope']), true) ? 'id,name,email' : 'id,name',
+            'appsecret_proof' => hash_hmac('sha256', $access, $provider['client_secret']),
         ], '', '&', PHP_QUERY_RFC3986), ['Authorization: Bearer ' . $access]);
         if (($profile['id'] ?? null) !== $data['user_id']) throw new HttpError(403, 'Danh tính Facebook không khớp token.');
         $now = time(); // Profile lookup may have consumed part of the token lifetime.
         $ttl = $data['expires_at'] - $now;
         if (($data['data_access_expires_at'] ?? 0) > 0) $ttl = min($ttl, $data['data_access_expires_at'] - $now);
         if ($ttl <= 0) throw new HttpError(403, 'Phiên Facebook đã hết hạn. Vui lòng đăng nhập lại.');
-        return [['provider' => 'facebook', 'subject' => $data['user_id'], 'email' => null, 'email_verified' => false,
+        $email = is_string($profile['email'] ?? null) && strlen($profile['email']) <= 191 && filter_var($profile['email'], FILTER_VALIDATE_EMAIL)
+            ? mb_strtolower($profile['email']) : null;
+        return [['provider' => 'facebook', 'subject' => $data['user_id'], 'email' => $email, 'email_verified' => false,
             'name' => is_string($profile['name'] ?? null) ? mb_substr($profile['name'], 0, 120) : 'Facebook'], $ttl];
     }
 

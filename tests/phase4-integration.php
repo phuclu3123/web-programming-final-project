@@ -47,7 +47,8 @@ $access=new MerchantAccessRepository($db);
 $membership=$db->query("SELECT user_id,merchant_id FROM merchant_memberships WHERE status='ACTIVE' LIMIT 1")->fetch();
 fourthReject(fn()=>$access->revoke($uid,(int)$membership['user_id'],(int)$membership['merchant_id'],'Attempt with wrong role'),'User cannot revoke shop membership at repository');
 $facebook=['provider'=>'facebook','subject'=>'100000-phase4','email'=>null,'email_verified'=>false,'name'=>'Facebook User'];
-fourthReject(fn()=>$oauth->resolve($facebook),'unlinked Facebook cannot create account with unverified email');
+try { $oauth->resolve($facebook); throw new LogicException('Unverified Facebook email accepted'); }
+catch (\App\Core\OAuthAccountLinkRequired $error) { fourthCheck(true, 'unlinked Facebook requires another authenticated identity before account matching'); }
 $current=$users->findById($uid);$linked=$oauth->resolve($facebook,$current);
 fourthCheck((int)$linked['id']===$uid && (int)$oauth->resolve($facebook)['id']===$uid,'Facebook explicit link followed by identity-only login');
 $read=$db->prepare("SELECT provider_email,email_verified FROM oauth_accounts WHERE user_id=? AND provider='facebook'");$read->execute([$uid]);$row=$read->fetch();

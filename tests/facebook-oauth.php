@@ -19,6 +19,7 @@ final class FacebookHttp implements \App\Contracts\HttpClientInterface {
 }
 final class FacebookUsers implements \App\Contracts\OAuthRepositoryInterface {
     public array $identities=[];
+    public function resolveLinked(array $google, array $facebook): array { throw new LogicException('Unexpected confirmation'); }
     public function resolve(array $identity,?array $linkActor=null): array {
         $this->identities[]=[$identity,$linkActor];
         return ['id'=>7,'role'=>'USER','full_name'=>'Existing User','auth_version'=>0];
@@ -31,7 +32,7 @@ $p=$begin();
 fbCheck(strlen($p['state'])===64 && !isset($p['code_challenge'],$p['client_secret']) && $p['scope']==='public_profile','Facebook code/state flow requests minimum permission, no unsupported PKCE');
 $result=$service->complete('facebook',['state'=>$p['state'],'code'=>'code','role'=>'ADMIN']);
 fbCheck($result['user']['role']==='USER' && $result['user']['session_ttl']<=1800,'session bounded by token and data-access expiry; role is server-owned');
-fbCheck($users->identities[0][0]['email']===null && $users->identities[0][0]['email_verified']===false,'Facebook email is never assumed verified or used for auto-merge');
+fbCheck($users->identities[0][0]['email']==='untrusted@example.test' && $users->identities[0][0]['email_verified']===false,'Facebook email is only a hint, never an email-ownership proof');
 parse_str($http->calls[0][3],$exchange);
 fbCheck($exchange['client_secret']==='server_only_secret' && $exchange['redirect_uri']===$p['redirect_uri'],'code exchanged on server with exact callback');
 fbCheck(in_array('Authorization: Bearer 12345|server_only_secret',$http->calls[1][2],true),'token introspected for the configured app');

@@ -250,7 +250,7 @@
                 errors[0].input.focus({ preventScroll: true });
                 return;
             }
-            // ---- PHẦN ĐĂNG KÝ (BỔ SUNG) ----
+            // PHẦN ĐĂNG KÝ (BỔ SUNG)
             if (form.id === "registerForm") {
                 await submitRegistration(form);
                 return;
@@ -330,8 +330,9 @@
 
         input.type = show ? "text" : "password";
         button.setAttribute("aria-pressed", String(show));
-        const suffix =
-            input.id === "registerPasswordConfirm" ? " nhập lại" : "";
+        const suffix = input.id === "resetConfirmation" ? " mới nhập lại"
+            : input.id === "resetNewPassword" ? " mới"
+            : input.id === "registerPasswordConfirm" ? " nhập lại" : "";
         button.setAttribute(
             "aria-label",
             (show ? "Ẩn mật khẩu" : "Hiện mật khẩu") + suffix,
@@ -379,6 +380,7 @@
                 )
                 ?.focus();
         }
+        modal.dispatchEvent(new CustomEvent('couponhub:auth-view', { detail: { view: name } }));
     }
 
     // Bắt nút chuyển form qua data-auth-target; closest tìm cả khi bấm vào icon.
@@ -411,6 +413,7 @@
             if (!modal.open) modal.showModal();
             document.documentElement.classList.add('auth-dialog-open');
             modal.querySelector(`[data-auth-view="${name}"] input:not([type="hidden"])`)?.focus();
+            modal.dispatchEvent(new CustomEvent('couponhub:auth-open', { detail: { view: name } }));
         };
         document.addEventListener('click', event => {
             const link = event.target.closest('[data-auth-open], a[href]');

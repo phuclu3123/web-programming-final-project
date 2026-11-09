@@ -26,8 +26,10 @@ final class OAuthHttpFake implements \App\Contracts\HttpClientInterface {
 }
 final class OAuthUsersFake implements \App\Contracts\OAuthRepositoryInterface {
     public array $calls=[];
+    public function resolveLinked(array $google, array $facebook): array { throw new LogicException('Unexpected confirmation'); }
     public function resolve(array $identity,?array $linkActor=null): array {
         $this->calls[]=[$identity,$linkActor];
+        if ($identity['email'] === null && $linkActor === null) throw new \App\Core\OAuthAccountLinkRequired();
         return ['id'=>42,'role'=>'USER','email'=>$identity['email'],'full_name'=>$identity['name'],'auth_version'=>0];
     }
 }
@@ -53,7 +55,8 @@ oauthReject(fn()=>$service->complete('google',['state'=>$p['state'],'code'=>'val
 $p=oauthBegin($service);
 oauthReject(fn()=>$service->complete('github',['state'=>$p['state'],'error'=>'access_denied']),'provider cancellation rejected');
 $http->verified=false; $p=oauthBegin($service);
-oauthReject(fn()=>$service->complete('github',['state'=>$p['state'],'code'=>'valid-code']),'unverified GitHub email rejected');
+oauthReject(fn() => $service->complete('github',['state'=>$p['state'],'code'=>'valid-code']), 'unverified GitHub email cannot authenticate a new account or send a verification email');
+oauthCheck(end($users->calls)[0]['email'] === null && end($users->calls)[0]['email_verified'] === false, 'unverified GitHub email is discarded');
 $http->verified=true;
 $actor=['id'=>9,'auth_version'=>3]; $p=oauthBegin($service,'github',$actor);
 oauthReject(fn()=>$service->complete('github',['state'=>$p['state'],'code'=>'valid-code'],['id'=>9,'auth_version'=>4]),'link callback cannot cross password/session version change');
@@ -80,6 +83,13 @@ $claims=['iss'=>'https://accounts.google.com','aud'=>'public-client','sub'=>'goo
 $http->jwt=signGoogle($claims,$key);
 $result=$service->complete('google',['state'=>$p['state'],'code'=>'valid-code']);
 oauthCheck($result['user']['session_ttl']<=3600 && end($users->calls)[0]['subject']==='google-subject','signed Google identity verified and session bounded by token expiry');
+oauthCheck(end($users->calls)[0]['email_verified'] === false, 'third-party Google email does not silently authorize account matching');
+foreach ([['email' => 'member@gmail.com'], ['hd' => 'example.test']] as $authority) {
+    $p = oauthBegin($service, 'google');
+    $http->jwt = signGoogle(array_replace($claims, $authority, ['nonce' => $_SESSION['oauth_login_pending'][$p['state']]['nonce']]), $key);
+    $service->complete('google', ['state' => $p['state'], 'code' => 'valid-code']);
+    oauthCheck(end($users->calls)[0]['email_verified'] === true, 'Google-authoritative email can match one existing account');
+}
 foreach (['aud'=>'other-client','iss'=>'https://evil.test','exp'=>time()-1,'iat'=>time()+3600,'nonce'=>'wrong','email_verified'=>false] as $field=>$bad) {
     oauthReject(fn()=>$service->verifyGoogle(signGoogle(array_replace($claims,[$field=>$bad]),$key),'public-client',$nonce),'Google rejects invalid '.$field);
 }

@@ -1,4 +1,5 @@
 <?php
+// Chỉ hiển thị hồ sơ actor và phương thức đăng nhập đã liên kết từ controller.
 
 use App\Core\Session; ?>
 <?php
@@ -75,8 +76,7 @@ $profilePhone = is_string($profileValues['phone'] ?? null) ? $profileValues['pho
     <section class="card mt-4" aria-labelledby="linked-providers-title">
       <div class="card-body">
         <h2 class="h5" id="linked-providers-title">Tài khoản liên kết</h2>
-        <p class="text-muted">Liên kết để đăng nhập nhanh. Tài khoản có cùng email chỉ được liên kết khi bạn chủ
-          động xác nhận tại đây.</p>
+        <p class="text-muted">Các phương thức đã liên kết cùng sử dụng tài khoản và dữ liệu của bạn.</p>
         <div class="d-flex flex-wrap gap-3">
           <?php foreach (['google' => 'Google', 'github' => 'GitHub', 'facebook' => 'Facebook'] as $provider => $label):
             $ready = (new \App\Core\OAuthPreparation((array)config('oauth')))->status($provider)['ready']; ?>

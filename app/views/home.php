@@ -1,4 +1,5 @@
 <?php
+// Trang khám phá nhận bộ lọc và dữ liệu từ CatalogController; hỗ trợ thay vùng kết quả bằng AJAX.
 require __DIR__ . '/layouts/head.php';
 
 $selectedCategoryName = null;
@@ -330,6 +331,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
     <span id="copy-toast-text">Đã sao chép mã</span>
 </div>
 
+<?php require __DIR__ . '/partials/cookie-consent.php'; ?>
 <?php require __DIR__ . '/auth/auth-modal.php'; ?>
 <script src="<?= e(url('/assets/js/turnstile.js')) ?>?v=<?= filemtime(__DIR__ . '/../../assets/js/turnstile.js') ?>" defer></script>
 </body>
