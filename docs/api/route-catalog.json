@@ -31,6 +31,18 @@
   },
   {
     "method": "POST",
+    "path": "/api/oauth/google-one-tap/start",
+    "roles": [],
+    "handler": "App\\Controllers\\OAuthController::oneTapStart"
+  },
+  {
+    "method": "POST",
+    "path": "/api/oauth/google-one-tap",
+    "roles": [],
+    "handler": "App\\Controllers\\OAuthController::oneTapLogin"
+  },
+  {
+    "method": "POST",
     "path": "/auth/oauth/{provider}",
     "roles": [],
     "handler": "App\\Controllers\\OAuthController::start"

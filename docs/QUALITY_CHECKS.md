@@ -2,7 +2,7 @@
 
 ## CI cho Pull Request
 
-`.github/workflows/quality.yml` chạy PHP lint, Node.js tests và các PHP regression tests **không cần MySQL** ở mọi Pull Request, cũng như khi push lên `main`/`Quang`.
+`.github/workflows/quality.yml` chạy PHP lint, Node.js tests và các PHP regression tests **không cần MySQL** ở mọi Pull Request, cũng như khi push lên `main`/`Phuc`/`Quang`.
 
 - PHP 8.3 với extensions `mysqli`, `mbstring`, `openssl`.
 - Node.js 22.
@@ -11,6 +11,8 @@
 - `tests/coupon-interaction-errors-phase4.php` và `tests/oauth-setup-access-phase5.php`: kiểm tra hợp đồng HTTP status không cần DB.
 
 CI này **không chứng minh** toàn bộ chức năng và database đã chạy đúng. Không dùng `config/local.php` hoặc `.env` có secret trong CI.
+
+Kết quả dọn source 09-10/11/2026, gồm kiểm thử MariaDB riêng và Postman CLI, được ghi tại [CODE_CLEANUP_20261110.md](CODE_CLEANUP_20261110.md). Việc này không thay thế nghiệm thu provider hoặc hosting HTTPS thật.
 
 ## Kiểm thử tích hợp trên XAMPP trước khi merge
 

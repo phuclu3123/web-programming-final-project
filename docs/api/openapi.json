@@ -951,9 +951,373 @@
         }
       }
     },
+    "/api/oauth/google-one-tap/start": {
+      "post": {
+        "operationId": "App_Controllers_OAuthController_oneTapStart_5",
+        "summary": "oneTapStart — /api/oauth/google-one-tap/start",
+        "tags": [
+          "Public / Auth"
+        ],
+        "x-role-policy": [],
+        "x-handler": "App\\Controllers\\OAuthController::oneTapStart",
+        "responses": {
+          "200": {
+            "description": "JSON response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request body exceeds 1 MiB; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "419": {
+            "description": "Legacy controller CSRF rejection; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected API failure; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed input; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No active session; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, object permission, origin or CSRF rejection; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Missing or not publicly visible resource; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong method; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State conflict / already handled; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation/business rule rejected; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "External provider failed; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Missing configuration or service unavailable; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "csrf"
+                ],
+                "properties": {
+                  "csrf": {
+                    "type": "string",
+                    "description": "Current session CSRF token, from HTML meta csrf-token. _token is the legacy alias."
+                  },
+                  "_token": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/oauth/google-one-tap": {
+      "post": {
+        "operationId": "App_Controllers_OAuthController_oneTapLogin_6",
+        "summary": "oneTapLogin — /api/oauth/google-one-tap",
+        "tags": [
+          "Public / Auth"
+        ],
+        "x-role-policy": [],
+        "x-handler": "App\\Controllers\\OAuthController::oneTapLogin",
+        "responses": {
+          "200": {
+            "description": "JSON response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request body exceeds 1 MiB; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "419": {
+            "description": "Legacy controller CSRF rejection; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected API failure; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Malformed input; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No active session; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role, object permission, origin or CSRF rejection; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Missing or not publicly visible resource; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong method; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State conflict / already handled; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation/business rule rejected; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "External provider failed; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Missing configuration or service unavailable; JSON for Accept: application/json, otherwise HTML.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "csrf"
+                ],
+                "properties": {
+                  "csrf": {
+                    "type": "string",
+                    "description": "Current session CSRF token, from HTML meta csrf-token. _token is the legacy alias."
+                  },
+                  "_token": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/oauth/{provider}": {
       "post": {
-        "operationId": "App_Controllers_OAuthController_start_5",
+        "operationId": "App_Controllers_OAuthController_start_7",
         "summary": "start — /auth/oauth/{provider}",
         "tags": [
           "Public / Auth"
@@ -1161,7 +1525,7 @@
     },
     "/api/oauth/google-callback.php": {
       "get": {
-        "operationId": "App_Controllers_OAuthController_google_6",
+        "operationId": "App_Controllers_OAuthController_google_8",
         "summary": "google — /api/oauth/google-callback.php",
         "tags": [
           "Public / Auth"
@@ -1338,7 +1702,7 @@
     },
     "/api/oauth/github-callback.php": {
       "get": {
-        "operationId": "App_Controllers_OAuthController_github_7",
+        "operationId": "App_Controllers_OAuthController_github_9",
         "summary": "github — /api/oauth/github-callback.php",
         "tags": [
           "Public / Auth"
@@ -1515,7 +1879,7 @@
     },
     "/api/oauth/facebook-callback.php": {
       "get": {
-        "operationId": "App_Controllers_OAuthController_facebook_8",
+        "operationId": "App_Controllers_OAuthController_facebook_10",
         "summary": "facebook — /api/oauth/facebook-callback.php",
         "tags": [
           "Public / Auth"
@@ -1692,7 +2056,7 @@
     },
     "/index.php": {
       "get": {
-        "operationId": "App_Controllers_CatalogController_index_9",
+        "operationId": "App_Controllers_CatalogController_index_11",
         "summary": "index — /index.php",
         "tags": [
           "Public / Auth"
@@ -1845,7 +2209,7 @@
     },
     "/admin.php": {
       "get": {
-        "operationId": "App_Controllers_Admin_ReviewController_index_10",
+        "operationId": "App_Controllers_Admin_ReviewController_index_12",
         "summary": "index — /admin.php",
         "tags": [
           "ADMIN"
@@ -2003,7 +2367,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_Admin_ReviewController_index_11",
+        "operationId": "App_Controllers_Admin_ReviewController_index_13",
         "summary": "index — /admin.php",
         "tags": [
           "ADMIN"
@@ -2204,7 +2568,7 @@
     },
     "/shop.php": {
       "get": {
-        "operationId": "App_Controllers_ShopController_index_12",
+        "operationId": "App_Controllers_ShopController_index_14",
         "summary": "index — /shop.php",
         "tags": [
           "MERCHANT"
@@ -2362,7 +2726,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_ShopController_index_13",
+        "operationId": "App_Controllers_ShopController_index_15",
         "summary": "index — /shop.php",
         "tags": [
           "MERCHANT"
@@ -2590,7 +2954,7 @@
     },
     "/": {
       "get": {
-        "operationId": "App_Controllers_CatalogController_index_14",
+        "operationId": "App_Controllers_CatalogController_index_16",
         "summary": "index — /",
         "tags": [
           "Public / Auth"
@@ -2743,7 +3107,7 @@
     },
     "/portal": {
       "get": {
-        "operationId": "App_Controllers_PortalController_index_15",
+        "operationId": "App_Controllers_PortalController_index_17",
         "summary": "index — /portal",
         "tags": [
           "Public / Auth"
@@ -2896,7 +3260,7 @@
     },
     "/dashboard": {
       "get": {
-        "operationId": "App_Controllers_PortalController_dashboard_16",
+        "operationId": "App_Controllers_PortalController_dashboard_18",
         "summary": "dashboard — /dashboard",
         "tags": [
           "USER"
@@ -3058,7 +3422,7 @@
     },
     "/notifications": {
       "get": {
-        "operationId": "App_Controllers_NotificationController_index_17",
+        "operationId": "App_Controllers_NotificationController_index_19",
         "summary": "index — /notifications",
         "tags": [
           "USER"
@@ -3220,7 +3584,7 @@
     },
     "/notifications/read": {
       "post": {
-        "operationId": "App_Controllers_NotificationController_read_18",
+        "operationId": "App_Controllers_NotificationController_read_20",
         "summary": "read — /notifications/read",
         "tags": [
           "USER"
@@ -3411,7 +3775,7 @@
     },
     "/account": {
       "get": {
-        "operationId": "App_Controllers_AccountController_index_19",
+        "operationId": "App_Controllers_AccountController_index_21",
         "summary": "index — /account",
         "tags": [
           "USER"
@@ -3571,7 +3935,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_AccountController_update_20",
+        "operationId": "App_Controllers_AccountController_update_22",
         "summary": "update — /account",
         "tags": [
           "USER"
@@ -3768,7 +4132,7 @@
     },
     "/account/password": {
       "post": {
-        "operationId": "App_Controllers_AccountController_changePassword_21",
+        "operationId": "App_Controllers_AccountController_changePassword_23",
         "summary": "changePassword — /account/password",
         "tags": [
           "USER"
@@ -3968,7 +4332,7 @@
     },
     "/about": {
       "get": {
-        "operationId": "App_Controllers_InfoController_about_22",
+        "operationId": "App_Controllers_InfoController_about_24",
         "summary": "about — /about",
         "tags": [
           "Public / Auth"
@@ -4121,7 +4485,7 @@
     },
     "/terms": {
       "get": {
-        "operationId": "App_Controllers_InfoController_terms_23",
+        "operationId": "App_Controllers_InfoController_terms_25",
         "summary": "terms — /terms",
         "tags": [
           "Public / Auth"
@@ -4274,7 +4638,7 @@
     },
     "/privacy": {
       "get": {
-        "operationId": "App_Controllers_InfoController_privacy_24",
+        "operationId": "App_Controllers_InfoController_privacy_26",
         "summary": "privacy — /privacy",
         "tags": [
           "Public / Auth"
@@ -4427,7 +4791,7 @@
     },
     "/community-guidelines": {
       "get": {
-        "operationId": "App_Controllers_InfoController_communityGuidelines_25",
+        "operationId": "App_Controllers_InfoController_communityGuidelines_27",
         "summary": "communityGuidelines — /community-guidelines",
         "tags": [
           "Public / Auth"
@@ -4580,7 +4944,7 @@
     },
     "/contact": {
       "get": {
-        "operationId": "App_Controllers_InfoController_contact_26",
+        "operationId": "App_Controllers_InfoController_contact_28",
         "summary": "contact — /contact",
         "tags": [
           "Public / Auth"
@@ -4733,7 +5097,7 @@
     },
     "/articles": {
       "get": {
-        "operationId": "App_Controllers_ArticleController_index_27",
+        "operationId": "App_Controllers_ArticleController_index_29",
         "summary": "index — /articles",
         "tags": [
           "Public / Auth"
@@ -4886,7 +5250,7 @@
     },
     "/guides/{slug}": {
       "get": {
-        "operationId": "App_Controllers_ArticleController_guide_28",
+        "operationId": "App_Controllers_ArticleController_guide_30",
         "summary": "guide — /guides/{slug}",
         "tags": [
           "Public / Auth"
@@ -5049,7 +5413,7 @@
     },
     "/articles/{slug}": {
       "get": {
-        "operationId": "App_Controllers_ArticleController_show_29",
+        "operationId": "App_Controllers_ArticleController_show_31",
         "summary": "show — /articles/{slug}",
         "tags": [
           "Public / Auth"
@@ -5212,7 +5576,7 @@
     },
     "/api/articles/{id}/comments": {
       "get": {
-        "operationId": "App_Controllers_ArticleCommentController_index_30",
+        "operationId": "App_Controllers_ArticleCommentController_index_32",
         "summary": "index — /api/articles/{id}/comments",
         "tags": [
           "Public / Auth"
@@ -5383,7 +5747,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_ArticleCommentController_store_31",
+        "operationId": "App_Controllers_ArticleCommentController_store_33",
         "summary": "store — /api/articles/{id}/comments",
         "tags": [
           "USER"
@@ -5629,7 +5993,7 @@
     },
     "/api/article-comments/{id}/delete": {
       "post": {
-        "operationId": "App_Controllers_ArticleCommentController_delete_32",
+        "operationId": "App_Controllers_ArticleCommentController_delete_34",
         "summary": "delete — /api/article-comments/{id}/delete",
         "tags": [
           "USER"
@@ -5845,7 +6209,7 @@
     },
     "/admin/article-comments": {
       "get": {
-        "operationId": "App_Controllers_ArticleCommentController_moderation_33",
+        "operationId": "App_Controllers_ArticleCommentController_moderation_35",
         "summary": "moderation — /admin/article-comments",
         "tags": [
           "ADMIN"
@@ -6005,7 +6369,7 @@
     },
     "/admin/article-comments/{id}/status": {
       "post": {
-        "operationId": "App_Controllers_ArticleCommentController_moderate_34",
+        "operationId": "App_Controllers_ArticleCommentController_moderate_36",
         "summary": "moderate — /admin/article-comments/{id}/status",
         "tags": [
           "ADMIN"
@@ -6240,7 +6604,7 @@
     },
     "/campaign-calendar": {
       "get": {
-        "operationId": "App_Controllers_HolidayController_index_35",
+        "operationId": "App_Controllers_HolidayController_index_37",
         "summary": "index — /campaign-calendar",
         "tags": [
           "Public / Auth"
@@ -6393,7 +6757,7 @@
     },
     "/login": {
       "get": {
-        "operationId": "App_Controllers_AuthController_showLogin_36",
+        "operationId": "App_Controllers_AuthController_showLogin_38",
         "summary": "showLogin — /login",
         "tags": [
           "Public / Auth"
@@ -6544,7 +6908,7 @@
         }
       },
       "post": {
-        "operationId": "App_Controllers_AuthController_login_37",
+        "operationId": "App_Controllers_AuthController_login_39",
         "summary": "login — /login",
         "tags": [
           "Public / Auth"
@@ -6747,7 +7111,7 @@
     },
     "/forgot-password": {
       "get": {
-        "operationId": "App_Controllers_AuthController_showForgotPassword_38",
+        "operationId": "App_Controllers_AuthController_showForgotPassword_40",
         "summary": "showForgotPassword — /forgot-password",
         "tags": [
           "Public / Auth"
@@ -6898,7 +7262,7 @@
         }
       },
       "post": {
-        "operationId": "App_Controllers_AuthController_forgotPassword_39",
+        "operationId": "App_Controllers_AuthController_forgotPassword_41",
         "summary": "forgotPassword — /forgot-password",
         "tags": [
           "Public / Auth"
@@ -7094,7 +7458,7 @@
     },
     "/auth/reset-otp": {
       "post": {
-        "operationId": "App_Controllers_AuthController_resetOtp_40",
+        "operationId": "App_Controllers_AuthController_resetOtp_42",
         "summary": "resetOtp — /auth/reset-otp",
         "tags": [
           "Public / Auth"
@@ -7290,7 +7654,7 @@
     },
     "/reset-password": {
       "get": {
-        "operationId": "App_Controllers_AuthController_showResetPassword_41",
+        "operationId": "App_Controllers_AuthController_showResetPassword_43",
         "summary": "showResetPassword — /reset-password",
         "tags": [
           "Public / Auth"
@@ -7450,7 +7814,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_AuthController_resetPassword_42",
+        "operationId": "App_Controllers_AuthController_resetPassword_44",
         "summary": "resetPassword — /reset-password",
         "tags": [
           "Public / Auth"
@@ -7646,7 +8010,7 @@
     },
     "/register": {
       "get": {
-        "operationId": "App_Controllers_AuthController_showRegister_43",
+        "operationId": "App_Controllers_AuthController_showRegister_45",
         "summary": "showRegister — /register",
         "tags": [
           "Public / Auth"
@@ -7797,7 +8161,7 @@
         }
       },
       "post": {
-        "operationId": "App_Controllers_AuthController_register_44",
+        "operationId": "App_Controllers_AuthController_register_46",
         "summary": "register — /register",
         "tags": [
           "Public / Auth"
@@ -8016,7 +8380,7 @@
     },
     "/logout": {
       "post": {
-        "operationId": "App_Controllers_AuthController_logout_45",
+        "operationId": "App_Controllers_AuthController_logout_47",
         "summary": "logout — /logout",
         "tags": [
           "Public / Auth"
@@ -8203,7 +8567,7 @@
     },
     "/categories": {
       "get": {
-        "operationId": "App_Controllers_CategoryController_index_46",
+        "operationId": "App_Controllers_CategoryController_index_48",
         "summary": "index — /categories",
         "tags": [
           "Public / Auth"
@@ -8356,7 +8720,7 @@
     },
     "/campaigns": {
       "get": {
-        "operationId": "App_Controllers_CampaignController_index_47",
+        "operationId": "App_Controllers_CampaignController_index_49",
         "summary": "index — /campaigns",
         "tags": [
           "Public / Auth"
@@ -8553,7 +8917,7 @@
     },
     "/coupons": {
       "get": {
-        "operationId": "App_Controllers_CouponController_index_48",
+        "operationId": "App_Controllers_CouponController_index_50",
         "summary": "index — /coupons",
         "tags": [
           "Public / Auth"
@@ -8762,7 +9126,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_CouponController_store_50",
+        "operationId": "App_Controllers_CouponController_store_52",
         "summary": "store — /coupons",
         "tags": [
           "USER"
@@ -9002,7 +9366,7 @@
     },
     "/coupons/create": {
       "get": {
-        "operationId": "App_Controllers_CouponController_create_49",
+        "operationId": "App_Controllers_CouponController_create_51",
         "summary": "create — /coupons/create",
         "tags": [
           "USER"
@@ -9164,7 +9528,7 @@
     },
     "/my-coupons": {
       "get": {
-        "operationId": "App_Controllers_CouponController_myCoupons_51",
+        "operationId": "App_Controllers_CouponController_myCoupons_53",
         "summary": "myCoupons — /my-coupons",
         "tags": [
           "USER"
@@ -9326,7 +9690,7 @@
     },
     "/saved-coupons": {
       "get": {
-        "operationId": "App_Controllers_SavedCouponController_index_52",
+        "operationId": "App_Controllers_SavedCouponController_index_54",
         "summary": "index — /saved-coupons",
         "tags": [
           "USER"
@@ -9488,7 +9852,7 @@
     },
     "/saved-coupons/{id}/save": {
       "post": {
-        "operationId": "App_Controllers_SavedCouponController_save_53",
+        "operationId": "App_Controllers_SavedCouponController_save_55",
         "summary": "save — /saved-coupons/{id}/save",
         "tags": [
           "USER"
@@ -9691,7 +10055,7 @@
     },
     "/saved-coupons/{id}/remove": {
       "post": {
-        "operationId": "App_Controllers_SavedCouponController_remove_54",
+        "operationId": "App_Controllers_SavedCouponController_remove_56",
         "summary": "remove — /saved-coupons/{id}/remove",
         "tags": [
           "USER"
@@ -9894,7 +10258,7 @@
     },
     "/coupons/{id}": {
       "get": {
-        "operationId": "App_Controllers_CouponController_show_55",
+        "operationId": "App_Controllers_CouponController_show_57",
         "summary": "show — /coupons/{id}",
         "tags": [
           "Public / Auth"
@@ -10059,7 +10423,7 @@
     },
     "/campaigns/{id}": {
       "get": {
-        "operationId": "App_Controllers_CampaignController_show_56",
+        "operationId": "App_Controllers_CampaignController_show_58",
         "summary": "show — /campaigns/{id}",
         "tags": [
           "Public / Auth"
@@ -10245,7 +10609,7 @@
     },
     "/api/health": {
       "get": {
-        "operationId": "App_Controllers_PortalController_apiHealth_57",
+        "operationId": "App_Controllers_PortalController_apiHealth_59",
         "summary": "apiHealth — /api/health",
         "tags": [
           "Public / Auth"
@@ -10399,7 +10763,7 @@
     },
     "/api/coupons/search": {
       "get": {
-        "operationId": "App_Controllers_CouponController_apiSearch_58",
+        "operationId": "App_Controllers_CouponController_apiSearch_60",
         "summary": "apiSearch — /api/coupons/search",
         "tags": [
           "Public / Auth"
@@ -10618,7 +10982,7 @@
     },
     "/api/coupons/{id}/events": {
       "post": {
-        "operationId": "App_Controllers_CouponEventController_record_59",
+        "operationId": "App_Controllers_CouponEventController_record_61",
         "summary": "record — /api/coupons/{id}/events",
         "tags": [
           "Public / Auth"
@@ -10836,7 +11200,7 @@
     },
     "/api/coupons/{id}/favorite": {
       "post": {
-        "operationId": "App_Controllers_CouponInteractionController_favorite_60",
+        "operationId": "App_Controllers_CouponInteractionController_favorite_62",
         "summary": "favorite — /api/coupons/{id}/favorite",
         "tags": [
           "USER"
@@ -11058,7 +11422,7 @@
     },
     "/api/coupons/{id}/vote": {
       "post": {
-        "operationId": "App_Controllers_CouponInteractionController_vote_61",
+        "operationId": "App_Controllers_CouponInteractionController_vote_63",
         "summary": "vote — /api/coupons/{id}/vote",
         "tags": [
           "USER"
@@ -11280,7 +11644,7 @@
     },
     "/api/coupons/{id}/comments": {
       "post": {
-        "operationId": "App_Controllers_CouponInteractionController_comment_62",
+        "operationId": "App_Controllers_CouponInteractionController_comment_64",
         "summary": "comment — /api/coupons/{id}/comments",
         "tags": [
           "USER"
@@ -11505,7 +11869,7 @@
     },
     "/api/coupons/{id}/reports": {
       "post": {
-        "operationId": "App_Controllers_CouponInteractionController_report_63",
+        "operationId": "App_Controllers_CouponInteractionController_report_65",
         "summary": "report — /api/coupons/{id}/reports",
         "tags": [
           "USER"
@@ -11736,7 +12100,7 @@
     },
     "/merchant/apply": {
       "get": {
-        "operationId": "App_Controllers_MerchantController_apply_64",
+        "operationId": "App_Controllers_MerchantController_apply_66",
         "summary": "apply — /merchant/apply",
         "tags": [
           "USER"
@@ -11895,7 +12259,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_MerchantController_submitApplication_65",
+        "operationId": "App_Controllers_MerchantController_submitApplication_67",
         "summary": "submitApplication — /merchant/apply",
         "tags": [
           "USER"
@@ -12108,7 +12472,7 @@
     },
     "/merchant": {
       "get": {
-        "operationId": "App_Controllers_MerchantController_dashboard_66",
+        "operationId": "App_Controllers_MerchantController_dashboard_68",
         "summary": "dashboard — /merchant",
         "tags": [
           "MERCHANT"
@@ -12268,7 +12632,7 @@
     },
     "/merchant/profile/{id}": {
       "get": {
-        "operationId": "App_Controllers_MerchantController_profile_67",
+        "operationId": "App_Controllers_MerchantController_profile_69",
         "summary": "profile — /merchant/profile/{id}",
         "tags": [
           "MERCHANT"
@@ -12438,7 +12802,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_MerchantController_updateProfile_68",
+        "operationId": "App_Controllers_MerchantController_updateProfile_70",
         "summary": "updateProfile — /merchant/profile/{id}",
         "tags": [
           "MERCHANT"
@@ -12648,7 +13012,7 @@
     },
     "/merchant/coupons": {
       "get": {
-        "operationId": "App_Controllers_MerchantController_coupons_69",
+        "operationId": "App_Controllers_MerchantController_coupons_71",
         "summary": "coupons — /merchant/coupons",
         "tags": [
           "MERCHANT"
@@ -12806,7 +13170,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_MerchantController_storeCoupon_71",
+        "operationId": "App_Controllers_MerchantController_storeCoupon_73",
         "summary": "storeCoupon — /merchant/coupons",
         "tags": [
           "MERCHANT"
@@ -12995,7 +13359,7 @@
     },
     "/merchant/coupons/create": {
       "get": {
-        "operationId": "App_Controllers_MerchantController_createCoupon_70",
+        "operationId": "App_Controllers_MerchantController_createCoupon_72",
         "summary": "createCoupon — /merchant/coupons/create",
         "tags": [
           "MERCHANT"
@@ -13155,7 +13519,7 @@
     },
     "/merchant/coupons/{id}/edit": {
       "get": {
-        "operationId": "App_Controllers_MerchantController_editCoupon_72",
+        "operationId": "App_Controllers_MerchantController_editCoupon_74",
         "summary": "editCoupon — /merchant/coupons/{id}/edit",
         "tags": [
           "MERCHANT"
@@ -13325,7 +13689,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_MerchantController_updateCoupon_73",
+        "operationId": "App_Controllers_MerchantController_updateCoupon_75",
         "summary": "updateCoupon — /merchant/coupons/{id}/edit",
         "tags": [
           "MERCHANT"
@@ -13526,7 +13890,7 @@
     },
     "/merchant/coupons/{id}/disable": {
       "post": {
-        "operationId": "App_Controllers_MerchantController_disableCoupon_74",
+        "operationId": "App_Controllers_MerchantController_disableCoupon_76",
         "summary": "disableCoupon — /merchant/coupons/{id}/disable",
         "tags": [
           "MERCHANT"
@@ -13727,7 +14091,7 @@
     },
     "/merchant/campaigns": {
       "get": {
-        "operationId": "App_Controllers_CampaignController_merchantIndex_75",
+        "operationId": "App_Controllers_CampaignController_merchantIndex_77",
         "summary": "merchantIndex — /merchant/campaigns",
         "tags": [
           "MERCHANT"
@@ -13885,7 +14249,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_CampaignController_merchantStore_77",
+        "operationId": "App_Controllers_CampaignController_merchantStore_79",
         "summary": "merchantStore — /merchant/campaigns",
         "tags": [
           "MERCHANT"
@@ -14095,7 +14459,7 @@
     },
     "/merchant/campaigns/create": {
       "get": {
-        "operationId": "App_Controllers_CampaignController_merchantCreate_76",
+        "operationId": "App_Controllers_CampaignController_merchantCreate_78",
         "summary": "merchantCreate — /merchant/campaigns/create",
         "tags": [
           "MERCHANT"
@@ -14255,7 +14619,7 @@
     },
     "/merchant/campaigns/{id}": {
       "get": {
-        "operationId": "App_Controllers_CampaignController_merchantShow_78",
+        "operationId": "App_Controllers_CampaignController_merchantShow_80",
         "summary": "merchantShow — /merchant/campaigns/{id}",
         "tags": [
           "MERCHANT"
@@ -14427,7 +14791,7 @@
     },
     "/merchant/campaigns/{id}/edit": {
       "get": {
-        "operationId": "App_Controllers_CampaignController_merchantEdit_79",
+        "operationId": "App_Controllers_CampaignController_merchantEdit_81",
         "summary": "merchantEdit — /merchant/campaigns/{id}/edit",
         "tags": [
           "MERCHANT"
@@ -14597,7 +14961,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_CampaignController_merchantUpdate_80",
+        "operationId": "App_Controllers_CampaignController_merchantUpdate_82",
         "summary": "merchantUpdate — /merchant/campaigns/{id}/edit",
         "tags": [
           "MERCHANT"
@@ -14819,7 +15183,7 @@
     },
     "/merchant/campaigns/{id}/attach": {
       "post": {
-        "operationId": "App_Controllers_CampaignController_attach_81",
+        "operationId": "App_Controllers_CampaignController_attach_83",
         "summary": "attach — /merchant/campaigns/{id}/attach",
         "tags": [
           "MERCHANT"
@@ -15023,7 +15387,7 @@
     },
     "/merchant/campaigns/{id}/coupons/{couponId}/detach": {
       "post": {
-        "operationId": "App_Controllers_CampaignController_detach_82",
+        "operationId": "App_Controllers_CampaignController_detach_84",
         "summary": "detach — /merchant/campaigns/{id}/coupons/{couponId}/detach",
         "tags": [
           "MERCHANT"
@@ -15234,7 +15598,7 @@
     },
     "/admin/api-docs": {
       "get": {
-        "operationId": "App_Controllers_Admin_ApiDocsController_index_83",
+        "operationId": "App_Controllers_Admin_ApiDocsController_index_85",
         "summary": "index — /admin/api-docs",
         "tags": [
           "ADMIN"
@@ -15394,7 +15758,7 @@
     },
     "/admin/api-spec": {
       "get": {
-        "operationId": "App_Controllers_Admin_ApiDocsController_spec_84",
+        "operationId": "App_Controllers_Admin_ApiDocsController_spec_86",
         "summary": "spec — /admin/api-spec",
         "tags": [
           "ADMIN"
@@ -15555,7 +15919,7 @@
     },
     "/admin/integrations": {
       "get": {
-        "operationId": "App_Controllers_Admin_IntegrationController_index_85",
+        "operationId": "App_Controllers_Admin_IntegrationController_index_87",
         "summary": "index — /admin/integrations",
         "tags": [
           "ADMIN"
@@ -15724,7 +16088,7 @@
     },
     "/admin/integrations/sync": {
       "post": {
-        "operationId": "App_Controllers_Admin_IntegrationController_sync_86",
+        "operationId": "App_Controllers_Admin_IntegrationController_sync_88",
         "summary": "sync — /admin/integrations/sync",
         "tags": [
           "ADMIN"
@@ -15917,7 +16281,7 @@
     },
     "/admin/integrations/{id}/review": {
       "get": {
-        "operationId": "App_Controllers_Admin_IntegrationController_review_87",
+        "operationId": "App_Controllers_Admin_IntegrationController_review_89",
         "summary": "review — /admin/integrations/{id}/review",
         "tags": [
           "ADMIN"
@@ -16089,7 +16453,7 @@
     },
     "/admin/integrations/{id}/import": {
       "post": {
-        "operationId": "App_Controllers_Admin_IntegrationController_import_88",
+        "operationId": "App_Controllers_Admin_IntegrationController_import_90",
         "summary": "import — /admin/integrations/{id}/import",
         "tags": [
           "ADMIN"
@@ -16345,7 +16709,7 @@
     },
     "/admin/integrations/{id}/dismiss": {
       "post": {
-        "operationId": "App_Controllers_Admin_IntegrationController_dismiss_89",
+        "operationId": "App_Controllers_Admin_IntegrationController_dismiss_91",
         "summary": "dismiss — /admin/integrations/{id}/dismiss",
         "tags": [
           "ADMIN"
@@ -16541,7 +16905,7 @@
     },
     "/admin": {
       "get": {
-        "operationId": "App_Controllers_Admin_DashboardController_index_90",
+        "operationId": "App_Controllers_Admin_DashboardController_index_92",
         "summary": "index — /admin",
         "tags": [
           "ADMIN"
@@ -16701,7 +17065,7 @@
     },
     "/admin/users": {
       "get": {
-        "operationId": "App_Controllers_Admin_UserController_index_91",
+        "operationId": "App_Controllers_Admin_UserController_index_93",
         "summary": "index — /admin/users",
         "tags": [
           "ADMIN"
@@ -16861,7 +17225,7 @@
     },
     "/admin/users/{id}/status": {
       "post": {
-        "operationId": "App_Controllers_Admin_UserController_status_92",
+        "operationId": "App_Controllers_Admin_UserController_status_94",
         "summary": "status — /admin/users/{id}/status",
         "tags": [
           "ADMIN"
@@ -17065,7 +17429,7 @@
     },
     "/admin/merchants": {
       "get": {
-        "operationId": "App_Controllers_Admin_MerchantController_index_93",
+        "operationId": "App_Controllers_Admin_MerchantController_index_95",
         "summary": "index — /admin/merchants",
         "tags": [
           "ADMIN"
@@ -17225,7 +17589,7 @@
     },
     "/admin/merchants/{id}/status": {
       "post": {
-        "operationId": "App_Controllers_Admin_MerchantController_shopStatus_94",
+        "operationId": "App_Controllers_Admin_MerchantController_shopStatus_96",
         "summary": "shopStatus — /admin/merchants/{id}/status",
         "tags": [
           "ADMIN"
@@ -17432,7 +17796,7 @@
     },
     "/admin/merchants/{id}/review": {
       "post": {
-        "operationId": "App_Controllers_Admin_MerchantController_review_95",
+        "operationId": "App_Controllers_Admin_MerchantController_review_97",
         "summary": "review — /admin/merchants/{id}/review",
         "tags": [
           "ADMIN"
@@ -17642,7 +18006,7 @@
     },
     "/admin/categories": {
       "get": {
-        "operationId": "App_Controllers_Admin_CategoryController_index_96",
+        "operationId": "App_Controllers_Admin_CategoryController_index_98",
         "summary": "index — /admin/categories",
         "tags": [
           "ADMIN"
@@ -17800,7 +18164,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_Admin_CategoryController_store_97",
+        "operationId": "App_Controllers_Admin_CategoryController_store_99",
         "summary": "store — /admin/categories",
         "tags": [
           "ADMIN"
@@ -17998,7 +18362,7 @@
     },
     "/admin/categories/{id}/toggle": {
       "post": {
-        "operationId": "App_Controllers_Admin_CategoryController_toggle_98",
+        "operationId": "App_Controllers_Admin_CategoryController_toggle_100",
         "summary": "toggle — /admin/categories/{id}/toggle",
         "tags": [
           "ADMIN"
@@ -18202,7 +18566,7 @@
     },
     "/admin/categories/{id}/edit": {
       "post": {
-        "operationId": "App_Controllers_Admin_CategoryController_update_99",
+        "operationId": "App_Controllers_Admin_CategoryController_update_101",
         "summary": "update — /admin/categories/{id}/edit",
         "tags": [
           "ADMIN"
@@ -18412,7 +18776,7 @@
     },
     "/admin/categories/{id}/delete": {
       "post": {
-        "operationId": "App_Controllers_Admin_CategoryController_delete_100",
+        "operationId": "App_Controllers_Admin_CategoryController_delete_102",
         "summary": "delete — /admin/categories/{id}/delete",
         "tags": [
           "ADMIN"
@@ -18616,7 +18980,7 @@
     },
     "/admin/campaigns": {
       "get": {
-        "operationId": "App_Controllers_Admin_CampaignController_index_101",
+        "operationId": "App_Controllers_Admin_CampaignController_index_103",
         "summary": "index — /admin/campaigns",
         "tags": [
           "ADMIN"
@@ -18774,7 +19138,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_Admin_CampaignController_store_105",
+        "operationId": "App_Controllers_Admin_CampaignController_store_107",
         "summary": "store — /admin/campaigns",
         "tags": [
           "ADMIN"
@@ -18984,7 +19348,7 @@
     },
     "/admin/campaigns/{id}": {
       "get": {
-        "operationId": "App_Controllers_Admin_CampaignController_show_102",
+        "operationId": "App_Controllers_Admin_CampaignController_show_104",
         "summary": "show — /admin/campaigns/{id}",
         "tags": [
           "ADMIN"
@@ -19156,7 +19520,7 @@
     },
     "/admin/campaigns/{id}/attach": {
       "post": {
-        "operationId": "App_Controllers_Admin_CampaignController_attach_103",
+        "operationId": "App_Controllers_Admin_CampaignController_attach_105",
         "summary": "attach — /admin/campaigns/{id}/attach",
         "tags": [
           "ADMIN"
@@ -19360,7 +19724,7 @@
     },
     "/admin/campaigns/{id}/coupons/{couponId}/detach": {
       "post": {
-        "operationId": "App_Controllers_Admin_CampaignController_detach_104",
+        "operationId": "App_Controllers_Admin_CampaignController_detach_106",
         "summary": "detach — /admin/campaigns/{id}/coupons/{couponId}/detach",
         "tags": [
           "ADMIN"
@@ -19571,7 +19935,7 @@
     },
     "/admin/campaigns/{id}/status": {
       "post": {
-        "operationId": "App_Controllers_Admin_CampaignController_status_106",
+        "operationId": "App_Controllers_Admin_CampaignController_status_108",
         "summary": "status — /admin/campaigns/{id}/status",
         "tags": [
           "ADMIN"
@@ -19775,7 +20139,7 @@
     },
     "/admin/coupons": {
       "get": {
-        "operationId": "App_Controllers_Admin_CouponController_index_107",
+        "operationId": "App_Controllers_Admin_CouponController_index_109",
         "summary": "index — /admin/coupons",
         "tags": [
           "ADMIN"
@@ -19944,7 +20308,7 @@
     },
     "/admin/coupons/{id}/moderate": {
       "post": {
-        "operationId": "App_Controllers_Admin_CouponController_moderate_108",
+        "operationId": "App_Controllers_Admin_CouponController_moderate_110",
         "summary": "moderate — /admin/coupons/{id}/moderate",
         "tags": [
           "ADMIN"
@@ -20151,7 +20515,7 @@
     },
     "/admin/coupons/{id}/edit": {
       "get": {
-        "operationId": "App_Controllers_Admin_CouponController_edit_109",
+        "operationId": "App_Controllers_Admin_CouponController_edit_111",
         "summary": "edit — /admin/coupons/{id}/edit",
         "tags": [
           "ADMIN"
@@ -20321,7 +20685,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_Admin_CouponController_update_110",
+        "operationId": "App_Controllers_Admin_CouponController_update_112",
         "summary": "update — /admin/coupons/{id}/edit",
         "tags": [
           "ADMIN"
@@ -20567,7 +20931,7 @@
     },
     "/admin/coupons/{id}/expire": {
       "post": {
-        "operationId": "App_Controllers_Admin_CouponController_expire_111",
+        "operationId": "App_Controllers_Admin_CouponController_expire_113",
         "summary": "expire — /admin/coupons/{id}/expire",
         "tags": [
           "ADMIN"
@@ -20771,7 +21135,7 @@
     },
     "/admin/coupons/{id}/revoke": {
       "post": {
-        "operationId": "App_Controllers_Admin_CouponController_revoke_112",
+        "operationId": "App_Controllers_Admin_CouponController_revoke_114",
         "summary": "revoke — /admin/coupons/{id}/revoke",
         "tags": [
           "ADMIN"
@@ -20975,7 +21339,7 @@
     },
     "/admin/coupons/{id}/delete": {
       "post": {
-        "operationId": "App_Controllers_Admin_CouponController_delete_113",
+        "operationId": "App_Controllers_Admin_CouponController_delete_115",
         "summary": "delete — /admin/coupons/{id}/delete",
         "tags": [
           "ADMIN"
@@ -21179,7 +21543,7 @@
     },
     "/admin/reports": {
       "get": {
-        "operationId": "App_Controllers_Admin_ReportController_index_114",
+        "operationId": "App_Controllers_Admin_ReportController_index_116",
         "summary": "index — /admin/reports",
         "tags": [
           "ADMIN"
@@ -21339,7 +21703,7 @@
     },
     "/admin/reports/{id}/resolve": {
       "post": {
-        "operationId": "App_Controllers_Admin_ReportController_resolve_115",
+        "operationId": "App_Controllers_Admin_ReportController_resolve_117",
         "summary": "resolve — /admin/reports/{id}/resolve",
         "tags": [
           "ADMIN"
@@ -21546,7 +21910,7 @@
     },
     "/admin/merchant-requests": {
       "get": {
-        "operationId": "App_Controllers_Admin_MerchantAccessController_index_116",
+        "operationId": "App_Controllers_Admin_MerchantAccessController_index_118",
         "summary": "index — /admin/merchant-requests",
         "tags": [
           "ADMIN"
@@ -21706,7 +22070,7 @@
     },
     "/admin/merchant-requests/{id}/review": {
       "post": {
-        "operationId": "App_Controllers_Admin_MerchantAccessController_review_117",
+        "operationId": "App_Controllers_Admin_MerchantAccessController_review_119",
         "summary": "review — /admin/merchant-requests/{id}/review",
         "tags": [
           "ADMIN"
@@ -21916,7 +22280,7 @@
     },
     "/admin/merchant-memberships/{userId}/{merchantId}/revoke": {
       "post": {
-        "operationId": "App_Controllers_Admin_MerchantAccessController_revoke_118",
+        "operationId": "App_Controllers_Admin_MerchantAccessController_revoke_120",
         "summary": "revoke — /admin/merchant-memberships/{userId}/{merchantId}/revoke",
         "tags": [
           "ADMIN"
@@ -22130,7 +22494,7 @@
     },
     "/admin/articles": {
       "get": {
-        "operationId": "App_Controllers_Admin_ArticleController_index_119",
+        "operationId": "App_Controllers_Admin_ArticleController_index_121",
         "summary": "index — /admin/articles",
         "tags": [
           "ADMIN"
@@ -22288,7 +22652,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_Admin_ArticleController_store_121",
+        "operationId": "App_Controllers_Admin_ArticleController_store_123",
         "summary": "store — /admin/articles",
         "tags": [
           "ADMIN"
@@ -22489,7 +22853,7 @@
     },
     "/admin/articles/create": {
       "get": {
-        "operationId": "App_Controllers_Admin_ArticleController_create_120",
+        "operationId": "App_Controllers_Admin_ArticleController_create_122",
         "summary": "create — /admin/articles/create",
         "tags": [
           "ADMIN"
@@ -22649,7 +23013,7 @@
     },
     "/admin/articles/{id}/edit": {
       "get": {
-        "operationId": "App_Controllers_Admin_ArticleController_edit_122",
+        "operationId": "App_Controllers_Admin_ArticleController_edit_124",
         "summary": "edit — /admin/articles/{id}/edit",
         "tags": [
           "ADMIN"
@@ -22819,7 +23183,7 @@
         ]
       },
       "post": {
-        "operationId": "App_Controllers_Admin_ArticleController_update_123",
+        "operationId": "App_Controllers_Admin_ArticleController_update_125",
         "summary": "update — /admin/articles/{id}/edit",
         "tags": [
           "ADMIN"

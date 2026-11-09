@@ -19,7 +19,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mysqli, mbstring, openssl
+          extensions: mysqli, mbstring, openssl, curl
           coverage: none
 
       - name: Set up Node.js
@@ -50,12 +50,15 @@ jobs:
           php tests/session-guards.php
           php tests/router-integration.php
           php tests/oauth-auth.php
+          php tests/google-one-tap.php
           php tests/facebook-oauth.php
+          php tests/facebook-google-link.php
           php tests/phase4-security.php
           php tests/security-hardening-phase10b.php
           php tests/interaction-rate-limit-phase10c.php
           php tests/interaction-http-response-phase10c.php
           php tests/route-aware-assets-phase9gd2.php
           php tests/provider-integrations.php
+          php tests/password-reset-email.php
           php tests/request-token-contract.php
           php tests/campaign-presentation.php
