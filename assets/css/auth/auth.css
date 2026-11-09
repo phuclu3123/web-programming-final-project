@@ -309,6 +309,9 @@
 #loginModal [data-password-toggle]:hover { background: #e9eef9; color: #2855d9 !important; }
 #loginModal [data-password-toggle]:focus-visible { outline: 2px solid #2855d9; outline-offset: -2px; border-radius: 8px; }
 
+/* Non-FedCM fallback stays in the dialog's top layer; FedCM position is owned by the browser. */
+.google-one-tap-prompt { position: fixed; top: 16px; right: 16px; z-index: 20; }
+
 /* The same auth partials render as a native modal and on dedicated /login pages. */
 dialog#loginModal.auth-dialog {
     box-sizing: border-box;
