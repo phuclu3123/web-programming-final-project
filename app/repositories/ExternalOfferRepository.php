@@ -26,6 +26,7 @@ final class ExternalOfferRepository
     {
         $s=$this->db->prepare('SELECT * FROM external_offers WHERE id=?');$s->execute([$id]);return $s->fetch() ?: null;
     }
+    // Upsert payload và fingerprint; giữ nguyên quyết định nhập/bỏ qua và coupon đã liên kết.
     public function stage(int $actor,array $offers): int
     {
         $this->db->beginTransaction();
@@ -40,6 +41,7 @@ final class ExternalOfferRepository
             $this->db->commit();return count($offers);
         } catch (\Throwable $e) {if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
+    // Chỉ bỏ qua nguồn còn chờ, không mở lại nguồn đã xử lý khi đồng bộ lần sau.
     public function dismiss(int $actor,int $id): void
     {
         $this->db->beginTransaction();
@@ -52,7 +54,7 @@ final class ExternalOfferRepository
         } catch (\Throwable $e) {if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
 
-    /** Create one pending COMMUNITY coupon, then use the existing independent moderation queue. */
+    // Khóa nguồn, so fingerprint và mã trùng rồi tạo coupon chờ duyệt trong cùng transaction.
     public function import(int $actor,int $id,array $data,string $expectedFingerprint): int
     {
         $this->db->beginTransaction();

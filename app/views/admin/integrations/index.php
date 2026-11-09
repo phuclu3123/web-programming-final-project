@@ -1,4 +1,6 @@
-<?php use App\Core\Session; ?>
+<?php
+// Nguồn và ảnh chỉ phục vụ đối chiếu; các hàng chưa nhập không phải coupon công khai.
+ use App\Core\Session; ?>
 <header class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
  <div><h1 class="h3 mb-2">Nguồn coupon</h1><p class="text-muted mb-0">ACCESSTRADE · Lấy dữ liệu, đối chiếu điều kiện, chuyển sang hàng kiểm duyệt.</p></div>
  <a class="btn btn-outline-secondary" href="<?= e(url('/admin/coupons')) ?>">Hàng kiểm duyệt <?= icon('arrow') ?></a>
@@ -21,8 +23,16 @@
 <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 mb-0">Hàng chờ đối chiếu</h2><span class="small text-muted"><?= (int)$listing['total'] ?> mục</span></div>
 <?php if (!$listing['items']): ?><div class="card"><div class="card-body"><strong>Chưa có dữ liệu từ nguồn.</strong><p class="text-muted mb-0 mt-2">Điền ACCESSTRADE_ACCESS_KEY trong .env rồi lấy trang đầu tiên. Coupon demo không được trộn vào hàng chờ này.</p></div></div>
 <?php else: ?><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Ưu đãi</th><th>Nhà cung cấp</th><th>Trạng thái</th><th>Cập nhật</th><th></th></tr></thead><tbody>
-<?php foreach ($listing['items'] as $row): $payload=json_decode($row['payload'],true,64,JSON_THROW_ON_ERROR); ?><tr>
- <td><strong><?= e($payload['title']) ?></strong><small class="d-block text-muted"><?= e($row['code'] ?: 'Ưu đãi không cần mã') ?></small></td>
+<?php foreach ($listing['items'] as $row): $payload=json_decode($row['payload'],true,64,JSON_THROW_ON_ERROR); $sourceImage=safeHttpUrl($payload['image_url'] ?? null); ?><tr>
+ <td><div class="d-flex align-items-start gap-3">
+  <?php if ($sourceImage): ?><img src="<?= e($sourceImage) ?>" alt="" width="72" height="72" loading="lazy" decoding="async" referrerpolicy="no-referrer" class="rounded border flex-shrink-0" style="object-fit:cover">
+  <?php else: ?><span class="d-flex align-items-center justify-content-center rounded border bg-light text-muted flex-shrink-0" style="width:72px;height:72px" role="img" aria-label="Nguồn chưa cung cấp ảnh"><i class="fa-solid fa-image" aria-hidden="true"></i></span><?php endif; ?>
+  <div><strong><?= e($payload['title']) ?></strong><small class="d-block text-muted mt-1"><?= e($row['code'] ?: 'Ưu đãi không cần mã') ?></small>
+   <?php if (!empty($payload['ends_at'])): ?><small class="d-block text-muted">Đến <?= e(format_db_datetime($payload['ends_at'])) ?></small><?php endif; ?>
+   <?php if (!empty($payload['ends_at']) && $payload['ends_at'] < gmdate('Y-m-d H:i:s')): ?><span class="badge text-bg-secondary mt-1">Hết hạn theo nguồn</span><?php endif; ?>
+   <?php if (empty($payload['discount_type']) || ($payload['discount_value'] ?? null) === null): ?><span class="badge text-bg-warning mt-1">Cần đối chiếu mức giảm</span><?php endif; ?>
+  </div>
+ </div></td>
  <td><?= e($payload['merchant_ref']) ?></td><td><?= e(['PENDING'=>'Chờ đối chiếu','IMPORTED'=>'Đã chuyển kiểm duyệt','DISMISSED'=>'Đã bỏ qua'][$row['state']]) ?><?php if($row['state']==='IMPORTED' && $row['fingerprint']!==$row['imported_fingerprint']): ?><small class="d-block text-danger">Nguồn đã thay đổi · Cần kiểm tra</small><?php endif; ?></td>
  <td class="small"><?= e(format_db_datetime($row['fetched_at'])) ?></td><td><a class="btn btn-sm btn-outline-primary" href="<?= e(url('/admin/integrations/'.$row['id'].'/review')) ?>">Xem nguồn</a></td>
 </tr><?php endforeach; ?></tbody></table></div>

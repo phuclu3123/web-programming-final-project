@@ -6,6 +6,7 @@ use App\Core\{Auth, Controller, Database, HttpClient, HttpError, Request, Respon
 use App\Repositories\{ExternalOfferRepository, MerchantRepository, CouponRepository, CampaignRepository};
 use App\Services\{AccesstradeService,CouponService};
 
+// Đưa dữ liệu ACCESSTRADE vào hàng chờ; nhập nguồn không tự xuất bản coupon.
 final class IntegrationController extends Controller
 {
     private function repo(): ExternalOfferRepository { return new ExternalOfferRepository(Database::connection()); }
@@ -16,6 +17,7 @@ final class IntegrationController extends Controller
             'providerReady'=>(string)config('integrations.accesstrade.access_key','')!=='',
             'listing'=>$ready ? $repo->page(positiveId($request->query('page','1'))) : null]);
     }
+    // Lấy và lưu hàng chờ; thao tác này không gọi bước xuất bản coupon.
     public function sync(Request $request): void
     {
         $actor=Auth::requireRole(['ADMIN']);
@@ -38,9 +40,10 @@ final class IntegrationController extends Controller
     private function renderReview(array $offer,array $values,array $errors=[]):void
     {
         $this->view('admin/integrations/review',['pageTitle'=>'Đối chiếu nguồn coupon','offer'=>$offer,'values'=>$values,'errors'=>$errors,
-            'merchants'=>Database::connection()->query("SELECT id,name FROM merchants WHERE status='APPROVED' AND deleted_at IS NULL ORDER BY name")->fetchAll(),
+            'merchants'=>(new MerchantRepository(Database::connection()))->approvedForImport(),
             'categories'=>(new CampaignRepository(Database::connection()))->publicCategories()]);
     }
+    // Dùng validation coupon chung và fingerprint của nguồn admin đã xem trước khi nhập.
     public function import(Request $request,string $id): void
     {
         $actor=Auth::requireRole(['ADMIN']);

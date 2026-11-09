@@ -11,6 +11,7 @@ final class AccesstradeService
     private const BASE = 'https://api.accesstrade.vn/v1/offers_informations';
     public function __construct(private HttpClientInterface $http, private string $key) {}
 
+    // GET endpoint cố định bằng key server; lỗi nguồn không được biến thành dữ liệu giả.
     public function fetch(string $resource = 'offers', int $page = 1, string $merchant = ''): array
     {
         if ($this->key === '' || strlen($this->key)>1024 || preg_match('/[\x00-\x20]/', $this->key)) throw new HttpError(503, 'Chưa cấu hình ACCESSTRADE_ACCESS_KEY.');
@@ -24,7 +25,7 @@ final class AccesstradeService
         } catch (\Throwable $error) { throw new HttpError(502,'Không lấy được dữ liệu ACCESSTRADE. Kiểm tra quyền API, giới hạn gọi và thử lại.'); }
     }
 
-    /** Stage only documented structured values; never guess monetary conditions from prose. */
+    // Chuẩn hóa JSON nguồn, giữ điều kiện không biết ở trạng thái thiếu để admin đối chiếu.
     public function normalize(array $response): array
     {
         if (array_key_exists('success',$response) && $response['success']!==true) throw new HttpError(502,'ACCESSTRADE chưa xác nhận lấy dữ liệu thành công.');

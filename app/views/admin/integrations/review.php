@@ -1,10 +1,13 @@
-<?php use App\Core\Session; ?>
+<?php
+// Giữ fingerprint nguồn đã xem; admin phải bổ sung điều kiện thiếu trước khi nhập.
+ use App\Core\Session; ?>
 <header class="mb-4"><a href="<?= e(url('/admin/integrations')) ?>">← Nguồn coupon</a><h1 class="h3 mt-3">Đối chiếu trước khi nhập</h1><p class="text-muted mb-0">Điền các điều kiện còn thiếu từ trang nguồn. Bản nhập vẫn cần được duyệt trong mục Kiểm duyệt coupon.</p></header>
-<div class="card mb-4"><div class="card-body">
- <strong><?= e($values['title']) ?></strong><p class="small text-muted mt-2 mb-1">Nhà cung cấp: <?= e($values['merchant_ref']) ?> · ID nguồn: <?= e($offer['provider_id']) ?></p>
+<div class="card mb-4"><div class="card-body"><div class="d-flex flex-column flex-sm-row align-items-start gap-3">
+ <?php $sourceImage=safeHttpUrl($values['image_url'] ?? null); if ($sourceImage): ?><img src="<?= e($sourceImage) ?>" alt="Ảnh ưu đãi do nguồn ACCESSTRADE cung cấp" width="152" height="152" decoding="async" referrerpolicy="no-referrer" class="rounded border flex-shrink-0" style="max-width:100%;object-fit:contain"><?php endif; ?>
+ <div class="flex-grow-1"><strong><?= e($values['title']) ?></strong><p class="small text-muted mt-2 mb-1">Nhà cung cấp: <?= e($values['merchant_ref']) ?> · ID nguồn: <?= e($offer['provider_id']) ?></p>
  <?php if ($values['source_url']): ?><a href="<?= e($values['source_url']) ?>" target="_blank" rel="noopener noreferrer">Mở thông tin nguồn <?= icon('arrow') ?></a><?php endif; ?>
  <details class="mt-3"><summary>Mô tả từ nhà cung cấp</summary><p class="mt-2 text-break" style="white-space:pre-line"><?= e($values['description']) ?></p></details>
-</div></div>
+</div></div></div></div>
 <?php if($offer['state']==='IMPORTED' && $offer['fingerprint']!==$offer['imported_fingerprint']): ?><div class="alert alert-warning">Thông tin nguồn đã thay đổi sau lần nhập. Coupon công khai được giữ nguyên; hãy đối chiếu lại điều kiện và thu hồi nếu ưu đãi không còn dùng được.</div><?php endif; ?>
 <?php if ($offer['state']!=='PENDING'): ?><div class="alert alert-info">Nguồn này đã được xử lý. Đồng bộ không khôi phục quyết định cũ.<?php if ($offer['coupon_id']): ?> <a href="<?= e(url('/admin/coupons/'.$offer['coupon_id'].'/edit')) ?>">Xem coupon đã nhập</a><?php endif; ?></div>
 <?php else: ?>

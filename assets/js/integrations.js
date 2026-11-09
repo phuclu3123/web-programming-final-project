@@ -1,3 +1,4 @@
+// Gửi form nguồn coupon qua AJAX; giữ input khi lỗi và chỉ chuyển tới cùng origin.
 document.addEventListener('submit', async event => {
   const form=event.target.closest('[data-integration-form]');
   if(!form || event.defaultPrevented) return;

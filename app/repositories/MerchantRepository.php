@@ -8,9 +8,16 @@ use App\Models\Merchant;
 use App\Core\Database;
 use App\Core\UserFacingException;
 
+// Đọc hồ sơ và quyền cửa hàng; chỉ ghi shop sau khi kiểm tra membership trong transaction.
 final class MerchantRepository implements \App\Contracts\MerchantRepositoryInterface
 {
     public function __construct(private Database $db) {}
+
+    // Nguồn ngoài chỉ được gắn vào shop đã duyệt và chưa bị xóa.
+    public function approvedForImport(): array
+    {
+        return $this->db->query("SELECT id,name FROM merchants WHERE status='APPROVED' AND deleted_at IS NULL ORDER BY name")->fetchAll();
+    }
 
     /** @return Merchant[] */
     public function availableForCommunitySubmission(): array
