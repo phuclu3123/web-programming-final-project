@@ -8,6 +8,7 @@ use App\Contracts\AdminRepositoryInterface;
 use App\Contracts\CampaignRepositoryInterface;
 use RuntimeException;
 
+// Chuẩn hóa quyết định quản trị trước khi repository kiểm tra và ghi dữ liệu.
 final class AdminService
 {
     public function __construct(private AdminRepositoryInterface $admin, private CampaignRepositoryInterface $campaigns) {}

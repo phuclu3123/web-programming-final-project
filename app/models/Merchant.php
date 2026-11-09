@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+// Biểu diễn thông tin cửa hàng dùng trong bộ lọc và biểu mẫu coupon.
 final class Merchant
 {
     public function __construct(

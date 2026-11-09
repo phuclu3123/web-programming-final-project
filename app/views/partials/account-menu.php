@@ -1,4 +1,5 @@
 <?php
+// Dùng cùng menu tài khoản theo role từ phiên đã xác thực.
 use App\Core\Session;
 $currentUser = $currentUser ?? null;
 ?>

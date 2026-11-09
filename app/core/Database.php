@@ -14,9 +14,9 @@ final class Database implements RoutineGateway
         'ch_public_catalog_v3', 'ch_shop_dashboard_v2',
         'ch_create_coupon', 'ch_admin_dashboard_v2',
         'ch_approve_coupon', 'ch_reject_coupon', 'ch_find_user_by_login',
-        // ---- PHẦN ĐĂNG KÝ (BỔ SUNG): procedure do bạn tự tạo trong MySQL ----
+        // PHẦN ĐĂNG KÝ (BỔ SUNG): procedure do bạn tự tạo trong MySQL
         'ch_create_user',
-        // ---- SESSION/GUARD: định nghĩa chung trong database/schema.sql ----
+        // SESSION/GUARD: định nghĩa chung trong database/schema.sql
         'ch_auth_user', 'ch_owned_merchant',
     ];
 
@@ -26,7 +26,7 @@ final class Database implements RoutineGateway
 
     private function __construct(private readonly mysqli $connection) {}
 
-    // ---- KẾT NỐI: chỉ mở khi code thực sự cần truy cập database ----
+    // KẾT NỐI: chỉ mở khi code thực sự cần truy cập database
     public static function connection(?array $config = null): self
     {
         $config ??= require __DIR__ . '/../../config/database.php';
@@ -75,7 +75,7 @@ final class Database implements RoutineGateway
     public function inTransaction(): bool { return $this->transaction; }
     public function lastInsertId(): string { return (string) $this->connection->insert_id; }
 
-    // ---- ROUTINE: chỉ gọi tên procedure nằm trong allowlist ----
+    // ROUTINE: chỉ gọi tên procedure nằm trong allowlist
     public function call(string $routine, array $parameters = []): array
     {
         if (!in_array($routine, self::ROUTINES, true)) throw new LogicException('Routine không được phép gọi.');

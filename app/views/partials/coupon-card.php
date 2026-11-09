@@ -1,4 +1,6 @@
-<?php $remainingDays = daysLeft($coupon['ends_at']); $isSaved = in_array((int)$coupon['id'], $savedCouponIds ?? [], true); ?>
+<?php
+// Thẻ coupon dùng chung; chỉ cập nhật trạng thái lưu sau phản hồi backend.
+ $remainingDays = daysLeft($coupon['ends_at']); $isSaved = in_array((int)$coupon['id'], $savedCouponIds ?? [], true); ?>
 <article class="coupon-card" <?= ($couponIndex ?? 0) >= 6 ? 'hidden' : '' ?>>
     <div class="coupon-photo"><img src="<?= e(couponPhoto($coupon)) ?>" alt="" width="720" height="480" loading="lazy"
             decoding="async"><span><?= e($coupon['category_name']) ?></span><?php if (str_contains($coupon['title'],'[DEMO]')): ?><small

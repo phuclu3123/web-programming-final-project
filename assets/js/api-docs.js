@@ -1,3 +1,4 @@
+// Khởi tạo Swagger từ đặc tả nội bộ, không gửi schema sang dịch vụ kiểm tra bên ngoài.
 (() => {
   const root=document.getElementById('swagger-ui');
   if(!root || !window.SwaggerUIBundle)return;

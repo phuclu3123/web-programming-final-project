@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Core\{Auth,Controller,Database,HttpError,InteractionRateLimit,Request,Response,Session};
 use App\Repositories\ArticleCommentRepository;
 
+// Điều phối bình luận bài viết qua repository; giữ cùng quyền cho HTML và AJAX.
 final class ArticleCommentController extends Controller
 {
     private function repository():ArticleCommentRepository {return new ArticleCommentRepository(Database::connection());}
@@ -42,7 +43,7 @@ final class ArticleCommentController extends Controller
     }
     private function slug(int $articleId):string
     {
-        $q=Database::connection()->prepare('SELECT slug FROM articles WHERE id=?');$q->execute([$articleId]);return (string)$q->fetchColumn();
+        return $this->repository()->articleSlug($articleId);
     }
     public function moderation(Request $request):void
     {

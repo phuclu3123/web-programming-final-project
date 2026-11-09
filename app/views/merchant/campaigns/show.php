@@ -1,4 +1,5 @@
 <?php
+// Hiển thị coupon có thể gắn và các liên kết đang có trong chiến dịch sở hữu.
 
 use App\Core\Session; ?>
 <div class="d-flex justify-content-between align-items-start mb-4">

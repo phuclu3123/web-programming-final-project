@@ -13,6 +13,7 @@ use App\Core\Session;
 use App\Repositories\MerchantAccessRepository;
 use Throwable;
 
+// Xét yêu cầu và thu hồi membership theo từng shop, không suy quyền từ role chung.
 final class MerchantAccessController extends Controller
 {
     private MerchantAccessRepository $access;

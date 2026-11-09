@@ -1,4 +1,6 @@
-<?php $commentEndpoint=url('/api/articles/'.(int)$article['id'].'/comments'); ?>
+<?php
+// Giữ form POST hoạt động khi tắt JS; AJAX dùng cùng CSRF và request ID.
+ $commentEndpoint=url('/api/articles/'.(int)$article['id'].'/comments'); ?>
 <section class="article-discussion" id="article-comments" aria-labelledby="article-comments-title" data-article-comments data-endpoint="<?= e($commentEndpoint) ?>" data-delete-base="<?= e(url('/api/article-comments')) ?>" data-csrf="<?= e(\App\Core\Session::csrfToken()) ?>">
     <header class="article-discussion-heading"><h2 id="article-comments-title">Cùng trao đổi.</h2><span><b data-comment-count><?= (int)$commentPage['total'] ?></b> bình luận</span></header>
     <?php if($commentViewer): ?>

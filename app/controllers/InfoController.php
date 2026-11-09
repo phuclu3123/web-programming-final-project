@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Request;
 
+// Chọn nội dung giới thiệu, chính sách và liên hệ từ các trang thông tin nội bộ.
 final class InfoController extends Controller
 {
     public function about(Request $request): void

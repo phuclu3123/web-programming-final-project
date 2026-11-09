@@ -1,4 +1,5 @@
 <?php
+// Hiển thị điều kiện coupon và tương tác; sao chép mã không xác nhận giao dịch thành công.
 
 use App\Core\Auth;
 use App\Core\Session;

@@ -1,4 +1,5 @@
 <?php
+// Đọc khóa provider phía server; chỉ site key Turnstile được phép đưa ra trình duyệt.
 declare(strict_types=1);
 return [
     'accesstrade' => ['access_key' => getenv('ACCESSTRADE_ACCESS_KEY') ?: '', 'limit' => 50],

@@ -1,4 +1,6 @@
-<?php if ($homeCampaigns): ?>
+<?php
+// Ghép nội dung biên tập vào trang chủ từ dữ liệu controller đã chuẩn bị.
+ if ($homeCampaigns): ?>
 <section class="editorial-block" aria-labelledby="home-campaigns-title">
     <div class="editorial-section-head">
         <div><span class="eyebrow">NHỮNG DỊP MUA SẮM ĐÁNG CHỜ</span>

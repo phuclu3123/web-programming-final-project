@@ -26,12 +26,13 @@ final class Auth
         return $user;
     }
 
-    // ---- ĐIỀU HƯỚNG: chỉ nhận trang nội bộ đã biết, không open redirect ----
+    // ĐIỀU HƯỚNG: chỉ nhận trang nội bộ đã biết, không open redirect
     public static function home(string $role): string
     {
         return match ($role) { 'ADMIN' => '/admin', 'MERCHANT' => '/merchant', default => 'index.php' };
     }
 
+    // Chuẩn hóa URL quay lại và giới hạn theo role, tránh chuyển tới domain ngoài.
     public static function safeReturn(string $url, string $role): string
     {
         $fallback = self::home($role);

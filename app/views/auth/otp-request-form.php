@@ -1,4 +1,5 @@
 <?php
+// Gửi email yêu cầu OTP; CAPTCHA và giới hạn gửi được kiểm tra phía server.
 
 use App\Core\Session; ?>
 <div class="modal-header mx-3 mt-3 pe-5">

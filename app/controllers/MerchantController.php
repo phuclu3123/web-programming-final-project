@@ -20,6 +20,7 @@ use App\Services\CouponService;
 use App\Services\MerchantService;
 use Throwable;
 
+// Điều phối hồ sơ, yêu cầu cấp quyền và coupon theo các shop actor được quản lý.
 final class MerchantController extends Controller
 {
     private MerchantRepository $merchants;

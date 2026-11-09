@@ -15,6 +15,7 @@ use App\Repositories\CampaignRepository;
 use App\Services\AdminService;
 use Throwable;
 
+// Quản trị trạng thái tài khoản bằng actor đã xác thực và kiểm tra tại repository.
 final class UserController extends Controller
 {
     private AdminRepository $repo;

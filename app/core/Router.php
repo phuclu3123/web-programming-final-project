@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace App\Core;
 
-/** ---- ROUTER THỐNG NHẤT: match route, guard trước constructor, trả 404/405 đúng ---- */
+/* ROUTER THỐNG NHẤT: match route, guard trước constructor, trả 404/405 đúng */
 final class Router
 {
     private array $routes = [];
@@ -15,6 +15,7 @@ final class Router
         $this->routes[] = ['method'=>strtoupper($method), 'path'=>$path, 'handler'=>$handler];
     }
     public function routes(): array { return $this->routes; }
+    // Kiểm tra quyền, CSRF, dữ liệu phẳng và Turnstile trước khi tạo controller.
     public function dispatch(Request $request): void
     {
         RequestSecurity::headers();
@@ -66,6 +67,7 @@ final class Router
             require dirname(__DIR__).'/views/errors/standalone.php';
         }
     }
+    // Chặn theo role tại router; quyền từng shop/bản ghi còn được kiểm tra ở tầng nghiệp vụ.
     private function guard(string $path, string $method): void
     {
         $roles = null;
@@ -78,6 +80,7 @@ final class Router
             || preg_match('~\A/(?:saved-coupons/[0-9]+/(?:remove|save)|api/coupons/[0-9]+/(?:favorite|vote|comments|reports))\z~', $path)) $roles = ['USER','MERCHANT','ADMIN'];
         if ($roles !== null) Auth::requireRole($roles);
     }
+    // Chỉ trích tham số từ mẫu route đã đăng ký, không dùng URL để chọn tên lớp.
     private function match(string $route, string $path): ?array
     {
         $pattern = preg_quote($route, '~');

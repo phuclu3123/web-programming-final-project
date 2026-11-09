@@ -1,4 +1,5 @@
 <?php
+// Trang lỗi độc lập không truy vấn thêm database khi hệ thống đang lỗi kết nối.
 $errorTitle=match($status) { 404=>'Không tìm thấy trang.', 403=>'Bạn chưa có quyền truy cập.', 401=>'Đăng nhập để tiếp tục.', 422=>'Kiểm tra lại thông tin.', 405=>'Thao tác chưa được hỗ trợ.', default=>'Trang đang tạm gián đoạn.' };
 ?>
 <!doctype html>

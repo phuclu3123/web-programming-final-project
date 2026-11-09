@@ -30,6 +30,7 @@ final class TurnstileService
         return array_values(array_filter(array_map(static fn($host) => strtolower(trim($host)), explode(',', $value)), static fn($host) => (bool)preg_match('/\A[a-z0-9.-]+\z/D', $host)));
     }
 
+    // Gửi token tới Siteverify rồi kiểm tra success, hostname và action; lỗi xác minh phải chặn form.
     public function verify(mixed $token, string $action, ?string $ip = null): void
     {
         if (!$this->enabled()) return;

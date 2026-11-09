@@ -1,4 +1,4 @@
-
+<?php /* Ghép nhóm chiến dịch và coupon đã được controller chuẩn bị. */ ?>
 <?php if ($campaignPreview): ?>
 <section id="campaign-deals"
          class="campaign-deals-section"

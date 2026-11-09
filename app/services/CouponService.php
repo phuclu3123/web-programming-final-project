@@ -12,6 +12,7 @@ use DateTimeZone;
 use mysqli_sql_exception;
 use RuntimeException;
 
+// Dùng chung validation coupon cho cộng đồng, merchant và nhập nguồn ngoài.
 final class CouponService
 {
     private const DISCOUNT_TYPES = ['PERCENTAGE', 'FIXED_AMOUNT', 'FREE_SHIPPING', 'BUY_X_GET_Y', 'GIFT', 'CASHBACK'];
@@ -108,6 +109,7 @@ final class CouponService
         $this->coupons->updateOwnedOfficial($actorId, $couponId, $data);
     }
 
+    // Duyệt và từ chối có cặp trạng thái riêng; lý do từ chối phải đủ để người gửi đối chiếu.
     public function moderate(int $actorId, int $couponId, string $action, ?string $note): void
     {
         $action = strtoupper(trim($action));
@@ -138,6 +140,7 @@ final class CouponService
     }
 
     /** @param array<string,mixed> $input @return array<string,mixed> */
+    // Kiểm tra loại giảm, tiền, kênh và thời gian trước khi chuyển dữ liệu xuống repository.
     public function validateSubmission(array $input): array
     {
         foreach ($input as $value) {

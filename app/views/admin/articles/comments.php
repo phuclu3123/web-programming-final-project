@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="<?= e(url('/assets/css/article-comments.css')) ?>?v=<?= filemtime(__DIR__.'/../../../../assets/css/article-comments.css') ?>">
+<?php /* Phân trang bình luận cho admin; thao tác ẩn/hiện gửi POST có CSRF. */ ?><link rel="stylesheet" href="<?= e(url('/assets/css/article-comments.css')) ?>?v=<?= filemtime(__DIR__.'/../../../../assets/css/article-comments.css') ?>">
 <header class="workspace-heading"><div><h1>Bình luận bài viết</h1><p>Ẩn nội dung không phù hợp. Bình luận đã xóa được giữ trong lịch sử, không xuất hiện công khai.</p></div><a class="btn btn-outline-primary" href="<?= e(url('/admin/articles')) ?>">Quản lý bài viết</a></header>
 <div class="workspace-panel">
 <?php if(!$comments): ?><p>Chưa có bình luận cần xem.</p><?php endif; ?>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+// Biểu diễn danh mục lấy từ repository để view không phụ thuộc hàng SQL thô.
 final class Category
 {
     public function __construct(

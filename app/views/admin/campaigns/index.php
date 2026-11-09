@@ -1,4 +1,5 @@
 <?php
+// Hiển thị chiến dịch quản trị và biểu mẫu tạo; không suy quyền từ các nút đang thấy.
 
 use App\Core\Session; ?>
 <div class="row">

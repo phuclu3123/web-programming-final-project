@@ -1,4 +1,6 @@
-<?php if ($campaignSelection): ?>
+<?php
+// Hiển thị mốc chiến dịch từ dữ liệu truyền vào, không tự tính trạng thái công bố.
+ if ($campaignSelection): ?>
 <section class="studio-section campaign-agenda" aria-labelledby="campaign-agenda-title">
     <div class="studio-section-title">
         <div><span class="eyebrow">MỐC THỜI GIAN</span>

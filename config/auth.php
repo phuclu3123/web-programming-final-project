@@ -1,4 +1,5 @@
 <?php
+// Tập trung thời hạn phiên, khóa OTP và nơi lưu giới hạn gửi request.
 
 declare(strict_types=1);
 // Secure defaults: 8h absolute, 30m idle. Existing .env values deliberately

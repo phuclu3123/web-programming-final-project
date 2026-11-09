@@ -1,4 +1,5 @@
 <?php
+// Thẻ cộng đồng giữ thông tin tác giả và trạng thái coupon do backend xác nhận.
 $couponId = (int)$coupon['id'];
 $isSaved = in_array($couponId, $savedCouponIds ?? [], true);
 $detailUrl = url('/coupons/'.$couponId);

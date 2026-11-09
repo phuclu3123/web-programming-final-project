@@ -1,4 +1,5 @@
 <?php
+// Trang chẩn đoán OAuth có giới hạn truy cập; probe không tạo phiên đăng nhập thật.
 
 declare(strict_types=1);
 

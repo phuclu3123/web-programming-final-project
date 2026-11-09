@@ -1,4 +1,5 @@
 <?php
+// Yêu cầu khôi phục dùng phản hồi chung để không tiết lộ email có tài khoản hay không.
 
 use App\Core\Session; ?>
 <div class="row justify-content-center">

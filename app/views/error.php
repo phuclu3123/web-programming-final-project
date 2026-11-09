@@ -1,4 +1,6 @@
-<?php $title = 'Thông báo'; require __DIR__ . '/layouts/head.php'; ?>
+<?php
+// Chỉ trình bày thông báo lỗi đã chọn, không xuất stack trace hay cấu hình server.
+ $title = 'Thông báo'; require __DIR__ . '/layouts/head.php'; ?>
 <main id="main" class="container-wide py-5">
     <div class="empty-state">
         <p class="eyebrow">COUPONHUB · <?= (int) $status ?></p>

@@ -1,4 +1,5 @@
 <?php
+// Hiển thị tài khoản và form đổi trạng thái; không thay quyền dựa trên dữ liệu client.
 
 use App\Core\Auth;
 use App\Core\Session; ?>

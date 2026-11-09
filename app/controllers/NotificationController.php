@@ -8,6 +8,7 @@ use App\Core\{Auth, Controller, Database, Request, Response};
 use App\Repositories\NotificationRepository;
 use App\Services\NotificationService;
 
+// Lấy và đánh dấu thông báo của actor hiện tại, không nhận user ID từ client.
 final class NotificationController extends Controller
 {
     private function service(): NotificationService

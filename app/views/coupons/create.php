@@ -1,4 +1,5 @@
 <?php
+// Giữ dữ liệu đã nhập và lỗi từng trường khi đóng góp coupon chưa hợp lệ.
 
 use App\Core\Session; ?>
 <div class="row justify-content-center">

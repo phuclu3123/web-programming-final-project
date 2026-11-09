@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Repositories\ArticleRepository;
 
+// Chọn bài đã xuất bản và dữ liệu trình bày trước khi render trang đọc.
 final class ArticleController extends Controller
 {
     public function guide(Request $request, string $slug): void

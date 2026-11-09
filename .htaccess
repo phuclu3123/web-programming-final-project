@@ -3,10 +3,10 @@ DirectoryIndex index.php
 RewriteEngine On
 
 # Application source/config/SQL are never public web resources.
-RewriteRule ^(?:app|config|database|docs|tests|scripts|storage|\.git)(?:/|$) - [F,L,NC]
+RewriteRule ^(?:app|config|database|docs|tests|scripts|storage|Latex|temp|tmp|\.git)(?:/|$) - [F,L,NC]
 RewriteRule (^|/)\. - [F,L]
 # Course archives, backups and logs placed beside the application stay private.
-<FilesMatch "\.(?i:sql|log|bak|zip|7z|tar|gz|ppt|pptx|xls|xlsx|xlsm)$">
+<FilesMatch "\.(?i:sql|log|bak|zip|7z|tar|gz|ppt|pptx|xls|xlsx|xlsm|drawio|tex|py|ps1|sh)$">
     Require all denied
 </FilesMatch>
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -27,5 +27,5 @@ RewriteRule ^ index.php [QSA,L]
 <IfModule mod_headers.c>
     Header onsuccess unset Content-Security-Policy-Report-Only
 
-    Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: https://images.unsplash.com https://cdn.simpleicons.org https://www.google.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://accounts.google.com/gsi/client; style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com https://accounts.google.com/gsi/style; img-src 'self' data: https://images.unsplash.com https://cdn.simpleicons.org https://www.google.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; object-src 'none'; base-uri 'self'; form-action 'self'"
 </IfModule>

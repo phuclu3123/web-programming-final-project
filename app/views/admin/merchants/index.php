@@ -1,4 +1,4 @@
-<h1 class="h3 mb-3">Quản lý Merchant/Shop</h1>
+<?php /* Hiển thị hồ sơ và trạng thái shop; quyết định quản trị luôn được kiểm tra lại phía server. */ ?><h1 class="h3 mb-3">Quản lý Merchant/Shop</h1>
 <p class="text-muted">Trạng thái Shop độc lập với yêu cầu cấp quyền của từng User. Để duyệt quyền, vào <a
         href="<?= e(url('/admin/merchant-requests')) ?>">Đơn đăng ký quản lý</a>.</p>
 <div class="table-responsive">

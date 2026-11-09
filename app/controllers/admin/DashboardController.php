@@ -10,6 +10,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Repositories\AdminRepository;
 
+// Đọc thống kê quản trị sau khi xác nhận quyền ADMIN.
 final class DashboardController extends Controller
 {
     public function index(Request $request): void

@@ -1,4 +1,5 @@
 <?php
+// Chỉ đưa site key và action ra HTML; secret key luôn ở server.
 $botGuard = new \App\Services\TurnstileService(new \App\Core\HttpClient(), (array)config('integrations.turnstile', []));
 if ($botGuard->enabled()): ?>
 <div class="turnstile-field my-3" data-turnstile-field data-sitekey="<?= e($botGuard->siteKey()) ?>" data-action="<?= e($turnstileAction) ?>">

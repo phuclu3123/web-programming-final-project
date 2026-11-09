@@ -17,6 +17,7 @@ use App\Repositories\ArticleRepository;
 use App\Repositories\SavedCouponRepository;
 use Throwable;
 
+// Nạp dữ liệu cho portal, dashboard cá nhân và tình trạng kết nối database.
 final class PortalController extends Controller
 {
     public function index(Request $request): void

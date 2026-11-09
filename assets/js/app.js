@@ -49,6 +49,7 @@
     if (!success) throw new Error('Copy command failed');
   }
 
+  // Chỉ ghi nhận sự kiện sau khi clipboard thành công; đây không phải xác nhận dùng mã.
   function initCopyButtons() {
     document.addEventListener('click', async event => {
       const button = event.target.closest('[data-copy-code]');

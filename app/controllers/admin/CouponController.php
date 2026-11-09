@@ -18,6 +18,7 @@ use App\Services\CouponService;
 use RuntimeException;
 use Throwable;
 
+// Tách duyệt, sửa, hết hạn, thu hồi và xóa coupon thành hành động quản trị riêng.
 final class CouponController extends Controller
 {
     private CouponRepository $coupons;

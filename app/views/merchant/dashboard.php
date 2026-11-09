@@ -1,4 +1,4 @@
-<header class="workspace-heading">
+<?php /* Hiển thị các shop đã cấp quyền cùng thống kê do repository cung cấp. */ ?><header class="workspace-heading">
     <div><h1>Không gian đối tác</h1><p>Quản lý ưu đãi và theo dõi tương tác của cửa hàng.</p></div>
     <?php if ($shops !== []): ?><a class="btn btn-primary" href="<?= e(url('/merchant/coupons/create')) ?>">Tạo coupon <?= icon('arrow') ?></a><?php endif; ?>
 </header>

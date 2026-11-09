@@ -1,3 +1,4 @@
+// Đổi nhóm trường theo loại yêu cầu shop, thay cho handler inline trong HTML.
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function () {

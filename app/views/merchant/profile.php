@@ -1,4 +1,5 @@
 <?php
+// Chỉnh hồ sơ shop đã được xác nhận quyền; ID ẩn không thay cho kiểm tra sở hữu.
 
 use App\Core\Session; ?>
 <div class="row justify-content-center">

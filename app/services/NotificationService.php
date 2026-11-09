@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Core\Session;
 use App\Contracts\NotificationRepositoryInterface;
 
+// Lọc và trình bày thông báo theo actor; trạng thái đã đọc được lưu phía server.
 final class NotificationService
 {
     public function __construct(private NotificationRepositoryInterface $notifications) {}

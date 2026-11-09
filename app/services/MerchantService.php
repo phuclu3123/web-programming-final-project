@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Contracts\MerchantRepositoryInterface;
 use App\Core\UserFacingException;
 
+// Kiểm tra yêu cầu nhận quyền hoặc tạo shop trước khi lưu hồ sơ chờ xét duyệt.
 final class MerchantService
 {
     public function __construct(private MerchantRepositoryInterface $merchants) {}

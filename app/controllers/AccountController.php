@@ -15,6 +15,7 @@ use App\Repositories\UserRepository;
 use App\Services\AccountService;
 use RuntimeException;
 
+// Chỉ cập nhật hồ sơ và mật khẩu của actor đã xác thực, không lấy user ID từ form.
 final class AccountController extends Controller
 {
     public function index(Request $request): void

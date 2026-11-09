@@ -18,6 +18,7 @@ use App\Services\InteractionService;
 use RuntimeException;
 use Throwable;
 
+// Xác thực actor trước khi lưu mã, bình chọn, bình luận hoặc báo cáo coupon.
 final class CouponInteractionController extends Controller
 {
     private InteractionService $service;

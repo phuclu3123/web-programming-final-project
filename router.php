@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-// ---- PHP BUILT-IN SERVER: php -S localhost:8000 router.php (tại CouponHub_UI) ----
+// Chạy bằng php -S localhost:8000 router.php để chỉ phục vụ asset và entry point được phép.
 $path = rawurldecode(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/');
 $prefix = '/' . basename(__DIR__);
 $base = $path === $prefix || str_starts_with($path, $prefix . '/') ? $prefix : '';
 if ($base !== '') $path = substr($path, strlen($base)) ?: '/';
 if (
-    preg_match('~(?:^|/)(?:\.|app|config|database|docs|tests|scripts|storage)(?:/|$)|(?:^|/)\.[^/]*~i', $path)
+    preg_match('~(?:^|/)(?:\.|app|config|database|docs|tests|scripts|storage|Latex|temp|tmp)(?:/|$)|(?:^|/)\.[^/]*~i', $path)
     || str_contains($path, '\\') || str_contains($path, "\0")
 ) {
     http_response_code(403);

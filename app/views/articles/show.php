@@ -1,4 +1,6 @@
-<?php [$articlePhoto,$articleTopic]=articleTopic($article['title']); ?>
+<?php
+// Escape nội dung bài và nhúng vùng bình luận dùng dữ liệu lưu trong MySQL.
+ [$articlePhoto,$articleTopic]=articleTopic($article['title']); ?>
 <div class="article-detail-page">
 <article class="article-reading article-story">
     <a class="text-link" href="<?= e(url('/articles')) ?>">← Góc đọc</a>

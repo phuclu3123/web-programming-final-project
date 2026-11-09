@@ -1,4 +1,4 @@
-<section class="discovery-page notification-page">
+<?php /* Thông báo và trạng thái đọc thuộc actor hiện tại, được lưu phía server. */ ?><section class="discovery-page notification-page">
     <div class="studio-section-title">
         <div><span class="eyebrow">TÀI KHOẢN CỦA BẠN</span>
             <h1>Thông báo</h1>

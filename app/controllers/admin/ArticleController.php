@@ -13,6 +13,7 @@ use App\Core\Session;
 use App\Repositories\ArticleRepository;
 use Throwable;
 
+// Chỉ admin được tạo, sửa và thay đổi trạng thái xuất bản bài viết.
 final class ArticleController extends Controller
 {
     private ArticleRepository $articles;

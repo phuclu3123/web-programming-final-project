@@ -1,4 +1,5 @@
 <?php
+// Tách thao tác sửa, bật/tắt và xóa danh mục bằng các form có CSRF.
 
 use App\Core\Session; ?>
 <div class="row g-4">

@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Repositories\AdminCouponRepository;
 use RuntimeException;
 
+// Kiểm tra dữ liệu và lý do quản trị trước khi repository sửa trạng thái coupon.
 final class AdminCouponService
 {
     public function __construct(private AdminCouponRepository $repo, private CouponService $couponValidation) {}

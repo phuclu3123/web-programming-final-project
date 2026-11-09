@@ -1,4 +1,5 @@
 <?php
+// Chọn Resend hoặc SMTP bằng env; địa chỉ gửi phải phù hợp transport được cấu hình.
 
 // XAMPP demo: run Mailpit listening on 127.0.0.1:1025 (inbox at :8025).
 // For real email, use TLS + a reputable SMTP provider, configured through

@@ -1,4 +1,5 @@
 <?php
+// Ảnh và ưu đãi được ghép từ dữ liệu hiện có; thao tác mã dùng ID coupon thật.
 $heroCoupons = $featuredCoupon ? [$featuredCoupon] : [];
 $heroBrands = $featuredCoupon ? [slugify($featuredCoupon['merchant_name']) => true] : [];
 foreach (['nike', 'grab', 'traveloka', 'fpt-shop', 'lazada', 'shopee', 'highlands-coffee', 'highlands', 'hasaki', 'cgv', 'tiki'] as $heroBrand) {

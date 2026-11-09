@@ -1,4 +1,6 @@
-<?php $role = $role ?? 'user';
+<?php
+// Nạp asset theo trang để tránh tải script và CSS không dùng trong request hiện tại.
+ $role = $role ?? 'user';
 $title = $title ?? 'CouponHub';
 $demo = $demo ?? false; ?>
 <!doctype html>

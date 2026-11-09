@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Core;
 
+// Ánh xạ từng biểu mẫu sang action Turnstile trước khi controller xử lý dữ liệu.
 final class TurnstileGuard
 {
     public static function check(Request $request): void

@@ -13,6 +13,7 @@ use App\Repositories\CouponRepository;
 use App\Repositories\SavedCouponRepository;
 use App\Services\CouponService;
 
+// Đọc danh mục cùng số ưu đãi công khai, không tính cả coupon đang chờ duyệt.
 final class CategoryController extends Controller
 {
     public function index(Request $request): void

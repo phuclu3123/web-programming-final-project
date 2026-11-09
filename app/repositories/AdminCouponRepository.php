@@ -160,6 +160,7 @@ final class AdminCouponRepository
         $stmt->execute([$actorId, $couponId, $action, mb_substr($note, 0, 500)]);
     }
 
+    // Khóa coupon, kiểm tra admin rồi đổi trạng thái và ghi lịch sử trong cùng transaction.
     private function changePublication(int $actorId, int $couponId, string $state, string $reason, string $action): void
     {
         $this->db->beginTransaction();

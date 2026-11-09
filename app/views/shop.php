@@ -1,4 +1,5 @@
 <?php
+// Màn shop tương thích URL cũ; chỉ trình bày cửa hàng và coupon controller đã cho phép.
 use App\Core\Session;
 ?>
 <?php

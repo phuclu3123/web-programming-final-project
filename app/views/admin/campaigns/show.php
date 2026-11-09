@@ -1,4 +1,5 @@
 <?php
+// Đối chiếu chiến dịch và coupon trước khi gửi yêu cầu gắn/gỡ về controller.
 
 use App\Core\Session; ?>
 <div class="d-flex justify-content-between align-items-start mb-4">

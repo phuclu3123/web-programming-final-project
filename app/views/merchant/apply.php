@@ -1,4 +1,5 @@
 <?php
+// Gửi yêu cầu nhận quyền hoặc tạo shop; lựa chọn trên form không tự cấp quyền Merchant.
 
 use App\Core\Session; ?>
 <div class="row">

@@ -1,4 +1,5 @@
 <?php
+// Dùng chung form Official; controller xác minh membership trước khi ghi coupon.
 
 use App\Core\Session;
 

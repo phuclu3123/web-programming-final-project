@@ -6,6 +6,7 @@ namespace App\Core;
 
 use RuntimeException;
 
+// Giữ lỗi theo từng trường để form HTML và AJAX dùng cùng kết quả validation.
 final class ValidationException extends RuntimeException
 {
     /** @param array<string,string> $errors */

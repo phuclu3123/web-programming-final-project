@@ -15,6 +15,7 @@ use App\Repositories\CampaignRepository;
 use App\Services\AdminService;
 use Throwable;
 
+// Điều phối tạo, sửa, bật/tắt và xóa danh mục theo ràng buộc dữ liệu.
 final class CategoryController extends Controller
 {
     private AdminRepository $repo;

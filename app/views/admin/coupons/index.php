@@ -1,4 +1,5 @@
 <?php
+// Phân biệt duyệt, hết hạn, thu hồi và xóa; mỗi quyết định gửi tới action riêng.
 
 use App\Core\Session; ?>
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">

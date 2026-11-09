@@ -1,3 +1,4 @@
+// Hiện trường điều kiện theo loại ưu đãi; server dùng validation độc lập khi lưu.
 (function ($) {
     'use strict';
 

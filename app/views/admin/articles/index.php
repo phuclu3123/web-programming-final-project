@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
+<?php /* Danh sách quản trị gồm cả bài nháp; trang công khai có bộ lọc xuất bản riêng. */ ?><div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3">Quản lý bài viết</h1><a class="btn btn-outline-primary" href="<?= e(url('/admin/article-comments')) ?>">Bình luận</a><a class="btn btn-primary" href="<?= e(url('/admin/articles/create')) ?>">+ Viết
         bài</a>
 </div>

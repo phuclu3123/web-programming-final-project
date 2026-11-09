@@ -1,4 +1,4 @@
-<header class="workspace-heading">
+<?php /* Trình bày thống kê đã tổng hợp tại repository, không truy vấn từ template. */ ?><header class="workspace-heading">
     <div><h1>Tổng quan quản trị</h1><p>Những việc cần xử lý và tình hình phát hành ưu đãi.</p></div>
     <a class="btn btn-primary" href="<?= e(url('/admin/articles/create')) ?>">Viết bài mới <?= icon('arrow') ?></a>
 </header>

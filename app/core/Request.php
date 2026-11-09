@@ -47,7 +47,7 @@ final class Request
         return strtolower((string) ($this->server['HTTP_X_REQUESTED_WITH'] ?? '')) === 'couponhub';
     }
 
-    // ---- ROUTER QUANG: cùng một request cho route, form và JSON ----
+    // ROUTER QUANG: cùng một request cho route, form và JSON
     public function path(): string
     {
         $path = parse_url($this->server['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';

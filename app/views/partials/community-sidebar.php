@@ -1,4 +1,4 @@
-<aside class="community-sidebar" aria-label="Khám phá cộng đồng">
+<?php /* Trình bày bộ lọc và điều hướng cộng đồng từ dữ liệu hiện tại. */ ?><aside class="community-sidebar" aria-label="Khám phá cộng đồng">
     <section class="community-side-brands">
         <h2>Thương hiệu</h2>
         <div class="community-brand-list">

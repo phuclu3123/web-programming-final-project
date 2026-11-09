@@ -1,4 +1,6 @@
-<?php $publishedArticles=array_column($articles,null,'slug');
+<?php
+// Ghép thẻ biên tập với dữ liệu bài đã xuất bản; không tạo bài giả trong giao diện.
+ $publishedArticles=array_column($articles,null,'slug');
 $guides=array_intersect_key(productGuides(),$publishedArticles);
 foreach($guides as $slug=>&$item){$item['title']=$publishedArticles[$slug]['title'];$item['summary']=$publishedArticles[$slug]['summary'];}unset($item);
 $articles=array_values(array_filter($articles,static fn($a)=>!isset($guides[$a['slug']])));

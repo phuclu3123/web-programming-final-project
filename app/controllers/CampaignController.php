@@ -16,6 +16,7 @@ use App\Repositories\MerchantRepository;
 use App\Services\CampaignService;
 use Throwable;
 
+// Tách tra cứu chiến dịch công khai khỏi thao tác của merchant có quyền quản lý.
 final class CampaignController extends Controller
 {
     private CampaignRepository $campaigns;

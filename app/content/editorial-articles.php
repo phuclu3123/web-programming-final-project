@@ -1,4 +1,5 @@
 <?php
+// Nguồn bài biên tập cho công cụ xuất bản; trang đọc lấy trạng thái từ database.
 declare(strict_types=1);
 // Original editorial content. These are articles, not invented brand promotions or customer reviews.
 return [

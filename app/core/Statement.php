@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use mysqli_stmt;
 use mysqli_result;
 
-/** ---- PREPARED STATEMENT: bind dữ liệu, đọc hết CALL để tránh commands out of sync ---- */
+/* PREPARED STATEMENT: bind dữ liệu, đọc hết CALL để tránh commands out of sync */
 final class Statement
 {
     private array $bound = [];
@@ -26,6 +26,7 @@ final class Statement
         $this->types[$position] = $type;
         return true;
     }
+    // Bind tham số rồi đọc hết mọi result set của CALL trước truy vấn kế tiếp.
     public function execute(?array $parameters = null): bool
     {
         $this->closeCursor();

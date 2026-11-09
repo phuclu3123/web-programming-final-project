@@ -17,6 +17,7 @@ use App\Services\InteractionService;
 use RuntimeException;
 use Throwable;
 
+// Lọc kho mã đã lưu của actor và dùng chung nghiệp vụ lưu/bỏ lưu coupon.
 final class SavedCouponController extends Controller
 {
     public function save(Request $request, string $id): void

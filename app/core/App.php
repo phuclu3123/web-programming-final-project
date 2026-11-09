@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+// Giữ cấu hình dùng chung trong request sau khi bootstrap hoàn tất.
 final class App
 {
     /** @var array<string,mixed> */

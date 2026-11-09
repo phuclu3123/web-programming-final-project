@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Controllers\Admin;
 use App\Core\{Auth,Controller,Request,Response,Session};
+// Chỉ phục vụ Swagger và đặc tả API cho phiên admin đã xác thực.
 final class ApiDocsController extends Controller
 {
     public function index(Request $request):void

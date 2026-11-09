@@ -1,4 +1,5 @@
 <?php
+// Màn duyệt tương thích URL cũ; quyền và quyết định kiểm duyệt được xử lý trước khi render.
 use App\Core\Session;
 ?>
 <?php

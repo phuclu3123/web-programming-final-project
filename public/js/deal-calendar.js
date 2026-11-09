@@ -1,3 +1,4 @@
+// Điều hướng lịch chiến dịch và cập nhật thông tin theo dữ liệu trang đã tải.
 (function () {
     'use strict';
 

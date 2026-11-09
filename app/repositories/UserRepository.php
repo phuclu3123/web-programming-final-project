@@ -12,7 +12,7 @@ final class UserRepository implements \App\Contracts\UserProfileRepositoryInterf
     {
     }
 
-    // ---- AUTH CHUNG: giữ account=email/username và các trường UI hiện tại ----
+    // AUTH CHUNG: giữ account=email/username và các trường UI hiện tại
     public function findByLogin(string $account): ?array
     {
         $statement = $this->db->prepare('CALL ch_find_user_by_login(?)');

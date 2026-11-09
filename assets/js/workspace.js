@@ -1,3 +1,4 @@
+// Điều khiển thành phần workspace; không thay thế kiểm tra quyền ở backend.
 (() => {
   'use strict';
   const menu = document.querySelector('[data-workspace-menu]');

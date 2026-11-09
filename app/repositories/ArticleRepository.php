@@ -7,10 +7,12 @@ namespace App\Repositories;
 use App\Core\Database;
 use RuntimeException;
 
+// Tập trung truy vấn bài viết; ghi nội dung và nhật ký trong cùng transaction.
 final class ArticleRepository implements \App\Contracts\ArticleRepositoryInterface
 {
     use AdminWriteGuard;
     public function __construct(private Database $db) {}
+    // Chỉ đọc bài đã công bố và tới thời điểm xuất bản; bài nháp không ra trang công khai.
     public function published(int $limit = 20): array
     {
         $limit = max(1, min(50, $limit));
@@ -34,6 +36,7 @@ final class ArticleRepository implements \App\Contracts\ArticleRepositoryInterfa
         $r = $q->fetch();
         return is_array($r) ? $r : null;
     }
+    // Kiểm tra nội dung rồi lưu bài và nhật ký cùng transaction của admin đang hoạt động.
     public function save(int $actorId, ?int $id, array $values): int
     {
         $title = trim((string)($values['title'] ?? ''));

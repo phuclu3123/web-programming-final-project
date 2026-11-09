@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+// Thống nhất status, JSON và chuyển hướng khi kết thúc request.
 final class Response
 {
     /** @param array<string,mixed> $payload */

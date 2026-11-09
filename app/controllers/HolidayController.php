@@ -10,6 +10,7 @@ use App\Services\HolidayService;
 use App\Core\Database;
 use App\Repositories\CampaignRepository;
 
+// Ghép lịch dịp mua sắm với chiến dịch có trong database để trình bày theo tháng.
 final class HolidayController extends Controller
 {
     public function index(Request $request): void

@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use mysqli_sql_exception;
 
 
+// Giữ URL shop cũ tương thích với luồng quản lý cửa hàng hiện tại.
 final class ShopController extends Controller
 {
     public function index(Request $request): void

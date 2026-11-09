@@ -13,6 +13,7 @@ use App\Core\Session;
 use App\Repositories\CatalogRepository;
 use mysqli_sql_exception;
 
+// Giữ điểm vào duyệt coupon cũ, dùng chung quyền và dữ liệu với khu quản trị.
 final class ReviewController extends Controller
 {
     public function index(Request $request): void

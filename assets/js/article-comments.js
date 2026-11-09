@@ -29,6 +29,7 @@
     if (text !== undefined) node.textContent = text;
     return node;
   }
+  // Dựng nội dung bằng textContent để bình luận không được thực thi như HTML.
   function render(data, append) {
     if (!append) list.replaceChildren();
     list.querySelector('.article-comment-empty')?.remove();
@@ -51,6 +52,7 @@
     more.hidden = !data.next_before; more.dataset.before = String(data.next_before || 0);
     const link = new URL(more.href); link.searchParams.set('before', data.next_before || 0); more.href = link.href;
   }
+  // Khóa thao tác đang gửi và luôn trả UI về trạng thái có thể thử lại khi lỗi.
   async function perform(control, action) {
     if (pending) return;
     pending = true; control.disabled = true; root.setAttribute('aria-busy', 'true');

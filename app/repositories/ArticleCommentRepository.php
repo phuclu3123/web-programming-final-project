@@ -4,10 +4,19 @@ namespace App\Repositories;
 
 use App\Core\{Database,HttpError};
 
+// Lưu bình luận bền trong MySQL; khóa actor và request ID để chống ghi trùng.
 final class ArticleCommentRepository
 {
     use AdminWriteGuard;
     public function __construct(private Database $db) {}
+
+    // Lấy slug cho URL quay lại sau POST; quyền ghi đã được kiểm tra ở thao tác bình luận.
+    public function articleSlug(int $articleId): string
+    {
+        $query = $this->db->prepare('SELECT slug FROM articles WHERE id=?');
+        $query->execute([$articleId]);
+        return (string)$query->fetchColumn();
+    }
 
     private function published(int $id, bool $lock = false): void
     {
@@ -16,6 +25,7 @@ final class ArticleCommentRepository
         if (!$q->fetch()) throw new HttpError(404,'Bài viết không tồn tại hoặc chưa được xuất bản.');
     }
 
+    // Đọc theo cursor ID để tải thêm bình luận ổn định; không trả user ID nội bộ ra JSON.
     public function page(int $articleId, int $viewerId = 0, int $before = 0): array
     {
         $this->published($articleId);
@@ -31,6 +41,7 @@ final class ArticleCommentRepository
         return ['items'=>$rows,'total'=>(int)$q->fetchColumn(),'next_before'=>$more?(int)end($rows)['id']:null];
     }
 
+    // Khóa actor và request ID để cùng lượt gửi chỉ tạo một bình luận, kể cả khi thử lại.
     public function create(int $actorId, int $articleId, string $body, string $requestId): array
     {
         $this->db->beginTransaction();
@@ -49,6 +60,7 @@ final class ArticleCommentRepository
         } catch (\Throwable $e) {if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
 
+    // Khóa bình luận và kiểm tra owner/admin; không phục hồi bình luận đã xóa.
     public function change(int $actorId, int $id, string $status, bool $admin): int
     {
         if(($admin && !in_array($status,['VISIBLE','HIDDEN'],true)) || (!$admin && $status!=='DELETED'))throw new HttpError(422,'Trạng thái bình luận không hợp lệ.');

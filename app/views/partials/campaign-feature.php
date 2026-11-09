@@ -1,4 +1,5 @@
 <?php
+// Thẻ chiến dịch dùng chung nhận ảnh, nhãn và đường dẫn từ dữ liệu trình bày.
 $visual=campaignVisual($campaign);
 $timing=campaignTiming($campaign);
 $ended=time() >= $timing['end']/1000;

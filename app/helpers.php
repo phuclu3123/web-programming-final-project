@@ -106,6 +106,7 @@ function articleTopic(string $title): array
 }
 
 /** Campaign dates are stored in UTC. Labels are rendered in the app's Vietnam timezone. */
+// Tính nhãn thời gian để trình bày; trạng thái công khai vẫn do truy vấn nghiệp vụ quyết định.
 function campaignTiming(array $campaign): array
 {
     $start=(new DateTimeImmutable($campaign['starts_at'],new DateTimeZone('UTC')))->getTimestamp();
@@ -177,6 +178,7 @@ function campaignOverview(array $coupons): array
 }
 
 /** Banner is a browser image URL, never a server-side download or upload. */
+// Chỉ nhận HTTPS hoặc đường dẫn ảnh nội bộ cho phép, không nhận đường dẫn tùy ý tới source.
 function normalizeCampaignBanner(?string $value): ?string
 {
     $value=trim($value ?? '');
@@ -512,7 +514,8 @@ if (!function_exists('merchant_status_label')) {
     }
 }
 
-// ---- HÀM HIỂN THỊ CHUNG: không truy vấn database tại đây ----
+// HÀM HIỂN THỊ CHUNG: không truy vấn database tại đây
+// Escape tại biên HTML; không dùng chuỗi đã escape để ghi trở lại database.
 function e(mixed $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -585,6 +588,7 @@ function icon(string $name): string
 }
 
 /** Chỉ cho phép liên kết web, không chứa credentials hoặc scheme thực thi. */
+// Loại protocol nguy hiểm trước khi đưa URL bên ngoài vào thuộc tính HTML.
 function safeHttpUrl(?string $value): ?string
 {
     if ($value === null || filter_var($value, FILTER_VALIDATE_URL) === false) return null;

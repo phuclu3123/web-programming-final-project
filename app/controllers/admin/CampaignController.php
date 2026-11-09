@@ -15,6 +15,7 @@ use App\Repositories\CampaignRepository;
 use App\Services\CampaignService;
 use Throwable;
 
+// Điều phối quản trị chiến dịch và liên kết coupon với kiểm tra quyền phía server.
 final class CampaignController extends Controller
 {
     private AdminRepository $admin;

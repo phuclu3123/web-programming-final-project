@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+// Chuẩn bị dữ liệu dùng chung rồi render view; template không tự truy vấn database.
 abstract class Controller
 {
     /** null giữ nguyên các template đã có đủ head/body; các trang khác dùng layout chung. */

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace App\Services;
 
+// Chọn transport email theo cấu hình server; không tạo kết nối SMTP nếu dùng Resend.
 final class AuthMailFactory
 {
     public static function create(): \App\Contracts\AuthMailerInterface

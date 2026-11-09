@@ -1,4 +1,5 @@
 <?php
+// Trình bày danh mục và số coupon công khai từ controller.
 $total = array_sum(array_column($categories,'coupon_count'));
 $previewCategory = $categories[0] ?? null;
 foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategory) $previewCategory=$candidate;

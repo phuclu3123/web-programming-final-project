@@ -23,6 +23,7 @@ use App\Services\InteractionService;
 use RuntimeException;
 use Throwable;
 
+// Điều phối tìm kiếm, chi tiết và đóng góp coupon qua service dùng chung.
 final class CouponController extends Controller
 {
     private CouponRepository $coupons;

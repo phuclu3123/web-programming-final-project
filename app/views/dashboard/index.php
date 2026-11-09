@@ -1,4 +1,5 @@
 <?php
+// Tóm tắt điểm, chất lượng đóng góp và mã đã lưu của actor hiện tại.
 $points = (int) ($rewardSummary['earned_points'] ?? 0);
 $nextPoints = $rewardSummary['next_level_points'] ?? null;
 $levelStart = (int) ($rewardSummary['level_min_points'] ?? 0);

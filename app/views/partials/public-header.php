@@ -1,4 +1,5 @@
 <?php
+// Dùng cùng điều hướng và dữ liệu tài khoản/thông báo đã được controller chuẩn bị.
 $currentUser = $currentUser ?? \App\Core\Auth::user();
 $headerPath = (new \App\Core\Request())->path();
 $headerLinks = [

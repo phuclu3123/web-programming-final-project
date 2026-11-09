@@ -43,7 +43,7 @@ final class MerchantAccessRepository implements \App\Contracts\MerchantAccessRep
         return $this->db->query("SELECT mm.*, u.full_name,u.email,m.name AS merchant_name,m.status AS shop_status FROM merchant_memberships mm JOIN users u ON u.id=mm.user_id JOIN merchants m ON m.id=mm.merchant_id ORDER BY mm.updated_at DESC,mm.user_id,mm.merchant_id")->fetchAll();
     }
 
-    /** This must never downgrade User access to any other merchant. */
+    // Xét yêu cầu và thay membership trong cùng transaction để quyền shop không bị lệch.
     public function review(int $adminId,int $requestId,string $action,?string $note,bool $duplicateConfirmed = false): void
     {
         if(!in_array($action,['APPROVE','REJECT'],true)) throw new RuntimeException('Hành động không hợp lệ.');
@@ -102,6 +102,7 @@ final class MerchantAccessRepository implements \App\Contracts\MerchantAccessRep
         }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
 
+    // Thu hồi quyền theo cặp user/shop và ghi lý do; không tự chuyển quyền sang shop khác.
     public function revoke(int $adminId,int $userId,int $merchantId,string $note): void
     {
         if(trim($note)==='')throw new RuntimeException('Cần ghi lý do thu hồi.');

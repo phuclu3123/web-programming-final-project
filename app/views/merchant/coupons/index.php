@@ -1,4 +1,5 @@
 <?php
+// Phân biệt trạng thái kiểm duyệt, công bố và thời hạn coupon của shop.
 
 use App\Core\Session; ?>
 <div class="merchant-coupon-page">
