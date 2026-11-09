@@ -29,10 +29,8 @@ CouponHub_UI/
 ├── assets/                    CSS/JS/icon của giao diện hiện tại
 ├── public/                    Asset của các module tích hợp
 ├── storage/                   Dữ liệu runtime của ứng dụng
-├── tests/                     Kiểm tra Auth, guard, Router, JS, mysqli và HTTP
-├── scripts/                   Công cụ CLI kiểm tra route
-├── docs/                      Tài liệu dự án
-└── Latex/                     Source báo cáo, sơ đồ và PDF hoàn chỉnh
+├── scripts/                   Công cụ PHP CLI
+└── docs/                      Tài liệu kỹ thuật và đặc tả API
 ```
 
 `assets/` và `public/` tiếp tục phục vụ các giao diện đang có để giữ nguyên đường dẫn CSS/JS. `public/index.php` chỉ chuyển về URL gốc; document root hiện tại vẫn là thư mục dự án, theo README. Cả Apache lẫn built-in server phải chặn truy cập trực tiếp vào source/config/SQL.
@@ -40,6 +38,8 @@ CouponHub_UI/
 Trang chủ và các trang trong layout `main.php` dùng chung `partials/public-header.php`, `public-footer.php` và `account-menu.php`. Chỉnh điều hướng/tài khoản tại các partial này để tránh sinh thêm navbar khác nhau. `assets/css/member.css` dùng token của trang chủ cho phần User; `assets/js/member.js` xử lý menu và điều hướng cuộn. Các layout hiện tại dùng Bootstrap 5.3; không nạp thêm Bootstrap 4 trong cùng trang. Menu tài khoản dùng native `details`, không phụ thuộc dropdown của Bootstrap.
 
 Trang tài khoản lấy thông tin, điểm và ba coupon đã lưu gần nhất từ repository theo ID của actor đã xác thực. View không truy vấn DB. Thanh `section-nav.php` chỉ điều hướng đến section có trong trang; JS lấy lại section sau khi bộ lọc trang chủ thay vùng kết quả. Trên màn hình nhỏ, các phần tài khoản dùng liên kết cuộn ngang và header có menu điều hướng thu gọn.
+
+Bộ test, script Python/Shell/PowerShell và benchmark phát triển nằm ở `CouponHub_DevTools` bên cạnh repo, không nằm trong source web trên GitHub. Source báo cáo LaTeX/draw.io được giữ riêng local. Xem [QUALITY_CHECKS.md](QUALITY_CHECKS.md).
 
 ## 2. Luồng chạy thực tế
 

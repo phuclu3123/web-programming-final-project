@@ -32,7 +32,7 @@ Gốc ứng dụng là thư mục chứa `index.php` của repo. Với domain đ
 
 Áp dụng rewrite trên Apache/LiteSpeed; không đổi URL vào thẳng `app/views/`. Nginx cần quy tắc bảo vệ/rewrite tương đương và phải được cấu hình, kiểm tra riêng.
 
-Gói website không gồm `.git`, `.runtime`, `.vscode`, SQL/backup, ZIP tải về, `tests/`, `scripts/`, `docs/`, `Latex/` hoặc source sơ đồ. Các thư mục hỗ trợ này vẫn có thể giữ trong checkout phát triển, nhưng không cần phát hành qua webroot.
+Gói website không gồm `.git`, `.runtime`, `.vscode`, SQL/backup dữ liệu thật, ZIP tải về, tài liệu báo cáo hoặc source sơ đồ. Repo không còn thư mục test và script Python/Shell/PowerShell; chúng ở bộ DevTools riêng. `scripts/` hiện chỉ giữ PHP CLI để quản trị/kiểm tra cấu hình; có thể giữ khi triển khai để dùng terminal, nhưng phải chặn truy cập web trực tiếp bằng `.htaccess`. `docs/` là tài liệu phát triển và đặc tả, không cần mở công khai qua webroot.
 
 ## 5. Env và provider
 

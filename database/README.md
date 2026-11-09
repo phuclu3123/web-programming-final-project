@@ -24,12 +24,7 @@
 
 ## Kiểm tra hợp đồng schema
 
-```bash
-node --test tests/db-migration-contract.test.cjs
-python tests/db-migration-contract.py
-```
-
-Đây là kiểm tra tĩnh; không thay thế import SQL, PHP/mysqli và kiểm thử HTTP trên MariaDB. Hướng dẫn test CSDL tách biệt nằm trong `tests/sql-install.py` (có thao tác reset DB **thử riêng**, không được dùng cho DB làm việc).
+Các test hợp đồng schema và `sql-install.py` được lưu trong bộ `CouponHub_DevTools` riêng, không thuộc repo web. Xem [hướng dẫn kiểm chứng](../docs/QUALITY_CHECKS.md). Kiểm tra tĩnh không thay thế import SQL/PHP/HTTP trên MariaDB; runner tích hợp chỉ được dùng với DB thử riêng, không dùng cho DB làm việc.
 
 ## Dữ liệu trong demo.sql
 

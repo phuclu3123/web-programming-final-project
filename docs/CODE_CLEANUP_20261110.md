@@ -1,5 +1,7 @@
 # Rà soát source và cấu trúc CouponHub, 09-10/11/2026
 
+**Cập nhật tiếp ngày 10/11/2026:** theo yêu cầu giữ repo chỉ chứa source web, toàn bộ `tests/` và script Python/Shell/PowerShell/benchmark được chuyển ra `../CouponHub_DevTools/`, có manifest/checksum. CI mới chỉ kiểm tra cú pháp, không chạy regression. Các kết quả test dưới đây thuộc đợt trước khi tách; xem [QUALITY_CHECKS.md](QUALITY_CHECKS.md) cho cách dùng bộ riêng.
+
 ## Phạm vi
 
 Rà source PHP/JS, bổ sung comment có ý nghĩa, bỏ comment trang trí, tách prototype và tài liệu tải về khỏi ứng dụng, cập nhật hướng dẫn phát triển/deploy. Không push, merge hoặc triển khai hosting. Không chạy migration/seed hay ghi dữ liệu vào database đang dùng.

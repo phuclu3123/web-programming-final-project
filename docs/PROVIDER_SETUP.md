@@ -7,10 +7,10 @@ Code dùng PHP/mysqli, session cookie, HTML/CSS/JS và Bootstrap hiện có. Kh�
 Chạy tại thư mục `CouponHub_UI`:
 
 ```powershell
-.\scripts\serve-local.ps1 -Port 8080
+php -S localhost:8000 router.php
 ```
 
-Mở `http://localhost:8080/CouponHub_UI/`. Script dùng `router.php` để chặn `.env`, SQL, source, session và tài liệu nội bộ; giữ nguyên server đang chiếm cổng khác. Dừng bằng Ctrl+C. Nếu đã có server 8080, chọn cổng khác; script in URL tương ứng.
+Mở `http://localhost:8000/`. `router.php` chặn `.env`, SQL, source và tài liệu nội bộ. Dừng bằng Ctrl+C; nếu cổng đã có tiến trình khác, chọn cổng trống và cập nhật APP_URL cùng cấu hình callback tương ứng. Script PowerShell tiện ích được giữ riêng trong bộ DevTools.
 
 **Preview không có router không phù hợp để điền secret**: dùng `router.php` hoặc cấu hình web server chặn file riêng. Local ngày 09/11/2026 tại `http://localhost:8000/` đang dùng router; `.env` và `database/schema.sql` đã trả 403. Không suy ra mọi tiến trình trên cổng 8000 đều an toàn: kiểm tra lại khi thay server. Apache phải bật rewrite và áp dụng `.htaccess` của dự án. Khi triển khai HTTPS, kiểm tra trực tiếp `.env`/`database/schema.sql` trả 403/404 và cookie có Secure.
 
@@ -122,7 +122,7 @@ Session và chuyển hướng admin/merchant/user dùng cùng luồng hiện có
 
 Không có Client ID thì không tải SDK và không hiển thị prompt; biểu mẫu mật khẩu vẫn dùng được.
 Không copy Client ID/secret từ ứng dụng tham khảo sang CouponHub nếu chưa cấu hình dự án Google phù hợp.
-Kiểm thử local: `php tests/google-one-tap.php` và `node --test tests/google-one-tap.test.cjs`.
+Kiểm thử giao thức One Tap được giữ trong bộ `CouponHub_DevTools` riêng; xem [QUALITY_CHECKS.md](QUALITY_CHECKS.md).
 Test giao thức dùng khóa RSA sinh tại chỗ và transport được kiểm soát; việc hiện hộp Google thật,
 đăng nhập bằng tài khoản thật và tạo/liên kết dữ liệu thật vẫn phải nghiệm thu sau khi điền cấu hình.
 
@@ -136,12 +136,7 @@ Cookie: thông báo ở góc trái, lựa chọn được lưu trên trình duy�
 
 Admin → **API & nghiệm thu** (`/admin/api-docs`) có Swagger UI local, không gửi schema sang validator bên ngoài. `/admin/api-spec` trả 119 operation lấy từ router, có token CSRF của phiên admin hiện tại. Tài liệu tĩnh trong `docs/api` không chứa cookie/token thật. Nhiều endpoint PHP là form trả HTML/302/303; không coi redirect là bằng chứng nghiệp vụ thành công, cần kiểm tra trạng thái dữ liệu.
 
-```powershell
-python scripts/build_api_assets.py
-python scripts/build_postman.py
-$env:COUPONHUB_RUN_DB_TEST='1'
-python tests/run-integrations.py --browser
-```
+Đặc tả/collection tĩnh tiếp tục có trong `docs/api/`. Công cụ tái tạo OpenAPI/Postman và runner nghiệm thu được giữ trong bộ `CouponHub_DevTools` riêng, không cần Python để chạy website. Xem [QUALITY_CHECKS.md](QUALITY_CHECKS.md).
 
 Runner yêu cầu MariaDB **riêng** `127.0.0.1:13379/couponhub_merge_test`, sẽ tạo lại fixture tại đó, từ chối `config/local.php`. Không chạy bằng DB thật. Bộ Postman dùng `--no-report-events`, không upload collection/kết quả lên tài khoản Postman. Cấu hình và tài khoản trong collection là demo local. Swagger dùng phiên hiện tại và có thể ghi dữ liệu thật khi bấm Execute; kịch bản thu hồi phải chạy trên database kiểm thử.
 

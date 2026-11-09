@@ -77,3 +77,5 @@ Tài liệu chính thức đã đọc:
 - [GitHub OAuth web application flow](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps).
 - [Google backend ID-token validation](https://developers.google.com/identity/sign-in/web/backend-auth).
 - [Resend Send Email API](https://resend.com/docs/api-reference/emails/send-email).
+
+Các đường dẫn `tests/` ở phần kiểm chứng trên thuộc bộ `CouponHub_DevTools` được tách khỏi repo ngày 10/11/2026. Chúng không phải file cần upload hosting; xem [QUALITY_CHECKS.md](QUALITY_CHECKS.md).

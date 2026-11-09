@@ -32,3 +32,10 @@
 /Latex/**/*.fls
 /Latex/**/*.fdb_latexmk
 /Latex/**/*.synctex.gz
+
+# Development tools are maintained in the separate sibling DevTools bundle.
+/tests/
+/scripts/*.py
+/scripts/*.sh
+/scripts/*.ps1
+/scripts/*.cjs

@@ -21,7 +21,7 @@ Mở `http://localhost:8000/`. Không chạy PHP server thiếu `router.php` khi
 - MySQL/MariaDB tương thích schema, view và stored procedure của dự án.
 - Không có bước `npm install` hoặc `composer install`: repo hiện không có package manifest tương ứng.
 - Font Awesome và Swagger UI nằm sẵn trong `assets/vendor/`, bao gồm giấy phép và webfont.
-- Bootstrap được tải qua CDN. Node và Python phục vụ kiểm thử/công cụ phát triển, không phải runtime bắt buộc của hosting.
+- Bootstrap được tải qua CDN. Repo web không chứa công cụ Python/Shell/PowerShell hay bộ test; các phần này được lưu riêng trong `CouponHub_DevTools`. Node trên CI chỉ kiểm tra cú pháp JavaScript.
 
 ## Tài liệu đang dùng
 
@@ -46,10 +46,8 @@ assets/             CSS, JS, ảnh, thư viện đã đóng gói
 public/             Asset của các module tích hợp; không phải document root
 database/           Schema cài mới, demo riêng và migration
 storage/            Cache, log và dữ liệu runtime được bảo vệ
-scripts/            Công cụ CLI có chủ đích
-tests/              Kiểm thử; test ghi DB yêu cầu database riêng
+scripts/            Công cụ PHP CLI quản trị, cấu hình và dữ liệu
 docs/               Tài liệu kỹ thuật
-Latex/              Source báo cáo, sơ đồ và PDF hoàn chỉnh
 ```
 
 `admin.php`, `shop.php`, `login.php`, các callback trong `api/` là wrapper cần giữ để tương thích URL. Chúng không tạo một backend thứ hai. Thư mục gốc chứa `index.php` là gốc ứng dụng; áp dụng `.htaccess` khi chạy Apache/LiteSpeed.
@@ -59,12 +57,11 @@ Các template User cũ dùng mảng dữ liệu và asset tương ứng đã đ�
 ## Kiểm tra nhanh
 
 ```bash
-node --test tests/*.test.cjs
 php scripts/check_auth_config.php --db --facebook
 php scripts/check_integrations.php --database
 ```
 
-Hai lệnh PHP chỉ kiểm tra cấu hình/schema và không gửi email hoặc chứng minh API key hoạt động. Chỉ chạy test thay đổi dữ liệu với database tách biệt theo hướng dẫn trong từng runner.
+Hai lệnh PHP chỉ kiểm tra cấu hình/schema và không gửi email hoặc chứng minh API key hoạt động. Bộ test và công cụ phát triển được bàn giao riêng, xem [QUALITY_CHECKS.md](docs/QUALITY_CHECKS.md). Source báo cáo LaTeX/draw.io cũng được giữ local, không thuộc repo web này.
 
 ## Thành viên
 

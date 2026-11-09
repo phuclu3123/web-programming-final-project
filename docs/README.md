@@ -20,6 +20,8 @@
 
 ## Báo cáo lịch sử
 
+Test và công cụ hỗ trợ không còn trong repo web; được giữ ở bộ `CouponHub_DevTools` riêng. Những đường dẫn `tests/` hoặc script Python/Shell/PowerShell trong báo cáo lịch sử mô tả phiên bản trước khi tách. Xem [QUALITY_CHECKS.md](QUALITY_CHECKS.md) để kiểm chứng với source hiện tại.
+
 Các file `INTEGRATION_*`, `PHASE*`, `PHUC_PHASE*`, `REVIEW_*`, `UI_*` ghi lại từng đợt phát triển. Số bảng, URL, số test và trạng thái provider trong đó thuộc thời điểm ghi nhận; không dùng thay hướng dẫn triển khai hiện hành.
 
 Giữ các báo cáo này để truy vết thay đổi và dẫn chiếu kiểm thử. Thư mục bài giảng tải về trước đây được lưu ngoài repo tại `../temp/CouponHub_cleanup_20261109/archived/drive-download-20261010T105110Z-1-001/` tính từ gốc ứng dụng. Giao diện User prototype và asset cũ được lưu cùng gói, không còn là source chạy.

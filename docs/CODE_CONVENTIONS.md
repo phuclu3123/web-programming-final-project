@@ -28,7 +28,7 @@
 | View/partial | Trình bày dữ liệu đã chuẩn bị, escape bằng helper; không tự truy vấn SQL. |
 | JS | Progressive enhancement, AJAX và trạng thái giao diện; không quyết định quyền. |
 | `scripts/` | Công cụ CLI lặp lại được, có guard nếu ghi dữ liệu. |
-| `tests/` | Kiểm chứng hành vi, quyền và lỗi; dữ liệu ghi chỉ trong DB test riêng. |
+| `CouponHub_DevTools` ngoài repo | Giữ test, công cụ kiểm chứng và benchmark; dữ liệu ghi chỉ trong DB test riêng. |
 
 Health endpoint có truy vấn kỹ thuật `SELECT 1`/collation để chẩn đoán kết nối. Đây không phải truy vấn nghiệp vụ chuyển vào view.
 
@@ -37,6 +37,6 @@ Health endpoint có truy vấn kỹ thuật `SELECT 1`/collation để chẩn đ
 - `api/` và wrapper PHP ở gốc tiếp tục được giữ vì URL cũ còn dùng.
 - `assets/` và `public/` cùng chứa asset đang được các layout tham chiếu. Không gộp/đổi đường dẫn nếu chưa cập nhật caller và kiểm thử.
 - `app/content/` là nội dung biên tập cho công cụ xuất bản, không phải database giả của ứng dụng.
-- `Latex/` và source draw.io là tài nguyên báo cáo có chủ đích; build/cache và bản tải về chuyển ra temp ngoài repo.
+- Source LaTeX/draw.io giữ riêng local. Bộ test và script không thuộc runtime được lưu ngoài repo, không trộn lại vào source web.
 - Runtime của developer ở `.runtime/`; cache/log/session của ứng dụng ở nơi lưu riêng được bảo vệ.
 - Không sửa code thư viện trong `assets/vendor/`; giữ LICENSE và đường dẫn webfont đi cùng CSS.
