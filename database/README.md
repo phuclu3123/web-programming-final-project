@@ -19,6 +19,8 @@
 - Database 20 bảng core: nếu thiếu thì thêm `external_offers` bằng `20261105_external_offers.sql`, sau đó chạy `20261107_unify_comments.sql` để nâng cấu trúc `comments`, không tạo lại `article_comments`.
 - `20261106_article_comments.sql` là migration **lịch sử** cho phiên bản 22 bảng, **không chạy sau baseline 21 bảng**; hai migration Phase 3/4 cũ cũng chỉ dành cho schema trước hợp nhất.
 - Database rất cũ chưa được hợp nhất `coupon_status_history` cần xử lý bằng quy trình chuyển đổi core riêng trước khi dùng migration hiện tại.
+- Đã bổ sung quy trình cho DB cũ 23 bảng: chạy `20261109_legacy_core_compat.sql`,
+  sau đó `20261107_unify_comments.sql` trên bản sao đã backup. Xem [hướng dẫn nâng cấp](../docs/DB_UPGRADE_20261109.md).
 
 ## Kiểm tra hợp đồng schema
 

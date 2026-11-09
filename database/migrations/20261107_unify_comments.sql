@@ -96,7 +96,7 @@ BEGIN
     SELECT COUNT(*) INTO v_valid_copy FROM article_comments a
       JOIN comments c ON c.user_id=a.user_id AND c.request_id=a.request_id
        AND c.article_id=a.article_id AND c.coupon_id IS NULL
-       AND c.body=a.body AND c.status=a.status
+       AND BINARY c.body=BINARY a.body AND c.status=a.status
        AND c.created_at=a.created_at AND c.updated_at=a.updated_at;
     IF v_legacy_count <> v_valid_copy THEN
       ROLLBACK;
@@ -131,7 +131,7 @@ BEGIN
     SELECT COUNT(*) INTO v_valid_copy FROM article_comments a
       JOIN comments c ON c.user_id=a.user_id AND c.request_id=a.request_id
        AND c.article_id=a.article_id AND c.coupon_id IS NULL
-       AND c.body=a.body AND c.status=a.status
+       AND BINARY c.body=BINARY a.body AND c.status=a.status
        AND c.created_at=a.created_at AND c.updated_at=a.updated_at;
     IF v_legacy_count <> v_valid_copy THEN
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Post-commit parity failed; old table preserved.';

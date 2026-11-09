@@ -65,4 +65,25 @@ assert query("SELECT COUNT(*) FROM activity_logs WHERE action LIKE 'ARTICLE_COMM
 # Verify repeatable migration after successful completion (no extra comments).
 load('database/migrations/20261107_unify_comments.sql')
 assert query('SELECT COUNT(*) FROM comments WHERE article_id IS NOT NULL') == '2'
-print('PASS isolated MariaDB comments merge: 22 -> 21 tables, ID collision, audit mapping, parity, idempotence.', flush=True)
+
+# Existing destinations during retry must match bytes, not just a CI collation.
+for index, (original, different) in enumerate([
+    ('Original Case', 'original case'),
+    ('Cafe', 'Café'),
+    ('Same text', 'Same text '),
+]):
+    load('database/migrations/20261106_article_comments.sql')
+    key = str(index + 1) * 32
+    stamp = '2026-11-01 00:00:00'
+    quote = lambda value: "CONVERT(0x" + value.encode('utf-8').hex() + " USING utf8mb4)"
+    query(f"INSERT INTO article_comments(article_id,user_id,body,status,request_id,created_at,updated_at) VALUES({article},5,{quote(original)},'VISIBLE','{key}','{stamp}','{stamp}')")
+    query(f"INSERT INTO comments(article_id,user_id,body,status,request_id,created_at,updated_at) VALUES({article},5,{quote(different)},'VISIBLE','{key}','{stamp}','{stamp}')")
+    failed = subprocess.run(mysql + [name], input=(ROOT / 'database/migrations/20261107_unify_comments.sql').read_bytes(), capture_output=True)
+    assert failed.returncode != 0 and b'parity failed' in failed.stderr, failed.stderr
+    assert query("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='article_comments'") == '1'
+    assert query('SELECT HEX(body) FROM article_comments LIMIT 1').lower() == original.encode().hex()
+    query(f"DELETE FROM comments WHERE user_id=5 AND request_id='{key}'")
+    load('database/migrations/20261107_unify_comments.sql')
+    assert query(f"SELECT HEX(body) FROM comments WHERE user_id=5 AND request_id='{key}'").lower() == original.encode().hex()
+
+print('PASS isolated MariaDB comments merge: IDs/audit/idempotence; case/accent/trailing-space conflicts preserve the legacy source.', flush=True)

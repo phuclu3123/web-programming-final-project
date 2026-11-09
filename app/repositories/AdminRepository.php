@@ -173,12 +173,11 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
             $lock = $this->db->prepare('SELECT id FROM categories WHERE id=? FOR UPDATE');
             $lock->execute([$categoryId]);
             if (!$lock->fetch()) throw new RuntimeException('Không tìm thấy danh mục.');
-            foreach (['coupons', 'articles'] as $table) {
-                $count = $this->db->prepare("SELECT COUNT(*) FROM {$table} WHERE category_id=?");
-                $count->execute([$categoryId]);
-                if ((int)$count->fetchColumn() > 0) {
-                    throw new RuntimeException('Danh mục đã được sử dụng. Hãy tắt danh mục thay vì xóa.');
-                }
+            // Articles no longer belong to coupon categories in the consolidated schema.
+            $count = $this->db->prepare('SELECT COUNT(*) FROM coupons WHERE category_id=?');
+            $count->execute([$categoryId]);
+            if ((int)$count->fetchColumn() > 0) {
+                throw new RuntimeException('Danh mục đã được sử dụng. Hãy tắt danh mục thay vì xóa.');
             }
             $stmt = $this->db->prepare('DELETE FROM categories WHERE id=?');
             $stmt->execute([$categoryId]);

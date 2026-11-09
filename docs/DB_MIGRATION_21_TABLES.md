@@ -15,6 +15,11 @@ Bảng chung giữ `user_id`, `body`, `status`, `created_at`, `updated_at`, có 
 
 ## Quy trình A — DB đang có **22 bảng** (có `article_comments`)
 
+Nếu DB vẫn có **23 bảng** và `coupon_status_history`, cần chạy
+`20261109_legacy_core_compat.sql` trước bước gộp bình luận. Xem
+[DB_UPGRADE_20261109.md](DB_UPGRADE_20261109.md). Không bỏ qua bước này:
+source mới gọi `sp_submit_coupon` 17 tham số và dùng các cột lịch sử trong `activity_logs`.
+
 1. **Sao lưu toàn bộ** database (bao gồm dữ liệu), kiểm tra file backup có thể import. Dùng DB sao chép/test trước. Đưa website và worker viết DB vào bảo trì; ngăn ghi trong toàn bộ quá trình.
 2. Kiểm tra đúng database bằng `SELECT DATABASE();` và chạy preflight dưới đây. **Không import lại `schema.sql` hoặc `demo.sql`** vì hai file đó dành cho DB mới.
 3. Chọn database đang nâng cấp trong phpMyAdmin/MySQL và import **một file duy nhất**: `database/migrations/20261107_unify_comments.sql`.
