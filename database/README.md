@@ -1,6 +1,6 @@
-# CouponHub Database — baseline 21 bảng (07/11/2026)
+# CouponHub Database — 22 bảng (10/11/2026)
 
-**Bản chuẩn hiện tại:** `database/schema.sql` cài mới với **21 BASE TABLE / 6 VIEW / 21 PROCEDURE**. `comments` chứa bình luận coupon hoặc bài viết, không còn bảng vật lý `article_comments` hoặc `coupon_status_history`.
+**Bản chuẩn hiện tại:** `database/schema.sql` cài mới với **22 BASE TABLE / 6 VIEW / 21 PROCEDURE**. `comments` chứa bình luận coupon hoặc bài viết, không còn bảng vật lý `article_comments` hoặc `coupon_status_history`.
 
 **Không import `schema.sql` vào database đang có dữ liệu** — bản DDL fresh install này có `DROP TABLE` và tạm tắt kiểm tra FK. `demo.sql` cũng chỉ dùng cho DB mới trống, một lần.
 
@@ -12,6 +12,9 @@
 4. Thiết lập `COUPONHUB_DB`, `COUPONHUB_HOST`, `COUPONHUB_USER`, `COUPONHUB_PASSWORD`, hoặc `config/local.php` không commit. Xem `docs/DEMO_DATA.md` cho tài khoản thử.
 
 ## Nâng cấp từ database hiện có
+
+- Bản đang chạy 21 bảng hoặc SQL bàn giao tại commit `601e0b1`: backup rồi chỉ áp dụng **`20261110_external_campaigns.sql`**. Migration thêm hàng chờ chiến dịch ACCESSTRADE, giữ nguyên shop/coupon/chiến dịch hiện có. Sau bước này có 22 bảng, 6 view, 21 procedure.
+- Các bước bên dưới mô tả nâng core cũ về 21 bảng; sau đó áp dụng migration nguồn chiến dịch nói trên.
 
 Đọc **[docs/DB_MIGRATION_21_TABLES.md](../docs/DB_MIGRATION_21_TABLES.md)**. Backup dữ liệu, dừng mọi thao tác ghi, nâng cấp DB và PHP source trong cùng đợt triển khai.
 

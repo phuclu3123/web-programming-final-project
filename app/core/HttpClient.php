@@ -5,6 +5,7 @@ namespace App\Core;
 /** HTTPS only; fixed provider endpoints are selected by services, never by input. */
 final class HttpClient implements \App\Contracts\HttpClientInterface
 {
+    public function __construct(private int $maxResponseBytes=1048576) {}
     public function json(string $method, string $url, array $headers = [], ?string $body = null): array
     {
         if (!extension_loaded('curl') || parse_url($url, PHP_URL_SCHEME) !== 'https') throw new \RuntimeException('HTTPS transport unavailable');
@@ -15,8 +16,9 @@ final class HttpClient implements \App\Contracts\HttpClientInterface
             CURLOPT_SSL_VERIFYHOST=>2, CURLOPT_CUSTOMREQUEST=>$method,
             CURLOPT_HTTPHEADER=>array_merge(['Accept: application/json','User-Agent: CouponHub/1.0'], $headers)];
         // Stop while receiving, rather than allocating an unbounded provider response first.
-        $options[CURLOPT_WRITEFUNCTION] = static function ($handle, string $chunk) use (&$response): int {
-            if (strlen($response) + strlen($chunk) > 1048576) return 0;
+        $limit=max(1024,min(8388608,$this->maxResponseBytes));
+        $options[CURLOPT_WRITEFUNCTION] = static function ($handle, string $chunk) use (&$response,$limit): int {
+            if (strlen($response) + strlen($chunk) > $limit) return 0;
             $response .= $chunk;
             return strlen($chunk);
         };
