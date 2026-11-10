@@ -21,13 +21,43 @@
 .article-comment-feedback { min-height:24px; margin:18px 0 0; color:#3550a4; font-size:15px; }
 .article-comment-feedback.is-error { color:#a22f37; }
 .article-comment { padding:24px 0; border-bottom:1px solid #e0e5ec; }
+.article-comment[id] { scroll-margin-top:120px; }
+.article-comment:target { background:#f0f3ff; border-radius:12px; padding-inline:16px; outline:2px solid #b6c4ff; }
 .article-comment-meta { display:flex; align-items:baseline; flex-wrap:wrap; gap:12px; }
 .article-comment-meta strong { font-size:15px; color:#263346; }
 .article-comment-meta time { font-size:13px; color:#627084; }
+.article-comment-role { display:inline-flex; align-items:center; border:1px solid #d6deea; border-radius:999px; padding:3px 9px; background:#f4f6fa; color:#4b5769; font-size:12px; font-weight:600; line-height:1.4; white-space:nowrap; }
+.article-comment-role--admin { color:#30469b; background:#eef1ff; border-color:#c9d2fb; }
+.article-comment-role--merchant { color:#205c48; background:#edf7f1; border-color:#bcdccc; }
 .article-comment-body { white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.65; margin:12px 0 4px; }
 .article-comment-delete { padding:8px 0; min-height:44px; border:0; background:transparent; color:#7d4850; font-size:13px; text-decoration:underline; text-underline-offset:3px; }
+.article-thread { border-bottom:1px solid #e0e5ec; }
+.article-thread > .article-comment { border-bottom:0; }
+.article-comment-replies { margin-left:28px; padding-left:20px; border-left:2px solid #dce3ef; }
+.article-reply-disclosure { padding-bottom:12px; }
+.article-reply-disclosure > summary { width:fit-content; max-width:100%; min-height:44px; padding:10px 4px; color:#3550a4; font-size:14px; font-weight:600; cursor:pointer; }
+.article-reply-disclosure > summary:focus-visible { outline:3px solid #b6c4ff; outline-offset:3px; border-radius:4px; }
+.article-reply-disclosure:not([open]) .article-replies-hide,.article-reply-disclosure[open] .article-replies-show { display:none; }
+.article-comment--reply { padding-block:20px; }
+.article-reply-context { margin:8px 0 0; color:#627084; font-size:13px; overflow-wrap:anywhere; }
+.article-comment-actions { display:flex; align-items:center; flex-wrap:wrap; gap:4px 18px; margin-top:8px; }
+.article-comment-actions form { margin:0; }
+.article-comment-actions a,.article-comment-actions button { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:8px 2px; font:inherit; font-size:13px; }
+.article-comment-like,.article-reply-cancel { border:0; background:transparent; color:#627084; }
+.article-comment-like > span:first-child { font-size:21px; line-height:1; }
+.article-comment-like.is-liked { color:#a22f56; font-weight:600; }
+.article-comment-actions :is(a,button):focus-visible,.article-reply-pagination a:focus-visible { outline:3px solid #b6c4ff; outline-offset:3px; border-radius:4px; }
+.article-comment-actions button:disabled { opacity:.6; cursor:wait; }
+.article-inline-reply { margin-top:16px; padding:16px; background:#f6f8fc; border:1px solid #dce3ef; border-radius:16px; }
+.article-inline-reply textarea { min-height:90px; }
+.article-reply-pagination { display:flex; flex-wrap:wrap; gap:8px 20px; margin-left:48px; }
+.article-reply-pagination a { display:inline-flex; align-items:center; min-height:44px; font-size:13px; }
+.article-reply-pagination:has(a:not([hidden])) { padding-bottom:16px; }
+@media(max-width:575px) { .article-comment-replies { margin-left:10px; padding-left:12px; } .article-reply-pagination { margin-left:24px; } .article-inline-reply { padding:12px; } }
 .article-comment-empty { padding:24px 0; color:#627084; }
 .article-comments-more { margin-top:24px; min-height:44px; }
 .article-discussion [hidden] { display:none!important; }
 .article-moderation-item { padding:20px 0; border-bottom:1px solid #e0e5ec; overflow-wrap:anywhere; }
+.article-moderation-links { display:flex; flex-wrap:wrap; gap:8px 20px; margin-block:8px; }
+.article-moderation-links a { display:inline-flex; align-items:center; min-height:44px; text-underline-offset:3px; }
 @media(max-width:575px) { .article-comment-form-foot { align-items:flex-start; flex-direction:column; gap:12px; } .article-comment-form-foot .btn { align-self:flex-end; } .article-story > img { border-radius:16px; } .article-story header { margin-top:24px; } }

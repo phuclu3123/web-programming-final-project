@@ -3,10 +3,27 @@
 <div class="workspace-panel">
 <?php if(!$comments): ?><p>Chưa có bình luận cần xem.</p><?php endif; ?>
 <?php foreach($comments as $comment): ?>
+<?php
+    $editUrl = url('/admin/articles/'.(int)$comment['article_id'].'/edit');
+    $articleUrl = url('/articles/'.$comment['slug']);
+    $published = (bool)$comment['article_published'];
+    // Permalink resolves the thread and reply cursor on the server.
+    $commentUrl = $articleUrl.'?comment='.(int)$comment['id'].'#article-comment-'.(int)$comment['id'];
+?>
 <article class="article-moderation-item">
-    <a href="<?= e(url('/admin/articles/'.(int)$comment['article_id'].'/edit')) ?>"><?= e($comment['title']) ?></a>
-    <p><strong><?= e($comment['author_name']) ?></strong> · <?= e(format_db_datetime($comment['created_at'])) ?> · <?= $comment['status']==='VISIBLE'?'Đang hiển thị':'Đã ẩn' ?></p>
+    <a href="<?= e($published ? $articleUrl : $editUrl) ?>"><?= e($comment['title']) ?></a>
+    <p class="article-comment-meta"><strong><?= e($comment['author_name']) ?></strong><span class="article-comment-role article-comment-role--<?= e(strtolower($comment['author_role'])) ?>"><?= e($comment['author_role_label']) ?></span><span><?= e(format_db_datetime($comment['created_at'])) ?> · <?= $comment['status']==='VISIBLE'?'Đang hiển thị':'Đã ẩn' ?></span></p>
     <p class="article-comment-body"><?= e($comment['body']) ?></p>
+    <?php if($comment['parent_comment_id']): ?><p class="text-muted small">Phản hồi trong một cuộc trao đổi.</p><?php endif; ?>
+    <nav class="article-moderation-links" aria-label="Liên kết bài viết và bình luận">
+        <?php if($published): ?>
+        <a href="<?= e($articleUrl) ?>">Xem bài viết</a>
+        <?php if($comment['status']==='VISIBLE'): ?><a href="<?= e($commentUrl) ?>">Đến bình luận</a><?php endif; ?>
+        <?php endif; ?>
+        <a href="<?= e($editUrl) ?>">Chỉnh sửa bài viết</a>
+    </nav>
+    <?php if(!$published): ?><p class="text-muted small">Bài viết chưa được xuất bản công khai.</p>
+    <?php elseif($comment['status']!=='VISIBLE'): ?><p class="text-muted small">Bình luận đã ẩn, chỉ xem được trong quản trị.</p><?php endif; ?>
     <form method="post" action="<?= e(url('/admin/article-comments/'.(int)$comment['id'].'/status')) ?>">
         <input type="hidden" name="csrf" value="<?= e(\App\Core\Session::csrfToken()) ?>">
         <input type="hidden" name="status" value="<?= $comment['status']==='VISIBLE'?'HIDDEN':'VISIBLE' ?>">

@@ -1,27 +1,64 @@
 /* Shared public chrome. Native details/anchors remain usable without JavaScript. */
 (() => {
   'use strict';
-  document.querySelectorAll('[data-notifications-read]').forEach(form => form.addEventListener('submit', async event => {
-    event.preventDefault();
+  const notificationPanel = document.querySelector('[data-notifications-endpoint]');
+  if (notificationPanel) {
+    const form = notificationPanel.querySelector('[data-notifications-read]');
     const button = form.querySelector('button');
-    const panel = form.closest('.header-notification-wrapper');
-    const feedback = panel.querySelector('.notification-feedback');
-    button.disabled = true;
-    try {
-      const response = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
-      const result = await response.json();
-      if (!response.ok || !result.success) throw new Error('read failed');
-      panel.querySelectorAll('.unread').forEach(item => item.classList.remove('unread'));
-      panel.querySelector('.notification-dot')?.remove();
-      panel.querySelector('summary').setAttribute('aria-label', 'Thông báo');
-      button.textContent = 'Đã đọc';
-      feedback.hidden = true;
-    } catch {
-      feedback.textContent = 'Chưa thể cập nhật. Bạn thử lại nhé.';
-      feedback.hidden = false;
-      button.disabled = false;
-    }
-  }));
+    const feedback = notificationPanel.querySelector('.notification-feedback');
+    let fetching = false, reading = false, signature = '', revision = 0;
+    const read = async eventKey => {
+      const body = new FormData(form); if (eventKey) body.set('event_key', eventKey);
+      const response = await fetch(form.action, { method: 'POST', body, headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) });
+      const result = await response.json(); if (!response.ok || !result.success) throw new Error('read failed');
+    };
+    const refresh = async () => {
+      if (document.hidden || fetching || reading) return;
+      fetching = true;
+      const currentRevision = revision;
+      try {
+        const response = await fetch(notificationPanel.dataset.notificationsEndpoint, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) });
+        const result = await response.json(); if (!response.ok || !result.success) return;
+        if (reading || currentRevision !== revision) return;
+        const data = result.data, nextSignature = JSON.stringify(data);
+        if (signature === nextSignature) return; signature = nextSignature;
+        const summary = notificationPanel.querySelector('summary');
+        summary.setAttribute('aria-label', 'Thông báo' + (data.unread_count ? ' · ' + data.unread_count + ' chưa đọc' : ''));
+        summary.querySelector('.notification-dot')?.remove();
+        if (data.unread_count) { const dot = document.createElement('span'); dot.className = 'notification-dot'; summary.append(dot); }
+        form.hidden = !data.unread_count;
+        const focusedKey = document.activeElement.closest?.('[data-notification-key]')?.dataset.notificationKey;
+        const body = notificationPanel.querySelector('.notif-body'); body.replaceChildren();
+        data.items.slice(0, 5).forEach(item => {
+          const link = document.createElement('a'); link.className = 'notif-item' + (item.unread ? ' unread' : ''); link.href = item.href; link.dataset.notificationKey = item.event_key;
+          const title = document.createElement('p'); title.className = 'notif-title'; title.textContent = item.title;
+          const time = document.createElement('time'); time.className = 'notif-time'; time.textContent = item.occurred_at_display; link.append(title, time); body.append(link);
+        });
+        if (!data.items.length) { const empty = document.createElement('p'); empty.className = 'notification-empty'; empty.textContent = 'Bạn chưa có thông báo mới.'; body.append(empty); }
+        if (focusedKey) [...body.querySelectorAll('[data-notification-key]')].find(link => link.dataset.notificationKey === focusedKey)?.focus();
+      } catch { /* Keep the current feed during a transient network failure. */ }
+      finally { fetching = false; if (!reading && currentRevision !== revision) refresh(); }
+    };
+    form.addEventListener('submit', async event => {
+      event.preventDefault(); if (reading) return; reading = true; revision++; button.disabled = true;
+      try { await read(''); feedback.hidden = true; signature = ''; }
+      catch { feedback.textContent = 'Chưa thể cập nhật. Bạn thử lại nhé.'; feedback.hidden = false; }
+      finally { reading = false; button.disabled = false; await refresh(); }
+    });
+    document.addEventListener('click', async event => {
+      const link = event.target.closest('[data-notification-key]');
+      if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      event.preventDefault();
+      try { await read(link.dataset.notificationKey); } catch { /* Reading must not block opening the discussion. */ }
+      window.location.assign(link.href);
+    });
+    // State comes from MySQL; no localStorage/sessionStorage or client-generated notifications.
+    notificationPanel.addEventListener('toggle', () => { if (notificationPanel.open) refresh(); });
+    window.addEventListener('focus', refresh);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+    window.addEventListener('couponhub:notifications-refresh', refresh);
+    window.setInterval(refresh, 30000);
+  }
   const menus = [...document.querySelectorAll('[data-account-dropdown]')];
   menus.forEach(menu => menu.addEventListener('toggle', () => {
     if (menu.open) menus.forEach(other => { if (other !== menu) other.open = false; });
