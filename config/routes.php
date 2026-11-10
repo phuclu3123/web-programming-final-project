@@ -130,6 +130,9 @@ $router->get('/admin/api-docs', [\App\Controllers\Admin\ApiDocsController::class
 $router->get('/admin/api-spec', [\App\Controllers\Admin\ApiDocsController::class, 'spec']);
 $router->get('/admin/integrations', [\App\Controllers\Admin\IntegrationController::class, 'index']);
 $router->post('/admin/integrations/sync', [\App\Controllers\Admin\IntegrationController::class, 'sync']);
+$router->get('/admin/integrations/campaigns', [\App\Controllers\Admin\CampaignSourceController::class, 'index']);
+$router->post('/admin/integrations/campaigns/sync', [\App\Controllers\Admin\CampaignSourceController::class, 'sync']);
+$router->post('/admin/integrations/campaigns/moderate', [\App\Controllers\Admin\CampaignSourceController::class, 'moderate']);
 $router->get('/admin/integrations/{id}/review', [\App\Controllers\Admin\IntegrationController::class, 'review']);
 $router->post('/admin/integrations/{id}/import', [\App\Controllers\Admin\IntegrationController::class, 'import']);
 $router->post('/admin/integrations/{id}/dismiss', [\App\Controllers\Admin\IntegrationController::class, 'dismiss']);

@@ -14,7 +14,8 @@ document.addEventListener('submit', async event => {
     error.remove();
   });
   message.replaceChildren();message.hidden=true;
-  form.dataset.busy='1';if(button)button.disabled=true;
+  form.dataset.busy='1';form.setAttribute('aria-busy','true');if(button)button.disabled=true;
+  message.textContent='Đang lấy và lưu dữ liệu từ nguồn…';message.hidden=false;message.className='alert alert-info';
   try {
     const response=await fetch(form.action,{method:'POST',credentials:'same-origin',headers:{Accept:'application/json'},body:new FormData(form)});
     let data;try{data=await response.json();}catch{throw new Error('Máy chủ chưa trả kết quả hợp lệ. Vui lòng tải lại trang hoặc thử lại.');}
@@ -41,5 +42,5 @@ document.addEventListener('submit', async event => {
     }
     message.hidden=false;message.className='alert alert-danger';message.focus();
   }
-  finally{delete form.dataset.busy;if(button)button.disabled=false;}
+  finally{delete form.dataset.busy;form.removeAttribute('aria-busy');if(button)button.disabled=false;}
 });

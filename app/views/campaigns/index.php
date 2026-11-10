@@ -53,6 +53,24 @@
 
     <!-- DEALS TRONG CHIẾN DỊCH -->
     <?php require __DIR__ . '/../partials/campaign-deals.php'; ?>
+    <?php if(!empty($partnerCampaigns['items'])): ?>
+    <section class="campaign-section-block" aria-labelledby="partner-campaign-title">
+        <div class="event-gallery-heading"><div><h2 class="event-more-title" id="partner-campaign-title">Chương trình từ đối tác.</h2><p>Thông tin từ ACCESSTRADE, được CouponHub duyệt trước khi hiển thị.</p></div></div>
+        <div class="row g-3">
+        <?php foreach($partnerCampaigns['items'] as $source): $partner=json_decode($source['payload'],true,64,JSON_THROW_ON_ERROR);$partnerUrl=safeHttpUrl($partner['url']);$partnerLogo=safeHttpUrl($partner['logo']); ?>
+            <div class="col-12 col-md-6 col-xl-4"><article class="card h-100"><div class="card-body d-flex flex-column align-items-start gap-3">
+                <?php if($partnerLogo): ?><img src="<?= e($partnerLogo) ?>" alt="" width="72" height="72" class="object-fit-contain rounded" loading="lazy" decoding="async" referrerpolicy="no-referrer"><?php endif; ?>
+                <h3 class="h5 mb-0"><?= e($partner['name']) ?></h3>
+                <p class="text-muted mb-0"><?= e(mb_substr($partner['description']?:'Khám phá thông tin chương trình trên website đối tác.',0,180)) ?></p>
+                <p class="small text-muted mb-0"><?= $source['ends_at']?'Đến '.e(format_db_datetime($source['ends_at'],'d/m/Y')):'Đối tác chưa công bố ngày kết thúc.' ?></p>
+                <?php if($source['starts_at']!==null && $source['starts_at']>gmdate('Y-m-d H:i:s')): ?><p class="small mb-0">Bắt đầu <?= e(format_db_datetime($source['starts_at'],'d/m/Y')) ?></p><?php endif; ?>
+                <?php if($partnerUrl): ?><a class="btn btn-outline-primary mt-auto" href="<?= e($partnerUrl) ?>" target="_blank" rel="noopener noreferrer">Xem tại đối tác <?= icon('arrow') ?><span class="visually-hidden"> (mở tab mới)</span></a><?php endif; ?>
+            </div></article></div>
+        <?php endforeach; ?>
+        </div>
+        <?php if($partnerCampaigns['pages']>1): ?><nav class="d-flex flex-wrap gap-2 mt-3" aria-label="Trang chương trình đối tác"><?php for($n=max(1,$partnerCampaigns['page']-2);$n<=min($partnerCampaigns['pages'],$partnerCampaigns['page']+2);++$n): ?><a class="btn btn-outline-secondary" href="<?= e(url('/campaigns').'?'.http_build_query(['partner_page'=>$n,'phase'=>$phase,'page'=>$listing['page']]).'#partner-campaign-title') ?>" <?= $n===$partnerCampaigns['page']?'aria-current="page"':'' ?>><?= $n ?></a><?php endfor; ?></nav><?php endif; ?>
+    </section>
+    <?php endif; ?>
     <?php if ($listing['pages'] > 1): ?><nav class="campaign-pagination" aria-label="Phân trang chiến dịch">
         <?php for ($target=max(1,$listing['page']-2); $target<=min($listing['pages'],$listing['page']+2); ++$target): ?>
         <a href="<?= e(url('/campaigns').'?'.http_build_query(['phase'=>$phase,'category_id'=>$selectedCategory,'usage_channel'=>$selectedChannel,'platform'=>$selectedPlatform,'page'=>$target])) ?>" <?= $target===$listing['page'] ? 'aria-current="page"' : '' ?>><?= $target ?></a>

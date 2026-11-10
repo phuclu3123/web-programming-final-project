@@ -110,6 +110,9 @@ final class CampaignController extends Controller
         }
         $this->view('campaigns/index', [
             'pageTitle' => 'Chiến dịch ưu đãi',
+            'partnerCampaigns' => !$categoryId && !$platform && $usageChannel==='ALL'
+                ? (new \App\Repositories\ExternalCampaignRepository(Database::connection()))->published(positiveId($request->query('partner_page','1')),$phase)
+                : ['items'=>[],'total'=>0,'page'=>1,'pages'=>1],
             'phase' => $phase,
             'listing' => $listing,
             'campaignPreview' => $campaignPreview,

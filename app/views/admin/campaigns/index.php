@@ -2,6 +2,7 @@
 // Hiển thị chiến dịch quản trị và biểu mẫu tạo; không suy quyền từ các nút đang thấy.
 
 use App\Core\Session; ?>
+<div class="d-flex justify-content-end mb-3"><a class="btn btn-outline-primary" href="<?= e(url('/admin/integrations/campaigns')) ?>">Đồng bộ chiến dịch ACCESSTRADE <?= icon('arrow') ?></a></div>
 <div class="row">
     <div class="col-xl-4 mb-4">
         <div class="card shadow-sm">

@@ -5,6 +5,7 @@
  <div><h1 class="h3 mb-2">Nguồn coupon</h1><p class="text-muted mb-0">ACCESSTRADE · Lấy dữ liệu, đối chiếu điều kiện, chuyển sang hàng kiểm duyệt.</p></div>
  <a class="btn btn-outline-secondary" href="<?= e(url('/admin/coupons')) ?>">Hàng kiểm duyệt <?= icon('arrow') ?></a>
 </header>
+<nav class="nav nav-tabs mb-4" aria-label="Loại nguồn ACCESSTRADE"><a class="nav-link active" aria-current="page" href="<?= e(url('/admin/integrations')) ?>">Coupon</a><a class="nav-link" href="<?= e(url('/admin/integrations/campaigns')) ?>">Chiến dịch</a></nav>
 <?php if (!$storageReady): ?><div class="alert alert-warning">Cần cài migration <code>database/migrations/20261105_external_offers.sql</code>. Với database đang có dữ liệu, sao lưu rồi chỉ chạy migration này.</div>
 <?php else: ?>
 <section class="card mb-4"><div class="card-body">
