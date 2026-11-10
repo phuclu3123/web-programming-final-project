@@ -1,6 +1,6 @@
-# CouponHub Database — 22 bảng (10/11/2026)
+# CouponHub Database — 24 bảng (10/11/2026)
 
-**Bản chuẩn hiện tại:** `database/schema.sql` cài mới với **22 BASE TABLE / 6 VIEW / 21 PROCEDURE**. `comments` chứa bình luận coupon hoặc bài viết, không còn bảng vật lý `article_comments` hoặc `coupon_status_history`.
+**Bản chuẩn hiện tại:** `database/schema.sql` cài mới với **24 BASE TABLE / 6 VIEW / 21 PROCEDURE**. `comments` chứa bình luận coupon hoặc bài viết; phản hồi bài viết dùng `parent_comment_id` và `root_comment_id`. `comment_reactions` lưu lượt thích; `notifications` lưu sự kiện và trạng thái đã đọc theo tài khoản.
 
 **Không import `schema.sql` vào database đang có dữ liệu** — bản DDL fresh install này có `DROP TABLE` và tạm tắt kiểm tra FK. `demo.sql` cũng chỉ dùng cho DB mới trống, một lần.
 
@@ -12,6 +12,11 @@
 4. Thiết lập `COUPONHUB_DB`, `COUPONHUB_HOST`, `COUPONHUB_USER`, `COUPONHUB_PASSWORD`, hoặc `config/local.php` không commit. Xem `docs/DEMO_DATA.md` cho tài khoản thử.
 
 ## Nâng cấp từ database hiện có
+
+- Bản 23 bảng đã có reply/react: backup rồi chạy **`20261110_comment_notifications.sql`**. Migration lưu thông báo và trạng thái đã đọc vào MySQL, đồng thời bổ sung thông báo cho reply/thả tim đã có; có thể chạy lại mà không reset đã đọc. Sau nâng cấp có 24 bảng.
+
+- Bản 22 bảng đã có `external_campaigns`: backup rồi chạy **`20261110_comment_threads_reactions.sql`** để thêm reply và thả tim. Bình luận hiện có giữ nguyên và vẫn là bình luận gốc. Sau nâng cấp có 23 bảng; không import lại full/schema vào DB đang chạy.
+- Nếu dùng full SQL 21 bảng đã gửi Quang: import vào DB mới trống, sau đó chạy lần lượt `20261110_external_campaigns.sql`, `20261110_comment_threads_reactions.sql`, `20261110_comment_notifications.sql`.
 
 - Bản đang chạy 21 bảng hoặc SQL bàn giao tại commit `601e0b1`: backup rồi chỉ áp dụng **`20261110_external_campaigns.sql`**. Migration thêm hàng chờ chiến dịch ACCESSTRADE, giữ nguyên shop/coupon/chiến dịch hiện có. Sau bước này có 22 bảng, 6 view, 21 procedure.
 - Các bước bên dưới mô tả nâng core cũ về 21 bảng; sau đó áp dụng migration nguồn chiến dịch nói trên.
