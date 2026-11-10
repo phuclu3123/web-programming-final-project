@@ -18,8 +18,8 @@ $currentUser = $currentUser ?? null;
             <strong><?= e($currentUser['full_name']) ?></strong><small><?= e($currentUser['email'] ?? '') ?></small>
         </div>
         <nav aria-label="Tài khoản cá nhân">
-            <?php if ($currentUser['role'] === 'MERCHANT'): ?>
-            <a href="<?= e(url('/')) ?>"><?= icon('search') ?>Xem trang người dùng</a>
+            <?php if (in_array($currentUser['role'], ['ADMIN', 'MERCHANT'], true)): ?>
+            <a href="<?= e(url('/')) ?>"><?= icon('search') ?><?= $currentUser['role']==='ADMIN' ? 'Xem website' : 'Xem trang người dùng' ?></a>
             <?php endif; ?>
             <?php if ($currentUser['role'] !== 'ADMIN'): ?><a href="<?= e(url('/dashboard')) ?>"><?= icon('grid') ?>Tổng quan tài khoản</a><?php endif; ?>
             <a href="<?= e(url('/account')) ?>"><?= icon('users') ?>Chỉnh sửa hồ sơ</a>
