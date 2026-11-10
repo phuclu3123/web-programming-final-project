@@ -151,6 +151,7 @@ $router->post('/admin/campaigns/{id}/coupons/{couponId}/detach', [AdminCampaignC
 $router->post('/admin/campaigns', [AdminCampaignController::class, 'store']);
 $router->post('/admin/campaigns/{id}/status', [AdminCampaignController::class, 'status']);
 $router->get('/admin/coupons', [AdminCouponController::class, 'index']);
+$router->post('/admin/coupons/moderate-many', [AdminCouponController::class, 'moderateMany']);
 $router->post('/admin/coupons/{id}/moderate', [AdminCouponController::class, 'moderate']);
 $router->get('/admin/coupons/{id}/edit', [AdminCouponController::class, 'edit']);
 $router->post('/admin/coupons/{id}/edit', [AdminCouponController::class, 'update']);
