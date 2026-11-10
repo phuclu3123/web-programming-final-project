@@ -22,7 +22,7 @@ Nếu mất icon: kiểm tra HTTP status của `assets/vendor/fontawesome/css/al
 - Bản đầy đủ của Phúc: import vào database mới, trống; không chạy tiếp `schema.sql`, `demo.sql` hay seed.
 - Database đang hoạt động: chọn migration theo [database/README.md](../database/README.md), không chạy mọi file theo ngày.
 - Tài khoản import cần tạo bảng/view/routine; runtime cần quyền đọc/ghi và thực thi procedure. Không bỏ qua lỗi quyền hoặc `DEFINER`.
-- Đối chiếu 21 bảng, 6 view, 21 procedure và 17 tham số của `sp_submit_coupon`; kiểm tra số lượng nội dung theo manifest snapshot mới.
+- Source có đồng bộ chiến dịch cần 22 bảng, 6 view, 21 procedure và 17 tham số của `sp_submit_coupon`. Nếu dùng SQL bàn giao 21 bảng tại commit `601e0b1`, backup rồi áp dụng thêm `database/migrations/20261110_external_campaigns.sql`. Kiểm tra số lượng nội dung theo manifest snapshot tương ứng.
 - Kiểm tra đủ bài viết, chiến dịch, bình luận, membership và hàng chờ nguồn ngoài, không chỉ đếm bảng.
 - Đổi mật khẩu/khóa các tài khoản demo có quyền cao trước khi mở website công khai. SQL và các liên kết OAuth là dữ liệu riêng, không đưa vào Git hay webroot.
 
