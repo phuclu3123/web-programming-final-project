@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Core\Session;
 use App\Contracts\NotificationRepositoryInterface;
 
 // Lọc và trình bày thông báo theo actor; trạng thái đã đọc được lưu phía server.
@@ -14,18 +13,20 @@ final class NotificationService
 
     public function feed(array $actor): array
     {
-        $read = Session::get('notification_read_' . (int)$actor['id'], []);
-        return array_map(static function (array $item) use ($read): array {
-            $item['unread'] = !in_array($item['event_key'], $read, true);
+        return array_map(static function (array $item): array {
+            $item['unread'] = empty($item['read_at']);
             return $item;
         }, $this->notifications->forActor($actor));
     }
 
     public function markAllRead(array $actor): void
     {
-        // Session-scoped receipts survive navigation, never mix different actors.
-        $key = 'notification_read_' . (int)$actor['id'];
-        $read = array_unique(array_merge(Session::get($key, []), array_column($this->feed($actor), 'event_key')));
-        Session::put($key, array_slice(array_values($read), -100));
+        $this->notifications->markRead($actor,array_column($this->feed($actor),'event_key'),true);
+    }
+    public function markOneRead(array $actor,string $eventKey):void
+    {
+        // Chỉ nhận sự kiện đang thuộc feed của actor, không nhận recipient ID từ client.
+        if(!in_array($eventKey,array_column($this->feed($actor),'event_key'),true))throw new \App\Core\HttpError(404,'Không tìm thấy thông báo.');
+        $this->notifications->markRead($actor,[$eventKey]);
     }
 }

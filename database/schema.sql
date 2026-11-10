@@ -1,5 +1,5 @@
--- CouponHub fresh-install baseline (2026-11-07).
--- 21 base tables = 20 consolidated business tables + external_offers.
+-- CouponHub fresh-install baseline (2026-11-10).
+-- 24 base tables, including campaign review, comment reactions and notification receipts.
 -- Coupon and article comments share comments (exactly one target per comment).
 -- 6 views, 21 stored procedures.  No fixture/user data included.
 -- Intended only for a NEW EMPTY database; DO NOT import over an existing database.
@@ -165,6 +165,8 @@ CREATE TABLE `comments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `coupon_id` bigint(20) unsigned DEFAULT NULL,
   `article_id` bigint(20) unsigned DEFAULT NULL,
+  `parent_comment_id` bigint(20) unsigned DEFAULT NULL,
+  `root_comment_id` bigint(20) unsigned DEFAULT NULL,
   `user_id` bigint(20) unsigned NOT NULL,
   `body` text NOT NULL,
   `status` enum('VISIBLE','HIDDEN','DELETED') NOT NULL DEFAULT 'VISIBLE',
@@ -177,6 +179,10 @@ CREATE TABLE `comments` (
   KEY `idx_comment_coupon_date` (`coupon_id`,`created_at`),
   KEY `idx_comment_article_page` (`article_id`,`status`,`id`),
   KEY `idx_comment_article_moderation` (`status`,`id`),
+  KEY `ix_comment_thread` (`article_id`,`root_comment_id`,`status`,`id`),
+  CONSTRAINT `fk_comment_parent` FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`id`),
+  CONSTRAINT `fk_comment_root` FOREIGN KEY (`root_comment_id`) REFERENCES `comments` (`id`),
+  CONSTRAINT `ck_comment_thread` CHECK ((`parent_comment_id` IS NULL AND `root_comment_id` IS NULL) OR (`article_id` IS NOT NULL AND `parent_comment_id` IS NOT NULL AND `root_comment_id` IS NOT NULL)),
   CONSTRAINT `fk_comment_coupon` FOREIGN KEY (`coupon_id`) REFERENCES `coupons` (`id`),
   CONSTRAINT `fk_comment_article` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`),
   CONSTRAINT `fk_comment_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
@@ -1949,4 +1955,41 @@ CREATE TABLE IF NOT EXISTS external_campaigns (
  CONSTRAINT fk_external_campaign_reviewer FOREIGN KEY(reviewed_by) REFERENCES users(id),
  CONSTRAINT ck_external_campaign_running CHECK(source_running IN (0,1)),
  CONSTRAINT ck_external_campaign_dates CHECK(ends_at IS NULL OR starts_at IS NULL OR ends_at>starts_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+
+-- Reactions belong to existing comments and users.
+DROP TABLE IF EXISTS comment_reactions;
+CREATE TABLE comment_reactions (
+ comment_id BIGINT UNSIGNED NOT NULL,
+ user_id BIGINT UNSIGNED NOT NULL,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ PRIMARY KEY(comment_id,user_id),
+ KEY ix_comment_reaction_user(user_id),
+ CONSTRAINT fk_comment_reaction_comment FOREIGN KEY(comment_id) REFERENCES comments(id),
+ CONSTRAINT fk_comment_reaction_user FOREIGN KEY(user_id) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+
+-- Persistent notification events and read receipts.
+DROP TABLE IF EXISTS notifications;
+-- Additive: back up first. Comment events and read receipts persist by account.
+-- Rows with kind NULL are read receipts for notifications derived from coupon/shop workflows.
+CREATE TABLE IF NOT EXISTS notifications (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ user_id BIGINT UNSIGNED NOT NULL,
+ event_key VARCHAR(191) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+ actor_id BIGINT UNSIGNED DEFAULT NULL,
+ comment_id BIGINT UNSIGNED DEFAULT NULL,
+ subject_comment_id BIGINT UNSIGNED DEFAULT NULL,
+ kind ENUM('ARTICLE_REPLY','COMMENT_LIKE') DEFAULT NULL,
+ active TINYINT UNSIGNED NOT NULL DEFAULT 1,
+ created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ read_at DATETIME DEFAULT NULL,
+ UNIQUE KEY uq_notification_user_event(user_id,event_key),
+ KEY ix_notification_feed(user_id,active,created_at),
+ CONSTRAINT fk_notification_user FOREIGN KEY(user_id) REFERENCES users(id),
+ CONSTRAINT fk_notification_actor FOREIGN KEY(actor_id) REFERENCES users(id),
+ CONSTRAINT fk_notification_comment FOREIGN KEY(comment_id) REFERENCES comments(id),
+ CONSTRAINT fk_notification_subject FOREIGN KEY(subject_comment_id) REFERENCES comments(id),
+ CONSTRAINT ck_notification_active CHECK(active IN (0,1)),
+ CONSTRAINT ck_notification_event CHECK(kind IS NULL OR (actor_id IS NOT NULL AND comment_id IS NOT NULL AND subject_comment_id IS NOT NULL AND actor_id<>user_id))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;

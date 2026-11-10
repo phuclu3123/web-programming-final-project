@@ -17,7 +17,19 @@ final class ArticleCommentController extends Controller
     }
     public function index(Request $request,string $id):void
     {
-        Response::json(['success'=>true,'data'=>$this->repository()->page($this->id($id),(int)(Auth::id()??0),$this->id($request->query('before',''),true))]);
+        Response::json(['success'=>true,'data'=>$this->repository()->page($this->id($id),(int)(Auth::id()??0),$this->id($request->query('before',''),true),$this->id($request->query('comment',''),true))]);
+    }
+    public function replies(Request $request,string $id,string $rootId):void
+    {
+        Response::json(['success'=>true,'data'=>$this->repository()->replies($this->id($id),$this->id($rootId),(int)(Auth::id()??0),$this->id($request->query('after',''),true))]);
+    }
+    public function react(Request $request,string $id):void
+    {
+        $actor=Auth::requireRole(['USER','MERCHANT','ADMIN']);$liked=$request->input('liked');
+        if(!in_array($liked,['0','1',0,1],true))throw new HttpError(422,'Trạng thái thích không hợp lệ.');
+        $result=$this->repository()->react((int)$actor['id'],$this->id($id),(string)$liked==='1');
+        if($request->acceptsHtml())Response::redirect(url('/articles/'.$this->slug($result['article_id'])).'?comment='.$result['id'].'#article-comment-'.$result['id'],303);
+        unset($result['article_id']);Response::json(['success'=>true,'data'=>$result]);
     }
     public function store(Request $request,string $id):void
     {
@@ -28,11 +40,12 @@ final class ArticleCommentController extends Controller
         if($body==='' || !preg_match('/\S/u',$body) || mb_strlen($body)>2000 || preg_match('/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/',$body))throw new HttpError(422,'Nhập bình luận từ 1 đến 2.000 ký tự.');
         if(!is_string($key)||!preg_match('/\A[a-f0-9]{32}\z/',$key))throw new HttpError(422,'Lượt gửi không hợp lệ. Vui lòng tải lại trang.');
         InteractionRateLimit::check('comment',(int)$actor['id']);
-        $articleId=$this->id($id);$result=$this->repository()->create((int)$actor['id'],$articleId,$body,$key);
+        $parent=$this->id($request->input('parent_comment_id',''),true);
+        $articleId=$this->id($id);$result=$this->repository()->create((int)$actor['id'],$articleId,$body,$key,$parent);
         if($request->acceptsHtml()){
-            Session::flash('success','Đã gửi bình luận.');Response::redirect(url('/articles/'.$this->slug($articleId)).'#article-comments',303);
+            Session::flash('success','Đã gửi bình luận.');Response::redirect(url('/articles/'.$this->slug($articleId)).'?comment='.$result['id'].'#article-comment-'.$result['id'],303);
         }
-        Response::json(['success'=>true,'message'=>'Đã gửi bình luận.','data'=>$this->repository()->page($articleId,(int)$actor['id']),'comment_id'=>$result['id']],$result['created']?201:200);
+        Response::json(['success'=>true,'message'=>$parent?'Đã gửi trả lời.':'Đã gửi bình luận.','data'=>$this->repository()->page($articleId,(int)$actor['id'],0,$result['id']),'comment_id'=>$result['id']],$result['created']?201:200);
     }
     public function delete(Request $request,string $id):void
     {

@@ -36,7 +36,14 @@ final class ArticleController extends Controller
         }
         $viewer=\App\Core\Auth::user();$before=$request->query('before','');
         if(!is_scalar($before) || ($before!=='' && filter_var($before,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])===false))throw new \App\Core\HttpError(422,'Trang bình luận không hợp lệ.');
-        $comments=(new \App\Repositories\ArticleCommentRepository(Database::connection()))->page((int)$article['id'],(int)($viewer['id']??0),(int)$before);
-        $this->view('articles/show', ['pageTitle' => (string)$article['title'], 'article' => $article,'commentPage'=>$comments,'commentViewer'=>$viewer]);
+        $focus=$request->query('comment','');
+        $reply=$request->query('reply','');
+        if($reply!=='' && filter_var($reply,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])===false)throw new \App\Core\HttpError(422,'Bình luận trả lời không hợp lệ.');
+        if($reply!=='')$focus=$reply;
+        if($focus!=='' && filter_var($focus,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]])===false)throw new \App\Core\HttpError(422,'Bình luận không hợp lệ.');
+        $comments=(new \App\Repositories\ArticleCommentRepository(Database::connection()))->page((int)$article['id'],(int)($viewer['id']??0),(int)$before,(int)$focus);
+        $replyTarget=null;
+        if($reply!=='' && $viewer)foreach($comments['items'] as $thread)foreach([$thread,...$thread['replies']] as $comment)if($comment['id']===(int)$reply && $comment['can_reply'])$replyTarget=$comment;
+        $this->view('articles/show', ['pageTitle' => (string)$article['title'], 'article' => $article,'commentPage'=>$comments,'commentViewer'=>$viewer,'replyTarget'=>$replyTarget,'commentFocusId'=>(int)$focus]);
     }
 }
