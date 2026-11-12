@@ -1,0 +1,2 @@
+# These files contain PHP, not Hack.
+*.php linguist-language=PHP

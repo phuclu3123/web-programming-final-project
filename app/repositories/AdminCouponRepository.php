@@ -19,7 +19,7 @@ final class AdminCouponRepository
     /** @return array<int,array<string,mixed>> */
     public function all(?string $status = null, int $page = 1, int $pageSize = 25): array
     {
-        $sql = "SELECT c.id,c.title,c.code,c.source,c.moderation_status,c.publication_status,c.effective_status, " .
+        $sql = "SELECT c.*, " .
             self::ADMIN_STATUS . " AS admin_status,c.starts_at,c.ends_at,c.created_at,c.deleted_at,m.name AS merchant_name,cat.name AS category_name " .
             "FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id " .
             "JOIN categories cat ON cat.id=c.category_id WHERE c.deleted_at IS NULL";
@@ -62,6 +62,33 @@ final class AdminCouponRepository
     public function activeCategories(): array
     {
         return $this->db->query('SELECT id,name FROM categories WHERE is_active=1 ORDER BY sort_order,name')->fetchAll();
+    }
+
+    // Duyệt nhiều chỉ tác động coupon còn chờ và đúng nội dung admin đã chọn.
+    public function moderatePending(int $actor,int $id,string $fingerprint,string $action,string $note): void
+    {
+        if(!in_array($action,['APPROVE','REJECT'],true) || mb_strlen($note)>1000 || ($action==='REJECT' && mb_strlen($note)<10))throw new \App\Core\HttpError(422,'Lý do từ chối cần từ 10 đến 1.000 ký tự.');
+        $this->db->beginTransaction();
+        try {
+            $this->requireActiveAdmin($actor);
+            $q=$this->db->prepare('SELECT merchant_id FROM coupons WHERE id=?');$q->execute([$id]);$merchant=(int)$q->fetchColumn();
+            if(!$merchant)throw new \App\Core\HttpError(404,'Không tìm thấy coupon.');
+            $q=$this->db->prepare('SELECT id FROM merchants WHERE id=? FOR UPDATE');$q->execute([$merchant]);$q->fetch();
+            $q=$this->db->prepare('SELECT * FROM coupons WHERE id=? FOR UPDATE');$q->execute([$id]);$row=$q->fetch();
+            if(!$row || (int)$row['merchant_id']!==$merchant || $row['deleted_at']!==null || $row['moderation_status']!=='PENDING' || in_array($row['publication_status'],['ARCHIVED','EXPIRED'],true))throw new \App\Core\HttpError(409,'Coupon không còn chờ duyệt hoặc đã bị thu hồi/hết hạn thủ công.');
+            if(!hash_equals(\App\Core\BulkSelection::couponFingerprint($row),$fingerprint))throw new \App\Core\HttpError(409,'Nội dung coupon đã thay đổi. Tải lại trước khi duyệt.');
+            if($action==='APPROVE' && $row['code_normalized']!==null){
+                $q=$this->db->prepare("SELECT id FROM coupons WHERE id<>? AND merchant_id=? AND code_normalized=? AND deleted_at IS NULL AND moderation_status IN ('PENDING','APPROVED') AND publication_status='ENABLED' AND starts_at<? AND ends_at>? LIMIT 1");
+                $q->execute([$id,$merchant,$row['code_normalized'],$row['ends_at'],$row['starts_at']]);
+                if($q->fetch())throw new \App\Core\HttpError(409,'Mã trùng trong cùng khoảng hiệu lực.');
+            }
+            $moderation=$action==='APPROVE'?'APPROVED':'REJECTED';$publication=$action==='APPROVE'?'ENABLED':'DISABLED';
+            $this->db->prepare('UPDATE coupons SET moderation_status=?,publication_status=?,reviewed_by=?,reviewed_at=UTC_TIMESTAMP(),review_note=? WHERE id=?')->execute([$moderation,$publication,$actor,$note,$id]);
+            $this->db->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,'COUPON_STATUS_CHANGE',?,?,?,?,?)")->execute([$actor,$id,$row['moderation_status'],$moderation,$row['publication_status'],$publication,$note]);
+            $this->db->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,'COUPON_MODERATE',?)")->execute([$actor,$id,$moderation.'/'.$publication]);
+            if($action==='APPROVE'){$q=$this->db->prepare('CALL sp_award_coupon_points(?)');$q->execute([$id]);$q->closeCursor();}
+            $this->db->commit();
+        }catch(Throwable $e){if($this->db->inTransaction())$this->db->rollBack();throw $e;}
     }
 
     /** @param array<string,mixed> $data */
@@ -149,7 +176,7 @@ final class AdminCouponRepository
     private function recordHistory(int $couponId, int $actorId, array $old, string $newModeration, string $newPublication, string $note): void
     {
         $stmt = $this->db->prepare(
-            'INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,?,?)'
+            "INSERT INTO activity_logs(coupon_id,user_id,action,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,'COUPON_STATUS_CHANGE',?,?,?,?,?)"
         );
         $stmt->execute([$couponId, $actorId, $old['moderation_status'], $newModeration, $old['publication_status'], $newPublication, $note]);
     }
@@ -160,6 +187,7 @@ final class AdminCouponRepository
         $stmt->execute([$actorId, $couponId, $action, mb_substr($note, 0, 500)]);
     }
 
+    // Khóa coupon, kiểm tra admin rồi đổi trạng thái và ghi lịch sử trong cùng transaction.
     private function changePublication(int $actorId, int $couponId, string $state, string $reason, string $action): void
     {
         $this->db->beginTransaction();

@@ -12,15 +12,16 @@ final class ResendMailService implements AuthMailerInterface
 
     public function sendPasswordReset(string $recipient, string $resetUrl): void
     {
-        $this->send($recipient, 'Đặt lại mật khẩu CouponHub', "Mở liên kết để đặt mật khẩu mới (30 phút, chỉ dùng một lần):\n" . $resetUrl);
+        $this->send($recipient, PasswordResetEmail::link($resetUrl));
     }
 
     public function sendOtp(string $recipient, string $code): void
     {
-        $this->send($recipient, 'Mã khôi phục mật khẩu CouponHub', "Mã xác minh của bạn: " . $code . "\nMã có hiệu lực 10 phút, chỉ sử dụng một lần. Không cung cấp mã cho bất kỳ ai. Nếu không yêu cầu, hãy bỏ qua email này.");
+        $this->send($recipient, PasswordResetEmail::otp($code));
     }
 
-    private function send(string $to, string $subject, string $text): void
+    /** @param array{subject:string,text:string,html:string} $message */
+    private function send(string $to, array $message): void
     {
         $key = (string)($this->config['resend_api_key'] ?? '');
         $from = (string)($this->config['resend_from'] ?? '');
@@ -30,7 +31,7 @@ final class ResendMailService implements AuthMailerInterface
             'POST',
             'https://api.resend.com/emails',
             ['Authorization: Bearer ' . $key, 'Content-Type: application/json', 'Idempotency-Key: ' . bin2hex(random_bytes(16))],
-            json_encode(['from' => $from, 'to' => [$to], 'subject' => $subject, 'text' => $text], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE)
+            json_encode(['from' => $from, 'to' => [$to], 'subject' => $message['subject'], 'text' => $message['text'], 'html' => $message['html']], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE)
         );
         if (!is_string($result['id'] ?? null) || $result['id'] === '') throw new \RuntimeException('Resend chưa chấp nhận email.');
     }

@@ -1,4 +1,5 @@
 <?php
+// Đăng ký method và action trong một router; URL PHP cũ cùng trỏ về nghiệp vụ MVC.
 
 declare(strict_types=1);
 
@@ -36,9 +37,12 @@ $router->post('/logout.php', [AuthController::class, 'logout']);
 $router->post('/api/login.php', [AuthController::class, 'login']);
 $router->post('/api/register.php', [AuthController::class, 'register']);
 $router->post('/api/oauth/prepare.php', [OAuthController::class, 'prepare']);
+$router->post('/api/oauth/google-one-tap/start', [OAuthController::class, 'oneTapStart']);
+$router->post('/api/oauth/google-one-tap', [OAuthController::class, 'oneTapLogin']);
 $router->post('/auth/oauth/{provider}', [OAuthController::class, 'start']);
 $router->get('/api/oauth/google-callback.php', [OAuthController::class, 'google']);
 $router->get('/api/oauth/github-callback.php', [OAuthController::class, 'github']);
+$router->get('/api/oauth/facebook-callback.php', [OAuthController::class, 'facebook']);
 $router->get('/index.php', [CatalogController::class, 'index']);
 $router->get('/admin.php', [ReviewController::class, 'index']);
 $router->post('/admin.php', [ReviewController::class, 'index']);
@@ -48,6 +52,7 @@ $router->get('/', [CatalogController::class, 'index']);
 $router->get('/portal', [PortalController::class, 'index']);
 $router->get('/dashboard', [PortalController::class, 'dashboard']);
 $router->get('/notifications', [\App\Controllers\NotificationController::class, 'index']);
+$router->get('/api/notifications', [\App\Controllers\NotificationController::class, 'feed']);
 $router->post('/notifications/read', [\App\Controllers\NotificationController::class, 'read']);
 $router->get('/account', [AccountController::class, 'index']);
 $router->post('/account', [AccountController::class, 'update']);
@@ -60,6 +65,13 @@ $router->get('/contact', [InfoController::class, 'contact']);
 $router->get('/articles', [ArticleController::class, 'index']);
 $router->get('/guides/{slug}', [ArticleController::class, 'guide']);
 $router->get('/articles/{slug}', [ArticleController::class, 'show']);
+$router->get('/api/articles/{id}/comments', [\App\Controllers\ArticleCommentController::class, 'index']);
+$router->post('/api/articles/{id}/comments', [\App\Controllers\ArticleCommentController::class, 'store']);
+$router->get('/api/articles/{id}/comments/{rootId}/replies', [\App\Controllers\ArticleCommentController::class, 'replies']);
+$router->post('/api/article-comments/{id}/react', [\App\Controllers\ArticleCommentController::class, 'react']);
+$router->post('/api/article-comments/{id}/delete', [\App\Controllers\ArticleCommentController::class, 'delete']);
+$router->get('/admin/article-comments', [\App\Controllers\ArticleCommentController::class, 'moderation']);
+$router->post('/admin/article-comments/{id}/status', [\App\Controllers\ArticleCommentController::class, 'moderate']);
 $router->get('/campaign-calendar', [HolidayController::class, 'index']);
 
 $router->get('/login', [AuthController::class, 'showLogin']);
@@ -117,6 +129,16 @@ $router->post('/merchant/campaigns/{id}/attach', [CampaignController::class, 'at
 $router->post('/merchant/campaigns/{id}/coupons/{couponId}/detach', [CampaignController::class, 'detach']);
 
 // Admin.
+$router->get('/admin/api-docs', [\App\Controllers\Admin\ApiDocsController::class, 'index']);
+$router->get('/admin/api-spec', [\App\Controllers\Admin\ApiDocsController::class, 'spec']);
+$router->get('/admin/integrations', [\App\Controllers\Admin\IntegrationController::class, 'index']);
+$router->post('/admin/integrations/sync', [\App\Controllers\Admin\IntegrationController::class, 'sync']);
+$router->get('/admin/integrations/campaigns', [\App\Controllers\Admin\CampaignSourceController::class, 'index']);
+$router->post('/admin/integrations/campaigns/sync', [\App\Controllers\Admin\CampaignSourceController::class, 'sync']);
+$router->post('/admin/integrations/campaigns/moderate', [\App\Controllers\Admin\CampaignSourceController::class, 'moderate']);
+$router->get('/admin/integrations/{id}/review', [\App\Controllers\Admin\IntegrationController::class, 'review']);
+$router->post('/admin/integrations/{id}/import', [\App\Controllers\Admin\IntegrationController::class, 'import']);
+$router->post('/admin/integrations/{id}/dismiss', [\App\Controllers\Admin\IntegrationController::class, 'dismiss']);
 $router->get('/admin', [AdminDashboardController::class, 'index']);
 $router->get('/admin/users', [AdminUserController::class, 'index']);
 $router->post('/admin/users/{id}/status', [AdminUserController::class, 'status']);
@@ -135,6 +157,7 @@ $router->post('/admin/campaigns/{id}/coupons/{couponId}/detach', [AdminCampaignC
 $router->post('/admin/campaigns', [AdminCampaignController::class, 'store']);
 $router->post('/admin/campaigns/{id}/status', [AdminCampaignController::class, 'status']);
 $router->get('/admin/coupons', [AdminCouponController::class, 'index']);
+$router->post('/admin/coupons/moderate-many', [AdminCouponController::class, 'moderateMany']);
 $router->post('/admin/coupons/{id}/moderate', [AdminCouponController::class, 'moderate']);
 $router->get('/admin/coupons/{id}/edit', [AdminCouponController::class, 'edit']);
 $router->post('/admin/coupons/{id}/edit', [AdminCouponController::class, 'update']);

@@ -1,4 +1,4 @@
-<article class="campaign-deal">
+<?php /* Thẻ coupon trong chiến dịch dùng dữ liệu đã lọc theo điều kiện hiển thị. */ ?><article class="campaign-deal">
     <div class="campaign-deal-brand">
         <?= brandLogo($previewCoupon['merchant_name']) ?><span><?= e($previewCoupon['merchant_name']) ?></span><?php if (str_contains($previewCoupon['title'],'[DEMO]')): ?><small>Minh
             họa</small><?php endif; ?></div>

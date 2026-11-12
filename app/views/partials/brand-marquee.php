@@ -1,4 +1,6 @@
-<?php if (!empty($brandMerchants)): ?>
+<?php
+// Trình bày nhận diện thương hiệu; không suy ra coupon thật từ hình minh họa.
+ if (!empty($brandMerchants)): ?>
 <section id="<?= e($brandSectionId ?? 'brands') ?>"
     class="brand-section <?= count($brandMerchants)<5 ? 'brand-static' : '' ?>"
     aria-labelledby="<?= e(($brandSectionId ?? 'brands').'-title') ?>">

@@ -1,4 +1,6 @@
-<?php [$photo,$topic] = articleTopic($a['title']); $articleUrl = url('/articles/'.$a['slug']); ?>
+<?php
+// Escape nội dung bài đã biên tập trước khi ghép vào bố cục đọc.
+ [$photo,$topic] = articleTopic($a['title']); $articleUrl = url('/articles/'.$a['slug']); ?>
 <article class="editorial-article">
     <a class="editorial-article-image" href="<?= e($articleUrl) ?>" tabindex="-1" aria-hidden="true"><img
             src="<?= e(editorialPhoto($photo)) ?>" alt="" width="720" height="480" loading="lazy" decoding="async"></a>

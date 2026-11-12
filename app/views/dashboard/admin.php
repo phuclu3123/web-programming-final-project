@@ -1,4 +1,4 @@
-<div class="card shadow-sm">
+<?php /* Giữ template dashboard quản trị tương thích; dữ liệu phải được chuẩn bị trước. */ ?><div class="card shadow-sm">
     <div class="card-body">
         <h1 class="h4">Admin Dashboard</h1>
         <p class="text-muted">Quản lý hàng đợi kiểm duyệt coupon và báo cáo cộng đồng.</p>

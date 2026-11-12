@@ -1,3 +1,4 @@
+// Đồng bộ trường yêu cầu Merchant khi đăng ký; lựa chọn này không tự cấp quyền shop.
 (function () {
     'use strict';
 

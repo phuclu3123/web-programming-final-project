@@ -1,4 +1,5 @@
 <?php
+// Dùng cùng biểu mẫu tạo/sửa bài; quyền xuất bản được kiểm tra lại phía server.
 
 use App\Core\Session; ?>
 <h1 class="h3 mb-3"><?= $article === null ? 'Viết bài mới' : 'Chỉnh sửa bài viết' ?></h1>

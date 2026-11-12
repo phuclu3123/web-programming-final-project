@@ -11,14 +11,16 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Core\ValidationException;
+use App\Core\UserFacingException;
+use App\Core\MerchantError;
 use App\Repositories\CategoryRepository;
 use App\Repositories\CouponRepository;
 use App\Repositories\MerchantRepository;
 use App\Services\CouponService;
 use App\Services\MerchantService;
-use RuntimeException;
 use Throwable;
 
+// Điều phối hồ sơ, yêu cầu cấp quyền và coupon theo các shop actor được quản lý.
 final class MerchantController extends Controller
 {
     private MerchantRepository $merchants;
@@ -55,7 +57,7 @@ final class MerchantController extends Controller
             $this->service->requestMerchant((int) Auth::id(), $request->all());
             Session::flash('success', 'Đã gửi yêu cầu Merchant. Admin sẽ kiểm tra trước khi kích hoạt Merchant Center.');
         } catch (Throwable $e) {
-            Session::flash('error', (bool) config('app.debug', false) || $e instanceof RuntimeException ? $e->getMessage() : 'Không thể gửi yêu cầu Merchant.');
+            Session::flash('error', MerchantError::message($e, 'Không thể gửi yêu cầu Merchant.', 'apply'));
         }
         Response::redirect(url('/merchant/apply'));
     }
@@ -90,7 +92,7 @@ final class MerchantController extends Controller
             $this->service->updateProfile($merchantId, (int) Auth::id(), $request->all());
             Session::flash('success', 'Đã cập nhật hồ sơ Merchant.');
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            Session::flash('error', MerchantError::message($e, 'Không thể lưu thay đổi Merchant.', 'profile'));
         }
         Response::redirect(url('/merchant/profile/' . $merchantId));
     }
@@ -109,6 +111,10 @@ final class MerchantController extends Controller
     {
         Auth::requireRole(['MERCHANT']);
         $shops = $this->merchants->ownedApproved((int) Auth::id());
+        if ($shops === []) {
+            Session::flash('warning', 'Bạn chưa có cửa hàng đang được phép đăng mã. Vui lòng kiểm tra quyền quản lý cửa hàng.');
+            Response::redirect(url('/merchant/coupons'), 303);
+        }
         $this->renderCouponForm('create', [], [], $shops, null);
     }
 
@@ -120,14 +126,14 @@ final class MerchantController extends Controller
         $input = $request->all();
         try {
             $merchantId = (int) ($input['merchant_id'] ?? 0);
-            if ($this->merchants->findOwnedApproved($merchantId, (int) Auth::id()) === null) throw new RuntimeException('Merchant không thuộc quyền quản lý của bạn.');
+            if ($this->merchants->findOwnedApproved($merchantId, (int) Auth::id()) === null) throw new UserFacingException('Merchant không thuộc quyền quản lý của bạn.');
             $this->couponService->submitOfficial((int) Auth::id(), $input);
             Session::flash('success', 'Đã tạo Official Deal. Coupon đang chờ Admin duyệt trước khi public.');
             Response::redirect(url('/merchant/coupons'));
         } catch (ValidationException $e) {
             $this->renderCouponForm('create', $e->errors(), $input, $shops, null);
         } catch (Throwable $e) {
-            $this->renderCouponForm('create', ['auth' => $e->getMessage()], $input, $shops, null);
+            $this->renderCouponForm('create', ['auth' => MerchantError::message($e, 'Không thể tạo coupon lúc này.', 'create-coupon')], $input, $shops, null);
         }
     }
 
@@ -160,7 +166,7 @@ final class MerchantController extends Controller
             $this->renderCouponForm('edit', $e->errors(), $input, $this->merchants->ownedApproved((int) Auth::id()), $coupon);
         } catch (Throwable $e) {
             $coupon = $this->coupons->findOwnedOfficialForEdit($couponId, (int) Auth::id());
-            $this->renderCouponForm('edit', ['auth' => $e->getMessage()], $input, $this->merchants->ownedApproved((int) Auth::id()), $coupon);
+            $this->renderCouponForm('edit', ['auth' => MerchantError::message($e, 'Không thể cập nhật coupon lúc này.', 'update-coupon')], $input, $this->merchants->ownedApproved((int) Auth::id()), $coupon);
         }
     }
 
@@ -172,7 +178,7 @@ final class MerchantController extends Controller
             $this->coupons->disableOwnedOfficial((int) Auth::id(), (int) $id);
             Session::flash('success', 'Đã ngừng Official Coupon. Muốn public lại cần chỉnh sửa và gửi Admin duyệt lại.');
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            Session::flash('error', MerchantError::message($e, 'Không thể ngừng coupon lúc này.', 'disable-coupon'));
         }
         Response::redirect(url('/merchant/coupons'));
     }
@@ -212,7 +218,7 @@ final class MerchantController extends Controller
 
     private function verifyCsrf(Request $request): void
     {
-        if (!Session::verifyCsrf((string) $request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             exit;
         }

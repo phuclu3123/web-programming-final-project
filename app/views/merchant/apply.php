@@ -1,4 +1,5 @@
 <?php
+// Gửi yêu cầu nhận quyền hoặc tạo shop; lựa chọn trên form không tự cấp quyền Merchant.
 
 use App\Core\Session; ?>
 <div class="row">
@@ -45,7 +46,8 @@ use App\Core\Session; ?>
                             class="text-muted">Đây là thông tin do bạn cung cấp, không phải mã đơn hệ thống. Admin phải
                             xác minh riêng từng người; không đăng dữ liệu nhạy cảm.</small></div>
                     <button class="btn btn-primary" type="submit">Gửi yêu cầu Merchant</button>
-                </form>
+                <?php $turnstileAction='merchant_application'; require __DIR__.'/../partials/turnstile.php'; ?>
+</form>
             </div>
         </div>
     </div>
@@ -74,19 +76,4 @@ use App\Core\Session; ?>
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var mode = document.getElementById('merchant-apply-mode'),
-            claim = document.getElementById('merchant-claim-block'),
-            fresh = document.getElementById('merchant-new-block');
-        if (!mode) return;
-
-        function sync() {
-            var isNew = mode.value === 'new';
-            claim.classList.toggle('d-none', isNew);
-            fresh.classList.toggle('d-none', !isNew);
-        }
-        mode.addEventListener('change', sync);
-        sync();
-    });
-</script>
+<script src="<?= e(url('/assets/js/csp/merchant-apply.js')) ?>" defer></script>

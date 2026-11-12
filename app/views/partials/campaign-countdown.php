@@ -1,4 +1,6 @@
-<?php $timing=campaignTiming($campaign); ?>
+<?php
+// Đếm ngược chỉ phục vụ hiển thị; hiệu lực chiến dịch được xác định phía server.
+ $timing=campaignTiming($campaign); ?>
 <div class="campaign-clock" data-campaign-clock data-start="<?= $timing['start'] ?>" data-end="<?= $timing['end'] ?>"
     data-server-now="<?= $timing['now'] ?>" role="timer" aria-live="off">
     <span class="campaign-clock-label"

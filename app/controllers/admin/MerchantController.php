@@ -15,6 +15,7 @@ use App\Repositories\CampaignRepository;
 use App\Services\AdminService;
 use Throwable;
 
+// Quản trị trạng thái shop và kết quả xét duyệt thông qua nghiệp vụ dùng chung.
 final class MerchantController extends Controller
 {
     private AdminRepository $repo;
@@ -33,7 +34,7 @@ final class MerchantController extends Controller
     public function review(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
@@ -48,7 +49,7 @@ final class MerchantController extends Controller
     public function shopStatus(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'CSRF hết hạn');
             return;
         }

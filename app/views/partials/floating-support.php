@@ -1,4 +1,4 @@
-  <aside class="floating-support" data-floating-support aria-label="Liên hệ và điều hướng nhanh">
+<?php /* Giữ nhóm liên hệ và về đầu trang dùng chung; JavaScript chỉ điều khiển vị trí hiển thị. */ ?>  <aside class="floating-support" data-floating-support aria-label="Liên hệ và điều hướng nhanh">
     <section class="contact-popover" id="contact-popover" role="dialog" aria-modal="false"
       aria-labelledby="contact-title" aria-hidden="true" inert>
       <div class="contact-popover-head">

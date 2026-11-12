@@ -54,7 +54,8 @@ use App\Core\Session;
             </div>
 
 
-        </form>
+        <?php $turnstileAction='login'; require __DIR__.'/../partials/turnstile.php'; ?>
+</form>
 
         <!-- button Đăng nhập -->
 
@@ -75,9 +76,9 @@ use App\Core\Session;
 
 
         <div class="row g-3 mb-4">
-            <?php foreach (['google' => 'Google', 'github' => 'GitHub'] as $provider => $label):
+            <?php foreach (['google' => 'Google', 'github' => 'GitHub', 'facebook' => 'Facebook'] as $provider => $label):
                 $ready = (new \App\Core\OAuthPreparation((array)config('oauth')))->status($provider)['ready']; ?>
-                <div class="col-6">
+                <div class="col-12 col-sm-4">
                     <form method="post" action="<?= e(url('/auth/oauth/' . $provider)) ?>" data-oauth-form>
                         <input type="hidden" name="csrf" value="<?= e(Session::token()) ?>">
                         <input type="hidden" name="return_url"
@@ -85,7 +86,7 @@ use App\Core\Session;
                         <button type="submit" <?= $ready ? '' : 'disabled title="Chưa cấu hình nhà cung cấp này"' ?>
                             class="btn social-btn w-100 rounded-4 fw-bold d-flex align-items-center justify-content-center gap-3">
                             <?php if ($provider === 'google'): ?><img src="https://www.google.com/favicon.ico" alt=""
-                                    width="20" height="20"><?php else: ?><i class="fa-brands fa-github fs-5"
+                                    width="20" height="20"><?php else: ?><i class="fa-brands fa-<?= $provider === 'facebook' ? 'facebook' : 'github' ?> fs-5"
                                     aria-hidden="true"></i><?php endif; ?>
                             <?= e($label) ?>
                         </button>
@@ -93,6 +94,7 @@ use App\Core\Session;
                 </div>
             <?php endforeach; ?>
         </div>
+        <p class="small text-muted text-center">Dùng cùng email để tiếp tục với một tài khoản CouponHub.</p>
 
         <div class="d-flex flex-row justify-content-center align-items-center mb-3 gap-1">
             <span class="form-label mb-0">

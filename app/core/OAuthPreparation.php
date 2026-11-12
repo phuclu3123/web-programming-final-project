@@ -5,14 +5,14 @@ namespace App\Core;
 
 
 
-/** ---- CHUẨN BỊ OAUTH: state/PKCE/callback; chưa đổi code lấy token/tạo user ---- */
+/* CHUẨN BỊ OAUTH: state/PKCE/callback; chưa đổi code lấy token/tạo user */
 final class OAuthPreparation
 {
     public function __construct(private readonly array $config) {}
 
     public function provider(string $name): array
     {
-        if (!in_array($name, ['github', 'google'], true)) throw new HttpError(404, 'Nhà cung cấp không hợp lệ.');
+        if (!in_array($name, ['github', 'google', 'facebook'], true)) throw new HttpError(404, 'Nhà cung cấp không hợp lệ.');
         return $this->config['providers'][$name];
     }
 
@@ -21,6 +21,9 @@ final class OAuthPreparation
         $provider = $this->provider($name);
         $missing = [];
         foreach (['client_id', 'client_secret'] as $key) if ($provider[$key] === '') $missing[] = $key;
+        // A pasted Google secret must never be published as a browser client ID.
+        if ($name === 'google' && str_starts_with($provider['client_id'], 'GOCSPX-')) $missing[] = 'client_id';
+        if ($name === 'facebook' && !preg_match('/\Av[0-9]{1,3}\.0\z/D', $provider['graph_version'] ?? '')) $missing[] = 'graph_version';
         $url = parse_url($this->config['base_url']);
         if (!$url || empty($url['host']) || isset($url['user']) || isset($url['query']) || isset($url['fragment'])
             || !in_array($url['scheme'] ?? '', ['http', 'https'], true)
@@ -29,6 +32,15 @@ final class OAuthPreparation
         }
         // Trạng thái không bao giờ chứa app secret, token hay mã xác thực.
         return ['provider' => $name, 'callback' => $provider['callback'], 'ready' => $missing === [], 'missing' => $missing];
+    }
+
+    /** GIS verifies an ID token directly; it needs the public Web client ID, not a client secret. */
+    public function oneTapReady(): bool
+    {
+        $status = $this->status('google');
+        return ($this->config['google_one_tap'] ?? true) === true
+            && array_diff($status['missing'], ['client_secret']) === []
+            && preg_match('/\A[A-Za-z0-9._-]+\.apps\.googleusercontent\.com\z/D', $this->provider('google')['client_id']) === 1;
     }
 
     /** Probe thử callback nội bộ; provider mode tạo URL thật để tự kiểm tra App. */
@@ -43,7 +55,7 @@ final class OAuthPreparation
         $state = bin2hex(random_bytes(32));
         $verifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
         $pending[$state] = ['provider' => $name, 'expires' => time() + 600, 'probe' => $probe, 'verifier' => $verifier];
-        // ---- GOOGLE OIDC: lưu nonce để bước xác minh ID token sau này đối chiếu ----
+        // GOOGLE OIDC: lưu nonce để bước xác minh ID token sau này đối chiếu
         // Nonce khác state: state đối chiếu callback; nonce đối chiếu claim trong ID token.
         if ($name === 'google') $pending[$state]['nonce'] = bin2hex(random_bytes(32));
         $_SESSION['oauth_pending'] = $pending;
@@ -54,8 +66,10 @@ final class OAuthPreparation
         $params = ['client_id' => $provider['client_id'], 'redirect_uri' => $provider['callback'],
             'state' => $state, 'scope' => $provider['scope'], 'response_type' => 'code'];
         // Cả Google và GitHub dùng PKCE S256; verifier chỉ giữ trong session server.
-        $params['code_challenge'] = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
-        $params['code_challenge_method'] = 'S256';
+        if ($name !== 'facebook') {
+            $params['code_challenge'] = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
+            $params['code_challenge_method'] = 'S256';
+        }
         if ($name === 'google') $params['nonce'] = $pending[$state]['nonce'];
         $endpoint = $provider['authorize_url'];
         return ['url' => $endpoint . '?' . http_build_query($params, '', '&', PHP_QUERY_RFC3986)];

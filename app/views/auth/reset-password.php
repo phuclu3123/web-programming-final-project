@@ -1,4 +1,5 @@
 <?php
+// Giữ luồng reset bằng liên kết cũ cho token còn hợp lệ; server kiểm tra một lần sử dụng.
 
 use App\Core\Session; ?>
 <div class="row justify-content-center">

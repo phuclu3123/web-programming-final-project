@@ -1,4 +1,5 @@
 <?php
+// Dùng cùng menu tài khoản theo role từ phiên đã xác thực.
 use App\Core\Session;
 $currentUser = $currentUser ?? null;
 ?>
@@ -18,9 +19,9 @@ $currentUser = $currentUser ?? null;
         </div>
         <nav aria-label="Tài khoản cá nhân">
             <?php if (in_array($currentUser['role'], ['ADMIN', 'MERCHANT'], true)): ?>
-            <a href="<?= e(url('/')) ?>"><?= icon('search') ?>Xem trang người dùng</a>
+            <a href="<?= e(url('/')) ?>"><?= icon('search') ?><?= $currentUser['role']==='ADMIN' ? 'Xem website' : 'Xem trang người dùng' ?></a>
             <?php endif; ?>
-            <a href="<?= e(url('/dashboard')) ?>"><?= icon('grid') ?>Tổng quan tài khoản</a>
+            <?php if ($currentUser['role'] !== 'ADMIN'): ?><a href="<?= e(url('/dashboard')) ?>"><?= icon('grid') ?>Tổng quan tài khoản</a><?php endif; ?>
             <a href="<?= e(url('/account')) ?>"><?= icon('users') ?>Chỉnh sửa hồ sơ</a>
             <?php if (in_array($currentUser['role'], ['USER', 'MERCHANT'], true)): ?>
             <a href="<?= e(url('/saved-coupons')) ?>"><?= icon('ticket') ?>Coupon đã lưu</a>

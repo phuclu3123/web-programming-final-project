@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Core\Database;
+use App\Core\UserFacingException;
 
 final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
 {
@@ -139,7 +140,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             "SELECT c.id, c.title, c.code, c.discount_type, c.discount_value, c.cashback_unit, " .
                 "c.starts_at, c.ends_at, c.effective_status, c.moderation_status, " .
                 "c.publication_status, c.review_note, c.reviewed_at, c.usage_channel, " .
-                "                m.name AS merchant_name, cat.name AS category_name, c.created_at " .
+                "m.name AS merchant_name, cat.name AS category_name, c.created_at " .
                 "FROM v_coupon_status c " .
                 "JOIN merchants m ON m.id = c.merchant_id " .
                 "JOIN categories cat ON cat.id = c.category_id " .
@@ -153,7 +154,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     public function submitCommunity(int $actorId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $actorId,
@@ -171,8 +172,6 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             $data['max_discount_amount'],
             $data['usage_channel'],
             $data['promotion_url'],
-            null,
-            null,
             $data['starts_at_utc'],
             $data['ends_at_utc'],
         ]);
@@ -201,7 +200,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     public function submitOfficial(int $actorId, array $data): int
     {
         $stmt = $this->db->prepare(
-            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'CALL sp_submit_coupon(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $actorId,
@@ -219,8 +218,6 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             $data['max_discount_amount'],
             $data['usage_channel'],
             $data['promotion_url'],
-            null,
-            null,
             $data['starts_at_utc'],
             $data['ends_at_utc'],
         ]);
@@ -234,7 +231,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     {
         $stmt = $this->db->prepare(
             "SELECT c.id,c.merchant_id,c.title,c.code,c.discount_type,c.discount_value,c.cashback_unit,c.usage_channel,c.starts_at,c.ends_at, " .
-                "c.effective_status,c.moderation_status,c.publication_status,c.review_note,m.name AS merchant_name,cat.name AS category_name,c.created_at " .
+                "c.effective_status,c.moderation_status,c.publication_status,c.review_note,c.reviewed_at,c.deleted_at,m.status AS merchant_status,m.name AS merchant_name,cat.name AS category_name,c.created_at " .
                 "FROM v_coupon_status c JOIN merchants m ON m.id=c.merchant_id JOIN merchant_memberships mm ON mm.merchant_id=m.id JOIN categories cat ON cat.id=c.category_id " .
                 "WHERE c.source='OFFICIAL' AND mm.user_id=? AND mm.status='ACTIVE' AND m.deleted_at IS NULL ORDER BY c.created_at DESC,c.id DESC"
         );
@@ -264,7 +261,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             $merchant->execute([(int) $data['merchant_id']]);
             $m = $merchant->fetch();
             if (!is_array($m) || !$this->activeManager($actorId, (int)$data['merchant_id']) || (string) $m['status'] !== 'APPROVED') {
-                throw new \RuntimeException('Merchant không thuộc quyền quản lý của bạn.');
+                throw new UserFacingException('Merchant không thuộc quyền quản lý của bạn.');
             }
 
             $lock = $this->db->prepare(
@@ -273,9 +270,9 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
             $lock->execute([$couponId]);
             $old = $lock->fetch();
             if (!is_array($old) || (string) $old['source'] !== 'OFFICIAL' || (int) $old['merchant_id'] !== (int) $data['merchant_id']) {
-                throw new \RuntimeException('Không tìm thấy coupon Official phù hợp.');
+                throw new UserFacingException('Không tìm thấy coupon Official phù hợp.');
             }
-            if (in_array($old['publication_status'],['ARCHIVED','EXPIRED'],true)) throw new \RuntimeException('Coupon đã bị thu hồi hoặc hết hạn thủ công; không thể chỉnh sửa để bật lại.');
+            if (in_array($old['publication_status'], ['ARCHIVED', 'EXPIRED'], true)) throw new UserFacingException('Coupon đã bị thu hồi hoặc hết hạn thủ công; không thể chỉnh sửa để bật lại.');
 
             if (!empty($data['code'])) {
                 $dup = $this->db->prepare(
@@ -283,7 +280,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
                         "AND moderation_status IN ('PENDING','APPROVED') AND publication_status='ENABLED' AND starts_at<? AND ends_at>?"
                 );
                 $dup->execute([$couponId, $data['merchant_id'], $data['code'], $data['ends_at_utc'], $data['starts_at_utc']]);
-                if ((int) $dup->fetchColumn() > 0) throw new \RuntimeException('Mã coupon bị trùng khoảng hiệu lực với coupon khác của Merchant.');
+                if ((int) $dup->fetchColumn() > 0) throw new UserFacingException('Mã coupon bị trùng khoảng hiệu lực với coupon khác của Merchant.');
             }
 
             $update = $this->db->prepare(
@@ -310,7 +307,7 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
 
             $this->db->prepare('DELETE FROM votes WHERE coupon_id=?')->execute([$couponId]);
             $history = $this->db->prepare(
-                "INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,?,?)"
+                "INSERT INTO activity_logs(coupon_id,user_id,action,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,'COUPON_STATUS_CHANGE',?,?,?,?,?)"
             );
             $history->execute([$couponId, $actorId, $old['moderation_status'], 'PENDING', $old['publication_status'], 'ENABLED', 'Merchant cập nhật nội dung và gửi duyệt lại']);
             $this->db->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,'COUPON_EDIT','Official coupon updated; re-moderation required')")
@@ -326,24 +323,24 @@ final class CouponRepository implements \App\Contracts\CouponRepositoryInterface
     {
         $this->db->beginTransaction();
         try {
-            $lookup=$this->db->prepare('SELECT merchant_id FROM coupons WHERE id=? AND deleted_at IS NULL');
+            $lookup = $this->db->prepare('SELECT merchant_id FROM coupons WHERE id=? AND deleted_at IS NULL');
             $lookup->execute([$couponId]);
-            $merchantId=(int)$lookup->fetchColumn();
-            $lock=$this->db->prepare("SELECT id FROM merchants WHERE id=? AND status='APPROVED' AND deleted_at IS NULL FOR UPDATE");
+            $merchantId = (int)$lookup->fetchColumn();
+            $lock = $this->db->prepare("SELECT id FROM merchants WHERE id=? AND status='APPROVED' AND deleted_at IS NULL FOR UPDATE");
             $lock->execute([$merchantId]);
-            if (!$lock->fetchColumn() || !$this->activeManager($actorId,$merchantId)) throw new \RuntimeException('Bạn không có quyền quản lý Shop này.');
+            if (!$lock->fetchColumn() || !$this->activeManager($actorId, $merchantId)) throw new UserFacingException('Bạn không có quyền quản lý Shop này.');
             $stmt = $this->db->prepare("SELECT moderation_status,publication_status FROM coupons WHERE id=? AND merchant_id=? AND source='OFFICIAL' AND deleted_at IS NULL FOR UPDATE");
-            $stmt->execute([$couponId,$merchantId]);
+            $stmt->execute([$couponId, $merchantId]);
             $row = $stmt->fetch();
-            if (!is_array($row)) throw new \RuntimeException('Không tìm thấy coupon Official thuộc Merchant của bạn.');
-            if (in_array($row['publication_status'],['ARCHIVED','EXPIRED'],true)) throw new \RuntimeException('Không thể ghi đè trạng thái coupon đã thu hồi hoặc hết hạn thủ công.');
+            if (!is_array($row)) throw new UserFacingException('Không tìm thấy coupon Official thuộc Merchant của bạn.');
+            if (in_array($row['publication_status'], ['ARCHIVED', 'EXPIRED'], true)) throw new UserFacingException('Không thể ghi đè trạng thái coupon đã thu hồi hoặc hết hạn thủ công.');
             if ((string) $row['publication_status'] === 'DISABLED') {
                 $this->db->commit();
                 return;
             }
             $this->db->prepare("UPDATE coupons SET publication_status='DISABLED' WHERE id=?")->execute([$couponId]);
             $this->db->prepare(
-                "INSERT INTO coupon_status_history(coupon_id,actor_id,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,?,?,?,'DISABLED','Merchant ngừng coupon')"
+                "INSERT INTO activity_logs(coupon_id,user_id,action,old_moderation,new_moderation,old_publication,new_publication,note) VALUES(?,?,'COUPON_STATUS_CHANGE',?,?,?,'DISABLED','Merchant ngừng coupon')"
             )->execute([$couponId, $actorId, $row['moderation_status'], $row['moderation_status'], $row['publication_status']]);
             $this->db->prepare("INSERT INTO activity_logs(user_id,coupon_id,action,description) VALUES(?,?,'COUPON_DISABLE','Merchant disabled official coupon')")
                 ->execute([$actorId, $couponId]);

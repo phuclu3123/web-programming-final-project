@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use RuntimeException;
 
+// Kiểm tra tên, ảnh và khoảng thời gian chiến dịch trước khi ghi theo quyền sở hữu.
 final class CampaignService
 {
     public function __construct(private CampaignRepositoryInterface $campaigns) {}

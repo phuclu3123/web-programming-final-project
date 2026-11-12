@@ -6,11 +6,18 @@ namespace App\Repositories;
 
 use App\Models\Merchant;
 use App\Core\Database;
-use RuntimeException;
+use App\Core\UserFacingException;
 
+// Đọc hồ sơ và quyền cửa hàng; chỉ ghi shop sau khi kiểm tra membership trong transaction.
 final class MerchantRepository implements \App\Contracts\MerchantRepositoryInterface
 {
     public function __construct(private Database $db) {}
+
+    // Nguồn ngoài chỉ được gắn vào shop đã duyệt và chưa bị xóa.
+    public function approvedForImport(): array
+    {
+        return $this->db->query("SELECT id,name FROM merchants WHERE status='APPROVED' AND deleted_at IS NULL ORDER BY name")->fetchAll();
+    }
 
     /** @return Merchant[] */
     public function availableForCommunitySubmission(): array
@@ -72,13 +79,13 @@ final class MerchantRepository implements \App\Contracts\MerchantRepositoryInter
             $stmt = $this->db->prepare("SELECT id,status FROM merchants WHERE id=? AND deleted_at IS NULL FOR UPDATE");
             $stmt->execute([$merchantId]);
             $shop = $stmt->fetch();
-            if (!is_array($shop) || !in_array($shop['status'], ['APPROVED', 'UNCLAIMED'], true)) throw new RuntimeException('Shop không thể nhận yêu cầu quản lý.');
+            if (!is_array($shop) || !in_array($shop['status'], ['APPROVED', 'UNCLAIMED'], true)) throw new UserFacingException('Shop không thể nhận yêu cầu quản lý.');
             $check = $this->db->prepare("SELECT 1 FROM merchant_memberships WHERE merchant_id=? AND user_id=? AND status='ACTIVE' LIMIT 1");
             $check->execute([$merchantId, $userId]);
-            if ($check->fetchColumn()) throw new RuntimeException('Bạn đang quản lý Shop này.');
+            if ($check->fetchColumn()) throw new UserFacingException('Bạn đang quản lý Shop này.');
             $check = $this->db->prepare("SELECT 1 FROM merchant_requests WHERE merchant_id=? AND user_id=? AND status='PENDING' LIMIT 1");
             $check->execute([$merchantId, $userId]);
-            if ($check->fetchColumn()) throw new RuntimeException('Bạn đã gửi đơn đăng ký Shop này, vui lòng chờ duyệt.');
+            if ($check->fetchColumn()) throw new UserFacingException('Bạn đã gửi đơn đăng ký Shop này, vui lòng chờ duyệt.');
             $stmt = $this->db->prepare("INSERT INTO merchant_requests(user_id,merchant_id,request_type,evidence_reference) VALUES(?,?,'JOIN',?)");
             $stmt->execute([$userId, $merchantId, $evidence]);
             $this->db->commit();
@@ -109,9 +116,9 @@ final class MerchantRepository implements \App\Contracts\MerchantRepositoryInter
     {
         $this->db->beginTransaction();
         try {
-            $lock=$this->db->prepare("SELECT m.id FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id JOIN users u ON u.id=mm.user_id WHERE m.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL AND u.role='MERCHANT' AND u.status='ACTIVE' AND u.deleted_at IS NULL FOR UPDATE");
-            $lock->execute([$merchantId,$userId]);
-            if (!$lock->fetchColumn()) throw new RuntimeException('Bạn không có quyền quản lý Shop này.');
+            $lock = $this->db->prepare("SELECT m.id FROM merchants m JOIN merchant_memberships mm ON mm.merchant_id=m.id JOIN users u ON u.id=mm.user_id WHERE m.id=? AND mm.user_id=? AND mm.status='ACTIVE' AND m.status='APPROVED' AND m.deleted_at IS NULL AND u.role='MERCHANT' AND u.status='ACTIVE' AND u.deleted_at IS NULL FOR UPDATE");
+            $lock->execute([$merchantId, $userId]);
+            if (!$lock->fetchColumn()) throw new UserFacingException('Bạn không có quyền quản lý Shop này.');
             $stmt = $this->db->prepare('UPDATE merchants SET name=?,description=?,website_url=? WHERE id=?');
             $stmt->execute([$name, $description, $websiteUrl, $merchantId]);
             $this->db->commit();

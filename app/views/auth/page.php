@@ -1,4 +1,5 @@
 <?php
+// Dùng lại các form của modal trên trang xác thực độc lập để giữ cùng hợp đồng input.
 
 use App\Core\Session;
 

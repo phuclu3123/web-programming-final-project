@@ -42,10 +42,14 @@ final class HolidayService
         $out = [];
         foreach ($raw as $record) {
             if (!is_array($record)) continue;
-            $date = (string)($record['date'] ?? '');
-            $name = trim((string)($record['name'] ?? ''));
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $name === '') continue;
-            $out[] = ['date' => $date, 'name' => mb_substr($name, 0, 120), 'countryCode' => (string)($record['countryCode'] ?? 'VN')];
+            $date = $record['date'] ?? null;
+            $name = $record['name'] ?? null;
+            $country = $record['countryCode'] ?? 'VN';
+            if (!is_string($date) || !is_string($name) || !is_string($country)) continue;
+            $name = trim($name);
+            if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $date, $parts) || $name === ''
+                || !checkdate((int)$parts[2], (int)$parts[3], (int)$parts[1]) || $country !== 'VN') continue;
+            $out[] = ['date' => $date, 'name' => mb_substr($name, 0, 120), 'countryCode' => $country];
         }
         usort($out, static fn($a, $b) => strcmp($a['date'], $b['date']));
         return array_slice($out, 0, 80);

@@ -1,55 +1,72 @@
 # CouponHub
 
-Kiến trúc hiện tại và quy ước phát triển: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Dự án dùng MVC, repository/interface và **mysqli**, một Router và một abstract Controller chung.
+Ứng dụng web PHP OOP theo MVC, dùng MySQL/MariaDB qua `mysqli`. Một front controller và một router phục vụ khách, User, Merchant và Admin.
 
-Cấu hình đăng nhập email/Google/GitHub và OTP qua Resend: [docs/AUTH_SETUP.md](docs/AUTH_SETUP.md). PHP tự nạp `.env` tại project root; dùng `.env.example` làm mẫu. Không cần import lại schema cho phần xác thực này.
+## Bắt đầu
 
-Rà soát giai đoạn 2 của Phúc: [kết quả kiểm thử, lỗi đã sửa và phần còn chờ nghiệm thu thật](docs/PHUC_PHASE2_REVIEW.md).
+1. Clone source đúng commit được nhóm chốt.
+2. Nếu chưa có `.env`, copy `.env.example` rồi điền cấu hình riêng. Không chép đè `.env` đang hoạt động.
+3. Chuẩn bị database theo [database/README.md](database/README.md). Database đã có dữ liệu chỉ nâng cấp theo migration phù hợp, không import lại schema/demo.
+4. Tại thư mục này, chạy:
 
-Tích hợp Trúc + Quang đợt 3: [nghiệm thu 21 mục P0, phạm vi chọn lọc và bước nâng cấp database](docs/PHASE3_ACCEPTANCE.md). Máy đã có dữ liệu cần import migration đợt 3 theo hướng dẫn; không nạp lại schema/demo.
+```bash
+php -S localhost:8000 router.php
+```
 
-## Bản tích hợp Phúc + Quang
+Mở `http://localhost:8000/`. Không chạy PHP server thiếu `router.php` khi đã có secret trong `.env`.
 
-Đã tích hợp thủ công `origin/Quang` tại `cc8a2d8`, giữ UI/Auth hiện tại và dùng **mysqli** cho toàn dự án. MVC, abstract controller, repository/interface và session được dùng chung.
+## Môi trường và dependency
 
-- [Báo cáo đối chiếu, kiến trúc, phần đã ghép và kiểm thử](docs/INTEGRATION_QUANG.md).
-- [Cài database và dữ liệu thử](database/README.md): import `database/schema.sql` vào database mới, trống; tùy chọn import tiếp `database/demo.sql` để có tài khoản, shop và coupon demo.
-- [Quy ước database dành cho Quang và cả nhóm](database/RULES.md).
-- [Phần tích hợp chọn lọc nhánh Trúc và các kiểm tra](docs/INTEGRATION_TRUC.md).
-- [Hướng dẫn Auth trước khi tích hợp](docs/AUTH_PHASE1.md): đọc cùng báo cáo mới vì vị trí endpoint và schema đã được thống nhất lại.
+- PHP 8.3 khớp CI; bật `mysqli` với mysqlnd, `mbstring`, `curl`, `openssl`.
+- MySQL/MariaDB tương thích schema, view và stored procedure của dự án.
+- Không có bước `npm install` hoặc `composer install`: repo hiện không có package manifest tương ứng.
+- Font Awesome và Swagger UI nằm sẵn trong `assets/vendor/`, bao gồm giấy phép và webfont.
+- Bootstrap được tải qua CDN. Repo web không chứa công cụ Python/Shell/PowerShell hay bộ test; các phần này được lưu riêng trong `CouponHub_DevTools`. Node trên CI chỉ kiểm tra cú pháp JavaScript.
 
-Code không tự chạy migration hoặc thay đổi cấu trúc database. Google/GitHub và OTP Resend đã có luồng backend; cần cấu hình riêng và thử tài khoản nhà cung cấp thật theo [AUTH_SETUP.md](docs/AUTH_SETUP.md). Các báo cáo tích hợp cũ bên trên mô tả lịch sử trước khi hoàn thiện xác thực.
+## Tài liệu đang dùng
 
-Đồ án Web Programming viết bằng PHP OOP theo mô hình MVC.
+| Nội dung | Tài liệu |
+|---|---|
+| Kiến trúc và trách nhiệm từng tầng | [ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Cài mới, nâng cấp database | [database/README.md](database/README.md) |
+| Hướng dẫn clone và deploy cho nhóm | [DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+| OAuth, email, Turnstile, nguồn coupon | [PROVIDER_SETUP.md](docs/PROVIDER_SETUP.md) |
+| Comment và vị trí đặt code mới | [CODE_CONVENTIONS.md](docs/CODE_CONVENTIONS.md) |
+| Kiểm thử và giới hạn nghiệm thu | [QUALITY_CHECKS.md](docs/QUALITY_CHECKS.md) |
+| Danh mục tài liệu hiện hành/lịch sử | [docs/README.md](docs/README.md) |
 
-## Chạy dự án
+## Cấu trúc chính
 
-1. Chuẩn bị database theo `database/README.md`.
-2. Kiểm tra cấu hình duy nhất tại `config/database.php` (env hoặc local.php).
-3. Trong thư mục project, chạy `php -S localhost:8000 router.php` rồi mở `http://localhost:8000/`.
-4. Với Apache/XAMPP, dùng thư mục project làm gốc ứng dụng, bật `.htaccess`/rewrite; đặt `COUPONHUB_APP_URL` khớp URL. `public/` chỉ chứa asset của module mới.
+```text
+index.php           Front controller
+api/                Wrapper tương thích URL PHP cũ
+app/                Core, controller, service, repository, model, view, nội dung biên tập
+config/             Cấu hình và route
+assets/             CSS, JS, ảnh, thư viện đã đóng gói
+public/             Asset của các module tích hợp; không phải document root
+database/           Schema cài mới, demo riêng và migration
+storage/            Cache, log và dữ liệu runtime được bảo vệ
+scripts/            Công cụ PHP CLI quản trị, cấu hình và dữ liệu
+docs/               Tài liệu kỹ thuật
+```
 
-Các trang chính:
+`admin.php`, `shop.php`, `login.php`, các callback trong `api/` là wrapper cần giữ để tương thích URL. Chúng không tạo một backend thứ hai. Thư mục gốc chứa `index.php` là gốc ứng dụng; áp dụng `.htaccess` khi chạy Apache/LiteSpeed.
 
-- `index.php`: danh sách coupon công khai.
-- `shop.php`: khu vực merchant.
-- `admin.php`: khu vực quản trị.
-- `/coupons`, `/saved-coupons`, `/dashboard`: Coupon cộng đồng và tài khoản.
-- `/merchant`, `/admin`: các module chức năng tích hợp từ Quang.
+Các template User cũ dùng mảng dữ liệu và asset tương ứng đã được lưu ngoài repo trong đợt dọn 09-10/11/2026. Chức năng hiện tại lấy dữ liệu qua controller/repository và database; không truy cập trực tiếp `app/views/*.php`.
 
-`index.php` là front controller, `config/routes.php` khai báo route. Các URL PHP cũ được giữ làm wrapper để không hỏng liên kết/JS hiện tại. Bảng chuẩn là `users`, `merchants`, `coupons`… theo dump Quang; routine `ch_*` và `sp_*` cùng đọc/ghi các bảng này qua mysqli.
+## Kiểm tra nhanh
+
+```bash
+php scripts/check_auth_config.php --db --facebook
+php scripts/check_integrations.php --database
+```
+
+Hai lệnh PHP chỉ kiểm tra cấu hình/schema và không gửi email hoặc chứng minh API key hoạt động. Bộ test và công cụ phát triển được bàn giao riêng, xem [QUALITY_CHECKS.md](docs/QUALITY_CHECKS.md). Source báo cáo LaTeX/draw.io cũng được giữ local, không thuộc repo web này.
 
 ## Thành viên
 
-- Từ Trương Thanh Trúc — nhánh `Truc`
-- Lữ Võ Hoàng Phúc — nhánh `Phuc`
-- Trương Ứng Quang — nhánh `Quang`
+- Trương Ứng Quang: Merchant/Shop và cơ sở dữ liệu.
+- Lữ Võ Hoàng Phúc: Admin, xác thực và tích hợp API.
+- Từ Trương Thanh Trúc: User và UI/UX.
 
-## Tài khoản thử nghiệm local
-
-Database đang dùng: `dbcouponshubweb_v2`. Đã có 6 tài khoản User/Merchant/Admin và 32 coupon của 12 nền tảng. Xem [tài khoản, mật khẩu và dữ liệu mẫu](docs/DEMO_DATA.md). Các mã `DEMO_` chỉ phục vụ chạy thử trong CouponHub.
-# Thiết kế giao diện và ảnh thật
-
-Hướng nhận diện, nguồn ảnh, dải thương hiệu chuyển động và phần khám phá danh mục được ghi tại [docs/EDITORIAL_DESIGN.md](docs/EDITORIAL_DESIGN.md).
-
-Đợt hoàn thiện toàn bộ UI ngày 17/10/2026: [phạm vi, nghiệm thu và giới hạn kiểm tra](docs/UI_RELEASE_REVIEW.md). Chạy `python scripts/check_ui_release.py` khi PHP/MySQL và bản preview local đang hoạt động; kiểm tra chỉ đọc dữ liệu.
+Phân công trên là phạm vi phụ trách; lịch sử commit/PR là minh chứng đóng góp thực tế. Không đưa `.env`, SQL dữ liệu thật, session hoặc backup vào Git.

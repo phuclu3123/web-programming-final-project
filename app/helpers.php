@@ -20,6 +20,7 @@ function couponPhoto(array $coupon): string
     if ($brand==='coolmate') return brandPhoto($variant ? 'coolmate-women' : 'coolmate-men');
     if ($brand==='grab') return brandPhoto(str_contains(slugify($coupon['title'] ?? ''),'food') ? 'grab-food' : ($variant ? 'grab-bike' : 'grab-car'));
     if ($brand==='be') return brandPhoto(str_contains(slugify($coupon['title'] ?? ''),'food') ? 'be-food' : 'be-ride');
+    if (in_array($brand,['nike','shopee'],true)) return url('/assets/images/brands/'.($brand==='nike' ? 'nike-training' : 'shopee-official').'.webp');
     return editorialPhoto((string)($coupon['category_name'] ?? 'shopping'));
 }
 
@@ -28,7 +29,7 @@ function couponHeroMedia(array $coupon): array
 {
     $normal=couponPhoto($coupon);
     $heroBrand=slugify($coupon['merchant_name']);
-    $editorial=['shopee'=>'fashion','highlands-coffee'=>'food','highlands'=>'food','hasaki'=>'beauty','cgv'=>'cinema'];
+    $editorial=['highlands-coffee'=>'food','highlands'=>'food','hasaki'=>'beauty','cgv'=>'cinema'];
     if (isset($editorial[$heroBrand])) $normal=editorialPhoto($editorial[$heroBrand],false);
     if ($heroBrand==='tiki') $normal=url('/assets/images/editorial/headphones-source.webp');
     if ($heroBrand==='traveloka' && is_file(dirname(__DIR__).'/assets/images/hero/travel-vivid.webp')) {
@@ -87,7 +88,7 @@ function editorialLargePhoto(string $category): string
 function brandLogo(string $name): string
 {
     $key = slugify($name);
-    $map = ['shopee'=>'shopee','lazada'=>'lazada','grab'=>'grab','be'=>'be','tiki'=>'tiki','shopeefood'=>'shopeefood','traveloka'=>'traveloka','cgv'=>'cgv','hasaki'=>'hasaki','fpt-shop'=>'fpt-shop','coolmate'=>'coolmate','highlands-coffee'=>'highlands'];
+    $map = ['shopee'=>'shopee','lazada'=>'lazada','grab'=>'grab','be'=>'be','tiki'=>'tiki','shopeefood'=>'shopeefood','traveloka'=>'traveloka','cgv'=>'cgv','hasaki'=>'hasaki','fpt-shop'=>'fpt-shop','coolmate'=>'coolmate','highlands-coffee'=>'highlands','nike'=>'nike','phuc-long'=>'phuc-long'];
     $file = $map[$key] ?? '';
     if ($file !== '' && is_file(dirname(__DIR__).'/assets/images/editorial/'.$file.'.png')) {
         return '<img class="merchant-logo-image" src="'.e(url('/assets/images/editorial/'.$file.'.png').'?v='.filemtime(dirname(__DIR__).'/assets/images/editorial/'.$file.'.png')).'" alt="" width="40" height="40" loading="lazy" decoding="async">';
@@ -105,6 +106,7 @@ function articleTopic(string $title): array
 }
 
 /** Campaign dates are stored in UTC. Labels are rendered in the app's Vietnam timezone. */
+// Tính nhãn thời gian để trình bày; trạng thái công khai vẫn do truy vấn nghiệp vụ quyết định.
 function campaignTiming(array $campaign): array
 {
     $start=(new DateTimeImmutable($campaign['starts_at'],new DateTimeZone('UTC')))->getTimestamp();
@@ -125,7 +127,58 @@ function campaignArtwork(array $campaign): array
     return ['technology','indigo'];
 }
 
+/** Local, attributed brand assets. Explicit campaign artwork always takes precedence. */
+function campaignVisual(array $campaign): array
+{
+    $custom = campaignBannerUrl($campaign);
+    $brand = slugify((string)($campaign['merchant_name'] ?? ''));
+    $assets = [
+        'shopee'=>['shopee-official','orange','Shopee / Sea','https://www.sea.com/products/shopee'],
+        'lazada'=>['lazada-campaign','berry','Lazada','https://www.lazada.vn/blog/thang-11-sale-lon-nhat-nam-lazada/'],
+        'grab'=>['grab-food-wide','green','Grab','https://www.grab.com/vn/pressdownload/'],
+        'coolmate'=>['coolmate-collection','neutral','Coolmate','https://www.coolmate.me/'],
+        'be'=>['be-ride','neutral','be','https://be.com.vn/'],
+        'nike'=>['nike-training','sport','Nike','https://www.nike.com/vn/'],
+        'hasaki'=>['hasaki-skincare','beauty','Hasaki','https://hasaki.vn/campaign/khai-truong-chi-nhanh-23'],
+        'highlands-coffee'=>['highlands-phin','coffee','Highlands Coffee','https://www.highlandscoffee.com.vn/'],
+        'phuc-long'=>['phuc-long-identity','tea','Phúc Long','https://phuclong.com.vn/'],
+    ];
+    if (isset($assets[$brand])) {
+        [$file,$tone,$credit,$source]=$assets[$brand];
+        $image=url('/assets/images/brands/'.$file.'.webp');
+        if ((!$custom || $custom===$image) && is_file(dirname(__DIR__).'/assets/images/brands/'.$file.'.webp')) {
+            $visual=['image'=>$image,'tone'=>$tone,'credit'=>$credit,'source'=>$source];
+            if ($brand==='hasaki') { $visual['secondary']=url('/assets/images/brands/hasaki-cleanser.webp'); $visual['layout']='products'; }
+            if ($brand==='phuc-long') $visual['layout']='identity';
+            return $visual;
+        }
+    }
+    if ($custom) return ['image'=>$custom,'tone'=>'neutral','credit'=>null,'source'=>null];
+    if ($brand==='cgv') return ['image'=>editorialLargePhoto('cinema'),'tone'=>'cinema','credit'=>null,'source'=>null,'caption'=>'Ảnh minh họa trải nghiệm điện ảnh'];
+    // A platform-wide event has no single-brand artwork. Its collage is labelled as illustration.
+    if ($brand === '' || $brand === 'couponhub') {
+        return ['image'=>url('/assets/images/brands/grab-food-wide.webp'),'tone'=>'ink','credit'=>'Grab · Coolmate','source'=>'https://www.grab.com/vn/pressdownload/','secondary'=>brandPhoto('coolmate-men'),'layout'=>'collage'];
+    }
+    [$category] = campaignArtwork($campaign);
+    return ['image'=>editorialLargePhoto($category),'tone'=>'neutral','credit'=>null,'source'=>null];
+}
+
+/** Overview of visible coupons only; never invent savings or combine percentage and currency. */
+function campaignOverview(array $coupons): array
+{
+    $brands=[]; $categories=[]; $channels=[]; $minimum=null;
+    foreach ($coupons as $coupon) {
+        $brands[(string)$coupon['merchant_name']]=(int)($coupon['merchant_id'] ?? 0);
+        $categories[(string)$coupon['category_name']]=true;
+        $channels[(string)$coupon['usage_channel']]=true;
+        $amount=(float)$coupon['min_order_amount'];
+        $minimum=$minimum===null ? $amount : min($minimum,$amount);
+    }
+    return ['count'=>count($coupons),'brands'=>$brands,'categories'=>array_keys($categories),'channels'=>array_keys($channels),'minimum'=>$minimum];
+}
+
 /** Banner is a browser image URL, never a server-side download or upload. */
+// Chỉ nhận HTTPS hoặc đường dẫn ảnh nội bộ cho phép, không nhận đường dẫn tùy ý tới source.
 function normalizeCampaignBanner(?string $value): ?string
 {
     $value=trim($value ?? '');
@@ -461,7 +514,8 @@ if (!function_exists('merchant_status_label')) {
     }
 }
 
-// ---- HÀM HIỂN THỊ CHUNG: không truy vấn database tại đây ----
+// HÀM HIỂN THỊ CHUNG: không truy vấn database tại đây
+// Escape tại biên HTML; không dùng chuỗi đã escape để ghi trở lại database.
 function e(mixed $value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -534,6 +588,7 @@ function icon(string $name): string
 }
 
 /** Chỉ cho phép liên kết web, không chứa credentials hoặc scheme thực thi. */
+// Loại protocol nguy hiểm trước khi đưa URL bên ngoài vào thuộc tính HTML.
 function safeHttpUrl(?string $value): ?string
 {
     if ($value === null || filter_var($value, FILTER_VALIDATE_URL) === false) return null;

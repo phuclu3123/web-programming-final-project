@@ -1,0 +1,80 @@
+{
+  "date": "2026-11-06",
+  "status": "LOCAL_PASS_REAL_PROVIDER_ACCEPTANCE_PENDING",
+  "declared_route_operations": 124,
+  "javascript_tests_passed": 128,
+  "postman": {
+    "requests": 280,
+    "assertions": 296,
+    "failed": 0
+  },
+  "chrome": {
+    "page_viewport_checks": 176,
+    "widths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "swagger_session_csrf_post": "PASS"
+  },
+  "provider_contract_checks": 25,
+  "source_revocation_database_checks": 34,
+  "source_workflow_http_checks": 14,
+  "turnstile_http_checks": 38,
+  "live_migration": {
+    "name": "20261105_external_offers.sql",
+    "previous_tables_preserved": 21,
+    "accounts": 6,
+    "merchants": 14,
+    "coupons": 40,
+    "campaigns": 10,
+    "external_offers": 0
+  },
+  "real_provider_credentials_used": false,
+  "public_https_connectivity": [
+    "Google signing keys",
+    "GitHub public API"
+  ],
+  "evidence": {
+    "integration_run": ".runtime/integrations-acceptance-1793977969455884700/results.json",
+    "corrected_full_browser_rerun": ".runtime/phase4-browser-1793978809226868500/results.json",
+    "final_consolidated_acceptance": ".runtime/article-final-acceptance.json"
+  },
+  "pending": [
+    "ACCESSTRADE account permissions and live data import",
+    "Turnstile live token/hostname/action/replay checks",
+    "OAuth real authorization/link/cancellation flows",
+    "Resend verified sender and mailbox delivery",
+    "Production HTTPS/proxy/private-file/session checks"
+  ],
+  "release_verification": {
+    "fetched_main": "963139c6a8f59a71d1a994f7fd91e7e5b44a474e",
+    "session_role_caps_with_long_overrides": "PASS",
+    "security_hardening_and_rate_limit_checks": "PASS",
+    "route_aware_assets": "PASS"
+  },
+  "article_discussion": {
+    "status": "PASS",
+    "schema_base_tables": 23,
+    "http_mysql_checks": 64,
+    "concurrent_php_workers": 8,
+    "duplicate_rows_from_concurrent_retries": 0,
+    "chrome_viewports": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "ajax_json_and_real_reload": "PASS",
+    "offline_input_retention": "PASS",
+    "native_html_forms": "PASS",
+    "live_articles": 8,
+    "live_customer_username": "user_demo",
+    "live_customer_role": "USER",
+    "live_persisted_comment_id": 1,
+    "live_comment_is_explicit_functional_test": true,
+    "live_independent_anonymous_chrome_read": "PASS",
+    "unchanged_original_domain_tables": 20
+  }
+}

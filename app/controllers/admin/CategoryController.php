@@ -15,6 +15,7 @@ use App\Repositories\CampaignRepository;
 use App\Services\AdminService;
 use Throwable;
 
+// Điều phối tạo, sửa, bật/tắt và xóa danh mục theo ràng buộc dữ liệu.
 final class CategoryController extends Controller
 {
     private AdminRepository $repo;
@@ -33,7 +34,7 @@ final class CategoryController extends Controller
     public function store(Request $request): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
@@ -48,12 +49,12 @@ final class CategoryController extends Controller
     public function toggle(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
         try {
-            $this->repo->toggleCategory((int)$id, (string)$request->input('active', '0') === '1');
+            $this->repo->toggleCategory((int)$id, (string)$request->input('active', '0') === '1', (int)Auth::id());
             Session::flash('success', 'Đã cập nhật danh mục.');
         } catch (Throwable $e) {
             Session::flash('error', $e->getMessage());
@@ -63,7 +64,7 @@ final class CategoryController extends Controller
     public function update(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }
@@ -84,7 +85,7 @@ final class CategoryController extends Controller
     public function delete(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }

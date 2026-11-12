@@ -18,7 +18,7 @@ use App\Services\PasswordResetService;
 use App\Core\AuthRateLimit;
 use App\Services\{AuthMailFactory, OtpPasswordResetService};
 
-/** ---- HTTP AUTH: đọc Request, gọi AuthService rồi trả JSON/View/redirect ---- */
+/* HTTP AUTH: đọc Request, gọi AuthService rồi trả JSON/View/redirect */
 final class AuthController extends Controller
 {
     public function showLogin(Request $request): void
@@ -75,7 +75,7 @@ final class AuthController extends Controller
         Response::redirect(url('/'), 303);
     }
 
-    // ---- QUÊN MẬT KHẨU TỪ QUANG: dùng cùng users/session và cấu hình SMTP ----
+    // QUÊN MẬT KHẨU TỪ QUANG: dùng cùng users/session và cấu hình SMTP
     private function resetService(): PasswordResetService
     {
         $db = Database::connection();
@@ -136,6 +136,7 @@ final class AuthController extends Controller
     }
     public function resetPassword(Request $request): void
     {
+        AuthRateLimit::request('reset-link-attempt', '', 30);
         $this->resetHeaders();
         $token = $this->field($request, 'token');
         $password = $this->field($request, 'password');

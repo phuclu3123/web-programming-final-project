@@ -13,6 +13,7 @@ use App\Core\Session;
 use App\Repositories\MerchantAccessRepository;
 use Throwable;
 
+// Xét yêu cầu và thu hồi membership theo từng shop, không suy quyền từ role chung.
 final class MerchantAccessController extends Controller
 {
     private MerchantAccessRepository $access;
@@ -24,7 +25,7 @@ final class MerchantAccessController extends Controller
     }
     private function csrf(Request $request): void
     {
-        if(!Session::verifyCsrf((string)$request->input('_token',''))){$this->renderError(419,'CSRF token đã hết hạn');exit;}
+        if(!Session::verifyCsrf($request->csrfToken())){$this->renderError(419,'CSRF token đã hết hạn');exit;}
     }
     public function review(Request $request,string $id): void
     {

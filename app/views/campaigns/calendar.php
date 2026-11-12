@@ -7,7 +7,7 @@ $calendarZone = new DateTimeZone((string)config('app.timezone', 'Asia/Ho_Chi_Min
 $monthStart = new DateTimeImmutable(sprintf('%04d-%02d-01', $calendarYear, $displayMonth), $calendarZone);
 $monthEnd = $monthStart->modify('first day of next month');
 $gridStart = $monthStart->modify('monday this week');
-$gridEnd = $monthEnd->modify('sunday this week');
+$gridEnd = $monthEnd->modify('-1 day')->modify('sunday this week');
 $today = new DateTimeImmutable('today', $calendarZone);
 $campaigns = is_array($campaigns ?? null) ? $campaigns : [];
 $campaignColorIndex = [];
@@ -21,8 +21,11 @@ foreach ($campaigns as $campaign) {
     } catch (Throwable) {
         continue;
     }
-    $firstDay = $startsAt->setTime(0, 0);
-    $lastDay = $endsAt->setTime(0, 0);
+    if ($endsAt <= $startsAt) continue;
+    // The end instant is exclusive, as in publicCalendar's overlap query.
+    // Bound work to the visible grid even for a campaign lasting many years.
+    $firstDay = max($startsAt->setTime(0, 0), $gridStart);
+    $lastDay = min($endsAt->modify('-1 microsecond')->setTime(0, 0), $gridEnd);
     for ($day = $firstDay; $day <= $lastDay; $day = $day->modify('+1 day')) {
         $key = $day->format('Y-m-d');
         $campaignsByDay[$key][] = $campaign;
@@ -61,9 +64,9 @@ $weekdayNames = [1=>'Thứ hai',2=>'Thứ ba',3=>'Thứ tư',4=>'Thứ năm',5=>
                 <span class="calendar-period-year"><?= $calendarYear ?></span>
             </div>
             <div class="calendar-controls" aria-label="Điều hướng lịch">
-                <a class="calendar-icon-button" href="<?= e(url('/campaign-calendar?year='.$previousMonth->format('Y').'&month='.$previousMonth->format('n').'&calendarOpen=1')) ?>" aria-label="Tháng trước" title="Tháng trước">‹</a>
+                <?php if ((int)$previousMonth->format('Y') >= 2020): ?><a class="calendar-icon-button" href="<?= e(url('/campaign-calendar?year='.$previousMonth->format('Y').'&month='.$previousMonth->format('n').'&calendarOpen=1')) ?>" aria-label="Tháng trước" title="Tháng trước">‹</a><?php else: ?><span class="calendar-icon-button" aria-disabled="true" aria-label="Đã đến đầu khoảng lịch">‹</span><?php endif; ?>
                 <a class="calendar-today-button" href="<?= e(url('/campaign-calendar?year='.$today->format('Y').'&month='.$today->format('n').'&calendarOpen=1')) ?>">Hôm nay</a>
-                <a class="calendar-icon-button" href="<?= e(url('/campaign-calendar?year='.$nextMonth->format('Y').'&month='.$nextMonth->format('n').'&calendarOpen=1')) ?>" aria-label="Tháng sau" title="Tháng sau">›</a>
+                <?php if ((int)$nextMonth->format('Y') <= 2035): ?><a class="calendar-icon-button" href="<?= e(url('/campaign-calendar?year='.$nextMonth->format('Y').'&month='.$nextMonth->format('n').'&calendarOpen=1')) ?>" aria-label="Tháng sau" title="Tháng sau">›</a><?php else: ?><span class="calendar-icon-button" aria-disabled="true" aria-label="Đã đến cuối khoảng lịch">›</span><?php endif; ?>
             </div>
         </div>
 

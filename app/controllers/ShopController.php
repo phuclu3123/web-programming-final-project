@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use mysqli_sql_exception;
 
 
+// Giữ URL shop cũ tương thích với luồng quản lý cửa hàng hiện tại.
 final class ShopController extends Controller
 {
     public function index(Request $request): void
@@ -42,11 +43,11 @@ final class ShopController extends Controller
         ];
         $errors = [];
         if ($method === 'POST') {
-            Session::checkCsrf($request->post('csrf'));
+            Session::checkCsrf($request->csrfToken());
             foreach ($input as $key => $_) $input[$key] = $request->post($key);
             $errors = $this->validate($input);
             if ($errors === []) {
-                // ---- OWNER GUARD: sửa merchant_id trong request không đổi được chủ ----
+                // OWNER GUARD: sửa merchant_id trong request không đổi được chủ
                 Auth::requireMerchantOwner(Database::connection(), $actor, (int) $input['merchant_id']);
                 try {
                     $id = $model->create((int) $actor['id'], $input);

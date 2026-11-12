@@ -44,9 +44,23 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
     {
         if ($actorId === $userId) throw new RuntimeException('Admin không thể tự khóa chính mình.');
         if (!in_array($status, ['ACTIVE', 'LOCKED'], true)) throw new RuntimeException('Trạng thái User không hợp lệ.');
-        $stmt = $this->db->prepare('UPDATE users SET status=? WHERE id=? AND deleted_at IS NULL');
-        $stmt->execute([$status, $userId]);
-        if ($stmt->rowCount() === 0) throw new RuntimeException('Không tìm thấy User.');
+        $this->db->beginTransaction();
+        try {
+            $this->requireActiveAdmin($actorId);
+            $read = $this->db->prepare('SELECT status FROM users WHERE id=? AND deleted_at IS NULL FOR UPDATE');
+            $read->execute([$userId]);
+            $old = $read->fetchColumn();
+            if ($old === false) throw new RuntimeException('Không tìm thấy User.');
+            if ($old !== $status) {
+                $this->db->prepare('UPDATE users SET status=?,auth_version=auth_version+1 WHERE id=?')->execute([$status, $userId]);
+                $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')
+                    ->execute([$actorId, 'USER_STATUS', json_encode(['user_id'=>$userId,'from'=>$old,'to'=>$status], JSON_THROW_ON_ERROR)]);
+            }
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
     /** @return array<int,array<string,mixed>> */
@@ -94,15 +108,38 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
 
     public function addCategory(int $actorId, string $name, string $slug, ?string $description): void
     {
+        $this->db->beginTransaction();
+        try {
+        $this->requireActiveAdmin($actorId);
         $stmt = $this->db->prepare('CALL sp_add_category(?, ?, ?, ?)');
         $stmt->execute([$actorId, $name, $slug, $description]);
         $stmt->closeCursor();
+        $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
-    public function toggleCategory(int $categoryId, bool $active): void
+    public function toggleCategory(int $categoryId, bool $active, int $actorId = 0): void
     {
-        $stmt = $this->db->prepare('UPDATE categories SET is_active=? WHERE id=?');
-        $stmt->execute([$active ? 1 : 0, $categoryId]);
+        $this->db->beginTransaction();
+        try {
+            $this->requireActiveAdmin($actorId);
+            $read = $this->db->prepare('SELECT is_active FROM categories WHERE id=? FOR UPDATE');
+            $read->execute([$categoryId]);
+            $old = $read->fetchColumn();
+            if ($old === false) throw new RuntimeException('Không tìm thấy danh mục.');
+            if ((bool)$old !== $active) {
+                $this->db->prepare('UPDATE categories SET is_active=? WHERE id=?')->execute([$active ? 1 : 0, $categoryId]);
+                $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')
+                    ->execute([$actorId, 'CATEGORY_STATUS', json_encode(['category_id'=>$categoryId,'active'=>$active], JSON_THROW_ON_ERROR)]);
+            }
+            $this->db->commit();
+        } catch (\Throwable $error) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
+            throw $error;
+        }
     }
 
     public function updateCategory(int $actorId, int $categoryId, string $name, string $slug, ?string $description, int $sortOrder): void
@@ -136,12 +173,11 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
             $lock = $this->db->prepare('SELECT id FROM categories WHERE id=? FOR UPDATE');
             $lock->execute([$categoryId]);
             if (!$lock->fetch()) throw new RuntimeException('Không tìm thấy danh mục.');
-            foreach (['coupons', 'articles'] as $table) {
-                $count = $this->db->prepare("SELECT COUNT(*) FROM {$table} WHERE category_id=?");
-                $count->execute([$categoryId]);
-                if ((int)$count->fetchColumn() > 0) {
-                    throw new RuntimeException('Danh mục đã được sử dụng. Hãy tắt danh mục thay vì xóa.');
-                }
+            // Articles no longer belong to coupon categories in the consolidated schema.
+            $count = $this->db->prepare('SELECT COUNT(*) FROM coupons WHERE category_id=?');
+            $count->execute([$categoryId]);
+            if ((int)$count->fetchColumn() > 0) {
+                throw new RuntimeException('Danh mục đã được sử dụng. Hãy tắt danh mục thay vì xóa.');
             }
             $stmt = $this->db->prepare('DELETE FROM categories WHERE id=?');
             $stmt->execute([$categoryId]);
@@ -170,10 +206,20 @@ final class AdminRepository implements \App\Contracts\AdminRepositoryInterface
         $this->db->beginTransaction();
         try {
             $this->requireActiveAdmin($actorId);
-            $lock=$this->db->prepare('SELECT status FROM campaigns WHERE id=? FOR UPDATE');
+            $lock=$this->db->prepare('SELECT status,owner_merchant_id,ends_at FROM campaigns WHERE id=? FOR UPDATE');
             $lock->execute([$campaignId]);
-            $old=$lock->fetchColumn();
-            if ($old===false) throw new RuntimeException('Không tìm thấy chiến dịch.');
+            $campaign=$lock->fetch();
+            if (!$campaign) throw new RuntimeException('Không tìm thấy chiến dịch.');
+            $old=$campaign['status'];
+            if ($old==='ARCHIVED' && $status!=='ARCHIVED') throw new RuntimeException('Chiến dịch đã lưu trữ không thể xuất bản lại. Tạo chiến dịch mới nếu cần.');
+            if ($status==='PUBLISHED') {
+                if ($campaign['ends_at']<=gmdate('Y-m-d H:i:s')) throw new RuntimeException('Không thể xuất bản chiến dịch đã hết hạn.');
+                if ($campaign['owner_merchant_id']!==null) {
+                    $merchant=$this->db->prepare("SELECT id FROM merchants WHERE id=? AND status='APPROVED' AND deleted_at IS NULL LOCK IN SHARE MODE");
+                    $merchant->execute([(int)$campaign['owner_merchant_id']]);
+                    if (!$merchant->fetch()) throw new RuntimeException('Cửa hàng của chiến dịch chưa được duyệt hoặc đã bị khóa.');
+                }
+            }
             if ($old!==$status) {
                 $this->db->prepare('UPDATE campaigns SET status=? WHERE id=?')->execute([$status,$campaignId]);
                 $this->db->prepare('INSERT INTO activity_logs(user_id,action,description) VALUES(?,?,?)')->execute([$actorId,'CAMPAIGN_STATUS',json_encode(['campaign_id'=>$campaignId,'from'=>$old,'to'=>$status],JSON_THROW_ON_ERROR)]);

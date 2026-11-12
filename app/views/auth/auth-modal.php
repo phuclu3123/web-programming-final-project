@@ -2,12 +2,16 @@
 $authPath = (new \App\Core\Request())->path();
 $autoAuthView = in_array($authPath, ['/register'], true) ? 'register' : (in_array($authPath, ['/login', '/login.php'], true) ? 'login' : '');
 if ($authPath === '/forgot-password') $autoAuthView = ($_GET['step'] ?? '') === 'reset' ? 'reset' : 'forgot';
+$oneTapReady = (new \App\Core\OAuthPreparation((array)config('oauth')))->oneTapReady();
 ?>
 <!-- Native dialog works across both existing Bootstrap layout versions. -->
 <link rel="stylesheet"
     href="<?= e(url('/assets/css/auth/auth.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/auth/auth.css') ?>">
 
-<dialog class="auth-dialog" id="loginModal" aria-labelledby="loginTitle" data-auth-auto="<?= e($autoAuthView) ?>">
+<dialog class="auth-dialog" id="loginModal" aria-labelledby="loginTitle" data-auth-auto="<?= e($autoAuthView) ?>"
+    <?php if ($oneTapReady): ?>data-one-tap-start="<?= e(url('/api/oauth/google-one-tap/start')) ?>"
+    data-one-tap-login="<?= e(url('/api/oauth/google-one-tap')) ?>"<?php endif; ?>>
+    <?php if ($oneTapReady): ?><div id="google-one-tap-prompt" class="google-one-tap-prompt"></div><?php endif; ?>
     <div class="modal-dialog modal-dialog-centered login-dialog">
         <div class="modal-content">
             <button type="button" class="auth-close" data-auth-close aria-label="Đóng cửa sổ xác thực" title="Đóng">
@@ -38,3 +42,4 @@ if ($authPath === '/forgot-password') $autoAuthView = ($_GET['step'] ?? '') === 
 
 <script src="<?= e(url('/assets/js/auth/auth.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/auth/auth.js') ?>"
     defer></script>
+<?php if ($oneTapReady): ?><script src="<?= e(url('/assets/js/auth/google-one-tap.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/auth/google-one-tap.js') ?>" defer></script><?php endif; ?>

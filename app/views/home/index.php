@@ -1,4 +1,5 @@
 <?php
+// Trang portal dùng dữ liệu tổng hợp; trang khám phá chính nằm ở home.php.
 
 use App\Core\Auth; ?>
 <?php if ($currentCampaigns !== []): ?>

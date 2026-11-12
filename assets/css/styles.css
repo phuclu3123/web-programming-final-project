@@ -1979,7 +1979,7 @@ p {
   transform: translateY(0);
 }
 
-/* CouponHub UI polish v2 — 2026 classroom + final-project foundation */
+/* CouponHub UI polish — 2026 classroom + final-project foundation */
 :root {
   --ink: #173a32;
   --ink-strong: #102d27;
@@ -2009,10 +2009,8 @@ body {
     var(--paper);
 }
 
-.site-header,
-.app-header,
-.sidebar,
-.site-footer {
+.site-header, .app-header,
+.sidebar, .site-footer {
   backdrop-filter: saturate(140%) blur(12px);
 }
 
@@ -2041,8 +2039,7 @@ body {
   box-shadow: 0 8px 18px rgba(21, 62, 52, 0.14);
 }
 
-.btn-brand:hover,
-.btn-brand:focus-visible {
+.btn-brand:hover, .btn-brand:focus-visible {
   box-shadow: 0 11px 24px rgba(21, 62, 52, 0.2);
 }
 
@@ -2130,26 +2127,11 @@ body {
   color: var(--ink);
 }
 
-.hero-proof {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px 16px;
-  margin-top: 17px;
-  color: #d1ddd4;
-  font-size: 11px;
-}
 
-.hero-proof span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
 
-.hero-proof .icon {
-  width: 15px;
-  height: 15px;
-  color: var(--lime);
-}
+
+
+
 
 .hero-compact .hero-art {
   min-height: 220px;
@@ -3078,10 +3060,6 @@ body {
 
   .hero-compact h1 {
     font-size: 35px;
-  }
-
-  .hero-proof {
-    display: grid;
   }
 
   .active-filters {

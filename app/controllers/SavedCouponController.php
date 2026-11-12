@@ -17,6 +17,7 @@ use App\Services\InteractionService;
 use RuntimeException;
 use Throwable;
 
+// Lọc kho mã đã lưu của actor và dùng chung nghiệp vụ lưu/bỏ lưu coupon.
 final class SavedCouponController extends Controller
 {
     public function save(Request $request, string $id): void
@@ -74,7 +75,7 @@ final class SavedCouponController extends Controller
     public function remove(Request $request, string $id): void
     {
         Auth::requireRole(['USER', 'MERCHANT']);
-        if (!Session::verifyCsrf((string) $request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
             return;
         }

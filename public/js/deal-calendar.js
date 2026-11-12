@@ -1,3 +1,4 @@
+// Điều hướng lịch chiến dịch và cập nhật thông tin theo dữ liệu trang đã tải.
 (function () {
     'use strict';
 
@@ -24,6 +25,10 @@
         requestController = controller;
         var sequence = ++requestSequence;
         var disclosureWasOpen = Boolean(root.querySelector('.calendar-disclosure')?.open);
+        var focused = document.activeElement;
+        var focusId = root.contains(focused) ? focused.id : '';
+        var focusLabel = root.contains(focused) ? focused.getAttribute('aria-label') : '';
+        var filterWasFocused = root.contains(focused) && focused.matches('.btn-calendar-filter');
         root.setAttribute('aria-busy', 'true');
 
         try {
@@ -42,10 +47,19 @@
             var parsed = new DOMParser().parseFromString(html, 'text/html');
             var updatedRoot = parsed.querySelector('.editorial-calendar-page');
             if (!updatedRoot) throw new Error('Calendar response invalid');
+            if (sequence !== requestSequence) return;
 
             var updatedDisclosure = updatedRoot.querySelector('.calendar-disclosure');
             if (updatedDisclosure) updatedDisclosure.open = disclosureWasOpen;
             root.replaceWith(updatedRoot);
+            var focusTarget = focusId ? updatedRoot.querySelector('#' + CSS.escape(focusId)) : null;
+            if (!focusTarget && focusLabel) focusTarget = Array.from(updatedRoot.querySelectorAll('[aria-label]')).find(function (node) { return node.getAttribute('aria-label') === focusLabel; });
+            if (!focusTarget && filterWasFocused) focusTarget = updatedRoot.querySelector('.btn-calendar-filter');
+            if (!focusTarget && root.contains(focused)) {
+                focusTarget = updatedRoot.querySelector('.calendar-period');
+                focusTarget?.setAttribute('tabindex', '-1');
+            }
+            focusTarget?.focus({ preventScroll: true });
             if (parsed.title) document.title = parsed.title;
             if (addHistory) window.history.pushState({ calendar: true }, '', url.href);
         } catch (error) {

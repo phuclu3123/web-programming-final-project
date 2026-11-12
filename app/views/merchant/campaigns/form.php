@@ -1,4 +1,6 @@
-<?php use App\Core\Session; $isEdit=$mode==='edit'; ?>
+<?php
+// Dùng cùng form tạo/sửa chiến dịch trong phạm vi shop được quản lý.
+ use App\Core\Session; $isEdit=$mode==='edit'; ?>
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="card shadow-sm">

@@ -1,8 +1,9 @@
 <?php
+// URL chuẩn lấy từ env để cùng source chạy được ở local và trên hosting.
 
 declare(strict_types=1);
 
-// ---- URL CHUNG: không hardcode đường dẫn máy Quang; có thể ghi đè bằng env ----
+// URL CHUNG: không hardcode đường dẫn máy Quang; có thể ghi đè bằng env
 $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '/index.php');
 $basePath = preg_replace('~/(?:api/.*|public/index\.php|(?:index|admin|shop|login|logout|oauth-setup)\.php)$~', '', $script);
 if (PHP_SAPI === 'cli') $basePath = '';

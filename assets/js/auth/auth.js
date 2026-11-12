@@ -152,7 +152,7 @@
             const resetForm = modal.querySelector('#resetOtpForm');
             if (resetForm) showMessage(resetForm, result.message, 'success');
         } catch { showMessage(form, 'Không thể kết nối. Vui lòng thử lại.', 'error'); }
-        finally { if (button) { button.disabled = false; button.textContent = original; } }
+        finally { form.dispatchEvent(new CustomEvent('couponhub:form-finished', {bubbles:true})); if (button) { button.disabled = false; button.textContent = original; } }
     }
 
     // PHẦN ĐĂNG KÝ (BỔ SUNG): gửi dữ liệu và chuyển về đăng nhập
@@ -225,6 +225,7 @@
                 "error",
             );
         } finally {
+                form.dispatchEvent(new CustomEvent('couponhub:form-finished', {bubbles:true}));
             if (button) {
                 button.disabled = false;
                 button.textContent = originalText;
@@ -249,7 +250,7 @@
                 errors[0].input.focus({ preventScroll: true });
                 return;
             }
-            // ---- PHẦN ĐĂNG KÝ (BỔ SUNG) ----
+            // PHẦN ĐĂNG KÝ (BỔ SUNG)
             if (form.id === "registerForm") {
                 await submitRegistration(form);
                 return;
@@ -310,6 +311,7 @@
                     "error",
                 );
             } finally {
+                form.dispatchEvent(new CustomEvent('couponhub:form-finished', {bubbles:true}));
                 // Luôn mở lại nút và trả chữ ban đầu khi xử lý đã kết thúc.
                 if (submitButton) {
                     submitButton.disabled = false;
@@ -328,8 +330,9 @@
 
         input.type = show ? "text" : "password";
         button.setAttribute("aria-pressed", String(show));
-        const suffix =
-            input.id === "registerPasswordConfirm" ? " nhập lại" : "";
+        const suffix = input.id === "resetConfirmation" ? " mới nhập lại"
+            : input.id === "resetNewPassword" ? " mới"
+            : input.id === "registerPasswordConfirm" ? " nhập lại" : "";
         button.setAttribute(
             "aria-label",
             (show ? "Ẩn mật khẩu" : "Hiện mật khẩu") + suffix,
@@ -377,6 +380,7 @@
                 )
                 ?.focus();
         }
+        modal.dispatchEvent(new CustomEvent('couponhub:auth-view', { detail: { view: name } }));
     }
 
     // Bắt nút chuyển form qua data-auth-target; closest tìm cả khi bấm vào icon.
@@ -409,6 +413,7 @@
             if (!modal.open) modal.showModal();
             document.documentElement.classList.add('auth-dialog-open');
             modal.querySelector(`[data-auth-view="${name}"] input:not([type="hidden"])`)?.focus();
+            modal.dispatchEvent(new CustomEvent('couponhub:auth-open', { detail: { view: name } }));
         };
         document.addEventListener('click', event => {
             const link = event.target.closest('[data-auth-open], a[href]');

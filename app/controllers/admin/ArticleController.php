@@ -13,6 +13,7 @@ use App\Core\Session;
 use App\Repositories\ArticleRepository;
 use Throwable;
 
+// Chỉ admin được tạo, sửa và thay đổi trạng thái xuất bản bài viết.
 final class ArticleController extends Controller
 {
     private ArticleRepository $articles;
@@ -43,7 +44,7 @@ final class ArticleController extends Controller
     private function persist(Request $request, ?int $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Token không hợp lệ');
             return;
         }
@@ -52,7 +53,8 @@ final class ArticleController extends Controller
             Session::flash('success', 'Đã lưu bài viết.');
             Response::redirect(url('/admin/articles'));
         } catch (Throwable $e) {
-            Session::flash('error', $e->getMessage());
+            if ($e instanceof \mysqli_sql_exception) error_log('CouponHub article save failed: '.get_class($e));
+            Session::flash('error', $e instanceof \mysqli_sql_exception ? 'Chưa thể lưu bài viết. Vui lòng thử lại.' : $e->getMessage());
             Response::redirect($id === null ? url('/admin/articles/create') : url('/admin/articles/' . $id . '/edit'));
         }
     }

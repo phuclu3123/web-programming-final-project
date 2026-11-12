@@ -13,6 +13,7 @@ use App\Core\Session;
 use App\Repositories\CatalogRepository;
 use mysqli_sql_exception;
 
+// Giữ điểm vào duyệt coupon cũ, dùng chung quyền và dữ liệu với khu quản trị.
 final class ReviewController extends Controller
 {
     public function index(Request $request): void
@@ -38,7 +39,7 @@ final class ReviewController extends Controller
         $status = $request->query('status', 'PENDING');
         if (!in_array($status, ['PENDING', 'APPROVED', 'REJECTED'], true)) throw new HttpError(422, 'Trạng thái không hợp lệ.');
         if ($method === 'POST') {
-            Session::checkCsrf($request->post('csrf'));
+            Session::checkCsrf($request->csrfToken());
             $selectedId = positiveId($request->post('coupon_id'));
             $action = $request->post('action', 'approve');
             try {

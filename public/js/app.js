@@ -1,3 +1,4 @@
+// Bổ sung tương tác cho layout module; form và liên kết vẫn do server xử lý.
 (function ($) {
     'use strict';
 

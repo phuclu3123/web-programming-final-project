@@ -1,4 +1,4 @@
-<div class="discovery-page">
+<?php /* Theo dõi coupon actor đã gửi, bao gồm trạng thái kiểm duyệt được phép xem. */ ?><div class="discovery-page">
     <div class="discovery-intro">
         <div><span class="eyebrow">CÙNG CỘNG ĐỒNG TIẾT KIỆM</span>
             <h1>Những mã bạn đã chia sẻ.</h1>

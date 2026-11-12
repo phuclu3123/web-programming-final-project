@@ -15,6 +15,7 @@ use App\Repositories\CampaignRepository;
 use App\Services\AdminService;
 use Throwable;
 
+// Quản trị trạng thái tài khoản bằng actor đã xác thực và kiểm tra tại repository.
 final class UserController extends Controller
 {
     private AdminRepository $repo;
@@ -36,7 +37,7 @@ final class UserController extends Controller
     public function status(Request $request, string $id): void
     {
         Auth::requireRole(['ADMIN']);
-        if (!Session::verifyCsrf((string)$request->input('_token', ''))) {
+        if (!Session::verifyCsrf($request->csrfToken())) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');
             return;
         }

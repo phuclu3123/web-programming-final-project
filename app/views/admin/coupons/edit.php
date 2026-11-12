@@ -1,4 +1,5 @@
 <?php
+// Hiển thị dữ liệu coupon và lỗi validation; shop sở hữu không được chuyển qua form.
 use App\Core\Session;
 $value = static fn(string $field): string => (string)($old[$field] ?? $coupon[$field] ?? '');
 $invalid = static fn(string $field): string => isset($errors[$field]) ? ' is-invalid' : '';

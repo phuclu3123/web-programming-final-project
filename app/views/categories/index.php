@@ -1,4 +1,5 @@
 <?php
+// Trình bày danh mục và số coupon công khai từ controller.
 $total = array_sum(array_column($categories,'coupon_count'));
 $previewCategory = $categories[0] ?? null;
 foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategory) $previewCategory=$candidate;
@@ -6,8 +7,8 @@ foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategor
 <div class="discovery-page">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Danh mục</span></div>
     <header class="category-directory-title">
-        <div><span class="eyebrow">DANH MỤC CUỘC SỐNG</span>
-            <h1>Có gì<br><em>trong ngày bạn?</em></h1>
+        <div>
+            <h1>Ưu đãi theo nhu cầu.</h1>
         </div>
         <p><?= count($categories) ?> nhu cầu, <?= (int)$total ?> ưu đãi đang hoạt động. Từ bữa trưa quen thuộc đến một
             chuyến đi bất chợt. Bắt đầu bằng điều bạn đang tìm.</p>
@@ -21,7 +22,6 @@ foreach ($categories as $candidate) if ((int)$candidate['id']===$selectedCategor
             <a class="category-directory-link" href="<?= e(url('/coupons') . '?category_id=' . (int)$category['id']) ?>"
                 data-category-visual="<?= e(editorialLargePhoto($category['slug'])) ?>"
                 data-category-name="<?= e($category['name']) ?>" data-category-caption="<?= e($categoryHeadline) ?>">
-                <small><?= str_pad((string)($categoryIndex+1),2,'0',STR_PAD_LEFT) ?></small>
                 <div>
                     <h2><?= e($category['name']) ?></h2>
                     <p><?= e($categoryDescription) ?></p>

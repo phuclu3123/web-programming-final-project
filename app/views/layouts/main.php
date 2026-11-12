@@ -1,4 +1,5 @@
 <?php
+// Ghép nội dung với header/footer dùng chung và asset theo route.
 
 use App\Core\Auth;
 use App\Core\Session;
@@ -9,6 +10,8 @@ $warning = Session::flash('warning');
 $info = Session::flash('info');
 $currentUser = $currentUser ?? Auth::user();
 $currentPath = (new \App\Core\Request())->path();
+$workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPath,['/account','/notifications'],true)) && ($currentUser['role'] ?? '') === 'ADMIN' ? 'admin'
+    : ((($currentPath === '/merchant' || str_starts_with($currentPath, '/merchant/')) && $currentPath !== '/merchant/apply' && ($currentUser['role'] ?? '') === 'MERCHANT') ? 'merchant' : null);
 ?>
 <!doctype html>
 <html lang="vi">
@@ -23,37 +26,55 @@ $currentPath = (new \App\Core\Request())->path();
     <link rel="stylesheet" href="<?= e(url('/assets/vendor/fontawesome/css/all.min.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('/css/style.css')) ?>">
     <link rel="stylesheet" href="<?= e(url('/assets/css/design-system.css')) ?>">
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'discovery.css')): ?>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/discovery.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/discovery.css') ?>">
+    <?php endif; ?>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/member.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/member.css') ?>">
     <script src="<?= e(url('/assets/js/member.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/member.js') ?>"
         defer></script>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'discovery.js')): ?>
     <script
         src="<?= e(url('/assets/js/discovery.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/discovery.js') ?>"
         defer></script>
+    <?php endif; ?>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'editorial.css')): ?>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/editorial.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/editorial.css') ?>">
+    <?php endif; ?>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'editorial.js')): ?>
     <script
         src="<?= e(url('/assets/js/editorial.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/editorial.js') ?>"
         defer></script>
+    <?php endif; ?>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'campaign-clock.js')): ?>
     <script
         src="<?= e(url('/assets/js/campaign-clock.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/campaign-clock.js') ?>"
         defer></script>
+    <?php endif; ?>
+    <script src="<?= e(url('/assets/js/campaign-gallery.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/campaign-gallery.js') ?>" defer></script>
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/product.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/product.css') ?>">
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/release.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/release.css') ?>">
     <link rel="stylesheet"
         href="<?= e(url('/assets/css/integration.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/integration.css') ?>">
-    <link rel="stylesheet" href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/floating-actions.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/floating-actions.css') ?>">
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'category-navigation.css')): ?>
+    <link rel="stylesheet"
+        href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
+    <?php endif; ?>
+  <link rel="stylesheet" href="<?= e(url('/assets/css/refinement.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/refinement.css') ?>">
 </head>
 
-<body class="unified-page">
+<body class="unified-page<?= $workspaceArea ? ' workspace-page' : '' ?>">
     <a class="skip-link" href="#main">Đến nội dung chính</a>
-    <?php require __DIR__ . '/../partials/public-header.php'; ?>
+    <?php require __DIR__ . ($workspaceArea ? '/../partials/workspace-header.php' : '/../partials/public-header.php'); ?>
     <main id="main" class="member-main py-4">
         <div class="container-wide">
+            <?php if ($workspaceArea): ?><div class="workspace-layout"><?php require __DIR__.'/../partials/workspace-nav.php'; ?><div class="workspace-content"><?php endif; ?>
             <?php if (
                 $currentUser && in_array($currentUser['role'], ['USER', 'MERCHANT'], true)
                 && in_array($currentPath, ['/account', '/saved-coupons', '/my-coupons', '/coupons/create', '/merchant/apply'], true)
@@ -65,19 +86,29 @@ $currentPath = (new \App\Core\Request())->path();
                         data-timeout="<?= (int)$timeout ?>" role="alert"><?= e($message) ?><button type="button"
                             class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button></div><?php endif;
                                                                                                 endforeach; ?><?= $content ?>
+            <?php if ($workspaceArea): ?></div></div><?php endif; ?>
         </div>
     </main>
-    <?php require __DIR__ . '/../partials/public-footer.php'; ?>
-    <?php require __DIR__ . '/../partials/floating-support.php'; ?>
+    <?php if (!$workspaceArea): require __DIR__ . '/../partials/public-footer.php'; require __DIR__ . '/../partials/floating-support.php'; endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= e(url('/assets/js/coupon-events.js')) ?>"></script>
     <script src="<?= e(asset('/js/app.js')) ?>"></script>
-    <script src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>"></script>
-    <link rel="stylesheet" href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
-    <script src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>"></script><?php foreach (($pageScripts ?? []) as $pageScript): ?><script
-            src="<?= e(asset((string)$pageScript)) ?>"></script><?php endforeach; ?>
+    <script
+        src="<?= e(url('/assets/js/floating-support.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/floating-support.js') ?>">
+    </script>
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'category-picker.js')): ?>
+    <script
+        src="<?= e(url('/assets/js/category-picker.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/category-picker.js') ?>">
+    </script>
+    <?php endif; ?>
+    <?php foreach (($pageScripts ?? []) as $pageScript): ?>
+    <script src="<?= e(asset((string)$pageScript)) ?>"></script>
+    <?php endforeach; ?>
+    <?php require __DIR__ . '/../partials/cookie-consent.php'; ?>
     <?php if (!$currentUser) require __DIR__ . '/../auth/auth-modal.php'; ?>
+    <?php if ($workspaceArea): ?><script src="<?= e(url('/assets/js/workspace.js')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/js/workspace.js') ?>" defer></script><?php endif; ?>
+<script src="<?= e(url('/assets/js/turnstile.js')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/js/turnstile.js') ?>" defer></script>
 </body>
 
 </html>

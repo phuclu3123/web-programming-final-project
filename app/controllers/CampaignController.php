@@ -16,6 +16,7 @@ use App\Repositories\MerchantRepository;
 use App\Services\CampaignService;
 use Throwable;
 
+// Tách tra cứu chiến dịch công khai khỏi thao tác của merchant có quyền quản lý.
 final class CampaignController extends Controller
 {
     private CampaignRepository $campaigns;
@@ -66,15 +67,15 @@ final class CampaignController extends Controller
         }
 
         $platform = positiveId($request->query('platform', '0'), true);
+        $allCoupons = $this->campaigns->publicCoupons((int)$campaign['id']);
+        $filteredCoupons = $categoryId || $platform || $usageChannel !== 'ALL'
+            ? $this->campaigns->publicCoupons((int)$campaign['id'], $categoryId, $usageChannel, $platform)
+            : $allCoupons;
         $this->view('campaigns/show', [
             'pageTitle' => (string) $campaign['name'],
             'campaign' => $campaign,
-            'coupons' => $this->campaigns->publicCoupons(
-                (int) $campaign['id'],
-                $categoryId,
-                $usageChannel,
-                $platform
-            ),
+            'coupons' => $filteredCoupons,
+            'campaignOverview' => campaignOverview($allCoupons),
             'categories' => $this->campaigns->publicCategories(),
             'selectedCategory' => $categoryId,
             'selectedChannel' => $usageChannel,
@@ -93,7 +94,8 @@ final class CampaignController extends Controller
         $usageChannel = $request->query('usage_channel', 'ALL');
         if (!in_array($usageChannel, ['ALL', 'ONLINE', 'OFFLINE', 'BOTH'], true)) $usageChannel = 'ALL';
         $platform = positiveId($request->query('platform', '0'), true);
-        $listing = $this->campaigns->publicFilteredListing($phase, $categoryId, $usageChannel, positiveId($request->query('page', '1')), 9, $platform);
+        // Keep a small campaign collection together; retain bounded pagination for growth.
+        $listing = $this->campaigns->publicFilteredListing($phase, $categoryId, $usageChannel, positiveId($request->query('page', '1')), 24, $platform);
         $previewId = positiveId($request->query('preview', '0'), true);
         $campaignPreview = $listing['items'][0] ?? null;
         if ($previewId > 0) {
@@ -108,6 +110,9 @@ final class CampaignController extends Controller
         }
         $this->view('campaigns/index', [
             'pageTitle' => 'Chiến dịch ưu đãi',
+            'partnerCampaigns' => !$categoryId && !$platform && $usageChannel==='ALL'
+                ? (new \App\Repositories\ExternalCampaignRepository(Database::connection()))->published(positiveId($request->query('partner_page','1')),$phase)
+                : ['items'=>[],'total'=>0,'page'=>1,'pages'=>1],
             'phase' => $phase,
             'listing' => $listing,
             'campaignPreview' => $campaignPreview,
@@ -361,7 +366,7 @@ final class CampaignController extends Controller
     {
         if (
             !Session::verifyCsrf(
-                (string) $request->input('_token', '')
+                $request->csrfToken()
             )
         ) {
             $this->renderError(419, 'Phiên làm việc đã hết hạn.');

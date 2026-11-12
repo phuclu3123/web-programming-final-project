@@ -2,7 +2,7 @@
 // Prepared by the controller's public-header composer; no DB access in templates.
 $unreadCount = count(array_filter($notificationItems, static fn($item) => $item['unread']));
 ?>
-<details class="header-notification-wrapper" data-account-dropdown>
+<details class="header-notification-wrapper" data-account-dropdown <?= $currentUser?'data-notifications-endpoint="'.e(url('/api/notifications')).'"':'' ?>>
     <summary class="header-search header-notification"
         aria-label="Thông báo<?= $unreadCount ? ' · '.$unreadCount.' chưa đọc' : '' ?>" title="Thông báo">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
@@ -13,14 +13,14 @@ $unreadCount = count(array_filter($notificationItems, static fn($item) => $item[
     </summary>
     <div class="notification-dropdown">
         <div class="notif-header"><strong>Thông báo</strong>
-            <?php if ($unreadCount): ?><form method="post" action="<?= e(url('/notifications/read')) ?>"
-                data-notifications-read><input type="hidden" name="csrf"
+            <?php if ($currentUser): ?><form method="post" action="<?= e(url('/notifications/read')) ?>"
+                data-notifications-read <?= $unreadCount?'':'hidden' ?>><input type="hidden" name="csrf"
                     value="<?= e(\App\Core\Session::token()) ?>"><button type="submit" class="mark-as-read">Đánh dấu đã
                     đọc</button></form><?php endif; ?>
         </div>
         <div class="notif-body">
             <?php foreach (array_slice($notificationItems,0,5) as $item): ?>
-            <a href="<?= e(url($item['path'])) ?>" class="notif-item <?= $item['unread'] ? 'unread' : '' ?>">
+            <a href="<?= e(url($item['path'])) ?>" data-notification-key="<?= e($item['event_key']) ?>" class="notif-item <?= $item['unread'] ? 'unread' : '' ?>">
                 <p class="notif-title"><?= e($item['title']) ?></p><time
                     class="notif-time"><?= e(format_db_datetime($item['occurred_at'])) ?></time>
             </a>

@@ -1,4 +1,4 @@
-<div class="editorial-article-page">
+<?php /* Danh sách bài viết chỉ nhận nội dung đã xuất bản từ repository. */ ?><div class="editorial-article-page">
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Bài viết</span></div>
     <?php if ($articles): $featuredArticle = $articles[0];
         [$featuredPhoto, $featuredTopic] = articleTopic($featuredArticle['title']); ?>

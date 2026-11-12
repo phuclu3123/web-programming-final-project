@@ -1,4 +1,5 @@
 <?php
+// Dùng một bố cục cho nội dung giới thiệu, liên hệ và chính sách đã chọn.
 $pages = [
     'about' => [
         'lead' => 'CouponHub giúp cộng đồng khám phá, chia sẻ và kiểm chứng các ưu đãi từ nhiều Merchant.',

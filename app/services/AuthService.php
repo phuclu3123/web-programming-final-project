@@ -12,7 +12,7 @@ final class AuthService
 {
     public function __construct(private readonly UserRepositoryInterface $users) {}
 
-    // ---- PHẦN ĐĂNG NHẬP (ĐÃ CÓ) ----
+    // PHẦN ĐĂNG NHẬP (ĐÃ CÓ)
     /** Controller truyền dữ liệu vào; service không xuất HTML hay JSON. */
     public function login(string $account, string $password, string $returnUrl = ''): array
     {
@@ -41,7 +41,7 @@ final class AuthService
             ];
         }
 
-        // ---- SESSION/REDIRECT: ghi phiên tập trung và chọn trang theo quyền thật ----
+        // SESSION/REDIRECT: ghi phiên tập trung và chọn trang theo quyền thật
         if (!in_array($user['role'], ['USER', 'MERCHANT', 'ADMIN'], true)) {
             return ['success' => false, 'message' => 'Vai trò tài khoản không hợp lệ.'];
         }
@@ -53,7 +53,7 @@ final class AuthService
             'redirect' => Auth::safeReturn($returnUrl, $user['role']),
         ];
     }
-    // ---- PHẦN ĐĂNG KÝ (BỔ SUNG): kiểm tra ở server trước khi INSERT ----
+    // PHẦN ĐĂNG KÝ (BỔ SUNG): kiểm tra ở server trước khi INSERT
     public function register(array $input): array
     {
         // Chỉ lấy các trường cho phép. role/status gửi từ client sẽ bị bỏ qua.

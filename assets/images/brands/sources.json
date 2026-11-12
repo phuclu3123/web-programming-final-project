@@ -1,17 +1,205 @@
 {
-  "reviewed_on": "2026-10-16",
+  "reviewed_on": "2026-11-05",
   "usage": "Brand-owned photography, referenced for the corresponding brand in this local CouponHub project. Source access is not a blanket redistribution or advertising licence. Retain attribution and review brand permissions before a commercial handoff.",
-  "allowed_domains": ["grab.com", "coolmate.me", "be.com.vn"],
+  "allowed_domains": [
+    "be.com.vn",
+    "coolmate.me",
+    "grab.com",
+    "hasaki.vn",
+    "highlandscoffee.com.vn",
+    "lazada.vn",
+    "media.hcdn.vn",
+    "nike.com",
+    "phuclong.com.vn",
+    "sea.com",
+    "static.nike.com"
+  ],
   "assets": [
-    {"key":"grab-bike","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabBike.jpg","context":"Mobility press photograph"},
-    {"key":"grab-car","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabCar.JPG","context":"Mobility press photograph"},
-    {"key":"grab-food","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood.jpg","context":"Food delivery press photograph"},
-    {"key":"grab-delivery","brand":"Grab","page":"https://www.grab.com/vn/pressdownload/","image_url":"https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood-delivery-partners.jpg","context":"Delivery partner press photograph"},
-    {"key":"coolmate-men","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_FW3459_2_2_copy.jpg?aio=w-1069","context":"Menswear collection photograph"},
-    {"key":"coolmate-women","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/FW3671_1_copy.jpg?aio=w-1069","context":"Womenswear collection photograph"},
-    {"key":"coolmate-autumn","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_thu_dong-desk_1.jpg","context":"Autumn collection image"},
-    {"key":"coolmate-sport","brand":"Coolmate","page":"https://www.coolmate.me/","image_url":"https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_do_the_thao-desk.jpg","context":"Sportswear collection image"},
-    {"key":"be-food","brand":"be","page":"https://be.com.vn/","image_url":"https://imgmainsite.be.com.vn/2022/12/1684217f-weborder_1920x990-2.jpg","context":"Official food service banner; no offer claim imported"},
-    {"key":"be-ride","brand":"be","page":"https://be.com.vn/","image_url":"https://imgmainsite.be.com.vn/2022/09/da356ba9-1920x990-be-copy-1.png","context":"Official mobility service banner; no offer claim imported"}
+    {
+      "key": "grab-bike",
+      "brand": "Grab",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "image_url": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabBike.jpg",
+      "context": "Mobility press photograph"
+    },
+    {
+      "key": "grab-car",
+      "brand": "Grab",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "image_url": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/mobility/GrabCar.JPG",
+      "context": "Mobility press photograph"
+    },
+    {
+      "key": "grab-food",
+      "brand": "Grab",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "image_url": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood.jpg",
+      "context": "Food delivery press photograph"
+    },
+    {
+      "key": "grab-delivery",
+      "brand": "Grab",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "image_url": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood-delivery-partners.jpg",
+      "context": "Delivery partner press photograph"
+    },
+    {
+      "key": "coolmate-men",
+      "brand": "Coolmate",
+      "page": "https://www.coolmate.me/",
+      "image_url": "https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_FW3459_2_2_copy.jpg?aio=w-1069",
+      "context": "Menswear collection photograph"
+    },
+    {
+      "key": "coolmate-women",
+      "brand": "Coolmate",
+      "page": "https://www.coolmate.me/",
+      "image_url": "https://n7media.coolmate.me/uploads/2026/10/16/FW3671_1_copy.jpg?aio=w-1069",
+      "context": "Womenswear collection photograph"
+    },
+    {
+      "key": "coolmate-autumn",
+      "brand": "Coolmate",
+      "page": "https://www.coolmate.me/",
+      "image_url": "https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_thu_dong-desk_1.jpg",
+      "context": "Autumn collection image"
+    },
+    {
+      "key": "coolmate-sport",
+      "brand": "Coolmate",
+      "page": "https://www.coolmate.me/",
+      "image_url": "https://n7media.coolmate.me/uploads/2026/10/16/NEW_161026_do_the_thao-desk.jpg",
+      "context": "Sportswear collection image"
+    },
+    {
+      "key": "be-food",
+      "brand": "be",
+      "page": "https://be.com.vn/",
+      "image_url": "https://imgmainsite.be.com.vn/2022/12/1684217f-weborder_1920x990-2.jpg",
+      "context": "Official food service banner; no offer claim imported"
+    },
+    {
+      "key": "be-ride",
+      "brand": "be",
+      "page": "https://be.com.vn/",
+      "image_url": "https://imgmainsite.be.com.vn/2022/09/da356ba9-1920x990-be-copy-1.png",
+      "context": "Official mobility service banner; no offer claim imported"
+    },
+    {
+      "key": "lazada-campaign",
+      "brand": "lazada",
+      "page": "https://www.lazada.vn/blog/thang-11-sale-lon-nhat-nam-lazada/",
+      "image_url": "https://lazada-blog-upload.oss-ap-southeast-1.aliyuncs.com/prod-vn/2025/11/Main-Mega-Lazzie_HP_PC_1976x688.jpg?OSSAccessKeyId=LTAI5tSRtDGoirEbT2eG2GRJ&Expires=2109202089&Signature=W2D1YpERj5sRR4PenjmO2yTzDu8%3D",
+      "size": [
+        1976,
+        688
+      ],
+      "bytes": 139758,
+      "sha256": "54619615a06613fac012dce79585ac8feb8beea44378998c7af9abab75517de7",
+      "context": "Archived 11.11/2025 promotional artwork. Always label as archival; not evidence of an active promotion."
+    },
+    {
+      "key": "coolmate-collection",
+      "brand": "coolmate",
+      "page": "https://www.coolmate.me/",
+      "image_url": "https://mcdn.coolmate.me/uploads/2026/10/27/hero-home-desk.jpg?aio=w-2048",
+      "size": [
+        2048,
+        841
+      ],
+      "bytes": 280462,
+      "sha256": "d02821bed20d5e2195a42dfde5579ac6a62ec7ea446cfaa1563ce259457f30b7",
+      "context": "Official brand imagery for corresponding brand, downloaded 2026-11-05; no promotion claims imported."
+    },
+    {
+      "key": "grab-food-wide",
+      "brand": "grab",
+      "page": "https://www.grab.com/vn/pressdownload/",
+      "image_url": "https://assets.grab.com/wp-content/uploads/media/ir/grab-in-action/deliveries/GrabFood.jpg",
+      "size": [
+        1920,
+        1280
+      ],
+      "bytes": 172842,
+      "sha256": "1b1be6ecfe6afc7b0cccef49e51b280240ac1fe0c2c9e0d8dff91ed90dcadaf1",
+      "context": "Official brand imagery for corresponding brand, downloaded 2026-11-05; no promotion claims imported."
+    },
+    {
+      "key": "shopee-official",
+      "brand": "Shopee",
+      "page": "https://www.sea.com/products/shopee",
+      "image_url": "https://www.sea.com/_next/static/media/bg-shopee.1789debb.jpg",
+      "size": [
+        1920,
+        720
+      ],
+      "sha256": "cf7f67576b676841ed3053c543b23f903f7832be9071132104a075ebbd52d3d0",
+      "context": "Official brand imagery for corresponding brand, downloaded 2026-11-05; no promotion claims imported."
+    },
+    {
+      "key": "nike-training",
+      "brand": "nike",
+      "image_url": "https://static.nike.com/a/images/f_auto,cs_srgb/w_1920,c_limit/eb02e4ba-5382-47ce-aeb7-c40d1fb96bad/nike-just-do-it.jpg",
+      "page": "https://www.nike.com/vn/",
+      "size": [
+        1920,
+        933
+      ],
+      "sha256": "e8719012ce210f7b7f8948e38de544bd06c196e2681db4afc2a37d78be5b0895",
+      "bytes": 180692,
+      "context": "Official brand artwork/identity for this brand in the local educational showcase; no offer claim imported."
+    },
+    {
+      "key": "highlands-phin",
+      "brand": "highlands",
+      "image_url": "https://www.highlandscoffee.com.vn/vnt_upload/weblink/HLD_MOT_CHAT_PHIN_DC_BANNER_ADAPTOPN_1920x926.jpg",
+      "page": "https://www.highlandscoffee.com.vn/",
+      "size": [
+        1921,
+        927
+      ],
+      "sha256": "5fe8cd8b0bd1b8316e8d4e6ec1a9d98bed70776523df1b0f6be67797b23a466d",
+      "bytes": 446046,
+      "context": "Official brand artwork/identity for this brand in the local educational showcase; no offer claim imported."
+    },
+    {
+      "key": "hasaki-skincare",
+      "brand": "Hasaki",
+      "page": "https://hasaki.vn/campaign/khai-truong-chi-nhanh-23",
+      "image_url": "https://media.hcdn.vn/catalog/product/f/a/facebook-dynamic-nuoc-hoa-hong-khong-mui-klairs-danh-cho-da-nhay-cam-180ml-1779419101_img_300x300_b798dd_fit_center.jpg",
+      "size": [
+        300,
+        300
+      ],
+      "sha256": "deca6083b2752488929ba32b1b2ec5f000e1c80c2fb1eaef2df315239da1ad72",
+      "bytes": 12390,
+      "context": "Official brand artwork/identity for this brand in the local educational showcase; no offer claim imported."
+    },
+    {
+      "key": "hasaki-cleanser",
+      "brand": "Hasaki",
+      "page": "https://hasaki.vn/campaign/khai-truong-chi-nhanh-23",
+      "image_url": "https://media.hcdn.vn/catalog/product/f/a/facebook-dynamic-nuoc-tay-trang-bioderma-danh-cho-da-nhay-cam-500ml-1769137296_img_300x300_b798dd_fit_center.jpg",
+      "size": [
+        300,
+        300
+      ],
+      "sha256": "34a018dbbd2f0038f40181c1d92ede7f35480134a0115ade6095e25b125af8aa",
+      "bytes": 10478,
+      "context": "Official brand artwork/identity for this brand in the local educational showcase; no offer claim imported."
+    },
+    {
+      "key": "phuc-long-identity",
+      "brand": "Phúc Long",
+      "page": "https://phuclong.com.vn/",
+      "image_url": "https://phuclong.com.vn/static/icons/apple-icon-180x180.png",
+      "size": [
+        180,
+        180
+      ],
+      "sha256": "e8e1e724fc3069937ffec81817a9c42f8dc9854e78f5dcbbbf003b9d984946a1",
+      "bytes": 11170,
+      "context": "Official brand artwork/identity for this brand in the local educational showcase; no offer claim imported."
+    }
   ]
 }

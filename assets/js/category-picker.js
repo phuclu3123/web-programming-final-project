@@ -1,4 +1,4 @@
-/* Phase 9B — render category picker options from the existing source controls.
+/* Render category picker options from the existing source controls.
    No cloned form inputs, no duplicated GET parameters, no new navigation paths. */
 (() => {
   'use strict';
@@ -154,9 +154,9 @@
     (search || options.querySelector('[aria-pressed="true"]') || options.querySelector('button'))?.focus();
   }
 
-  // On compact screens, fixed contact actions can temporarily cover the
-  // category trigger when users scroll it near the bottom-right corner.
-  // Hide only while the actual rectangles overlap; restore when scrolling away.
+  // On compact screens, floating contact actions must not cover primary controls.
+  // Reuse the category collision handler for the Community search submit button,
+  // so scroll/resize still schedule only one geometry check per animation frame.
   let collisionFrame = 0;
   function syncFloatingCollision() {
     collisionFrame = 0;
@@ -167,7 +167,7 @@
     const floatingRect = actions.getBoundingClientRect();
     const overlaps = window.matchMedia('(max-width: 991.98px)').matches
       && !floating.classList.contains('contact-open')
-      && Array.from(document.querySelectorAll('[data-category-open]')).some(trigger => {
+      && Array.from(document.querySelectorAll('[data-category-open], .community-catalog .community-search-submit')).some(trigger => {
         if (getComputedStyle(trigger).display === 'none') return false;
         const buttonRect = trigger.getBoundingClientRect();
         return buttonRect.left < floatingRect.right + 4
@@ -221,14 +221,22 @@
   else initializeAll();
   // Home AJAX replaces #discovery-results; initialize the newly rendered rail.
   window.addEventListener('couponhub:catalog-updated', initializeAll);
-  window.addEventListener('resize', () => {
+  // Resize can fire dozens of times per frame. Measure category widths once
+  // per animation frame rather than forcing layout for every resize event.
+  let resizeFrame = 0;
+  function syncCategoryResize() {
+    resizeFrame = 0;
     document.querySelectorAll(selector).forEach(root => {
       const dialog = root.querySelector('dialog');
       syncCompact(root);
       if (root.dataset.categoryOverflow === 'false' && dialog?.open) dialog.close();
     });
     scheduleFloatingCollision();
-  });
+  }
+  function scheduleCategoryResize() {
+    if (!resizeFrame) resizeFrame = window.requestAnimationFrame(syncCategoryResize);
+  }
+  window.addEventListener('resize', scheduleCategoryResize, { passive: true });
   // Community radio selection changes in-place; Home and Categories use links.
   document.addEventListener('change', event => {
     const root = event.target.closest?.(selector);

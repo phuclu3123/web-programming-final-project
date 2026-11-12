@@ -1,0 +1,17 @@
+/* Keep the API reference usable inside the existing operational workspace. */
+#swagger-ui { min-width:0; }
+#swagger-ui .wrapper { padding-inline:0; }
+#swagger-ui .info { margin-block:24px; }
+#swagger-ui .info .title { font-size:28px; overflow-wrap:anywhere; }
+#swagger-ui .opblock-summary { flex-wrap:wrap; gap:6px; }
+#swagger-ui .opblock-summary-path { min-width:0; overflow-wrap:anywhere; }
+#swagger-ui .opblock-summary-description { min-width:0; overflow-wrap:anywhere; }
+#swagger-ui table { display:block; max-width:100%; overflow-x:auto; }
+#swagger-ui .scheme-container { box-shadow:none; padding:16px; border:1px solid #d7dee7; border-radius:16px; }
+#swagger-ui select { max-width:100%; }
+@media(max-width:600px) {
+ #swagger-ui .info .title { font-size:22px; }
+ #swagger-ui .opblock-summary-path { max-width:calc(100% - 90px); font-size:12px; }
+ #swagger-ui .opblock-summary-description { flex-basis:100%; }
+ #swagger-ui .opblock-tag { font-size:18px; }
+}

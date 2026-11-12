@@ -27,7 +27,7 @@ Token/hash, request key và ID provider là **mã kỹ thuật**, dùng `VARBINA
 - Không commit dump phpMyAdmin chứa tài khoản/dữ liệu cá nhân, mật khẩu thật, token hoặc `DEFINER=root@localhost`.
 - `database/demo.sql` là bộ dữ liệu thử được yêu cầu riêng: chỉ danh tính giả từ fixture, mật khẩu hash, coupon ghi rõ DEMO. Giữ tách khỏi schema; không xuất database đang dùng để làm demo. Import sau schema vào database chưa có dữ liệu.
 - Không hardcode tên database/máy cá nhân bằng `USE ...` trong bản cài. Người import chọn database đích trước.
-- Không thêm file theo tên người thực hiện như `quang-*.sql`, nhiều bản `_v2`, `_final`, `_fix` có nội dung chồng nhau.
+- Không thêm file theo tên người thực hiện như `quang-*.sql`, nhiều bản `_v2`, `_final`, `_fix` có nội dung chồng nhau. Bản thiết kế 20 bảng chỉ là **core**; baseline mới có 21 bảng nhờ giữ `external_offers` và hợp nhất bình luận coupon/bài viết trong `comments`.
 - Khi cần thay đổi database đã có dữ liệu, gửi script cập nhật có phạm vi rõ ràng cùng thay đổi source. Không dùng schema cài mới để cập nhật tại chỗ.
 
 ## 3. Dùng chung cấu trúc bảng

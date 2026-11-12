@@ -41,7 +41,7 @@ final class CatalogRepository implements CatalogRepositoryInterface
 
     public function create(int $userId, array $input): int
     {
-        // ---- UTC CHUNG VỚI QUANG: ngày người dùng chọn là giờ Việt Nam ----
+        // UTC CHUNG VỚI QUANG: ngày người dùng chọn là giờ Việt Nam
         $utc = static fn (string $date): string => (new DateTimeImmutable($date, new DateTimeZone('Asia/Ho_Chi_Minh')))
             ->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s');
         $sets = $this->db->call('ch_create_coupon', [

@@ -10,3 +10,32 @@
 /storage/sessions/*
 /public/uploads/**/*
 !/public/uploads/**/.gitkeep
+
+# Local caches, editor noise and temporary exports are not application source.
+**/__pycache__/
+*.py[cod]
+/.vscode/
+/temp/
+/tmp/
+/drive-download-*/
+/drive-download-*.zip
+
+# Keep report source and final PDFs; omit rebuildable LaTeX intermediates.
+/Latex/_build/
+/Latex/tmp/
+/Latex/**/*.aux
+/Latex/**/*.log
+/Latex/**/*.out
+/Latex/**/*.toc
+/Latex/**/*.lof
+/Latex/**/*.lot
+/Latex/**/*.fls
+/Latex/**/*.fdb_latexmk
+/Latex/**/*.synctex.gz
+
+# Development tools are maintained in the separate sibling DevTools bundle.
+/tests/
+/scripts/*.py
+/scripts/*.sh
+/scripts/*.ps1
+/scripts/*.cjs

@@ -47,7 +47,7 @@ final class Request
         return strtolower((string) ($this->server['HTTP_X_REQUESTED_WITH'] ?? '')) === 'couponhub';
     }
 
-    // ---- ROUTER QUANG: cùng một request cho route, form và JSON ----
+    // ROUTER QUANG: cùng một request cho route, form và JSON
     public function path(): string
     {
         $path = parse_url($this->server['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
@@ -68,6 +68,13 @@ final class Request
         return array_merge($this->query, $this->json);
     }
     public function input(string $name, mixed $default = null): mixed { return $this->all()[$name] ?? $default; }
+    /** One token contract for browser forms and API clients. */
+    public function csrfToken(): string
+    {
+        $token=$this->input('csrf', $this->input('_token', ''));
+        if (!is_string($token)) throw new HttpError(403, 'Token không hợp lệ.');
+        return $token;
+    }
     public function queryString(): string { return http_build_query($this->query, '', '&', PHP_QUERY_RFC3986); }
     public function isJson(): bool { return str_contains(strtolower($this->server['CONTENT_TYPE'] ?? ''), 'application/json'); }
     public function expectsJson(): bool
@@ -75,6 +82,14 @@ final class Request
         return str_contains(strtolower($this->server['HTTP_ACCEPT'] ?? ''), 'application/json')
             || in_array(strtolower($this->server['HTTP_X_REQUESTED_WITH'] ?? ''), ['xmlhttprequest', 'couponhub'], true)
             || str_starts_with($this->path(), '/api/');
+    }
+
+    /** Explicit native browser form submission; AJAX/API requests keep JSON responses. */
+    public function acceptsHtml(): bool
+    {
+        $accept=strtolower($this->server['HTTP_ACCEPT']??'');
+        return str_contains($accept,'text/html') && !str_contains($accept,'application/json')
+            && !$this->isJson() && empty($this->server['HTTP_X_REQUESTED_WITH']);
     }
 
     private function stringValue(array $source, string $name, string $default, string $label): string

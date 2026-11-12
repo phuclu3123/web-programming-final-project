@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\ValidationException;
+use App\Core\UserFacingException;
 use App\Contracts\CouponRepositoryInterface;
 use DateTimeImmutable;
 use DateTimeZone;
 use mysqli_sql_exception;
 use RuntimeException;
 
+// Dùng chung validation coupon cho cộng đồng, merchant và nhập nguồn ngoài.
 final class CouponService
 {
     private const DISCOUNT_TYPES = ['PERCENTAGE', 'FIXED_AMOUNT', 'FREE_SHIPPING', 'BUY_X_GET_Y', 'GIFT', 'CASHBACK'];
@@ -22,6 +24,7 @@ final class CouponService
     /** @param array<string,mixed> $input @return array<string,mixed> */
     public function normalizeSearch(array $input): array
     {
+        foreach ($input as $value) if ($value!==null && (!is_scalar($value) || !mb_check_encoding((string)$value,'UTF-8'))) throw new \App\Core\HttpError(422, 'Bộ lọc coupon không hợp lệ.');
         $keyword = trim((string) ($input['keyword'] ?? ''));
         if (mb_strlen($keyword) > 200) {
             $keyword = mb_substr($keyword, 0, 200);
@@ -90,10 +93,10 @@ final class CouponService
         } catch (mysqli_sql_exception $e) {
             $message = $e->getMessage();
             if (stripos($message, 'Only approved merchant owner') !== false) {
-                throw new RuntimeException('Chỉ chủ Merchant đã được duyệt mới có thể tạo Official Deal.');
+                throw new UserFacingException('Chỉ chủ Merchant đã được duyệt mới có thể tạo Official Deal.');
             }
             if (stripos($message, 'Duplicate code with overlapping validity') !== false) {
-                throw new RuntimeException('Mã coupon này bị trùng khoảng hiệu lực với coupon khác của Merchant.');
+                throw new UserFacingException('Mã coupon này bị trùng khoảng hiệu lực với coupon khác của Merchant.');
             }
             throw $e;
         }
@@ -106,6 +109,7 @@ final class CouponService
         $this->coupons->updateOwnedOfficial($actorId, $couponId, $data);
     }
 
+    // Duyệt và từ chối có cặp trạng thái riêng; lý do từ chối phải đủ để người gửi đối chiếu.
     public function moderate(int $actorId, int $couponId, string $action, ?string $note): void
     {
         $action = strtoupper(trim($action));
@@ -136,8 +140,14 @@ final class CouponService
     }
 
     /** @param array<string,mixed> $input @return array<string,mixed> */
+    // Kiểm tra loại giảm, tiền, kênh và thời gian trước khi chuyển dữ liệu xuống repository.
     public function validateSubmission(array $input): array
     {
+        foreach ($input as $value) {
+            if ($value!==null && (!is_scalar($value) || !mb_check_encoding((string)$value,'UTF-8'))) {
+                throw new ValidationException(['form'=>'Dữ liệu coupon không hợp lệ.']);
+            }
+        }
         $errors = [];
         $title = trim((string) ($input['title'] ?? ''));
         $code = trim((string) ($input['code'] ?? ''));
@@ -152,6 +162,10 @@ final class CouponService
 
         if ($title === '') $errors['title'] = 'Tên coupon là bắt buộc.';
         elseif (mb_strlen($title) > 200) $errors['title'] = 'Tên coupon không được vượt quá 200 ký tự.';
+        if (mb_strlen($code)>100 || preg_match('/[\x00-\x1f\x7f]/',$code)) $errors['code']='Mã tối đa 100 ký tự, không chứa ký tự điều khiển.';
+        if (mb_strlen($description)>20000) $errors['description']='Mô tả tối đa 20.000 ký tự.';
+        if (mb_strlen($terms)>20000) $errors['terms']='Điều kiện tối đa 20.000 ký tự.';
+        if (strlen($promotionUrl)>2048) $errors['promotion_url']='Liên kết tối đa 2.048 ký tự.';
         if ($terms === '') $errors['terms'] = 'Điều kiện sử dụng là bắt buộc.';
         if ($merchantId === null) $errors['merchant_id'] = 'Vui lòng chọn Merchant.';
         if ($categoryId === null) $errors['category_id'] = 'Vui lòng chọn danh mục.';
@@ -166,6 +180,9 @@ final class CouponService
         $discountValue = $this->nullableDecimal($discountRaw);
         $minOrder = $this->nullableDecimal($minOrderRaw) ?? 0.0;
         $maxDiscount = $this->nullableDecimal($maxDiscountRaw);
+        foreach (['discount_value'=>$discountRaw,'min_order_amount'=>$minOrderRaw,'max_discount_amount'=>$maxDiscountRaw] as $field=>$raw) {
+            if ($raw!=='' && (!is_numeric($raw) || !is_finite((float)$raw) || abs((float)$raw)>9999999999999.99)) $errors[$field]='Giá trị tiền hoặc phần trăm không hợp lệ.';
+        }
         if ($minOrderRaw !== '' && !is_numeric($minOrderRaw)) $errors['min_order_amount'] = 'Giá trị đơn hàng tối thiểu phải là số.';
         elseif ($minOrder < 0) $errors['min_order_amount'] = 'Giá trị đơn hàng tối thiểu không được âm.';
         if ($maxDiscountRaw !== '' && !is_numeric($maxDiscountRaw)) $errors['max_discount_amount'] = 'Mức giảm tối đa phải là số.';

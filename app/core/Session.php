@@ -8,11 +8,12 @@ use RuntimeException;
 
 final class Session
 {
-    // ---- SESSION DÙNG CHUNG: login/API/trang HTML dùng cùng cấu hình ----
+    // SESSION DÙNG CHUNG: login/API/trang HTML dùng cùng cấu hình
     private const IDLE_SECONDS = 1800; // 30 phút không thao tác.
     private const MAX_SECONDS = 28800; // Tối đa 8 giờ cho một phiên đăng nhập.
     private const AUTH_SCHEMA = 'quang-integration-20261016';
 
+    // Mở phiên với cookie an toàn; đường dẫn lưu có thể tách khỏi webroot bằng env.
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) return;
@@ -38,6 +39,7 @@ final class Session
         ])) throw new RuntimeException('Không thể mở session.');
     }
 
+    // Đổi session ID và gắn auth_version sau xác thực để tránh dùng lại phiên cũ.
     public static function establish(array $user): void
     {
         self::start();
@@ -49,13 +51,15 @@ final class Session
         $_SESSION['auth_schema'] = self::AUTH_SCHEMA;
         $_SESSION['authenticated_at'] = $_SESSION['last_activity'] = time();
         $ttl = min((int)config('auth.session_lifetime', self::MAX_SECONDS), max(1, (int)($user['session_ttl'] ?? config('auth.session_lifetime', self::MAX_SECONDS))));
+        if (in_array($user['role'], ['ADMIN', 'MERCHANT'], true)) $ttl = min($ttl, self::MAX_SECONDS);
         $_SESSION['expires_at'] = time() + $ttl;
         $params = session_get_cookie_params();
         unset($params['lifetime']);
         setcookie(session_name(), session_id(), ['expires' => $_SESSION['expires_at']] + $params);
-        unset($_SESSION['csrf'], $_SESSION['oauth_pending'], $_SESSION['oauth_login_pending'], $_SESSION['password_reset_flow']);
+        unset($_SESSION['csrf'], $_SESSION['oauth_pending'], $_SESSION['oauth_login_pending'], $_SESSION['google_one_tap_pending'], $_SESSION['oauth_email_flow'], $_SESSION['password_reset_flow']);
     }
 
+    // Kiểm tra cả thời gian không hoạt động và giới hạn tuyệt đối trước khi trả user ID.
     public static function userId(): int
     {
         self::start();
@@ -67,9 +71,19 @@ final class Session
             return 0;
         }
         $now = time();
+        $authenticatedAt = (int) ($_SESSION['authenticated_at'] ?? 0);
+        $expiresAt = (int) ($_SESSION['expires_at'] ?? 0);
+        $absoluteLimit = (int) config('auth.session_lifetime', self::MAX_SECONDS);
+        if (in_array($_SESSION['user_role'] ?? '', ['ADMIN', 'MERCHANT'], true)) $absoluteLimit = min($absoluteLimit, self::MAX_SECONDS);
+        // Enforce the current absolute policy even for sessions established before
+        // the policy was tightened. Never let a legacy cookie extend the deadline.
+        $effectiveExpiry = $authenticatedAt > 0 && $expiresAt > 0
+            ? min($expiresAt, $authenticatedAt + $absoluteLimit)
+            : 0;
         if (
-            $now - (int) ($_SESSION['last_activity'] ?? 0) > (int)config('auth.session_idle', self::IDLE_SECONDS)
-            || $now >= (int)($_SESSION['expires_at'] ?? ((int)($_SESSION['authenticated_at'] ?? 0) + self::MAX_SECONDS))
+            $now - (int) ($_SESSION['last_activity'] ?? 0) > (in_array($_SESSION['user_role'] ?? '', ['ADMIN', 'MERCHANT'], true)
+                ? min(self::IDLE_SECONDS, (int)config('auth.session_idle', self::IDLE_SECONDS)) : (int)config('auth.session_idle', self::IDLE_SECONDS))
+            || $now >= $effectiveExpiry
         ) {
             self::clearAuthentication();
             return 0;
@@ -80,7 +94,7 @@ final class Session
 
     public static function clearAuthentication(): void
     {
-        foreach (['user_id', 'user_role', 'user_name', 'auth_version', 'auth_schema', 'authenticated_at', 'last_activity', 'expires_at', 'csrf', 'oauth_pending', 'oauth_login_pending', 'password_reset_flow'] as $key) {
+        foreach (['user_id', 'user_role', 'user_name', 'auth_version', 'auth_schema', 'authenticated_at', 'last_activity', 'expires_at', 'csrf', 'oauth_pending', 'oauth_login_pending', 'google_one_tap_pending', 'oauth_email_flow', 'password_reset_flow'] as $key) {
             unset($_SESSION[$key]);
         }
     }

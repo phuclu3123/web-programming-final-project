@@ -1,5 +1,5 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3">Quản lý bài viết</h1><a class="btn btn-primary" href="<?= e(url('/admin/articles/create')) ?>">+ Viết
+<?php /* Danh sách quản trị gồm cả bài nháp; trang công khai có bộ lọc xuất bản riêng. */ ?><div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">Quản lý bài viết</h1><a class="btn btn-outline-primary" href="<?= e(url('/admin/article-comments')) ?>">Bình luận</a><a class="btn btn-primary" href="<?= e(url('/admin/articles/create')) ?>">+ Viết
         bài</a>
 </div>
 <div class="table-responsive">
@@ -12,7 +12,7 @@
                 <th>Cập nhật</th>
             </tr>
         </thead>
-        <tbody><?php foreach ($articles as $a): ?><tr>
+        <tbody><?php if ($articles === []): ?><tr><td colspan="4" class="text-muted py-4">Chưa có bài viết. Chọn “Viết bài” để tạo bản nháp đầu tiên.</td></tr><?php endif; ?><?php foreach ($articles as $a): ?><tr>
                     <td><?= e((string)$a['title']) ?></td>
                     <td><?= e((string)$a['status']) ?></td>
                     <td><?= e((string)$a['author_name']) ?></td>

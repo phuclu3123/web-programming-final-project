@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
+<?php /* Danh sách chiến dịch chỉ nhận các bản ghi actor được phép quản lý. */ ?><div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">Campaign của Merchant</h1>
         <p class="text-muted mb-0">Tạo chiến dịch và gắn nhiều Official Coupon của chính Merchant.</p>

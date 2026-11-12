@@ -1,4 +1,5 @@
 <?php
+// Nội dung hướng dẫn biên tập sẵn; không thay thế dữ liệu coupon hoặc bình luận trong MySQL.
 declare(strict_types=1);
 
 return [

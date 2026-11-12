@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace App\Core;
 
-/** ---- ROUTER THỐNG NHẤT: match route, guard trước constructor, trả 404/405 đúng ---- */
+/* ROUTER THỐNG NHẤT: match route, guard trước constructor, trả 404/405 đúng */
 final class Router
 {
     private array $routes = [];
@@ -15,10 +15,12 @@ final class Router
         $this->routes[] = ['method'=>strtoupper($method), 'path'=>$path, 'handler'=>$handler];
     }
     public function routes(): array { return $this->routes; }
+    // Kiểm tra quyền, CSRF, dữ liệu phẳng và Turnstile trước khi tạo controller.
     public function dispatch(Request $request): void
     {
-        Session::start();
+        RequestSecurity::headers();
         try {
+            Session::start();
             $allowed = [];
             foreach ($this->routes as $route) {
                 $params = $this->match($route['path'], $request->path());
@@ -28,13 +30,17 @@ final class Router
                 // Không mở kết nối DB trong controller trước khi biết khách có phiên.
                 $this->guard($request->path(), $request->method());
                 if ($request->method() !== 'GET') {
-                    $scheme = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';
-                    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-                    if (($origin !== '' && $origin !== $scheme . '://' . ($_SERVER['HTTP_HOST'] ?? ''))
-                        || ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? '') === 'cross-site') throw new HttpError(403, 'Nguồn yêu cầu không hợp lệ.');
-                    $input = $request->input('csrf', $request->input('_token', ''));
+                    RequestSecurity::checkWrite();
+                    $input = $request->csrfToken();
                     if (!is_string($input)) throw new HttpError(403, 'Token không hợp lệ.');
                     Session::checkCsrf($input);
+                    // All current forms/APIs have flat fields. Reject foo[]=... for
+                    // every role before an array can be cast into a different record ID.
+                    foreach ($request->all() as $value) {
+                        if (($value!==null && !is_scalar($value)) || (is_string($value) && !mb_check_encoding($value,'UTF-8'))) throw new HttpError(422, 'Dữ liệu biểu mẫu không hợp lệ.');
+                    }
+                    RequestSecurity::limitWrite();
+                    TurnstileGuard::check($request);
                 }
                 [$class, $action] = $route['handler'];
                 (new $class())->{$action}($request, ...array_values($params));
@@ -48,7 +54,7 @@ final class Router
         } catch (\Throwable $error) {
             $businessError = $error instanceof \mysqli_sql_exception && $error->getCode() === 1644;
             $status = $error instanceof HttpError ? $error->status : ($businessError ? 422 : 503);
-            if ($status === 503) error_log((string) $error);
+            if ($status === 503) error_log('CouponHub request failed: '.get_class($error).' status=503'); // No request bodies, secrets or exception arguments in logs.
             if ($status === 401 && $request->method() === 'GET' && !$request->expectsJson()) {
                 $return = parse_url(url($request->path()), PHP_URL_PATH) ?: '/';
                 if ($request->queryString() !== '') $return .= '?' . $request->queryString();
@@ -61,6 +67,7 @@ final class Router
             require dirname(__DIR__).'/views/errors/standalone.php';
         }
     }
+    // Chặn theo role tại router; quyền từng shop/bản ghi còn được kiểm tra ở tầng nghiệp vụ.
     private function guard(string $path, string $method): void
     {
         $roles = null;
@@ -68,10 +75,12 @@ final class Router
         elseif ($path === '/merchant/apply') $roles = ['USER','MERCHANT'];
         elseif ($path === '/shop.php' || $path === '/merchant' || str_starts_with($path, '/merchant/')) $roles = ['MERCHANT'];
         elseif ($path === '/coupons' && $method === 'POST') $roles = ['USER','MERCHANT'];
-        elseif (in_array($path, ['/notifications','/notifications/read','/dashboard','/account','/account/password','/my-coupons','/saved-coupons','/coupons/create'], true)
+        elseif ($method === 'POST' && preg_match('~\A/api/(?:articles/[^/]+/comments|article-comments/[^/]+/(?:delete|react))\z~',$path)) $roles=['USER','MERCHANT','ADMIN'];
+        elseif (in_array($path, ['/notifications','/api/notifications','/notifications/read','/dashboard','/account','/account/password','/my-coupons','/saved-coupons','/coupons/create'], true)
             || preg_match('~\A/(?:saved-coupons/[0-9]+/(?:remove|save)|api/coupons/[0-9]+/(?:favorite|vote|comments|reports))\z~', $path)) $roles = ['USER','MERCHANT','ADMIN'];
         if ($roles !== null) Auth::requireRole($roles);
     }
+    // Chỉ trích tham số từ mẫu route đã đăng ký, không dùng URL để chọn tên lớp.
     private function match(string $route, string $path): ?array
     {
         $pattern = preg_quote($route, '~');

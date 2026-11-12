@@ -1,3 +1,4 @@
+// Tìm kiếm qua AJAX và bỏ phản hồi cũ để kết quả khớp bộ lọc mới nhất.
 (function ($) {
     'use strict';
 

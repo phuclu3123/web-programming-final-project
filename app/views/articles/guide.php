@@ -1,4 +1,4 @@
-<div class="guide-page">
+<?php /* Trình bày cẩm nang đã chọn trong controller và liên kết nội bộ liên quan. */ ?><div class="guide-page">
     <div class="member-breadcrumb"><a href="<?= e(url('/articles')) ?>">Góc đọc
             CouponHub</a><span>/</span><span><?= e($guide['topic']) ?></span></div>
     <header class="guide-masthead"><span class="eyebrow">CẨM NANG COUPONHUB / <?= (int)$guide['minutes'] ?> PHÚT

@@ -24,6 +24,7 @@ final class OtpPasswordResetService
         if (strlen($this->secret) < 32) throw new HttpError(503, 'Chưa cấu hình khôi phục mật khẩu. Vui lòng liên hệ quản trị viên.');
     }
 
+    // Tạo trạng thái giống nhau cho mọi email; chỉ gửi OTP nếu tài khoản hợp lệ và qua giới hạn gửi.
     public function request(string $email, string $ip): void
     {
         $this->configured();
@@ -55,6 +56,7 @@ final class OtpPasswordResetService
         }
     }
 
+    // Kiểm tra hạn/số lần thử rồi tiêu thụ token một lần khi thay password hash.
     public function reset(string $code, string $password, string $confirmation): bool
     {
         $this->configured();

@@ -7,8 +7,9 @@ $pageScripts = ['/js/merchant-approval-confirm.js']; ?>
 <p class="text-muted">Duyệt hoặc thu hồi theo từng User–Shop. Mã đơn do hệ thống sinh; bằng chứng do người đăng ký cung
   cấp.</p>
 <h2 class="h5 mt-4">Yêu cầu đăng ký</h2>
-<div class="table-responsive">
-  <table class="table table-hover table-bordered bg-white">
+<div class="table-responsive merchant-access-scroll" role="region"
+  aria-label="Yêu cầu đăng ký quyền quản lý Merchant/Shop" tabindex="0">
+  <table class="table table-hover table-bordered bg-white merchant-access-request-table">
     <thead>
       <tr>
         <th>Mã đơn</th>
@@ -33,7 +34,7 @@ $pageScripts = ['/js/merchant-approval-confirm.js']; ?>
           </td>
           <td>
             <span
-              style="overflow-wrap:anywhere"><?= e((string)($r['evidence_reference'] ?: 'Chưa cung cấp')) ?></span>
+              class="csp-wrap-anywhere"><?= e((string)($r['evidence_reference'] ?: 'Chưa cung cấp')) ?></span>
             <?php if ($r['status'] === 'PENDING' && (int)($r['duplicate_evidence_users'] ?? 0) > 0): ?>
               <div class="mt-2">
                 <span class="badge bg-warning text-dark">Bằng chứng đã được
@@ -79,8 +80,9 @@ $pageScripts = ['/js/merchant-approval-confirm.js']; ?>
   </table>
 </div>
 <h2 class="h5 mt-4">Quyền quản lý đã cấp</h2>
-<div class="table-responsive">
-  <table class="table table-striped bg-white">
+<div class="table-responsive merchant-access-scroll" role="region" aria-label="Quyền quản lý Merchant/Shop đã cấp"
+  tabindex="0">
+  <table class="table table-striped bg-white merchant-access-membership-table">
     <thead>
       <tr>
         <th>User</th>
@@ -98,14 +100,13 @@ $pageScripts = ['/js/merchant-approval-confirm.js']; ?>
                 action="<?= e(url('/admin/merchant-memberships/' . (int)$m['user_id'] . '/' . (int)$m['merchant_id'] . '/revoke')) ?>">
                 <input type="hidden" name="_token" value="<?= e(Session::csrfToken()) ?>"><input
                   aria-label="Ghi chú xét duyệt" type="text"
-                  class="form-control form-control-sm d-inline-block" style="max-width:240px" name="note"
-                  required placeholder="Lý do thu hồi quyền"><button class="btn btn-sm btn-outline-danger">Thu
+                  class="form-control form-control-sm d-inline-block csp-max-w-240" name="note" required
+                  placeholder="Lý do thu hồi quyền"><button class="btn btn-sm btn-outline-danger">Thu
                   hồi</button>
               </form><?php endif; ?></td>
         </tr><?php endforeach; ?></tbody>
   </table>
 </div>
-
 
 <!-- Second confirmation for duplicate evidence: Bootstrap 5.3.8 modal. -->
 <div class="modal fade" id="merchantDuplicateApprovalModal" tabindex="-1" role="dialog"

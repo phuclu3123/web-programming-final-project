@@ -14,7 +14,7 @@ final class Env
             if ($line === '' || str_starts_with($line, '#')) continue;
             if (!preg_match('/^(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=\s*(.*)$/D', $line, $match)) throw new \RuntimeException('Invalid .env syntax at line ' . ($number+1));
             [, $name, $value] = $match;
-            if (!preg_match('/^(?:COUPONHUB_|RESEND_|OTP_SECRET$)/', $name)) continue;
+            if (!preg_match('/^(?:COUPONHUB_|RESEND_|OTP_SECRET$|ACCESSTRADE_ACCESS_KEY$|TURNSTILE_(?:SITE_KEY|SECRET_KEY|HOSTNAMES)$)/', $name)) continue;
             if (getenv($name) !== false) continue; // Process environment wins, including empty values.
             $value = trim($value);
             if ($value !== '' && in_array($value[0], ['"', "'"], true)) {

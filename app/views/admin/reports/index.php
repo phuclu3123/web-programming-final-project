@@ -1,4 +1,5 @@
 <?php
+// Kết luận báo cáo gửi kèm hành động xử lý để lưu lịch sử đối chiếu.
 
 use App\Core\Session; ?>
 <div class="d-flex justify-content-between align-items-center mb-4">

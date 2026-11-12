@@ -1,3 +1,4 @@
+// Gửi tương tác coupon tới backend và chỉ đổi trạng thái UI sau khi được xác nhận.
 (function ($) {
     'use strict';
 

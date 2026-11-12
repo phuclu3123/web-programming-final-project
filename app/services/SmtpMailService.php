@@ -12,12 +12,14 @@ final class SmtpMailService implements \App\Contracts\AuthMailerInterface
 {
     public function sendPasswordReset(string $recipient, string $resetUrl): void
     {
-        $this->sendText($recipient, 'Đặt lại mật khẩu CouponHub', "Mở liên kết để đặt mật khẩu mới (30 phút, chỉ dùng một lần):\n" . $resetUrl . "\nNếu không yêu cầu, hãy bỏ qua email này.");
+        $message = PasswordResetEmail::link($resetUrl);
+        $this->sendText($recipient, $message['subject'], $message['text']);
     }
 
     public function sendOtp(string $recipient, string $code): void
     {
-        $this->sendText($recipient, 'Mã khôi phục mật khẩu CouponHub', "Mã xác minh của bạn: " . $code . "\nMã có hiệu lực 10 phút, chỉ sử dụng một lần. Không cung cấp mã cho bất kỳ ai. Nếu không yêu cầu, hãy bỏ qua email này.");
+        $message = PasswordResetEmail::otp($code);
+        $this->sendText($recipient, $message['subject'], $message['text']);
     }
 
     private function sendText(string $recipient, string $subjectText, string $body): void

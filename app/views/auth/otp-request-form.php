@@ -1,4 +1,5 @@
 <?php
+// Gửi email yêu cầu OTP; CAPTCHA và giới hạn gửi được kiểm tra phía server.
 
 use App\Core\Session; ?>
 <div class="modal-header mx-3 mt-3 pe-5">
@@ -16,6 +17,7 @@ use App\Core\Session; ?>
         <input class="form-control mb-4" id="resetEmail" name="email" type="email" maxlength="191" autocomplete="email"
             required>
         <button type="submit" class="btn login-btn w-100 text-white fw-bold rounded-4">Gửi mã xác minh</button>
-    </form>
+    <?php $turnstileAction='reset_request'; require __DIR__.'/../partials/turnstile.php'; ?>
+</form>
     <button type="button" data-auth-target="login" class="btn btn-link mt-3 w-100">Quay lại đăng nhập</button>
 </div>

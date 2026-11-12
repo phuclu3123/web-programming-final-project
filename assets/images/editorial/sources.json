@@ -118,6 +118,16 @@
       "source": "https://www.google.com/s2/favicons?domain=highlandscoffee.com.vn&sz=128",
       "type": "website icon; trademark belongs to its owner",
       "local_file": true
+    },
+    "nike": {
+      "source": "https://www.nike.com/apple-touch-icon.png",
+      "page": "https://www.nike.com/vn/",
+      "type": "official website identity"
+    },
+    "phuc-long": {
+      "source": "https://phuclong.com.vn/static/icons/apple-icon-180x180.png",
+      "page": "https://phuclong.com.vn/",
+      "type": "official website identity"
     }
   },
   "derivatives": {

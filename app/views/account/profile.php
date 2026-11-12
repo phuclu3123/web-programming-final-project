@@ -1,4 +1,5 @@
 <?php
+// Chỉ hiển thị hồ sơ actor và phương thức đăng nhập đã liên kết từ controller.
 
 use App\Core\Session; ?>
 <?php
@@ -55,7 +56,8 @@ $profilePhone = is_string($profileValues['phone'] ?? null) ? $profileValues['pho
               </div>
               <div class="mb-3"><label class="form-label" for="account-new-password">Mật khẩu mới</label>
                 <input class="form-control <?= isset($passwordErrors['new_password']) ? 'is-invalid' : '' ?>" id="account-new-password" name="new_password"
-                  type="password" minlength="8" maxlength="72" autocomplete="new-password" required <?= isset($passwordErrors['new_password']) ? 'aria-invalid="true" aria-describedby="account-new-password-error"' : '' ?>>
+                  type="password" minlength="8" maxlength="72" autocomplete="new-password" required aria-describedby="account-new-password-help<?= isset($passwordErrors['new_password']) ? ' account-new-password-error' : '' ?>" <?= isset($passwordErrors['new_password']) ? 'aria-invalid="true"' : '' ?>>
+                <div class="form-text" id="account-new-password-help">Từ 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt; tối đa 72 byte.</div>
                 <?php if (isset($passwordErrors['new_password'])): ?><div class="invalid-feedback d-block" id="account-new-password-error"><?= e($passwordErrors['new_password']) ?></div><?php endif; ?>
               </div>
               <div class="mb-3"><label class="form-label" for="account-confirm-password">Xác nhận mật khẩu
@@ -74,10 +76,9 @@ $profilePhone = is_string($profileValues['phone'] ?? null) ? $profileValues['pho
     <section class="card mt-4" aria-labelledby="linked-providers-title">
       <div class="card-body">
         <h2 class="h5" id="linked-providers-title">Tài khoản liên kết</h2>
-        <p class="text-muted">Liên kết để đăng nhập nhanh. Tài khoản có cùng email chỉ được liên kết khi bạn chủ
-          động xác nhận tại đây.</p>
+        <p class="text-muted">Các phương thức đã liên kết cùng sử dụng tài khoản và dữ liệu của bạn.</p>
         <div class="d-flex flex-wrap gap-3">
-          <?php foreach (['google' => 'Google', 'github' => 'GitHub'] as $provider => $label):
+          <?php foreach (['google' => 'Google', 'github' => 'GitHub', 'facebook' => 'Facebook'] as $provider => $label):
             $ready = (new \App\Core\OAuthPreparation((array)config('oauth')))->status($provider)['ready']; ?>
             <?php if (in_array($provider, $oauthLinks ?? [], true)): ?><span
                 class="badge bg-success align-self-center p-3"><?= e($label) ?> · Đã liên kết</span>

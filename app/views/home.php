@@ -1,4 +1,5 @@
 <?php
+// Trang khám phá nhận bộ lọc và dữ liệu từ CatalogController; hỗ trợ thay vùng kết quả bằng AJAX.
 require __DIR__ . '/layouts/head.php';
 
 $selectedCategoryName = null;
@@ -99,21 +100,6 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
             <h1 id="hero-title" class="visually-hidden">Khám phá ưu đãi CouponHub</h1>
 
             <?php require __DIR__.'/partials/hero-carousel.php'; ?>
-            <nav class="cover-shortcuts" aria-label="Khám phá thêm ưu đãi">
-                <?php
-                $coverMerchantIds = [];
-                foreach ($merchants as $coverMerchant) $coverMerchantIds[slugify($coverMerchant['name'])] = (int)$coverMerchant['id'];
-                $coverPicks = [
-                    ['merchant'=>'grab','link'=>'Grab'],
-                    ['merchant'=>'traveloka','link'=>'Du lịch'],
-                ];
-                foreach ($coverPicks as $pick):
-                    $pickQuery = isset($coverMerchantIds[$pick['merchant']]) ? '?merchant_id='.$coverMerchantIds[$pick['merchant']] : '';
-                ?>
-                <a href="<?= e(url('/coupons').$pickQuery) ?>"><?= e($pick['link']) ?> <?= icon('arrow') ?></a>
-                <?php endforeach; ?>
-                <a href="<?= e(url('/categories')) ?>">Tất cả nhu cầu <?= icon('arrow') ?></a>
-            </nav>
         </div>
     </section>
 
@@ -126,15 +112,14 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
         data-sort="<?= e($sort) ?>">
 
         <section id="categories" class="discovery-section" aria-labelledby="discovery-title">
+            <div class="home-discovery-head">
             <div class="section-heading discovery-heading">
                 <div>
-                    <div class="eyebrow muted mb-2">KHÁM PHÁ ƯU ĐÃI</div>
                     <h2 id="discovery-title">Ưu đãi dành cho bạn</h2>
-                    <p>Chọn nhu cầu hoặc tìm trực tiếp để xem những mã phù hợp đang còn hiệu lực.</p>
+                    <p>Mã đang còn hiệu lực, theo điều bạn cần.</p>
                 </div>
                 <?php if ($q !== '' || $categoryId > 0 || $merchantId > 0 || $discountType !== '' || $usageChannel !== '' || $endingSoon): ?>
                 <a class="text-link" href="index.php#coupons" data-home-filter>Xóa tất cả bộ lọc <?= icon('arrow') ?></a>
-                <?php else: ?><a class="text-link" href="<?= e(url('/categories')) ?>">Xem tất cả danh mục <?= icon('arrow') ?></a>
                 <?php endif; ?>
             </div>
 
@@ -144,7 +129,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                     <label class="visually-hidden" for="q">Tìm ưu đãi</label>
                     <input type="search" id="q" class="form-control" name="q" maxlength="100"
                         value="<?= e($q) ?>" placeholder="Tìm cửa hàng, mã hoặc ưu đãi…"
-                        aria-describedby="search-help">
+                        >
                     <input type="hidden" name="category" value="<?= $categoryId ?>">
                     <input type="hidden" name="merchant" value="<?= $merchantId ?>">
                     <input type="hidden" name="type" value="<?= e($discountType) ?>">
@@ -156,14 +141,15 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                 </form>
                 <nav id="home-suggestions" class="discovery-suggestions" aria-label="Gợi ý coupon từ kết quả tìm kiếm" hidden></nav>
                 </div>
-                <div id="search-help" class="hero-tip">Tìm theo cửa hàng, tên ưu đãi hoặc mã giảm giá.</div>
+            </div>
 
+            <div class="home-browse-tools">
             <div class="couponhub-category-tools" data-category-picker>
               <nav class="category-strip" data-category-rail aria-label="Danh mục ưu đãi">
                 <a class="category-chip <?= $categoryId === 0 && $q === '' && $merchantId === 0 && $discountType === '' && $usageChannel === '' && !$endingSoon ? 'selected' : '' ?>"
                     href="index.php#coupons" data-home-filter
                     <?= $categoryId === 0 && $q === '' && $merchantId === 0 && $discountType === '' && $usageChannel === '' && !$endingSoon ? 'aria-current="true"' : '' ?>>
-                    <i class="fa-solid fa-border-all" aria-hidden="true"></i> Tất cả ưu đãi
+                    Tất cả
                 </a>
                 <?php foreach ($categories as $category): ?>
                 <a class="category-chip <?= (int) $category['id'] === $categoryId ? 'selected' : '' ?>"
@@ -182,7 +168,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
             </div>
 
             <details class="home-refine" <?= $discountType !== '' || $usageChannel !== '' || $endingSoon ? 'open' : '' ?>>
-            <summary><?= icon('filter') ?> Tinh chỉnh ưu đãi <span><?= $discountType !== '' || $usageChannel !== '' || $endingSoon ? 'Đang áp dụng' : 'Loại ưu đãi, kênh dùng, thời hạn' ?></span><?= icon('chevron') ?></summary>
+            <summary><?= icon('filter') ?> Bộ lọc <span><?= $discountType !== '' || $usageChannel !== '' || $endingSoon ? 'Đang áp dụng' : '' ?></span><?= icon('chevron') ?></summary>
             <form class="catalog-filters" method="get" action="index.php#coupons" data-catalog-filter-form>
                 <input type="hidden" name="q" value="<?= e($q) ?>">
                 <input type="hidden" name="category" value="<?= $categoryId ?>">
@@ -211,6 +197,7 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                 <button class="btn btn-outline-brand" type="submit">Áp dụng bộ lọc</button>
             </form>
             </details>
+            </div>
 
             <?php if ($q !== '' || $categoryId > 0 || $merchantId > 0 || $discountType !== '' || $usageChannel !== '' || $endingSoon): ?>
             <div class="active-filters" aria-label="Bộ lọc đang áp dụng">
@@ -254,7 +241,6 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
                     <strong><?= count($coupons) ?></strong> ưu đãi
                     <?php if ($q !== ''): ?> cho “<?= e($q) ?>”<?php endif; ?>
                     <?php if ($selectedMerchantName): ?> · <?= e($selectedMerchantName) ?><?php endif; ?>
-                    <span class="result-limit">· xem rõ điều kiện trước khi dùng</span>
                 </div>
 
                 <form id="sort-form" method="get" action="index.php#coupons" class="sort-form">
@@ -345,6 +331,8 @@ $urlFor = static function (array $overrides = [], string $anchor = 'coupons') us
     <span id="copy-toast-text">Đã sao chép mã</span>
 </div>
 
+<?php require __DIR__ . '/partials/cookie-consent.php'; ?>
 <?php require __DIR__ . '/auth/auth-modal.php'; ?>
+<script src="<?= e(url('/assets/js/turnstile.js')) ?>?v=<?= filemtime(__DIR__ . '/../../assets/js/turnstile.js') ?>" defer></script>
 </body>
 </html>

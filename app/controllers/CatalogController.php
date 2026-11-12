@@ -14,6 +14,7 @@ use App\Repositories\SavedCouponRepository;
 use App\Repositories\CampaignRepository;
 use App\Repositories\ArticleRepository;
 
+// Kiểm tra bộ lọc rồi nạp coupon, chiến dịch và bài viết cho trang khám phá.
 final class CatalogController extends Controller
 {
     public function index(Request $request): void

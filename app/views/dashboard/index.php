@@ -1,4 +1,5 @@
 <?php
+// Tóm tắt điểm, chất lượng đóng góp và mã đã lưu của actor hiện tại.
 $points = (int) ($rewardSummary['earned_points'] ?? 0);
 $nextPoints = $rewardSummary['next_level_points'] ?? null;
 $levelStart = (int) ($rewardSummary['level_min_points'] ?? 0);
@@ -11,8 +12,8 @@ $sectionLinks = [['account-overview', 'Tổng quan'], ['account-saved', 'Coupon 
     <div class="member-breadcrumb"><a href="<?= e(url('/')) ?>">CouponHub</a><span>/</span><span>Không gian của
             bạn</span></div>
     <div class="member-page-heading">
-        <div><span class="eyebrow">MỘT GÓC RIÊNG CHO BẠN</span>
-            <h1>Ưu đãi hay. Lưu ở đây.</h1>
+        <div>
+            <h1>Không gian của bạn.</h1>
             <p>Giữ lại mã yêu thích, theo dõi đóng góp và tích lũy CouponPoint.</p>
         </div>
         <a class="btn btn-brand" href="<?= e(url('/coupons')) ?>">Khám phá ưu đãi <?= icon('arrow') ?></a>
@@ -51,9 +52,8 @@ $sectionLinks = [['account-overview', 'Tổng quan'], ['account-saved', 'Coupon 
                 <?php if ($nextPoints !== null): ?><p>Còn <b><?= max(0, (int)$nextPoints - $points) ?> điểm</b> để lên
                         <?= e($rewardSummary['next_level_name'] ?? 'cấp tiếp theo') ?>.</p><?php else: ?><p>Bạn đang ở cấp
                         cao nhất hiện tại.</p><?php endif; ?>
-                <div class="member-progress" role="progressbar" aria-label="Tiến độ trong cấp hiện tại"
-                    aria-valuenow="<?= $progress ?>" aria-valuemin="0" aria-valuemax="100"><span
-                        style="width:<?= $progress ?>%"></span></div>
+                <progress class="member-progress" aria-label="Tiến độ trong cấp hiện tại"
+                    value="<?= (int) max(0, min(100, $progress)) ?>" max="100"><?= (int) $progress ?>%</progress>
                 <a href="#account-rewards">Xem lịch sử tích điểm <?= icon('arrow') ?></a>
             </article>
         </div>

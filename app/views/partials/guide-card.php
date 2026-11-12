@@ -1,4 +1,4 @@
-<a class="guide-card" href="<?= e(url('/guides/'.$slug)) ?>">
+<?php /* Thẻ cẩm nang giữ cùng liên kết và nội dung tóm tắt ở các trang công khai. */ ?><a class="guide-card" href="<?= e(url('/guides/'.$slug)) ?>">
     <div class="guide-card-photo">
         <?php if ($slug==='so-sanh-muc-tiet-kiem'): ?>
         <div class="guide-figure" aria-label="So sánh giảm 20 phần trăm và giảm 40 nghìn đồng">

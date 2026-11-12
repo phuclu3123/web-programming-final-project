@@ -18,6 +18,7 @@ use App\Services\CouponService;
 use RuntimeException;
 use Throwable;
 
+// Tách duyệt, sửa, hết hạn, thu hồi và xóa coupon thành hành động quản trị riêng.
 final class CouponController extends Controller
 {
     private CouponRepository $coupons;
@@ -76,6 +77,22 @@ final class CouponController extends Controller
             $this->flashFailure($e, 'Không thể kiểm duyệt coupon.');
         }
         Response::redirect(url('/admin/coupons'));
+    }
+
+    public function moderateMany(Request $request): void
+    {
+        $actor=Auth::requireRole(['ADMIN']);
+        $rows=\App\Core\BulkSelection::parse($request->post('selection'));
+        $action=$request->post('action');$note=$request->post('note');
+        if(!in_array($action,['APPROVE','REJECT'],true) || mb_strlen($note)>1000 || ($action==='REJECT' && mb_strlen($note)<10))throw new \App\Core\HttpError(422,'Chọn quyết định hợp lệ; lý do từ chối cần từ 10 đến 1.000 ký tự.');
+        $results=[];$count=0;
+        foreach($rows as $row){
+            try{$this->adminCoupons->moderatePending((int)$actor['id'],$row['id'],$row['fingerprint'],$action,$note);$results[]=['id'=>$row['id'],'success'=>true,'message'=>$action==='APPROVE'?'Đã duyệt':'Đã từ chối'];++$count;}
+            catch(Throwable $e){$results[]=['id'=>$row['id'],'success'=>false,'message'=>$e instanceof \App\Core\HttpError?$e->getMessage():'Không thể xử lý mục này. Tải lại và thử lại.'];}
+        }
+        $failed=count($rows)-$count;$message="Đã xử lý $count coupon; $failed mục chưa xử lý được.";
+        if($request->expectsJson())Response::json(['success'=>true,'processed'=>$count,'failed'=>$failed,'results'=>$results,'message'=>$message]);
+        Session::flash($failed?'warning':'success',$message);Response::redirect(url('/admin/coupons?status=PENDING'),303);
     }
 
     public function edit(Request $request, string $id): void
@@ -179,7 +196,7 @@ final class CouponController extends Controller
 
     private function verifyCsrf(Request $request): bool
     {
-        if (Session::verifyCsrf((string)$request->input('_token', ''))) return true;
+        if (Session::verifyCsrf($request->csrfToken())) return true;
         $this->renderError(419, 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
         return false;
     }
