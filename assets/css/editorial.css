@@ -683,7 +683,7 @@ body:has(#campaign-modal) {
 }
 
 @media (max-width: 768px) {
-  .filter-grid, 
+  .filter-grid,
   .other-campaigns-grid {
     grid-template-columns: 1fr;
   }
@@ -739,7 +739,7 @@ body:has(#campaign-modal) {
 }
 
 /* Glassmorphism Badges */
-.poster-phase, 
+.poster-phase,
 .poster-demo {
   background: rgba(255, 255, 255, 0.12) !important;
   border: 1px solid rgba(255, 255, 255, 0.22) !important;
@@ -1088,7 +1088,7 @@ body:has(#campaign-modal) {
 }
 
 /* BADGES MỜ KÍNH VỚI CHỮ TRẮNG RÕ RÀNG */
-.poster-phase, 
+.poster-phase,
 .poster-demo {
   background: rgba(255, 255, 255, 0.18) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -2013,7 +2013,7 @@ body:has(#campaign-modal) {
   object-position: center !important;
   z-index: 1 !important;
   background: transparent !important;
-  
+
   /* Kỹ thuật Masking: Làm mép trái của ảnh hòa tan mượt mà vào màu nền Card */
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 35%, black 100%) !important;
   mask-image: linear-gradient(to right, transparent 0%, black 35%, black 100%) !important;
@@ -2326,3 +2326,4 @@ body:has(#campaign-modal) {
     flex-wrap: wrap;
   }
 }
+
