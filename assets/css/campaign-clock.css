@@ -1,0 +1,39 @@
+/* One timer component across posters, campaign features and the calendar. */
+body .campaign-clock {
+  display: grid !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  gap: 9px;
+  margin: 0 0 24px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+body .campaign-clock-label { color: inherit !important; font-size: 12px !important; opacity: .8; }
+body .campaign-clock-parts { display: flex; gap: 14px; }
+body .campaign-clock-parts > span {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  min-width: 35px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  text-align: center;
+}
+body .campaign-clock-parts > span + span::before { content: ':'; position: absolute; top: 0; left: -9px; font-size: 23px; line-height: 1; opacity: .5; }
+body .campaign-clock-parts strong { color: inherit !important; font-size: 27px !important; font-weight: 600 !important; line-height: 1.1; letter-spacing: -.03em; }
+body .campaign-clock-parts small { color: inherit !important; font-size: 11px !important; opacity: .75; }
+.event-feature .campaign-clock { margin-top: 0 !important; }
+.event-more-list .campaign-clock-parts strong { font-size: 24px !important; }
+.calendar-campaign-card .campaign-clock { margin: 0 !important; }
+.calendar-campaign-card .campaign-clock-parts strong { font-size: 23px !important; }
+@media (max-width: 599px) {
+  .event-feature .campaign-clock { margin-bottom: 24px !important; }
+  .event-feature .campaign-clock-parts { gap: 18px; }
+}

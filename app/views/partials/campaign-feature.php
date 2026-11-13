@@ -10,7 +10,7 @@ $campaignLabel=$campaign['merchant_name'] ?: 'CouponHub tuyển chọn';
 $featureTitle=editorialTitle($campaign['name']);
 if (!empty($campaign['merchant_name']) && str_starts_with($featureTitle,$campaign['merchant_name'].' · ')) $featureTitle=substr($featureTitle,strlen($campaign['merchant_name'].' · '));
 ?>
-<article class="event-feature event-tone-<?= e($visual['tone']) ?> <?= $detailMode ? 'event-feature-detail' : '' ?>">
+<article class="event-feature event-tone-<?= e($visual['tone']) ?> <?= $detailMode ? 'event-feature-detail' : '' ?>" data-phase="<?= $ended ? 'ended' : ($timing['upcoming'] ? 'upcoming' : 'active') ?>">
     <div class="event-feature-copy">
         <div class="event-identity"><?= brandLogo($campaign['merchant_name'] ?: 'CouponHub') ?><span><?= e($campaignLabel) ?></span><span class="event-status"><?= $ended ? 'Đã kết thúc' : ($timing['upcoming'] ? 'Sắp bắt đầu' : 'Đang diễn ra') ?></span></div>
         <?= $detailMode ? '<h1>' : '<h2>' ?><?= e($featureTitle) ?><?= $detailMode ? '</h1>' : '</h2>' ?>
@@ -18,6 +18,7 @@ if (!empty($campaign['merchant_name']) && str_starts_with($featureTitle,$campaig
             <p>Khám phá các mã trong bộ sưu tập. Xem mức giảm, đơn tối thiểu và kênh áp dụng trước khi chọn.</p>
         <?php elseif (!empty($campaign['description'])): ?><p><?= e($campaign['description']) ?></p><?php endif; ?>
         <?php if (isset($campaign['coupon_count']) || $detailMode): ?><div class="event-availability"><strong><?= $detailMode ? (int)$campaignOverview['count'] : (int)$campaign['coupon_count'] ?></strong><span>coupon còn hiệu lực<?= !$detailMode && (!empty($selectedCategory) || !empty($selectedPlatform) || ($selectedChannel ?? 'ALL')!=='ALL') ? ' phù hợp bộ lọc' : '' ?></span></div><?php endif; ?>
+        <?php require __DIR__.'/campaign-countdown.php'; ?>
         <div class="event-feature-bottom"><div><small><?= $timing['upcoming'] ? 'Bắt đầu' : 'Đến ngày' ?></small><time datetime="<?= e(gmdate('c',($timing['upcoming'] ? $timing['start'] : $timing['end'])/1000)) ?>"><?= e(format_db_datetime($timing['upcoming'] ? $campaign['starts_at'] : $campaign['ends_at'],'d.m.Y')) ?></time></div><a class="btn event-feature-action <?= $detailMode ? 'campaign-detail-action' : '' ?>" data-campaign-open href="<?= e($campaignHref) ?>"><?= $detailMode ? 'Chọn coupon' : 'Xem chiến dịch' ?> <?= icon('arrow') ?></a></div>
         <?php if ($isDemo): ?><small class="event-demo"><?= $detailMode ? 'Bản trải nghiệm · Coupon minh họa, không dùng thanh toán.' : 'Coupon minh họa · Không dùng thanh toán' ?></small><?php endif; ?>
     </div>

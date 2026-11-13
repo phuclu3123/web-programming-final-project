@@ -67,6 +67,9 @@ $workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPa
         href="<?= e(url('/assets/css/category-navigation.css')) ?>?v=<?= filemtime(__DIR__ . '/../../../assets/css/category-navigation.css') ?>">
     <?php endif; ?>
   <link rel="stylesheet" href="<?= e(url('/assets/css/refinement.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/refinement.css') ?>">
+    <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'campaign-clock.js')): ?>
+    <link rel="stylesheet" href="<?= e(url('/assets/css/campaign-clock.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/campaign-clock.css') ?>">
+    <?php endif; ?>
 </head>
 
 <body class="unified-page<?= $workspaceArea ? ' workspace-page' : '' ?>">

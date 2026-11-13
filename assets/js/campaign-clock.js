@@ -19,13 +19,13 @@
       const state = campaignTime(Number(clock.dataset.start), Number(clock.dataset.end), base.time + performance.now() - base.tick);
       clock.querySelector('[data-clock-label]').textContent = state.phase === 'upcoming' ? 'Bắt đầu sau' : state.phase === 'active' ? 'Kết thúc sau' : 'Đã kết thúc';
       clock.querySelectorAll('[data-clock-part]').forEach(part => { part.textContent = String(state[part.dataset.clockPart]).padStart(2, '0'); });
-      const card = clock.closest('.campaign-poster');
+      const card = clock.closest('.campaign-poster, .event-feature, .calendar-campaign-card');
       if (card) {
         card.dataset.phase = state.phase;
-        const phase = card.querySelector('.poster-phase');
-        phase.lastChild.textContent = state.phase === 'upcoming' ? 'Sắp bắt đầu' : state.phase === 'active' ? 'Đang diễn ra' : 'Đã kết thúc';
+        const phase = card.querySelector('.poster-phase, .event-status, .calendar-status-pill');
+        if (phase?.lastChild) phase.lastChild.textContent = state.phase === 'upcoming' ? 'Sắp bắt đầu' : state.phase === 'active' ? 'Đang diễn ra' : 'Đã kết thúc';
         const link = card.querySelector('[data-campaign-open]');
-        if (state.phase === 'ended') { link.setAttribute('aria-disabled', 'true'); link.textContent = 'Đã kết thúc'; }
+        if (state.phase === 'ended' && link && card.matches('.campaign-poster')) { link.setAttribute('aria-disabled', 'true'); link.textContent = 'Đã kết thúc'; }
       }
     });
     document.querySelectorAll('[data-time-vn]').forEach(time => {
@@ -34,8 +34,10 @@
       time.setAttribute('datetime', now.toISOString());
       const fields = Object.fromEntries(dateFormat.formatToParts(now).map(part => [part.type, part.value]));
       const planner = time.closest('.campaign-planner');
-      planner.querySelector('[data-planner-day]').textContent = fields.day;
-      planner.querySelector('[data-planner-month]').textContent = 'THÁNG ' + fields.month + ' / ' + fields.year;
+      if (planner) {
+        planner.querySelector('[data-planner-day]').textContent = fields.day;
+        planner.querySelector('[data-planner-month]').textContent = 'THÁNG ' + fields.month + ' / ' + fields.year;
+      }
     });
   }
   tick();
