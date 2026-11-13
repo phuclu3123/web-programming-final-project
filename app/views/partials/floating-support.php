@@ -1,4 +1,7 @@
-<?php /* Giữ nhóm liên hệ và về đầu trang dùng chung; JavaScript chỉ điều khiển vị trí hiển thị. */ ?>  <aside class="floating-support" data-floating-support aria-label="Liên hệ và điều hướng nhanh">
+<?php /* Liên hệ dùng cùng cấu hình với trang /contact. */
+$contactEmail = (string)config('app.support_email', '');
+$contactZalo = (string)config('app.support_zalo', '');
+?>  <aside class="floating-support" data-floating-support aria-label="Liên hệ và điều hướng nhanh">
     <section class="contact-popover" id="contact-popover" role="dialog" aria-modal="false"
       aria-labelledby="contact-title" aria-hidden="true" inert>
       <div class="contact-popover-head">
@@ -9,20 +12,15 @@
         <button class="contact-close" type="button" data-contact-close aria-label="Đóng bảng liên hệ">×</button>
       </div>
       <div class="contact-options">
-        <a class="contact-option" href="https://zalo.me/" target="_blank" rel="noopener noreferrer">
+        <a class="contact-option" href="<?= e('https://zalo.me/'.rawurlencode($contactZalo)) ?>" target="_blank" rel="noopener noreferrer">
           <span class="contact-channel-icon contact-channel-zalo" aria-hidden="true">Z</span>
-          <span><strong>Zalo</strong><small>Trò chuyện nhanh</small></span>
+          <span><strong>Zalo</strong><small><?= e($contactZalo) ?></small></span>
           <?= icon('arrow') ?>
         </a>
-        <a class="contact-option" href="https://www.messenger.com/" target="_blank" rel="noopener noreferrer">
-          <span class="contact-channel-icon contact-channel-messenger" aria-hidden="true">M</span>
-          <span><strong>Messenger</strong><small>Nhắn tin qua Facebook</small></span>
-          <?= icon('arrow') ?>
-        </a>
-        <a class="contact-option" href="mailto:hello@couponhub.vn?subject=Hỗ trợ từ CouponHub">
+        <a class="contact-option" href="<?= e('mailto:'.$contactEmail.'?subject='.rawurlencode('Hỗ trợ từ CouponHub')) ?>">
           <span class="contact-channel-icon contact-channel-mail"
             aria-hidden="true"><?= icon('mail') ?></span>
-          <span><strong>Email</strong><small>hello@couponhub.vn</small></span>
+          <span><strong>Email</strong><small><?= e($contactEmail) ?></small></span>
           <?= icon('arrow') ?>
         </a>
       </div>

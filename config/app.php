@@ -13,4 +13,6 @@ return [
     'timezone' => 'Asia/Ho_Chi_Minh',
     'debug' => getenv('COUPONHUB_DEBUG') === '1',
     'session_name' => 'COUPONHUBSESSID',
+    'support_email' => 'luphuc321@gmail.com',
+    'support_zalo' => '0833830322',
 ];

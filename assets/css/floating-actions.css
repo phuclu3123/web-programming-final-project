@@ -19,7 +19,7 @@
   min-width: 48px;
   height: 48px;
   border-radius: 999px;
-  box-shadow: 0 8px 24px rgba(18, 38, 80, .19);
+  box-shadow: none;
   transition: transform .3s cubic-bezier(.22,1,.36,1), opacity .18s cubic-bezier(.22,1,.36,1);
 }
 .floating-support .contact-trigger {
@@ -36,7 +36,7 @@
   background: #1e44a8;
   border-color: #1e44a8;
   color: #fff;
-  box-shadow: 0 10px 28px rgba(23, 54, 129, .28);
+  box-shadow: none;
 }
 .floating-support .back-to-top {
   position: static;
@@ -70,13 +70,17 @@
   border-color: #7b9ee7;
   color: #143d9d;
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(23, 54, 129, .22);
+  box-shadow: none;
 }
 .floating-support .glass-action:focus-visible {
   outline: 3px solid #f1aa33;
   outline-offset: 3px;
 }
 .floating-support .contact-popover { left:auto; right:0; max-width:calc(100vw - 24px); transform-origin:right bottom; }
+.floating-support .contact-option > span:nth-child(2) { min-width: 0; }
+.floating-support .contact-option strong { font-size: 16px; }
+.floating-support .contact-option small { font-size: 13px; overflow-wrap: anywhere; }
+.floating-support .contact-note { font-size: 12px; }
 @media (max-width: 575.98px) {
   .floating-support {
     --support-return-size: 46px;
@@ -87,7 +91,7 @@
   }
   .floating-support .glass-action { height: 46px; min-width: 46px; }
   .floating-support .back-to-top { width: 46px; height: 46px; flex-basis: 46px; }
-  .floating-support .contact-popover { width: min(292px, calc(100vw - 24px)); }
+  .floating-support .contact-popover { width: min(350px, calc(100vw - 24px)); }
 }
 @media (prefers-reduced-motion: reduce) {
   .floating-support .glass-action, .floating-support .contact-popover { transition: none !important; }

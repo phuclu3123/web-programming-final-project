@@ -37,9 +37,9 @@ $pages = [
         ],
     ],
     'contact' => [
-        'lead' => 'Thông tin liên hệ cho người sử dụng bản demo CouponHub.',
+        'lead' => 'Liên hệ CouponHub để được hỗ trợ hoặc gửi phản hồi về website.',
         'sections' => [
-            ['Báo lỗi hoặc phản hồi', 'Bạn có thể chuẩn bị ảnh chụp màn hình, URL trang phát sinh lỗi và bước tái hiện để gửi cho nhóm phát triển theo kênh liên lạc của lớp/dự án.'],
+            ['Báo lỗi hoặc phản hồi', 'Gửi ảnh chụp màn hình, đường dẫn trang và các bước gặp lỗi qua Zalo hoặc email bên dưới để nhóm kiểm tra.'],
             ['Báo cáo coupon', 'Để phản ánh một coupon cụ thể, sử dụng nút “Báo cáo” ở trang chi tiết coupon.'],
         ],
     ],
@@ -68,6 +68,7 @@ $page = $pages[$infoType] ?? $pages['about'];
                     <?php if ($supportEmail !== '' && filter_var($supportEmail, FILTER_VALIDATE_EMAIL)): ?>
                         <p class="mt-4"><strong>Email hỗ trợ:</strong> <a
                                 href="mailto:<?= e($supportEmail) ?>"><?= e($supportEmail) ?></a></p>
+                        <p><strong>Zalo:</strong> <a href="<?= e('https://zalo.me/'.rawurlencode((string)config('app.support_zalo', ''))) ?>" target="_blank" rel="noopener noreferrer"><?= e((string)config('app.support_zalo', '')) ?></a></p>
                     <?php else: ?>
                         <p class="small text-muted mt-4">Email hỗ trợ chưa được cấu hình. Chủ dự án có thể bổ sung
                             <code>support_email</code> trong <code>config/app.php</code>.
