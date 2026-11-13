@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Core\Database;
+use App\Core\{Database, Pagination};
 use RuntimeException;
 
 final class CampaignRepository implements \App\Contracts\CampaignRepositoryInterface
@@ -43,11 +43,12 @@ final class CampaignRepository implements \App\Contracts\CampaignRepositoryInter
         $stmt->execute($params);
         $total = (int)$stmt->fetchColumn();
         $pageSize = max(1,min(24,$pageSize));
-        $pages = max(1,(int)ceil($total/$pageSize));
-        $page = max(1,min($page,$pages));
+        $pagination = Pagination::fromTotal($total, $page, $pageSize);
+        $pages = $pagination['pages'];
+        $page = $pagination['page'];
         $stmt = $this->db->prepare('SELECT c.*,m.name AS merchant_name,(c.starts_at>UTC_TIMESTAMP()) AS upcoming,
             (SELECT COUNT(*)'.$coupons.') AS coupon_count'.$from.' ORDER BY (c.starts_at>UTC_TIMESTAMP()),c.starts_at DESC,c.id DESC LIMIT ? OFFSET ?');
-        $stmt->execute(array_merge($params, $params, [$pageSize, ($page-1)*$pageSize]));
+        $stmt->execute(array_merge($params, $params, [$pageSize, $pagination['offset']]));
         return ['items'=>$stmt->fetchAll(),'total'=>$total,'page'=>$page,'pages'=>$pages];
     }
 

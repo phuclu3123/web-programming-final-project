@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Core\Database;
+use App\Core\{Database, Pagination};
 
 /** Personalized saved-coupon reads. Every query is scoped to the authenticated user. */
 final class SavedCouponRepository implements \App\Contracts\SavedCouponRepositoryInterface
@@ -79,9 +79,10 @@ final class SavedCouponRepository implements \App\Contracts\SavedCouponRepositor
         $count = $this->db->prepare('SELECT COUNT(*)' . $fromSql . 'WHERE ' . $whereSql);
         $count->execute($params);
         $total = (int) $count->fetchColumn();
-        $pages = max(1, (int) ceil($total / $pageSize));
-        $page = max(1, min($requestedPage, $pages));
-        $offset = ($page - 1) * $pageSize;
+        $pagination = Pagination::fromTotal($total, $requestedPage, $pageSize);
+        $pages = $pagination['pages'];
+        $page = $pagination['page'];
+        $offset = $pagination['offset'];
 
         $order = $filters['sort'] === 'EXPIRING'
             ? "CASE WHEN $status = $active THEN 0 ELSE 1 END, c.ends_at ASC, f.created_at DESC, c.id DESC"
