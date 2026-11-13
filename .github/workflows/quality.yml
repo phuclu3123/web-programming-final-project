@@ -36,6 +36,8 @@ jobs:
             case "$file" in assets/vendor/*) continue ;; esac
             node --check "$file"
           done < <(git ls-files -z '*.js')
+      - name: Pagination and reusable partial regression checks
+        run: php scripts/check_pagination.php
       - name: Keep developer tooling outside the web repository
         shell: bash
         run: |

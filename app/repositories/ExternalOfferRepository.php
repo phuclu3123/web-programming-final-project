@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace App\Repositories;
 
-use App\Core\{Database, HttpError};
+use App\Core\{Database, HttpError, Pagination};
 
 /** Provider sync never updates public coupons or clears a moderation decision. */
 final class ExternalOfferRepository
@@ -17,9 +17,11 @@ final class ExternalOfferRepository
     public function page(int $page=1): array
     {
         $total=(int)$this->db->query('SELECT COUNT(*) FROM external_offers')->fetchColumn();
-        $pages=max(1,(int)ceil($total/20));$page=max(1,min($page,$pages));
+        $pagination = Pagination::fromTotal($total, $page, 20);
+        $page = $pagination['page'];
+        $pages = $pagination['pages'];
         $s=$this->db->prepare('SELECT id,provider_id,code,payload,state,coupon_id,fetched_at,fingerprint,imported_fingerprint FROM external_offers ORDER BY fetched_at DESC,id DESC LIMIT 20 OFFSET ?');
-        $s->execute([($page-1)*20]);
+        $s->execute([$pagination['offset']]);
         return ['items'=>$s->fetchAll(),'total'=>$total,'page'=>$page,'pages'=>$pages];
     }
     public function find(int $id): ?array

@@ -623,3 +623,86 @@ button, input, select, textarea { font-family: var(--bs-body-font-family); }
   .studio-journal .journal-quick-copy h3 { font-size:20px; }
   .studio-journal .journal-playground { padding-top:112px; padding-bottom:116px; }
 }
+
+/* Merchant campaigns listing: scoped responsive cards, independent from Bootstrap badges. */
+.merchant-campaigns-page { min-width:0; }
+.merchant-campaigns-page .merchant-campaigns-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:20px; margin-bottom:34px;
+}
+.merchant-campaigns-page .merchant-campaigns-header__copy { min-width:0; }
+.workspace-page .merchant-campaigns-page .merchant-campaigns-header h1 {
+  margin:0 0 10px; font-size:clamp(25px,2.6vw,32px); line-height:1.2;
+  overflow-wrap:anywhere;
+}
+.merchant-campaigns-header p { margin:0; max-width:62ch; font-size:14px; line-height:1.65; color:var(--ch-muted); }
+.merchant-campaigns-page .merchant-campaigns-create {
+  display:inline-flex; align-items:center; justify-content:center; flex:none;
+  gap:9px; min-height:44px; padding:10px 19px;
+  border-radius:999px; white-space:nowrap; text-decoration:none;
+}
+.merchant-campaigns-list-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; }
+.merchant-campaigns-list-heading h2 { margin:0; font-size:17px; line-height:1.4; color:var(--ch-heading); }
+.merchant-campaigns-count { color:var(--ch-muted); font-size:13px; white-space:nowrap; }
+.merchant-campaigns-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.merchant-campaign-card {
+  display:flex; flex-direction:column; min-width:0; padding:24px;
+  border:1px solid #dde5ef; border-radius:18px; background:#fff;
+  transition:border-color .16s ease, box-shadow .16s ease;
+}
+.merchant-campaign-card:hover { border-color:#b9c9e8; box-shadow:0 6px 22px rgba(35,61,114,.05); }
+.merchant-campaign-card__top { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 12px; margin-bottom:17px; }
+.merchant-campaign-card__shop { display:inline-flex; align-items:center; gap:8px; min-width:0; max-width:100%; color:#53627b; font-size:13px; font-weight:650; overflow-wrap:anywhere; }
+.merchant-campaign-card__shop i { color:#5072c6; font-size:12px; }
+.merchant-campaign-status {
+  display:inline-flex; align-items:center; justify-content:center; flex:none;
+  min-height:28px; max-width:100%; padding:5px 11px; border-radius:999px;
+  font-size:12px; font-weight:650; line-height:1.25; white-space:normal;
+}
+.merchant-campaign-status--draft { background:#edf0f4; color:#566474; }
+.merchant-campaign-status--published { background:#e5f5ec; color:#176744; }
+.merchant-campaign-status--archived, .merchant-campaign-status--neutral { background:#f1f2f5; color:#586272; }
+.merchant-campaign-status--disabled { background:#fff3dd; color:#805816; }
+.merchant-campaign-card__title { margin:0 0 12px; font-size:20px; line-height:1.35; color:var(--ch-heading); overflow-wrap:anywhere; }
+.merchant-campaign-card__coupons { display:flex; align-items:center; gap:8px; margin:0 0 21px; font-size:13px; color:#647187; }
+.merchant-campaign-card__coupons i { color:#7287aa; }
+.merchant-campaign-card__dates {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px;
+  padding:15px; border-radius:12px; background:#f6f8fc;
+}
+.merchant-campaign-card__date { display:flex; flex-direction:column; gap:5px; min-width:0; }
+.merchant-campaign-card__date > span { font-size:12px; color:#61718a; }
+.merchant-campaign-card__date time { color:#273650; font-size:13px; font-weight:650; line-height:1.45; overflow-wrap:anywhere; }
+.merchant-campaign-card__footer { display:flex; justify-content:flex-end; margin-top:auto; padding-top:20px; }
+.merchant-campaign-card__action {
+  display:inline-flex; align-items:center; justify-content:center; gap:11px;
+  min-height:44px; padding:10px 15px; border:1px solid #b8cafa;
+  border-radius:12px; background:#fff; color:#2353bd; font-size:13px;
+  font-weight:700; text-decoration:none; transition:background-color .16s ease, border-color .16s ease;
+}
+.merchant-campaign-card__action:hover { background:#f0f5ff; border-color:#6486d6; color:#19418e; }
+.merchant-campaign-card__action:focus-visible, .merchant-campaigns-create:focus-visible {
+  outline:3px solid #6284db; outline-offset:3px;
+}
+.merchant-campaigns-empty { padding:48px 24px; border:1px dashed #c9d5e8; border-radius:18px; background:#f8faff; text-align:center; }
+.merchant-campaigns-empty > i { margin-bottom:13px; color:#6481bd; font-size:26px; }
+.merchant-campaigns-empty h3 { margin:0 0 9px; font-size:19px; }
+.merchant-campaigns-empty p { margin:0 auto; max-width:48ch; font-size:14px; line-height:1.65; color:var(--ch-muted); }
+@media(max-width:900px) {
+  .merchant-campaigns-grid { grid-template-columns:1fr; }
+}
+@media(max-width:600px) {
+  .merchant-campaigns-page .merchant-campaigns-header { flex-direction:column; gap:18px; margin-bottom:27px; }
+  .merchant-campaigns-page .merchant-campaigns-create { width:100%; }
+  .merchant-campaigns-grid { gap:14px; }
+  .merchant-campaign-card { padding:19px; }
+  .merchant-campaign-card__title { font-size:18px; }
+  .merchant-campaign-card__dates { padding:13px; }
+  .merchant-campaign-card__action { width:100%; }
+}
+@media(max-width:390px) {
+  .merchant-campaign-card__dates { grid-template-columns:1fr; gap:12px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .merchant-campaign-card, .merchant-campaign-card__action { transition:none; }
+}
