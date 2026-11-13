@@ -6,7 +6,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
-use App\Core\Request;
+use App\Core\Request;     
 use App\Repositories\ArticleRepository;
 
 // Chọn bài đã xuất bản và dữ liệu trình bày trước khi render trang đọc.
