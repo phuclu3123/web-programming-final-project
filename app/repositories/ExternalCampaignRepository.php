@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace App\Repositories;
 
-use App\Core\{Database,HttpError};
+use App\Core\{Database,HttpError,Pagination};
 
 // Nguồn chiến dịch có hàng chờ riêng, không tự tạo shop hay coupon Official.
 final class ExternalCampaignRepository
@@ -18,8 +18,10 @@ final class ExternalCampaignRepository
         if(!in_array($state,['','PENDING','APPROVED','DISMISSED'],true))throw new HttpError(422,'Trạng thái nguồn không hợp lệ.');
         $where=$state!==''?' WHERE state=?':'';$params=$state!==''?[$state]:[];
         $q=$this->db->prepare('SELECT COUNT(*) FROM external_campaigns'.$where);$q->execute($params);$total=(int)$q->fetchColumn();
-        $pages=max(1,(int)ceil($total/50));$page=max(1,min($page,$pages));
-        $q=$this->db->prepare('SELECT * FROM external_campaigns'.$where.' ORDER BY fetched_at DESC,id DESC LIMIT 50 OFFSET ?');$q->execute([...$params,($page-1)*50]);
+        $pagination = Pagination::fromTotal($total, $page, 50);
+        $page = $pagination['page'];
+        $pages = $pagination['pages'];
+        $q=$this->db->prepare('SELECT * FROM external_campaigns'.$where.' ORDER BY fetched_at DESC,id DESC LIMIT 50 OFFSET ?');$q->execute([...$params, $pagination['offset']]);
         return ['items'=>$q->fetchAll(),'total'=>$total,'page'=>$page,'pages'=>$pages];
     }
     public function stage(int $actor,array $campaigns): int
@@ -64,8 +66,10 @@ final class ExternalCampaignRepository
         if($phase==='ACTIVE')$where.=' AND (starts_at IS NULL OR starts_at<=UTC_TIMESTAMP())';
         elseif($phase==='UPCOMING')$where.=' AND starts_at>UTC_TIMESTAMP()';
         $total=(int)$this->db->query('SELECT COUNT(*) FROM external_campaigns WHERE '.$where)->fetchColumn();
-        $pages=max(1,(int)ceil($total/12));$page=max(1,min($page,$pages));
-        $q=$this->db->prepare('SELECT id,payload,starts_at,ends_at FROM external_campaigns WHERE '.$where.' ORDER BY reviewed_at DESC,id DESC LIMIT 12 OFFSET ?');$q->execute([($page-1)*12]);
+        $pagination = Pagination::fromTotal($total, $page, 12);
+        $page = $pagination['page'];
+        $pages = $pagination['pages'];
+        $q=$this->db->prepare('SELECT id,payload,starts_at,ends_at FROM external_campaigns WHERE '.$where.' ORDER BY reviewed_at DESC,id DESC LIMIT 12 OFFSET ?');$q->execute([$pagination['offset']]);
         return ['items'=>$q->fetchAll(),'total'=>$total,'page'=>$page,'pages'=>$pages];
     }
     private function audit(int $actor,string $action,array $data): void
