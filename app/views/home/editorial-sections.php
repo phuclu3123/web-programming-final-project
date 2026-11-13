@@ -11,6 +11,7 @@
     <?php $campaignSelection=$homeCampaigns; $posterPriority=false; require __DIR__.'/../partials/campaign-bento.php'; ?>
 </section>
 <?php endif; ?>
+<?php if ($homeArticles): ?>
 <section class="studio-section" aria-labelledby="home-guides-title">
     <div class="studio-section-title">
         <div><span class="eyebrow">THE COUPONHUB EDIT</span>
@@ -18,17 +19,15 @@
         </div><a href="<?= e(url('/articles')) ?>">Góc đọc CouponHub <?= icon('arrow') ?></a>
     </div>
     <div class="guide-card-grid">
-        <?php foreach (productGuides() as $slug=>$item): require __DIR__.'/../partials/guide-card.php'; endforeach; ?>
+        <?php $guideArtwork = productGuides();
+        foreach ($homeArticles as $article):
+            $slug = $article['slug'];
+            [$photo, $topic] = articleTopic($article['title']);
+            $item = array_replace($guideArtwork[$slug] ?? ['photo'=>$photo, 'topic'=>$topic], [
+                'title'=>$article['title'], 'summary'=>$article['summary'] ?? '',
+            ]);
+            require __DIR__.'/../partials/guide-card.php';
+        endforeach; ?>
     </div>
-</section>
-<?php if ($homeArticles): ?>
-<section class="editorial-block" aria-labelledby="home-articles-title">
-    <div class="editorial-section-head">
-        <div><span class="eyebrow">GÓC ĐỌC COUPONHUB</span>
-            <h2 id="home-articles-title">Thêm một góc nhìn, mua sắm tốt hơn.</h2>
-        </div><a href="<?= e(url('/articles')) ?>">Xem bài viết <?= icon('arrow') ?></a>
-    </div>
-    <div class="editorial-articles">
-        <?php foreach ($homeArticles as $a): require __DIR__.'/../partials/editorial-article.php'; endforeach; ?></div>
 </section>
 <?php endif; ?>
