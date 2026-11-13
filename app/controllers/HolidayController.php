@@ -16,7 +16,7 @@ final class HolidayController extends Controller
     public function index(Request $request): void
     {
         $year = positiveId($request->query('year', date('Y')));
-        $month = positiveId($request->query('month', '0') ?: '0', true);
+        $month = positiveId($request->query('month', date('n')) ?: '0', true);
         if ($year < 2020 || $year > 2035 || $month > 12) throw new \App\Core\HttpError(422, 'Tháng hoặc năm không hợp lệ.');
         $holidays = (new HolidayService())->upcoming($year);
         if ($month) $holidays = array_values(array_filter($holidays, static fn($day) => (int)substr($day['date'], 5, 2) === $month));

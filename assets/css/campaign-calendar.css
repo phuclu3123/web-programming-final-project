@@ -1,0 +1,169 @@
+/* CouponHub: one quick list or one month, never two copies of the campaign list. */
+.campaign-planner-page { --calendar-ink:#232d3d; --calendar-muted:#58657b; --calendar-accent:#3c51c9; --calendar-line:#e3e8f0; font-variant-numeric:tabular-nums; }
+.campaign-planner-page .calendar-hero { padding:0 0 20px; margin:0; border:0; align-items:center; gap:20px; }
+.campaign-planner-page .calendar-hero h1 { color:var(--calendar-ink); font-size:28px; line-height:1.2; margin:0 0 8px; letter-spacing:-.025em; }
+.campaign-planner-page .calendar-hero p { color:var(--calendar-muted); font-size:14px; margin:0; }
+.campaign-planner-page .calendar-campaign-link { padding:0; border:0; background:transparent; border-radius:0; font-size:13px; color:var(--calendar-accent); }
+.campaign-planner-page .calendar-view-switch { display:flex; gap:28px; border-bottom:1px solid var(--calendar-line); margin:0 0 20px; }
+.campaign-planner-page .calendar-view-switch a { display:flex; align-items:center; min-height:44px; padding:0 2px; border-bottom:2px solid transparent; color:var(--calendar-muted); text-decoration:none; font-size:15px; font-weight:600; }
+.campaign-planner-page .calendar-view-switch a[aria-current] { border-color:var(--calendar-accent); color:var(--calendar-ink); }
+.campaign-planner-page .calendar-period-tools { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:20px; }
+.campaign-planner-page .calendar-toolbar { padding:0; gap:20px; flex:1 1 auto; min-width:0; justify-content:flex-start; }
+.campaign-planner-page .calendar-period { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.campaign-planner-page .calendar-period-month { color:var(--calendar-ink); font-size:21px; font-weight:650; }
+.campaign-planner-page .calendar-period-year { font-size:14px; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-controls { display:flex; gap:5px; }
+.campaign-planner-page .calendar-controls > :is(a,span) { display:inline-grid; place-items:center; min-width:36px; min-height:36px; padding:0 10px; border:1px solid var(--calendar-line); border-radius:8px; background:#fff; color:var(--calendar-ink); text-decoration:none; }
+.campaign-planner-page .calendar-controls > [aria-disabled] { opacity:.35; }
+.campaign-planner-page .calendar-today-button { font-size:12px; }
+.campaign-planner-page .calendar-filter-bar { display:flex!important; flex-direction:row; align-items:end!important; flex-wrap:nowrap; gap:10px; padding:0!important; margin:0!important; border:0!important; border-radius:0!important; background:transparent!important; box-shadow:none!important; }
+.campaign-planner-page .calendar-filter-field { min-width:0; flex:0 1 125px; gap:4px; }
+.campaign-planner-page .calendar-filter-field > span { font-size:11px; font-weight:500; color:var(--calendar-muted); text-transform:none; letter-spacing:0; }
+.campaign-planner-page .calendar-filter-bar .form-select { min-height:38px; width:125px; border:1px solid #cbd3df; border-radius:8px; font-size:13px; padding:7px 30px 7px 10px; color:var(--calendar-ink); background-color:#fff; box-shadow:none; }
+.campaign-planner-page .calendar-filter-actions { min-height:38px; }
+.campaign-planner-page .calendar-filter-bar .btn-calendar-filter { min-height:38px; padding:7px 14px; border-radius:8px; font-size:13px; background:#fff!important; border:1px solid #cbd3df!important; color:var(--calendar-ink)!important; }
+.campaign-planner-page .calendar-quick-view { border:1px solid var(--calendar-line); border-radius:14px; background:#fff; overflow:hidden; }
+.campaign-planner-page .calendar-quick-filters { display:flex; gap:8px; flex-wrap:wrap; padding:18px 22px 0; }
+.campaign-planner-page .calendar-quick-filters a { display:inline-flex; align-items:center; gap:8px; min-height:38px; padding:7px 12px; border:1px solid transparent; border-radius:8px; text-decoration:none; font-size:13px; color:var(--calendar-muted); white-space:nowrap; }
+.campaign-planner-page .calendar-quick-filters a[aria-current] { border-color:#dbe1f5; background:#eef1fb; color:var(--calendar-accent); font-weight:600; }
+.campaign-planner-page .calendar-quick-filters a > span { font-size:12px; font-variant-numeric:tabular-nums; }
+.campaign-planner-page .calendar-quick-heading { display:flex; align-items:end; justify-content:space-between; gap:20px; padding:22px 24px 12px; }
+.campaign-planner-page .calendar-quick-heading h2 { margin:0 0 5px; color:var(--calendar-ink); font-size:18px; font-weight:650; }
+.campaign-planner-page .calendar-quick-heading p,.campaign-planner-page .calendar-quick-heading > span { margin:0; color:var(--calendar-muted); font-size:12px; }
+.campaign-planner-page .calendar-quick-list { padding:0 24px 8px; }
+.campaign-planner-page .calendar-offer-row { display:grid; grid-template-columns:36px minmax(0,1fr) 172px 86px; align-items:center; column-gap:16px; min-height:84px; padding:15px 0; margin:0; color:var(--calendar-ink); text-decoration:none; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.campaign-planner-page .calendar-offer-row + .calendar-offer-row { border-top:1px solid #edf0f5; }
+.campaign-planner-page .calendar-offer-row > :is(.merchant-logo-image,.merchant-logo-fallback) { flex:none; width:36px; height:36px; padding:4px; border-radius:7px; background:#fff; object-fit:contain; }
+.campaign-planner-page .calendar-offer-identity { display:block; min-width:0; }
+.campaign-planner-page .calendar-offer-identity > strong { display:block; font-size:15px; font-weight:600; line-height:1.45; overflow-wrap:break-word; }
+.campaign-planner-page .calendar-offer-identity > small { display:block; margin-top:5px; font-size:12px; color:var(--calendar-muted); line-height:1.5; }
+.campaign-planner-page .calendar-row-timer { display:flex; flex-direction:column; align-items:end; gap:5px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.campaign-planner-page .calendar-row-timer small { margin:0; font-size:11px; line-height:1.4; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-row-timer strong { font-size:15px; font-weight:550; line-height:1.4; color:var(--calendar-ink); }
+.campaign-planner-page .is-ending-soon .calendar-row-timer strong { color:#9b4a16; }
+.campaign-planner-page .calendar-row-open { display:flex; align-items:center; justify-content:end; gap:8px; color:var(--calendar-accent); font-size:12px; white-space:nowrap; }
+.campaign-planner-page .calendar-row-open .icon { width:16px; height:16px; }
+.campaign-planner-page .calendar-offer-row:hover .calendar-offer-identity strong { color:var(--calendar-accent); text-decoration:underline; text-underline-offset:3px; }
+.campaign-planner-page .calendar-campaign-empty { padding:40px 24px; margin:0; border:0; background:transparent; text-align:left; }
+.campaign-planner-page .calendar-campaign-empty strong { display:block; font-size:15px; color:var(--calendar-ink); }
+.campaign-planner-page .calendar-campaign-empty p { margin:9px 0 18px; font-size:13px; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-campaign-empty a { display:inline-flex; align-items:center; min-height:36px; gap:10px; color:var(--calendar-accent); font-size:13px; }
+/* 1140px canvas: remaining width + 360px agenda + 20px gutter. */
+.campaign-planner-page .calendar-workspace { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:20px; align-items:start; }
+.campaign-planner-page .calendar-shell { min-width:0; margin:0!important; padding:12px 8px 0; overflow:visible; border:1px solid var(--calendar-line); border-radius:14px; background:#fff; box-shadow:none; }
+.campaign-planner-page .calendar-weekdays { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); padding:0; border:0; }
+.campaign-planner-page .calendar-weekdays > span { padding:10px 0; text-align:center; font-size:11px; font-weight:500; letter-spacing:0; text-transform:none; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); padding:0 0 10px; gap:3px; --calendar-gap:3px; }
+.campaign-planner-page .calendar-day { position:relative; min-width:0; min-height:88px; margin:0; border:0; border-radius:8px; background:#fff; --calendar-offset:0; }
+.campaign-planner-page .calendar-day:nth-child(7n+2) { --calendar-offset:-1; }
+.campaign-planner-page .calendar-day:nth-child(7n+3) { --calendar-offset:-2; }
+.campaign-planner-page .calendar-day:nth-child(7n+4) { --calendar-offset:-3; }
+.campaign-planner-page .calendar-day:nth-child(7n+5) { --calendar-offset:-4; }
+.campaign-planner-page .calendar-day:nth-child(7n+6) { --calendar-offset:-5; }
+.campaign-planner-page .calendar-day:nth-child(7n+7) { --calendar-offset:-6; }
+.campaign-planner-page .calendar-day > summary { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:88px; gap:3px; padding:6px 2px; border-radius:8px; list-style:none; cursor:pointer; }
+.campaign-planner-page .calendar-day > summary::-webkit-details-marker { display:none; }
+.campaign-planner-page .calendar-day-number { display:grid; place-items:center; align-self:auto; width:28px; height:28px; margin:0; color:var(--calendar-ink); font-size:14px; font-weight:600; }
+.campaign-planner-page .calendar-day-total { display:block; min-height:15px; color:var(--calendar-muted); font-size:11px; white-space:nowrap; }
+.campaign-planner-page .calendar-day.is-outside { background:#fafbfc; }
+.campaign-planner-page .calendar-day.is-outside .calendar-day-number { color:#8b96a7; }
+.campaign-planner-page .calendar-day.is-today .calendar-day-number { color:var(--calendar-accent); box-shadow:inset 0 0 0 1px #b7c0f2; }
+.campaign-planner-page .calendar-day:is(.is-selected,[open]) { background:#eef1fc; }
+.campaign-planner-page .calendar-day:is(.is-selected,[open]) .calendar-day-number { background:var(--calendar-accent); color:#fff; box-shadow:none; }
+.campaign-planner-page .calendar-milestones { display:flex; flex-wrap:wrap; justify-content:center; gap:2px 4px; width:100%; }
+.campaign-planner-page .calendar-milestone { display:inline-flex; align-items:center; min-width:0; max-width:100%; gap:3px; font-size:11px; line-height:1.3; color:var(--calendar-accent); }
+.campaign-planner-page .calendar-milestone.is-end { color:#9b4a16; }
+.campaign-planner-page .calendar-milestone-name { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.campaign-planner-page .calendar-milestone-more { font-size:11px; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-month-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:4px 8px 12px; border:0; color:var(--calendar-muted); font-size:11px; }
+.campaign-planner-page .calendar-month-foot > span { display:inline-flex; gap:12px; }
+.campaign-planner-page .calendar-legend-start { color:var(--calendar-accent); }
+.campaign-planner-page .calendar-legend-end { color:#9b4a16; }
+/* Override the legacy sixth/seventh-column mobile fallback as well. */
+.campaign-planner-page .calendar-day:nth-child(n) .calendar-day-detail { position:absolute; top:100%; left:calc((100% + var(--calendar-gap)) * var(--calendar-offset)); right:auto; z-index:5; width:min(360px,85vw); margin:0; padding:20px; border:1px solid var(--calendar-line); border-radius:12px; background:#fff; box-shadow:0 8px 30px #24354b18; }
+.campaign-planner-page .calendar-selected-day { display:none; min-width:0; padding:20px; border-radius:14px; background:#edf0f7; }
+.campaign-planner-page.calendar-enhanced .calendar-selected-day { display:block; }
+.campaign-planner-page.calendar-enhanced .calendar-day-detail { display:none; }
+.campaign-planner-page .calendar-day-detail-heading { display:block; padding:0 0 12px; border:0; }
+.campaign-planner-page .calendar-day-detail-heading > span { font-size:12px; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-day-detail-heading h2 { margin:6px 0; font-size:23px; color:var(--calendar-ink); font-weight:650; letter-spacing:-.02em; }
+.campaign-planner-page .calendar-day-detail-heading p { margin:0; font-size:11px; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-selected-day .calendar-day-events { max-height:none; overflow:visible; }
+.campaign-planner-page .calendar-offer-row.is-compact { grid-template-columns:30px minmax(0,1fr) 16px; column-gap:10px; row-gap:5px; padding:13px 0; min-height:80px; }
+.campaign-planner-page .calendar-offer-row.is-compact > :is(.merchant-logo-image,.merchant-logo-fallback) { width:30px; height:30px; grid-row:1 / 3; align-self:start; margin-top:2px; }
+.campaign-planner-page .is-compact .calendar-offer-identity { grid-column:2; }
+.campaign-planner-page .is-compact .calendar-offer-identity strong { font-size:13px; }
+.campaign-planner-page .is-compact .calendar-offer-identity small { display:none; }
+.campaign-planner-page .is-compact .calendar-row-timer { display:flex; grid-column:2; flex-direction:row; align-items:baseline; justify-content:space-between; gap:7px; }
+.campaign-planner-page .is-compact .calendar-row-timer strong { font-size:12px; }
+.campaign-planner-page .is-compact .calendar-row-open { grid-column:3; grid-row:1 / 3; }
+.campaign-planner-page .calendar-more-day { margin:0; border:0; padding:0; }
+.campaign-planner-page .calendar-more-day > summary { display:flex; align-items:center; justify-content:center; min-height:42px; padding:8px; border-top:1px solid #dce2ed; color:var(--calendar-accent); font-size:12px; cursor:pointer; list-style:none; }
+.campaign-planner-page .calendar-more-day > summary::-webkit-details-marker { display:none; }
+.campaign-planner-page .calendar-more-open,.campaign-planner-page .calendar-more-day[open] .calendar-more-closed { display:none; }
+.campaign-planner-page .calendar-more-day[open] .calendar-more-open { display:inline; }
+.campaign-planner-page .calendar-more-day[open] > summary::after { content:' −'; margin-left:8px; }
+.campaign-planner-page .calendar-more-day:not([open]) > summary::after { content:' +'; margin-left:8px; }
+.campaign-planner-page .calendar-day-empty { padding:24px 0; border:0; text-align:left; }
+.campaign-planner-page .calendar-day-empty strong { display:block; color:var(--calendar-ink); font-size:14px; }
+.campaign-planner-page .calendar-day-empty p { color:var(--calendar-muted); font-size:12px; line-height:1.6; margin:9px 0 0; }
+.campaign-planner-page .calendar-holidays { margin-top:24px; }
+.campaign-planner-page .calendar-holidays > summary { width:fit-content; min-height:40px; padding:8px 0; font-size:13px; color:var(--calendar-muted); cursor:pointer; }
+.campaign-planner-page .calendar-holidays > p { font-size:13px; color:var(--calendar-muted); }
+.campaign-planner-page .calendar-holiday-empty { color:var(--calendar-muted); font-size:13px; }
+.campaign-planner-page :is(summary,a,button,select):focus-visible { outline:3px solid #7184e5; outline-offset:3px; }
+.campaign-planner-page[aria-busy=true] .calendar-period-tools { opacity:.65; }
+@media(max-width:1099px) {
+  .campaign-planner-page .calendar-period-tools { flex-wrap:wrap; }
+  .campaign-planner-page .calendar-workspace { grid-template-columns:minmax(0,1fr) 320px; gap:16px; }
+  .campaign-planner-page .calendar-selected-day { padding:16px; }
+  .campaign-planner-page .calendar-milestone-name { max-width:48px; }
+  .campaign-planner-page .calendar-offer-row { grid-template-columns:36px minmax(0,1fr) 155px 22px; gap:12px; }
+  .campaign-planner-page .calendar-row-open > span { display:none; }
+}
+@media(max-width:850px) {
+  .campaign-planner-page .calendar-workspace { grid-template-columns:1fr; }
+  .campaign-planner-page .calendar-hero { align-items:start; flex-direction:column; gap:12px; }
+  .campaign-planner-page .calendar-selected-day { padding:20px; scroll-margin-top:95px; }
+  .campaign-planner-page .calendar-milestone-name { max-width:none; }
+  .campaign-planner-page .calendar-quick-heading { align-items:start; flex-direction:column; gap:10px; }
+}
+@media(max-width:599px) {
+  .campaign-planner-page .calendar-hero h1 { font-size:24px; }
+  .campaign-planner-page .calendar-hero { padding-bottom:12px; }
+  .campaign-planner-page .calendar-hero p { font-size:13px; max-width:none; }
+  .campaign-planner-page .calendar-campaign-link { display:none; }
+  .campaign-planner-page .calendar-view-switch { margin-bottom:16px; }
+  .campaign-planner-page .calendar-period-tools { display:block; }
+  .campaign-planner-page .calendar-toolbar { justify-content:space-between; gap:10px; margin-bottom:14px; }
+  .campaign-planner-page .calendar-filter-bar { display:grid!important; grid-template-columns:minmax(0,1fr) minmax(0,.8fr) auto; gap:8px; }
+  .campaign-planner-page .calendar-filter-bar .form-select { width:100%; }
+  .campaign-planner-page .calendar-filter-bar .btn-calendar-filter { padding-inline:10px; }
+  .campaign-planner-page .calendar-quick-filters { padding:12px 12px 0; gap:4px; }
+  .campaign-planner-page .calendar-quick-filters a { gap:5px; padding:7px 8px; font-size:12px; min-height:40px; }
+  .campaign-planner-page .calendar-quick-heading { padding:18px 16px 12px; gap:8px; }
+  .campaign-planner-page .calendar-quick-heading p { font-size:12px; }
+  .campaign-planner-page .calendar-quick-list { padding:0 16px 4px; }
+  .campaign-planner-page .calendar-offer-row { grid-template-columns:30px minmax(0,1fr) 16px; column-gap:10px; row-gap:8px; padding:16px 0; }
+  .campaign-planner-page .calendar-offer-row > :is(.merchant-logo-image,.merchant-logo-fallback) { width:30px; height:30px; grid-row:1 / 3; align-self:start; margin-top:2px; }
+  .campaign-planner-page .calendar-offer-identity { grid-column:2; }
+  .campaign-planner-page .calendar-offer-identity > strong { font-size:14px; }
+  .campaign-planner-page .calendar-offer-identity > small { font-size:11px; line-height:1.6; }
+  .campaign-planner-page .calendar-row-timer { grid-column:2; align-items:baseline; flex-direction:row; justify-content:space-between; gap:8px; }
+  .campaign-planner-page .calendar-row-timer strong { font-size:13px; }
+  .campaign-planner-page .calendar-row-open { grid-column:3; grid-row:1 / 3; }
+  .campaign-planner-page .calendar-weekdays > span { font-size:11px; }
+  .campaign-planner-page .calendar-shell { padding:8px 5px 0; }
+  .campaign-planner-page .calendar-grid { gap:2px; --calendar-gap:2px; }
+  .campaign-planner-page .calendar-controls > :is(a,span) { min-height:40px; }
+  .campaign-planner-page .calendar-filter-bar :is(.form-select,.btn-calendar-filter) { min-height:42px; }
+  .campaign-planner-page .calendar-day,.campaign-planner-page .calendar-day > summary { min-height:78px; }
+  .campaign-planner-page .calendar-day-total { display:flex; flex-direction:column; align-items:center; line-height:1.2; gap:2px; }
+  .campaign-planner-page .calendar-day-unit { display:block; }
+  .campaign-planner-page .calendar-milestone-name { display:none; }
+  .campaign-planner-page .calendar-milestones { gap:2px 3px; }
+  .campaign-planner-page .calendar-milestone { font-size:13px; }
+  .campaign-planner-page .calendar-month-foot { padding-inline:5px; font-size:11px; flex-wrap:wrap; }
+  .campaign-planner-page .calendar-month-foot > span { gap:8px; }
+  .campaign-planner-page .calendar-campaign-empty { padding:28px 16px; }
+}

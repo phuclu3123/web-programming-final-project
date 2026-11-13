@@ -70,6 +70,9 @@ $workspaceArea = (str_starts_with($currentPath, '/admin') || in_array($currentPa
     <?php if (\App\Core\PageAssetPolicy::enabled((string)($view ?? ''), 'campaign-clock.js')): ?>
     <link rel="stylesheet" href="<?= e(url('/assets/css/campaign-clock.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/campaign-clock.css') ?>">
     <?php endif; ?>
+    <?php if (($view ?? '') === 'campaigns/calendar'): ?>
+    <link rel="stylesheet" href="<?= e(url('/assets/css/campaign-calendar.css')) ?>?v=<?= filemtime(__DIR__.'/../../../assets/css/campaign-calendar.css') ?>">
+    <?php endif; ?>
 </head>
 
 <body class="unified-page<?= $workspaceArea ? ' workspace-page' : '' ?>">
